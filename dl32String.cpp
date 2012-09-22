@@ -169,6 +169,28 @@ dl32String::dl32String(double Number,int Decimals)
 	LongCasting(long(Number));
 }
 
+dl32String::dl32String(void* memoryaddress)
+{
+	size=10;//"0x" + ocho digitos hexadecimales (32 bits)
+	Array=new char[11];//Lo anterior más el caracter final (Cadena C-style)
+	int delta,realdelta;
+
+	Array[0]='0';
+	Array[1]='x';
+	Array[size]=DL32STRING_FINALSYMBOL;
+
+	for(int i=0;i<8;++i)//8 posiciones (cifras) hexadecimales (32 bits)
+	{
+		delta=int(memoryaddress)>>(i*4) & 0x0000000F;//delta es el numero (en decimal) de ésta posición
+		if(delta<=9)
+			realdelta=delta;
+		else
+			realdelta=delta+7;// El caracter 'A' no está después del '9' (Ver tabla ASCII)
+
+		Array[size-i-1]=char(int('0')+realdelta);
+	}
+}
+
 char* dl32String::c_str()
 {
 	return Array;
@@ -195,6 +217,14 @@ dl32String dl32String::Concat(dl32String &str1,dl32String &str2)
 		if(str2.Ready()) return str2;
 		return dl32String();
 	}
+}
+
+char dl32String::At(int pos)throw(dl32OutOfRangeException)
+{
+	if(pos>=0 && pos<size)
+		return Array[pos];
+	else
+		throw dl32OutOfRangeException(dl32Range(size),pos,"dl32String::At(int pos): 'pos' is out of range");
 }
 
 dl32String& dl32String::operator=(dl32String &string)

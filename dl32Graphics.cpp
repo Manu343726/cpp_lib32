@@ -472,7 +472,7 @@ bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool W
 	pp.SwapEffect=D3DSWAPEFFECT_DISCARD;
 	pp.BackBufferFormat=D3DFMT_UNKNOWN;
 
-	if(FAILED(d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&pp, &device)))
+	if(FAILED(d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&pp, &device)))
 		return false;
 	else
 	{

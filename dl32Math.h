@@ -21,7 +21,9 @@ using namespace std;
 
 float MATH_Min(float a,float b);
 
-//Represents a point in 2D space
+/////////////////////////////////
+///Represents a point in 2D space
+/////////////////////////////////
 struct dl322DPoint
 {
 	union
@@ -55,26 +57,30 @@ struct dl322DPoint
 	bool operator!=(dl322DPoint point){return x!=point.x || y!=point.y;};
 };
 
-//Represents a vector in 2D space
+//////////////////////////////////
+///Represents a vector in 2D space
+//////////////////////////////////
 struct dl322DVector:public dl322DPoint
 {
 	dl322DVector(){x=0,y=0;};
 	dl322DVector(float ValX,float ValY){x=ValX;y=ValY;};
 	dl322DVector(dl322DPoint P1,dl322DPoint P2){x=P2.x-P1.x;y=P2.y-P1.y;};
 
-	float GetLenght(){return sqrt(x*x+y*y);};
+	float GetLength(){return sqrt(x*x+y*y);};
 	void Normalize();
 	dl322DVector GetUnitary(){float m=sqrt(x*x+y*y);return dl322DVector(x/m,y/m);};
 
 	static float Mul(dl322DVector V1,dl322DVector V2){return V1.x*V2.x+V1.y*V2.y;};
-	static float Angle(dl322DVector V1, dl322DVector V2){return acos(Mul(V1,V2)/(V1.GetLenght()*V2.GetLenght()));};
+	static float Angle(dl322DVector V1, dl322DVector V2){return acos(Mul(V1,V2)/(V1.GetLength()*V2.GetLength()));};
 
 	dl322DVector operator-(){return dl322DVector(-x,-y);};
 	float operator*(dl322DVector vector){return Mul(*this,vector);};
 	float operator^(dl322DVector vector){return Angle(*this,vector);};
 };
 
-//Represents a line in 2D space
+////////////////////////////////
+///Represents a line in 2D space
+////////////////////////////////
 class dl322DLine
 {
 protected:
@@ -107,7 +113,9 @@ public:
 	void SetSlope(float slope);
 };
 
-//Represents a relative orientation for two 2D AABBs
+/////////////////////////////////////////////////////
+///Represents a relative orientation for two 2D AABBs
+/////////////////////////////////////////////////////
 enum dl322DOrientation
 {
 	OTHER,
@@ -121,7 +129,9 @@ enum dl322DOrientation
 	NORTHWEST
 };
 
-//Represents a Axis Aligned Bounding Box in 2D space
+/////////////////////////////////////////////////////
+///Represents a Axis Aligned Bounding Box in 2D space
+/////////////////////////////////////////////////////
 class dl322DAABB
 {
 	friend class dl322DAABB;
@@ -165,7 +175,9 @@ public:
 	dl322DOrientation Orientation(dl322DAABB AABB){return Orientation(*this,AABB);};
 };
 
-//Represents a 3x3 float matrix
+////////////////////////////////
+///Represents a 3x3 float matrix
+////////////////////////////////
 typedef struct dl323x3Matrix
 {
 	union
@@ -202,15 +214,16 @@ typedef struct dl323x3Matrix
 	static dl323x3Matrix Mul(dl323x3Matrix matrix,float mul);
 
 	static float GetDeterminant(dl323x3Matrix matrix);
-	static dl323x3Matrix GetInverse(dl323x3Matrix matrix)throw(dl32DividedByCeroException);
+	static dl323x3Matrix GetInverse(dl323x3Matrix matrix)throw(dl32InvalidMatrixOperationException);
 
 	dl323x3Matrix operator+(dl323x3Matrix matrix){return Add(*this,matrix);};
 	dl323x3Matrix operator-(dl323x3Matrix matrix){return Sub(*this,matrix);};
 	dl323x3Matrix operator*(dl323x3Matrix matrix){return Mul(*this,matrix);};
 	dl323x3Matrix operator*(float mul){return Mul(*this,mul);};
 };
-
-//Represents a geometric transformation in 2D space
+////////////////////////////////////////////////////
+///Represents a geometric transformation in 2D space
+////////////////////////////////////////////////////
 class dl322DTransform: public dl323x3Matrix
 {
 public:
@@ -225,7 +238,7 @@ public:
 	dl322DPoint Apply(float x,float y) {return dl322DPoint(m11*x+m12*y+m13,m21*x+m22*y+m23);};
 	dl322DPoint Apply(dl322DPoint point) {return dl322DPoint(m11*point.x+m12*point.y+m13,m21*point.x+m22*point.y+m23);};
 
-	void Concat(dl322DTransform &Transform) {*this=dl323x3Matrix::Mul(Transform,*this);};
+	void Concat(dl322DTransform Transform) {*this=dl323x3Matrix::Mul(Transform,*this);};
 	dl322DTransform operator+(dl322DTransform &Transform){return dl322DTransform(dl323x3Matrix::Mul(Transform,*this));};
 	static dl322DTransform Concat(dl322DTransform &t1,dl322DTransform &t2) {return dl322DTransform(dl323x3Matrix::Mul(t2,t1));};
 
@@ -319,20 +332,22 @@ struct dl323DPoint
 	dl323DPoint operator/(float div)throw(dl32DividedByCeroException){return Div(*this,div);};
 };
 
-//Represents a vector in 3D space
+//////////////////////////////////
+///Represents a vector in 3D space
+//////////////////////////////////
 struct dl323DVector:public dl323DPoint
 {
 	dl323DVector(){x=0;y=0;z=0;};
 	dl323DVector(float x,float y,float z){this->x=x;this->y=y;this->z=z;};
 	dl323DVector(dl323DPoint P1,dl323DPoint P2){this->x=P2.x-P1.x;y=P2.y-P1.y;z=P2.z-P1.z;};
 	
-	float GetLenght(){return sqrt(x*x+y*y+z*z);};
+	float GetLength(){return sqrt(x*x+y*y+z*z);};
 	void Normalize();
 	dl323DVector GetUnitary(){float m=sqrt(x*x+y*y+z*z);return dl323DVector(x/m,y/m,z/m);};
 
 	static float Mul(dl323DVector V1, dl323DVector V2){return V1.x*V2.x+V1.y*V2.y+V1.z*V2.z;};
 	static dl323DVector VectorialMul(dl323DVector V1,dl323DVector V2){return dl323DVector(V1.y*V2.z-V1.z*V2.y,V1.z*V2.x-V1.x*V2.z,V1.x*V2.y-V1.y*V2.x);};
-	static float Angle(dl323DVector V1,dl323DVector V2){return acos(Mul(V1,V2)/(V1.GetLenght()*V2.GetLenght()));};
+	static float Angle(dl323DVector V1,dl323DVector V2){return acos(Mul(V1,V2)/(V1.GetLength()*V2.GetLength()));};
 
 	dl323DVector operator-(){return dl323DVector(-x,-y,-z);};
 	float operator*(dl323DVector vector){return Mul(*this,vector);};
@@ -340,7 +355,9 @@ struct dl323DVector:public dl323DPoint
 	float operator^(dl323DVector vector){return Angle(*this,vector);};
 };
 
-//Represents a 4x4 float matrix
+////////////////////////////////
+///Represents a 4x4 float matrix
+////////////////////////////////
 struct dl324x4Matrix
 {
 	union
@@ -384,10 +401,14 @@ struct dl324x4Matrix
 	dl324x4Matrix operator*(float mul){return Mul(*this,mul);};
 };
 
-//Represents a set of quaternion coordinates
+/////////////////////////////////////////////
+///Represents a set of quaternion coordinates
+/////////////////////////////////////////////
 typedef float dl32QuaternionCoords[4];
 
-//Represents a coordinate axis
+///////////////////////////////
+///Represents a coordinate axis
+///////////////////////////////
 enum dl32CoordinateAxis
 {
 	DL32AXIS_X,// X axis
@@ -395,7 +416,9 @@ enum dl32CoordinateAxis
 	DL32AXIS_Z // Z axis
 };
 
-//Represents a unitary quaternion
+//////////////////////////////////
+///Represents a unitary quaternion
+//////////////////////////////////
 class dl32Quaternion:public dl324x4Matrix
 {
 	friend dl32Quaternion Add(dl32Quaternion Q1,dl32Quaternion Q2);
@@ -416,7 +439,7 @@ public:
 	void SetupMatrix();
 	bool MatrixReady(){return matrixReady;};
 
-	float GetLenght(){return sqrt(a*a+b*b+c*c+d*d);};
+	float GetLength(){return sqrt(a*a+b*b+c*c+d*d);};
 	float GetSquareLenght(){return a*a+b*b+c*c+d*d;};
 
 	float GetA(){return a;};
@@ -451,7 +474,9 @@ public:
 	};
 };
 
-//Represents a geometric transformation in 3D space
+////////////////////////////////////////////////////
+///Represents a geometric transformation in 3D space
+////////////////////////////////////////////////////
 class dl323DTransform:public dl324x4Matrix
 {
 public:
@@ -522,15 +547,24 @@ public:
 
 };
 
-
-//Represents a row of a generic matrix
+///////////////////////////////////////
+///Represents a row of a generic matrix
+///////////////////////////////////////
 typedef float *dl32MatrixRow;
-//Represets a pointer to a float variable
+
+//////////////////////////////////////////
+///Represets a pointer to a float variable
+//////////////////////////////////////////
 typedef float *dl32FloatPointer;
-//Represents a column of a generic matrix
+
+//////////////////////////////////////////
+///Represents a column of a generic matrix
+//////////////////////////////////////////
 typedef float **dl32MatrixColumn;
 
-//Represents a float generic matrix
+////////////////////////////////////
+///Represents a float generic matrix
+////////////////////////////////////
 class dl32Matrix
 {
 	friend void CopyRef(dl32Matrix &matrix);
@@ -545,6 +579,13 @@ protected:
 	float **Array;
 
 	bool NotInitialized;
+
+	void RowMul(int row, float mul);
+	void RowAdd(int source_row,int aux_row,float aux_mul=1);
+	void RowSwap(int row1,int row2);
+	void ColumnMul(int column,float mul);
+	void ColumnAdd(int source_column,int aux_column,float aux_mul=1);
+	void ColumnSwap(int column1,int column2);
 public:
 	dl32Matrix();
 	dl32Matrix(dl32Matrix &matrix);
@@ -558,32 +599,25 @@ public:
 	void Dispose();
 	~dl32Matrix();
 
-	bool Ready();
+	bool Ready(){return Array!=NULL;};
 	
-	float At(int row,int column);
-	dl32MatrixRow operator[](int row);
+	float At(int row,int column)throw(dl32OutOfRangeException);
+	dl32MatrixRow operator[](int row)throw(dl32OutOfRangeException);
 
-	int GetColumnsCount();
-	int GetRowsCount();
-	bool IsSquare();
+	int GetColumnsCount(){return columns;};
+	int GetRowsCount(){return rows;};
+	bool IsSquare(){return rows==columns;};
 
-	dl32MatrixColumn GetColumn(int column);
-	dl32MatrixRow GetRow(int row);
+	dl32MatrixColumn GetColumn(int column)throw(dl32OutOfRangeException);
+	dl32MatrixRow GetRow(int row)throw(dl32OutOfRangeException);
 
-	void RowMul(int row, float mul);
-	void RowAdd(int source_row,int aux_row,float aux_mul=1);
-	void RowSwap(int row1,int row2);
-	void ColumnMul(int column,float mul);
-	void ColumnAdd(int source_column,int aux_column,float aux_mul=1);
-	void ColumnSwap(int column1,int column2);
+	dl32Matrix GetSubMatrix(int row,int column,int rows,int columns)throw(dl32OutOfRangeException);
+	dl32Matrix GetSubMatrix(int row,int column,int size)throw(dl32OutOfRangeException){return GetSubMatrix(row,column,size,size);};
+	dl32Matrix GetSubMatrix(int row,int column)throw(dl32OutOfRangeException);
 
-	dl32Matrix GetSubMatrix(int row,int column,int rows,int columns);
-	dl32Matrix GetSquareSubMatrix(int row,int column,int size);
-	dl32Matrix GetSubMatrix(int row,int column);
-
-	float GetMinor(int row,int column);
-	float GetMinor(int row,int column,int size);
-	float GetAdjugate(int row,int column);
+	float GetMinor(int row,int column)throw(dl32OutOfRangeException){return GetSubMatrix(row,column).GetDeterminant();};
+	float GetMinor(int row,int column,int size)throw(dl32OutOfRangeException){return GetSubMatrix(row,column,size).GetDeterminant();};
+	float GetAdjugate(int row,int column)throw(dl32OutOfRangeException){return pow(float(-1),float(row+column))*GetSubMatrix(row,column).GetDeterminant();};
 	dl32Matrix GetAdjugate();
 
 	float GetDeterminant();
@@ -591,25 +625,27 @@ public:
 	void Transpose();
 	dl32Matrix GetInverse();
 
-	int GetRange();
+	int GetRange(){return GetRange(*this);};
 	int GetRange(dl32Matrix &FinalMatrix);
 
-	static dl32Matrix Add(dl32Matrix m1,dl32Matrix m2);
-	static dl32Matrix Sub(dl32Matrix m1,dl32Matrix m2);
-	static dl32Matrix Mul(dl32Matrix matrix,float mul);
-	static dl32Matrix Mul(dl32Matrix m1,dl32Matrix m2);
+	static dl32Matrix Add(dl32Matrix m1,dl32Matrix m2)throw(dl32InvalidMatrixOperationException);
+	static dl32Matrix Sub(dl32Matrix m1,dl32Matrix m2)throw(dl32InvalidMatrixOperationException);
+	static dl32Matrix Mul(dl32Matrix matrix,float mul)throw(dl32InvalidMatrixOperationException);
+	static dl32Matrix Mul(dl32Matrix m1,dl32Matrix m2)throw(dl32InvalidMatrixOperationException);
 
-	dl32Matrix operator+(dl32Matrix matrix){return Add(*this,matrix);};
-	dl32Matrix operator-(dl32Matrix matrix){return Sub(*this,matrix);};
-	dl32Matrix operator*(dl32Matrix matrix){return Mul(*this,matrix);};
-	dl32Matrix operator*(float factor){return Mul(*this,factor);};
+	dl32Matrix operator+(dl32Matrix matrix)throw(dl32InvalidMatrixOperationException){return Add(*this,matrix);};
+	dl32Matrix operator-(dl32Matrix matrix)throw(dl32InvalidMatrixOperationException){return Sub(*this,matrix);};
+	dl32Matrix operator*(dl32Matrix matrix)throw(dl32InvalidMatrixOperationException){return Mul(*this,matrix);};
+	dl32Matrix operator*(float factor)throw(dl32InvalidMatrixOperationException){return Mul(*this,factor);};
 
 	bool operator==(dl32Matrix &matrix){return Array==matrix.Array;};
 	bool operator!=(dl32Matrix &matrix){return Array!=matrix.Array;};
 };
 
 
-//Represents a solution type of a linear ecuations system
+//////////////////////////////////////////////////////////
+///Represents a solution type of a linear ecuations system
+//////////////////////////////////////////////////////////
 enum dl32SystemSolutionType
 {
 	SCD,
@@ -617,21 +653,33 @@ enum dl32SystemSolutionType
 	SI
 };
 
-//Represents a solution of a linear ecuations system
+/////////////////////////////////////////////////////
+///Represents a solution of a linear ecuations system
+/////////////////////////////////////////////////////
 struct dl32SystemSolution
 {
 	dl32SystemSolutionType Type;
 	float *Solutions;
 };
 
-//Represents a linear ecuation as a group of float coefficients
+////////////////////////////////////////////////////////////////
+///Represents a linear ecuation as a group of float coefficients
+////////////////////////////////////////////////////////////////
 typedef float *dl32LinearEcuation;
-//Represents a linear ecuation as a group of float coefficients
+
+////////////////////////////////////////////////////////////////
+///Represents a linear ecuation as a group of float coefficients
+////////////////////////////////////////////////////////////////
 typedef dl32LinearEcuation *dl32LinearEcuationArray;
-//Represents a linear ecuation as a group of float coefficients
+
+////////////////////////////////////////////////////////////////
+///Represents a linear ecuation as a group of float coefficients
+////////////////////////////////////////////////////////////////
 typedef vector<dl32LinearEcuation> dl32LinearEcuationList;
 
-//Represents a linear ecuations system
+///////////////////////////////////////
+///Represents a linear ecuations system
+///////////////////////////////////////
 class dl32EcuationsSystem
 {
 	friend class dl32EcuationsSystem;
@@ -659,10 +707,10 @@ public:
 
 	dl32EcuationsSystem& operator=(dl32EcuationsSystem &System);
 
-	int GetMainMatrixRange();
-	int GetAuxMatrixRange();
-	dl32SystemSolution GetSolution();
+	int GetMainMatrixRange(){return mainrange;};
+	int GetAuxMatrixRange(){return auxrange;};
+	dl32SystemSolution GetSolution(){return Solution;};
 
-	dl32Matrix GetGaussMatrix();
+	dl32Matrix GetGaussMatrix(){return gaussmatrix;};
 };
 #endif

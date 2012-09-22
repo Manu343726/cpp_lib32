@@ -3,6 +3,7 @@
 #if DL32DEBUG_DEBUGTEST == 1
 
 #include "dl32Windows.h"
+#include "dl32Console.h"
  
 #define RANDOM(min,max) (rand()%(max-min))+min
 #define RANDOM_COLOR COLOR_FromRGB(RANDOM(0,255),RANDOM(0,255),RANDOM(0,255))
@@ -28,8 +29,8 @@ const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
 const int POLYCOUNT=100;//Total de poligonos/sprites
-const dl32String FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
-const dl32String FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
+const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
+const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
 //Variables globales wuahahaha!!!!
 float Alfa=PI2+1; //Angulo de rotacion de poligonos/sprites
@@ -50,12 +51,15 @@ void OnPaint();//Captura del evento "Paint" de la ventana (La ventana necesita r
 void OnMouseMove(dl32MouseData MouseData);//Captura del evento "MouseMove" de la ventana
 void OnMouseUp(dl32MouseData MouseData);//Captura del evento "MouseUp" de la ventana
 void OnMouseDown(dl32MouseData MouseData);//Captura del evento "MouseDown" de la ventana
+void OnMouseWheel(dl32MouseData MouseData);//Captura del evento "MouseWheel" de la ventana
 void OnMove(dl322DAABB WindowArea);//Captura del evento "Move" de la ventana
 void OnKeyDown(dl32KeyboardData KeyboardData);//Captura del evento "KeyDown" de la ventana
 
 INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 {
 	dl32MeshPatch TransformPatch(-1,3,3,3,3);
+	Console.Open("dx_lib32 C++ (Debugging console)");
+	Console.WriteLine("dx_lib32 setting up window...");
 
 	Window = new dl32Window("dx_lib32 C++",0,0,WINDOWWIDTH,WINDOWHEIGHT);
 	if(Window->Ready())
@@ -65,14 +69,21 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 		switch(gfx->InitError())//dl32GraphicsClass contiene la funci�n "InitError()" que devuelve un valor del tipo DL32GRAPHICSCLASS_CTORERRORS que indica el tipo de error que ocurrio durante la ejecuci�n del constructor
 		{
 		case DL32GCCE_NOERRORS://Todo bien!!!
+			Console.WriteLine("Setting PreDrawProc at " + dl32String(PreDrawProc),DL32CP_YELLOW);
+
 			gfx->DEVICE_SetPreDrawProc(PreDrawProc);//Asignamos la funci�n que se ejecuta antes del dibujo de la escena
 
+			Console << "Loading texture: '" << dl32String(FILE1PATH) << "'" << dl32endl;
 			Texture1=gfx->MAP_Load(FILE1PATH);//Cargamos la imagen
+			Console << "Loading texture: '" << dl32String(FILE2PATH) << "'" << dl32endl;
 			Texture2=gfx->MAP_Load(FILE2PATH);//Cargamos la imagen
+
+			Console.WriteLine("Setting up event handlers...");
 
 			Window->MouseMove.AddHandler(OnMouseMove);//Preparamos el manejador del evento MouseMove
 			Window->MouseUp.AddHandler(OnMouseUp);//Preparamos el manejador del evento MouseUp
 			Window->MouseDown.AddHandler(OnMouseDown);//Preparamos el manejador del evento MouseDown
+			Window->MouseWheel.AddHandler(OnMouseWheel);//Preparamos el manejador del evento MouseWheel
 			
 			Window->Paint.AddHandler(OnPaint);//Preparamos el manejador del evento Paint
 			Window->Idle.AddHandler(OnIdle);//Preparamos el manejador del evento Idle
@@ -80,6 +91,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 
 			Window->KeyDown.AddHandler(OnKeyDown);
 
+			Console.WriteLine("Setting up mesh patches (not used)",DL32CP_LIGHTPURPLE);
 			Patch=dl32MeshPatch(Texture1,0,0,10,10,DL32COLOR_WHITE);
 			Mesh=dl32Mesh(dl322DAABB(0,0,1024,768),10,10);
 
@@ -88,6 +100,8 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 			
 			Mesh.Transform(dl322DTransform::Rotation(Mesh.GetPatchCenter(TransformPatch),PI/4),TransformPatch);
 
+			Console.WriteLine("Starting message loop");
+			Console.SetColors(DL32CP_BLACK,DL32CP_WHITE);
 
 			dl32Window::Start();//Iniciamos el bucle de captura de mensajes
 			break;
@@ -138,6 +152,7 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 	else
 	{//Cuando se acaba la vuelta, alfa vuelve a cero, y se vuelven a generar nuevos poligonos/sprites:
 		Alfa=0;
+		Console.Write("Recalculating sprites/polygons...");
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
@@ -147,6 +162,8 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aqu�, el valor Z es uno, para que los sprites salgan delante de los poligonos
 			//DrawPolygon(gfx,PDATA[i],Alfa);
 		}
+
+		Console.WriteLine("OK");
 	}
 
 	Mesh.Transform(dl322DTransform::Rotation(Mesh.GetMeshCenter(),PI/1000));
@@ -243,6 +260,19 @@ void OnMouseDown(dl32MouseData MouseData)
 	case DL32MOUSEBUTTON_CENTER:
 		Mesh.SetColor(DL32COLOR_WHITE,Patch);
 		break;
+	}
+}
+
+void OnMouseWheel(dl32MouseData MouseData)
+{
+	Window->SetText("dx_lib32 C++ (MouseWheel!!!)");
+
+	if(MouseData.Delta!=0)
+	{
+		if(MouseData.Delta>0)
+			gfx->Camera.Concat(dl322DTransform::Scale(2,2));
+		else
+			gfx->Camera.Concat(dl322DTransform::Scale(0.5,0.5));
 	}
 }
 

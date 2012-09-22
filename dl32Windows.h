@@ -87,6 +87,7 @@ typedef dl32Event<dl32MouseData> dl32MouseEvent;
 typedef dl32MouseEvent dl32MouseMoveEvent;
 typedef dl32MouseEvent dl32MouseUpEvent;
 typedef dl32MouseEvent dl32MouseDownEvent;
+typedef dl32MouseEvent dl32MouseWheelEvent;
 
 typedef dl32Event<dl32KeyboardData> dl32KeyboardEvent;
 typedef dl32KeyboardEvent dl32KeyPressEvent;
@@ -180,6 +181,7 @@ public:
 	dl32ResizeEvent Resize;
 	dl32MouseMoveEvent MouseMove;
 	dl32MouseDownEvent MouseDown;
+	dl32MouseWheelEvent MouseWheel;
 	dl32MouseUpEvent MouseUp;
 	dl32KeyDownEvent KeyDown;
 	dl32KeyUpEvent KeyUp;

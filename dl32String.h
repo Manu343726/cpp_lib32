@@ -2,8 +2,11 @@
 #define STRING_H
 
 #include <string>
+#include "dl32Exceptions.h"
+
 using namespace std;
 
+#define DL32STRINGDEFAULTS_MAXSIZE 100
 #define DL32STRINGDEFAULTS_DECIMALS 3
 #define DL32TRING_ENDLINE '\n'
 #define DL32STRING_FINALSYMBOL NULL
@@ -31,16 +34,19 @@ public:
 	dl32String(long Number);
 	dl32String(float Number,int Decimals=DL32STRINGDEFAULTS_DECIMALS);
 	dl32String(double Number,int Decimals=DL32STRINGDEFAULTS_DECIMALS);
+	dl32String(void* memoryaddress);
 
 	~dl32String();
 
 	bool Ready();
 
 	char* c_str();
+	char At(int pos)throw(dl32OutOfRangeException);
+	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);};
 
 	dl32String& operator=(dl32String &Str);
 
-	int GetLenght();
+	int GetLength(){return size;};
 
 	static dl32String Concat(dl32String &str1,dl32String &str2);
 	void Concat(dl32String &str);

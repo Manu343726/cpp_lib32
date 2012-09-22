@@ -27,12 +27,11 @@ dl322DPoint dl322DPoint::Div(dl322DPoint Point, float divisor)throw(dl32DividedB
 	if (divisor!=0)
 	{
 		Point.x/=divisor;
-		Point.y/=divisor;
+		Point.y/=divisor;		
+		return Point;
 	}
 	else
 		throw dl32DividedByCeroException("dl322DPoint::Div(dl322DPoint point,float divisor): 'divisor' must be different from 0");
-
-	return Point;
 }
 
 dl322DPoint dl322DPoint::Baricenter(dl322DPoint PointList[],int PointCount,int TypeSize)
@@ -366,16 +365,16 @@ dl323x3Matrix Get3x3Unity()
 		   matrix.m12*matrix.m21*matrix.m33-
 		   matrix.m11*matrix.m23*matrix.m32);
 }  
- dl323x3Matrix dl323x3Matrix::GetInverse(dl323x3Matrix matrix)
+ dl323x3Matrix dl323x3Matrix::GetInverse(dl323x3Matrix matrix)throw(dl32InvalidMatrixOperationException)
  {
 	 float det=dl323x3Matrix::GetDeterminant(matrix);
 
 	 if(det!=0)
-		 return dl323x3Matrix(((matrix.m22*matrix.m33-matrix.m23*matrix.m32)/det),((matrix.m12*matrix.m33-matrix.m13*matrix.m32)/det),((matrix.m12*matrix.m23-matrix.m13*matrix.m22)/det),
-							  ((matrix.m21*matrix.m33-matrix.m23*matrix.m31)/det),((matrix.m11*matrix.m33-matrix.m13*matrix.m31)/det),((matrix.m11*matrix.m23-matrix.m13*matrix.m21)/det),
-							  ((matrix.m21*matrix.m32-matrix.m22*matrix.m31)/det),((matrix.m11*matrix.m32-matrix.m12*matrix.m31)/det),((matrix.m11*matrix.m22-matrix.m12*matrix.m21)/det));
+		 return dl323x3Matrix((matrix.m22*matrix.m33-matrix.m23*matrix.m32)/det,-(matrix.m12*matrix.m33-matrix.m13*matrix.m32)/det,(matrix.m12*matrix.m23-matrix.m13*matrix.m22)/det,
+							  -(matrix.m21*matrix.m33-matrix.m23*matrix.m31)/det,(matrix.m11*matrix.m33-matrix.m13*matrix.m31)/det,-(matrix.m11*matrix.m23-matrix.m13*matrix.m21)/det,
+							  (matrix.m21*matrix.m32-matrix.m22*matrix.m31)/det,-(matrix.m11*matrix.m32-matrix.m12*matrix.m31)/det,(matrix.m11*matrix.m22-matrix.m12*matrix.m21)/det);
 	 else
-		 throw dl32DividedByCeroException("dl323x3Matrix::GetInverse(dl323x3Matrix matrix): 'matrix' is no-invertible");
+		 throw dl32InvalidMatrixOperationException("dl323x3Matrix::GetInverse(dl323x3Matrix matrix): 'matrix' is no-invertible");
  }
 
 dl322DTransform::dl322DTransform()
@@ -426,7 +425,7 @@ dl322DTransform& dl322DTransform::Rotation(dl322DPoint center,float angle)
 		return dl322DTransform(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl322DTransform::Traslation(center.x,center.y),dl322DTransform::Rotation(angle)),dl322DTransform::Traslation(-center.x,-center.y)));
 };
 
-dl323DPoint dl323DPoint::Div(dl323DPoint Point,float divisor)
+dl323DPoint dl323DPoint::Div(dl323DPoint Point,float divisor)throw(dl32DividedByCeroException)
 {
 	if(divisor!=0)
 	{
@@ -644,7 +643,6 @@ dl32Matrix::dl32Matrix()
 	columns=0;
 }
 
-#if DL32FLAGS_CHECKMATRIXOPERATIONS
 dl32Matrix::dl32Matrix(int rows,int columns)
 {
 	if(rows>0 && columns>0)
@@ -666,20 +664,6 @@ dl32Matrix::dl32Matrix(int rows,int columns)
 		columns=0;
 	}
 }
-#else
-dl32Matrix::dl32Matrix(int rows,int columns)
-{
-	Array=new dl32MatrixRow[rows];
-
-	NotInitialized=true;
-
-	for(int i=0;i<columns;++i)
-		Array[i]=new float[columns];
-
-	this->rows=rows;
-	this->columns=columns;
-}
-#endif
 
 dl32Matrix::dl32Matrix(dl32Matrix &matrix)
 {
@@ -809,240 +793,49 @@ dl32Matrix::~dl32Matrix()
 	Dispose();
 }
 
-bool dl32Matrix::Ready()
+float dl32Matrix::At(int row,int column)throw(dl32OutOfRangeException)
 {
-	return (Array!=NULL);
-}
-
-#if DL32FLAGS_CHECKARRAYINDEXES
-float dl32Matrix::At(int row,int column)
-{
-	if(row>=0 && row<rows && column>=0 && column<columns)
-		return Array[row][column];
+	if(row>=0 && row<rows)
+		if(column>=0 && column<columns)
+			return Array[row][column];
+		else
+			throw dl32OutOfRangeException(dl32Range(columns),column,"dl32Matrix::At(int row,int column): 'column' is out of range");
 	else
-		return 0;
+		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::At(int row,int column): 'row' is out of range");
 }
 
-dl32MatrixRow dl32Matrix::operator[](int row)
+dl32MatrixRow dl32Matrix::operator[](int row)throw(dl32OutOfRangeException)
 {
 	if(row>=0 && row<rows)
 		return Array[row];
 	else
-		return NULL;
+		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::operator[](int row): 'row' is out of range");
 }
 
 //NOTA: Ésta función devuelve un puntero a la fila, de manera que tenemos acceso directo a los elementos de ésta
-dl32MatrixRow dl32Matrix::GetRow(int row)
+dl32MatrixRow dl32Matrix::GetRow(int row)throw(dl32OutOfRangeException)
 {
 	if(row>=0 && row<rows)
 		return Array[row];
 	else
-		return NULL;
+		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::GetRow(int row): 'row' is out of ramge");
 }
 
 //NOTA: Ésta función devuelve un array de punteros a los elementos de la columna, para tener acceso directo a éstos
 //El array es creado dinámicamente, así que no hay que olvidar eliminarlo al terminar de utilizarlo, para no provocar rmemory-leaks
-dl32MatrixColumn dl32Matrix::GetColumn(int column)
+dl32MatrixColumn dl32Matrix::GetColumn(int column)throw(dl32OutOfRangeException)
 {
-	dl32MatrixColumn Column=NULL;
-
 	if(column>=0 && column<columns)
 	{
-		Column=new dl32FloatPointer[rows];
+		dl32MatrixColumn Column=new float*[rows];
 
 		for(int i=0;i<rows;++i)
 			Column[i]=Array[i]+column;//Recordemos que Array[i] es un puntero al elemento inicial de la fila
-	}
 
-	return Column;
-}
-
-void dl32Matrix::RowMul(int row,float mul)
-{
-	if(row>=0 && row<rows)
-	{
-		for(int i=0;i<columns;++i)
-			Array[row][i]*=mul;
-	}
-}
-
-void dl32Matrix::RowAdd(int source_row,int aux_row,float aux_mul)
-{
-	if(source_row!=aux_row)
-		if(source_row>=0 && source_row<rows && aux_row>=0 && aux_row<rows)
-		{
-			for(int i=0;i<columns;++i)
-				Array[source_row][i]+=Array[aux_row][i]*aux_mul;
-		}
-}
-
-void dl32Matrix::RowSwap(int row1,int row2)
-{
-	dl32MatrixRow aux;
-
-	if(row1!=row2)
-		if(row1>=0 && row1<rows && row2>=0 && row2<rows)
-		{
-			aux=Array[row1];
-			Array[row1]=Array[row2];
-			Array[row2]=aux;
-		}
-}
-
-void dl32Matrix::ColumnMul(int column,float mul)
-{
-	if(column>=0 && column<columns)
-	{
-		for(int i=0;i<columns;++i)
-			Array[i][column]*=mul;
-	}
-}
-
-void dl32Matrix::ColumnAdd(int source_column,int aux_column,float aux_mul)
-{
-	if(source_column!=aux_column)
-		if(source_column>=0 && source_column<columns && aux_column>=0 && aux_column<columns)
-		{
-			for(int i=0;i<columns;++i)
-				Array[i][source_column]+=Array[i][aux_column]*aux_mul;
-		}
-}
-
-void dl32Matrix::ColumnSwap(int column1,int column2)
-{
-	float aux;
-
-	if(column1!=column2)
-		if(column1>=0 && column1<columns && column2>=0 && column2<columns)
-		{
-			for(int i=0;i<rows;++i)
-			{
-				aux=Array[i][column1];
-				Array[i][column1]=Array[i][column2];
-				Array[i][column2]=aux;
-			}
-		}
-}
-
-dl32Matrix dl32Matrix::GetSubMatrix(int row,int column,int rows,int columns)
-{
-	if(row>=0 && row<this->rows && column>=0 && column<this->columns && row+rows<=this->rows && column+columns<=this->columns)
-	{
-		dl32Matrix SubMatrix(rows,columns);
-
-		for(int i=0;i<rows;++i)
-			for(int j=0;j<columns;++j)
-				SubMatrix[i][j]=Array[i+row][j+column];
-
-		return SubMatrix;
+		return Column;
 	}
 	else
-		return dl32Matrix();
-}
-
-dl32Matrix dl32Matrix::GetSquareSubMatrix(int row,int column,int size)
-{
-	if(row>=0 && row<rows && column>=0 && column<columns && row+size<=rows && column+size<=columns)
-	{
-		dl32Matrix SubMatrix(size,size);
-
-		for(int i=0;i<size;++i)
-			for(int j=0;j<size;++j)
-				SubMatrix[i][j]=Array[i+row][j+column];
-
-		return SubMatrix;
-	}
-	else
-		return dl32Matrix();
-}
-
-dl32Matrix dl32Matrix::GetSubMatrix(int row,int column)
-{
-	if(row>=0 && row<rows && column>=0 && column<columns)
-	{
-		dl32Matrix SubMatrix(rows-1,columns-1);
-		int i,j,x,y;
-
-		i=0;
-		x=0;
-
-		do
-		{
-			if(i<row)
-				x=i;
-			else
-				if(i>row) x=i-1;
-					
-			if(i!=row)
-			{
-				j=0;
-
-				do 
-				{
-					if(j<column)
-						y=j;
-					else
-						if(j>column) y=j-1;
-
-					if(j!=column)
-						SubMatrix[x][y]=Array[i][j];
-
-					++j;
-				}while(j<columns);
-			}
-
-			++i;
-		}while(i<rows);
-
-		return SubMatrix;
-	}
-	else
-		return dl32Matrix();
-}
-
-float dl32Matrix::GetMinor(int row,int column)
-{
-	if(row>=0 && row<rows && column>=0 && column<columns)
-		return GetSubMatrix(row,column).GetDeterminant();
-	else
-		return 0;
-}
-
-float dl32Matrix::GetAdjugate(int row,int column)
-{
-	if(row>=0 && row<rows && column>=0 && column<columns)
-		return pow(float(-1),float(row+column))*GetSubMatrix(row,column).GetDeterminant();
-	else
-		return 0;
-}
-
-#else
-float dl32Matrix::At(int row,int column)
-{
-	return Array[row][column];
-}
-
-dl32MatrixRow dl32Matrix::operator[](int row)
-{
-	return Array[row];
-}
-
-//NOTA: Ésta función devuelve un puntero a la fila, de manera que tenemos acceso directo a los elementos de ésta
-dl32MatrixRow dl32Matrix::GetRow(int row)
-{
-	return Array[row];
-}
-
-//NOTA: Ésta función devuelve un array de punteros a los elementos de la columna, para tener acceso directo a éstos
-//El array es creado dinámicamente, así que no hay que olvidar eliminarlo al terminar de utilizarlo, para no provoca rmemory-leaks
-dl32MatrixColumn dl32Matrix::GetColumn(int column)
-{
-	dl32MatrixColumn Column=new dl32FloatPointer[rows];
-
-	for(int i=0;i<rows;++i)
-		Column[i]=Array[i]+column;//Recordemos que Array[i] es un puntero al elemento inicial de la fila
-
-	return Column;
+		throw dl32OutOfRangeException(dl32Range(columns),column,"dl32Matrix::GetColumn(int column): 'column' is out of range");
 }
 
 void dl32Matrix::RowMul(int row,float mul)
@@ -1051,14 +844,14 @@ void dl32Matrix::RowMul(int row,float mul)
 		Array[row][i]*=mul;
 }
 
-void dl32Matrix::RowAdd(int source_row,int aux_row,float aux_mul)
+void dl32Matrix::RowAdd(int source_row,int aux_row,float aux_mul)throw(dl32OutOfRangeException)
 {
 	if(source_row!=aux_row)
 		for(int i=0;i<columns;++i)
 			Array[source_row][i]+=Array[aux_row][i]*aux_mul;
 }
 
-void dl32Matrix::RowSwap(int row1,int row2)
+void dl32Matrix::RowSwap(int row1,int row2)throw(dl32OutOfRangeException)
 {
 	dl32MatrixRow aux;
 
@@ -1070,20 +863,20 @@ void dl32Matrix::RowSwap(int row1,int row2)
 	}
 }
 
-void dl32Matrix::ColumnMul(int column,float mul)
+void dl32Matrix::ColumnMul(int column,float mul)throw(dl32OutOfRangeException)
 {
 	for(int i=0;i<columns;++i)
 		Array[i][column]*=mul;
 }
 
-void dl32Matrix::ColumnAdd(int source_column,int aux_column,float aux_mul)
+void dl32Matrix::ColumnAdd(int source_column,int aux_column,float aux_mul)throw(dl32OutOfRangeException)
 {
 	if(source_column!=aux_column)
 		for(int i=0;i<columns;++i)
 			Array[i][source_column]+=Array[i][aux_column]*aux_mul;
 }
 
-void dl32Matrix::ColumnSwap(int column1,int column2)
+void dl32Matrix::ColumnSwap(int column1,int column2)throw(dl32OutOfRangeException)
 {
 	float aux;
 
@@ -1095,21 +888,71 @@ void dl32Matrix::ColumnSwap(int column1,int column2)
 			Array[i][column2]=aux;
 		}
 }
-#endif
 
-int dl32Matrix::GetRowsCount()
+dl32Matrix dl32Matrix::GetSubMatrix(int row,int column,int rows,int columns)throw(dl32OutOfRangeException)
 {
-	return rows;
+	if(row>=0 && row+rows<=this->rows )
+		if(column>=0 && column+columns<=this->columns)
+		{
+			dl32Matrix SubMatrix(rows,columns);
+
+			for(int i=0;i<rows;++i)
+				for(int j=0;j<columns;++j)
+					SubMatrix[i][j]=Array[i+row][j+column];
+
+			return SubMatrix;
+		}
+		else
+			throw dl32OutOfRangeException(dl32Range(this->columns),column+columns,"dl32Matrix::GetSubMatrix(int row,int column,int rows,int columns): The value column+columns is out of interval");
+	else
+		throw dl32OutOfRangeException(dl32Range(this->rows),row+rows,"dl32Matrix::GetSubMatrix(int row,int column,int rows,int columns): The value row+rows is out of interval");
 }
 
-int dl32Matrix::GetColumnsCount()
+dl32Matrix dl32Matrix::GetSubMatrix(int row,int column)throw(dl32OutOfRangeException)
 {
-	return columns;
-}
+	if(row>=0 && row<rows)
+		if(column>=0 && column<columns)
+		{
+			dl32Matrix SubMatrix(rows-1,columns-1);
+			int i,j,x,y;
 
-bool dl32Matrix::IsSquare()
-{
-	return rows==columns;
+			i=0;
+			x=0;
+
+			do
+			{
+				if(i<row)
+					x=i;
+				else
+					if(i>row) x=i-1;
+					
+				if(i!=row)
+				{
+					j=0;
+
+					do 
+					{
+						if(j<column)
+							y=j;
+						else
+							if(j>column) y=j-1;
+
+						if(j!=column)
+							SubMatrix[x][y]=Array[i][j];
+
+						++j;
+					}while(j<columns);
+				}
+
+				++i;
+			}while(i<rows);
+
+			return SubMatrix;
+		}
+		else
+			throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::GetSubMatrix(int row,int column): 'row' is out of range");
+	else
+		throw dl32OutOfRangeException(dl32Range(columns),column,"dl32Matrix::GetSubMatrix(int row,int column): 'column' is out of range");
 }
 
 dl32Matrix dl32Matrix::GetAdjugate()
@@ -1132,11 +975,6 @@ dl32Matrix dl32Matrix::GetTranspose()
 			TransposeMatrix[i][j]=Array[j][i];
 
 	return TransposeMatrix;
-}
-
-void dl32Matrix::Transpose()
-{
-	*this=GetTranspose();
 }
 
 int dl32Matrix::GetRange(dl32Matrix &FinalMatrix)
@@ -1187,11 +1025,6 @@ int dl32Matrix::GetRange(dl32Matrix &FinalMatrix)
 	return Range;
 }
 
-int dl32Matrix::GetRange()
-{
-	return GetRange(dl32Matrix());
-}
-
 dl32Matrix GetUnity(int size)
 {
 	dl32Matrix Return(size,size);
@@ -1206,7 +1039,6 @@ dl32Matrix GetUnity(int size)
 	return Return;
 }
 
-#if DL32FLAGS_CHECKMATRIXOPERATIONS
 float dl32Matrix::GetDeterminant()
 {
 	if(rows==columns)
@@ -1235,21 +1067,29 @@ float dl32Matrix::GetDeterminant()
 dl32Matrix dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2)
 {
 	if(m1.rows == m2.rows && m1.columns == m2.columns)
+	{
 		for(int i=0;i<m1.rows;++i)
 			for(int j=0;j<m1.columns;++j)
 				m1.Array[i][j]+=m2.Array[i][j];
 
-	return m1;
+		return m1;
+	}
+	else
+		throw dl32InvalidMatrixOperationException("dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2): 'm1' and 'm2' have not same dimensions");
 }
 
 dl32Matrix dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2)
 {
 	if(m1.rows == m2.rows && m1.columns == m2.columns)
+	{
 		for(int i=0;i<m1.rows;++i)
 			for(int j=0;j<m1.columns;++j)
 				m1.Array[i][j]-=m2.Array[i][j];
 
-	return m1;
+		return m1;
+	}
+	else
+		throw dl32InvalidMatrixOperationException("dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2): 'm1' and 'm2' have not same dimensions");
 }
 
 dl32Matrix dl32Matrix::Mul(dl32Matrix matrix,float mul)
@@ -1278,42 +1118,8 @@ dl32Matrix dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2)
 		return Return;
 	}
 	else
-		return m1;
+		throw dl32InvalidMatrixOperationException("dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2): 'm1' columns count and 'm2' rows count must be equal");
 }
-#else
-dl32Matrix dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2)
-{
-	for(int i=0;i<m1.rows;++i)
-		for(int j=0;j<m1.columns;++j)
-			m1.Array[i][j]+=m2.Array[i][j];
-
-	return m1;
-}
-
-dl32Matrix dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2)
-{
-	for(int i=0;i<m1.rows;++i)
-		for(int j=0;j<m1.columns;++j)
-			m1.Array[i][j]-=m2.Array[i][j];
-
-	return m1;
-}
-
-dl32Matrix dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2)
-{
-	dl32Matrix Return(m1.rows,m2.rows);
-
-	for(int i=0;i<m1.rows;++i)
-		for(int j=0;j<m2.columns;++j)
-		{
-			Return.Array[i][j]=0;
-			for(int k=0;k<m2.rows;++k)
-				Return.Array[i][j]+=m1.Array[i][k]*m2.Array[k][j];
-		}
-
-		return Return;
-}
-#endif
 
 dl32EcuationsSystem::dl32EcuationsSystem()
 {
@@ -1446,25 +1252,5 @@ void dl32EcuationsSystem::Dispose()
 dl32EcuationsSystem::~dl32EcuationsSystem()
 {
 	Dispose();
-}
-
-dl32SystemSolution dl32EcuationsSystem::GetSolution()
-{
-	return Solution;
-}
-
-int dl32EcuationsSystem::GetMainMatrixRange()
-{
-	return mainrange;
-}
-
-int dl32EcuationsSystem::GetAuxMatrixRange()
-{
-	return auxrange;
-}
-
-dl32Matrix dl32EcuationsSystem::GetGaussMatrix()
-{
-	return gaussmatrix;
 }
 

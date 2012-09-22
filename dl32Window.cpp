@@ -167,7 +167,7 @@ dl32MouseData dl32Window::GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LP
 
 	Data.Location.x=GET_X_LPARAM(lParam);
 	Data.Location.y=GET_Y_LPARAM(lParam);
-	Data.Delta=0;
+	Data.Delta=GET_WHEEL_DELTA_WPARAM(wParam);
 
 	return Data;
 }
@@ -362,6 +362,10 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 		MouseDown.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
+		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+		break;
+	case WM_MOUSEWHEEL:
+		MouseWheel.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_KEYDOWN:
