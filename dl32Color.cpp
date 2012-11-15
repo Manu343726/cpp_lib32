@@ -108,3 +108,19 @@ D3DCOLOR COLOR_Blend(D3DCOLOR C1,D3DCOLOR C2)
 		return COLOR_FromARGB(a>255 ? 255:a,r>255 ? 255:r,g>255 ? 255:g,b>255 ? 255:b);
 	}
 }
+
+D3DCOLOR COLOR_RainbowGradient(DWORD value)
+{
+	if(value<256)
+		return COLOR_FromRGB(255,value,0);//Rojo - Amarillo
+	else if(value<512)
+		return COLOR_FromRGB(511-value,255,0);//Amarillo-Verde
+	else if(value<768)
+		return COLOR_FromRGB(0,255,value-767);//Verde-Cian
+	else if(value<1024)
+		return COLOR_FromRGB(0,1023-value,255);//Cian-Azul
+	else if(value<1280)
+		return COLOR_FromRGB(value-1279,0,255);//Azul-Magenta
+	else
+		return DL32COLOR_BLACK;
+}

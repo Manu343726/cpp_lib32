@@ -110,11 +110,13 @@ class dl32Window
 {
 	friend LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
-	int Index;
 	static WNDCLASSEX WndClass;
+	static bool WindowClassNotRegistered;
+
 	static vector<dl32Window*> WindowsList;
 	static dl32Window *LastWindowMessaged;
-	static bool WindowClassNotRegistered;
+
+	static void EraseWindow(dl32Window* window);
 	static void MessageLoop();
 	static bool Messagging;
 
@@ -123,17 +125,21 @@ private:
 	bool MouseCapture;
 
 	KEYCAPTURESTATE LastKeyCaptureState;
+
+	int Index;
 protected:
 	HWND hwnd;
-	dl32GraphicsClass *Graphics;
 	bool ready;
+
 	void UpdateArea();
-	dl32MouseData GetMouseData(MSG &Message);
-	dl32KeyboardData GetKeyboardData(MSG &Message);
-	dl32MouseData GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
-	dl32KeyboardData GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
+
 	void ProcessMessage(MSG &Message);
 	void ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
+
+	static dl32MouseData GetMouseData(MSG &Message);
+	static dl32KeyboardData GetKeyboardData(MSG &Message);
+	static dl32MouseData GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
+	static dl32KeyboardData GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
 public:
 	dl32Window();
 	dl32Window(string Title,int Left=DL32WINDOWSDEFAULTS_LEFT,int Top=DL32WINDOWSDEFAULTS_TOP,int Width=DL32WINDOWSDEFAULTS_WIDTH,int Height=DL32WINDOWSDEFAULTS_HEIGHT);
@@ -146,8 +152,6 @@ public:
 	bool Ready();
 
 	HWND GetHwnd();
-
-	dl32GraphicsClass* GetGraphics();
 
 	bool Visible();
 	void Show();

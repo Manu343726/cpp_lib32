@@ -21,6 +21,8 @@ private:
 	int size;
 protected:
 	void LongCasting(long Number);
+	void HexLongCasting(long Number);
+	void FloatCasting(float Number, int Decimals=DL32STRINGDEFAULTS_DECIMALS);
 public:
 	dl32String();
 	dl32String(char Str);
@@ -30,8 +32,8 @@ public:
 	dl32String(dl32String &Str);
 	dl32String(const string &Str);
 	dl32String(const dl32String &Str);
-	dl32String(int Number);
-	dl32String(long Number);
+	dl32String(int Number,bool Hex=false);
+	dl32String(long Number,bool Hex=false);
 	dl32String(float Number,int Decimals=DL32STRINGDEFAULTS_DECIMALS);
 	dl32String(double Number,int Decimals=DL32STRINGDEFAULTS_DECIMALS);
 	dl32String(void* memoryaddress);
@@ -41,6 +43,7 @@ public:
 	bool Ready();
 
 	char* c_str();
+	char* Copy();
 	char At(int pos)throw(dl32OutOfRangeException);
 	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);};
 

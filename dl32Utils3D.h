@@ -8,8 +8,8 @@
 class dl323DCamera
 {
 private:
-	dl323DTransform SURtoSRC;
-	dl323DTransform SRCtoSUR;
+	dl323DTransformation SURtoSRC;
+	dl323DTransformation SRCtoSUR;
 	dl323DPoint position;
 	dl323DVector direction;
 	dl323DPoint LookAt;
@@ -29,8 +29,8 @@ public:
 	void ApplySRCtoSUR(dl323DPoint* point){SRCtoSUR.Apply(point);};
 	dl323DPoint ApplySRCtoSUR(dl323DPoint &point){return SRCtoSUR.Apply(point);};
 
-	void ApplySURTransform(dl323DTransform transform);
-	void ApplySRCTrnasform(dl323DTransform transform);
+	void ApplySURTransformation(dl323DTransformation Transformation);
+	void ApplySRCTrnasform(dl323DTransformation Transformation);
 };
 
 struct dl323DVertex

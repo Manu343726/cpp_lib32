@@ -1,5 +1,6 @@
 #include "dl32Windows.h"
 #include <WindowsX.h>
+#include "dl32Console.h"
 
 WNDCLASSEX dl32Window::WndClass;
 vector<dl32Window*> dl32Window::WindowsList=vector<dl32Window*>();
@@ -19,13 +20,10 @@ dl32Window::dl32Window()
 	MouseCapture=false;
 	hwnd=0;
 	Index=-1;
-	Graphics=NULL;
 }
 
 dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
 {
-	Graphics=NULL;
-
 	if(WindowClassNotRegistered) 
 	{
 		/* Estructura de la ventana */
@@ -69,8 +67,6 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
 			MouseCapture=true;
 
 			UpdateArea();
-			Graphics=new dl32GraphicsClass(hwnd,Area.GetWidth(),Area.GetHeight(),true);
-			Graphics->Start();
 
 			WindowsList.push_back(this);
 			Index=WindowsList.size()-1;
@@ -95,15 +91,8 @@ dl32Window::~dl32Window()
 	{
 		ShowWindow(hwnd,SW_HIDE);
 		DestroyWindow(hwnd);
-		WindowsList.erase(WindowsList.begin()+Index);
+		dl32Window::WindowsList.erase(WindowsList.begin()+Index);
 		Index=-1;
-
-		if(Graphics!=NULL)
-		{
-			Graphics->Exit();
-			delete Graphics;
-			Graphics=NULL;
-		}
 
 		if(WindowsList.size()==0)
 		{
@@ -193,11 +182,6 @@ bool dl32Window::Ready()
 HWND dl32Window::GetHwnd()
 {
 	return hwnd;
-}
-
-dl32GraphicsClass* dl32Window::GetGraphics()
-{
-	return Graphics;
 }
 
 bool dl32Window::Visible()
@@ -312,16 +296,15 @@ void dl32Window::MessageLoop()
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 
-			LastWindowMessaged->ProcessMessage(message);
-			LastWindowMessaged->Graphics->Frame();
+			if(message.message==WM_QUIT)
+				message=message;
+
+			dl32Window::LastWindowMessaged->ProcessMessage(message);
 		}
 		else
 		{
 			for(int i=0;i<WindowsList.size();++i)
-			{
 				WindowsList[i]->Idle.RaiseEvent();
-				WindowsList[i]->Graphics->Frame();
-			}
 		}
 	}
 
@@ -332,12 +315,6 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 {
 	switch(msg)
 	{
-	case WM_QUIT:
-	case WM_DESTROY:
-	case WM_CLOSE:
-		this->~dl32Window();
-		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
-		break;
 	case WM_MOVE:
 		UpdateArea();
 		Move.RaiseEvent(&Area);
@@ -387,7 +364,13 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
+	case WM_QUIT:
+	case WM_DESTROY:
+	case WM_CLOSE:
+		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+		break;
 	default:
+		if(Console.Ready()) Console.WriteLine("UNKNOWN MESSAGE: " + dl32String(long(msg),true),DL32CP_WHITE,DL32CP_BLACK);
 		Idle.RaiseEvent();
 	}
 }

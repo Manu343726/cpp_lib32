@@ -5,8 +5,6 @@ using namespace std;
 wstring STRING_WSTRING(const string& s);
 LPCWSTR STRING_LPCWSTR(const string& s);
 
-PTDL32GRAPHICSCLASS GLOBALdl32GFXCLASS=NULL;
-
 wstring STRING_WSTRING(const string& s)
 {
 	int len;
@@ -33,41 +31,62 @@ LPCWSTR STRING_LPCWSTR(const string& s)
 
 DL32VERTEXTEXTURED::DL32VERTEXTEXTURED()
 {
-	z=DL32D3DVERTEX_ZVALUE;rhw=DL32D3DVERTEX_RHWVALUE;
+	z=DL32CONSTS_D3DVERTEX_Z;rhw=DL32CONSTS_D3DVERTEX_RHW;
 	diffuse=DL32COLOR_WHITE;specular=DL32COLOR_BLACK;
 	tx=-1;ty=-1;
 }
 
 DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(float x,float y,int z,D3DCOLOR diffuse,D3DCOLOR specular,float tx,float ty)
 {
-	this->x=x;this->y=y;this->z=(z-DL32GC_MINZLEVEL+1)*DL32D3DVERTEX_ZVALUE;
-	this->rhw=DL32D3DVERTEX_RHWVALUE;
+	this->x=x;this->y=y;this->z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(z)+1)*DL32CONSTS_D3DVERTEX_Z;
+	this->rhw=DL32CONSTS_D3DVERTEX_RHW;
 	this->diffuse=diffuse;this->specular=specular;
 	this->tx=tx;this->ty=ty;
 }
 
 DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const dl32Vertex &vertex)
 {
-	x=vertex.x;y=vertex.y;z=(vertex.Z-DL32GC_MINZLEVEL+1)*DL32D3DVERTEX_ZVALUE;
-	rhw=DL32D3DVERTEX_RHWVALUE;
+	x=vertex.x;y=vertex.y;z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(vertex.Z)+1)*DL32CONSTS_D3DVERTEX_Z;
+	rhw=DL32CONSTS_D3DVERTEX_RHW;
 	diffuse=vertex.color;specular=DL32COLOR_BLACK;
 	tx=-1;ty=-1;
 }
 
-//DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const DL32VERTEXTEXTURED &vertex)
-//{
-//	if(this!=&vertex)
-//	{
-//		this->x=vertex.x;
-//		this->y=vertex.y;
-//		this->z=vertex.z;
-//		this->rhw=vertex.rhw;
-//		this->diffuse=vertex.diffuse;
-//		this->specular=vertex.specular;
-//		this->tx=vertex.tx;
-//		this->ty=vertex.ty;
-//	}
-//}
+DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(dl322DPoint &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
+{
+	x=point.x;
+	y=point.y;
+	z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_D3DVERTEX_Z;
+	this->diffuse=diffuse;
+	this->specular=specular;
+	rhw=DL32CONSTS_D3DVERTEX_RHW;
+	this->tx=tx;
+	this->ty=ty;
+}
+
+bool DL32TEXTURE::LoadSurface()
+{
+	if(this->Surface==NULL)
+		if(FAILED(this->Texture->GetSurfaceLevel(0,&Surface)))
+			return false;
+		else
+			return true;
+	else
+		return false;
+}
+
+bool DL32TEXTURE::ReleaseSurface()
+{
+	if(Surface!=NULL)
+	{		
+		delete Surface;
+		Surface=NULL;
+
+		return true;
+	}
+	else
+		return false;
+}
 
 dl32Vertex::dl32Vertex()
 {
@@ -107,31 +126,31 @@ dl322DCamera::dl322DCamera()
 	m31=0;m32=0;m33=1;
 }
 
-dl322DCamera::dl322DCamera(dl323x3Matrix &Transform)
+dl322DCamera::dl322DCamera(dl323x3Matrix &Transformation)
 {
-	m11=Transform.m11;m12=Transform.m12;m13=Transform.m13;
-	m21=Transform.m21;m22=Transform.m22;m23=Transform.m23;
-	m31=Transform.m31;m32=Transform.m32;m33=Transform.m33;
+	m11=Transformation.m11;m12=Transformation.m12;m13=Transformation.m13;
+	m21=Transformation.m21;m22=Transformation.m22;m23=Transformation.m23;
+	m31=Transformation.m31;m32=Transformation.m32;m33=Transformation.m33;
 }
 
 void dl322DCamera::Rotate(float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransform::Rotation(Rotation),*this);
+	*this=dl323x3Matrix::Mul(dl322DTransformation::Rotation(Rotation),*this);
 }
 
 void dl322DCamera::Rotate(dl322DPoint Center,float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransform::Rotation(Center,Rotation),*this);
+	*this=dl323x3Matrix::Mul(dl322DTransformation::Rotation(Center,Rotation),*this);
 }
 
 void dl322DCamera::Traslate(float x,float y)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransform::Traslation(-x,-y),*this);
+	*this=dl323x3Matrix::Mul(dl322DTransformation::Translation(-x,-y),*this);
 }
 
-void dl322DCamera::Traslate(dl322DVector Traslation)
+void dl322DCamera::Traslate(dl322DVector Translation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransform::Traslation(-Traslation.x,-Traslation.y),*this);
+	*this=dl323x3Matrix::Mul(dl322DTransformation::Translation(-Translation.x,-Translation.y),*this);
 }
 
 void dl322DCamera::SetPosition(float x, float y)
@@ -338,7 +357,7 @@ dl322DPoint dl32Mesh::GetPatchCenter(dl32MeshPatch &patch)
 				center.y+=verts[i+j*width].y;
 			}
 
-		return dl322DPoint(center.x/vertexcount,center.y/vertexcount);
+			return dl322DPoint(center.x/vertexcount,center.y/vertexcount);
 	}
 	else
 		return dl322DPoint();
@@ -357,19 +376,19 @@ dl322DPoint dl32Mesh::GetMeshCenter()
 	return dl322DPoint(Center.x/(width*height),Center.y/(width*height));
 }
 
-void dl32Mesh::Transform(dl322DTransform transform)
+void dl32Mesh::Transformation(dl322DTransformation Transformation)
 {
 	for(int i=0;i<verts.size();++i)
-		transform.Apply(&verts[i].x,&verts[i].y);
+		Transformation.Apply(&verts[i].x,&verts[i].y);
 }
 
-void dl32Mesh::Transform(dl322DTransform transform,dl32MeshPatch &patch)
+void dl32Mesh::Transformation(dl322DTransformation Transformation,dl32MeshPatch &patch)
 {
 	if(IsValid(patch))
 	{
 		for(int i=patch.x;i<patch.x+patch.width;++i)
 			for(int j=patch.y;j<patch.y+patch.height;++j)
-				transform.Apply(&verts[i+width*j].x,&verts[i+width*j].y);
+				Transformation.Apply(&verts[i+width*j].x,&verts[i+width*j].y);
 	}
 }
 
@@ -396,117 +415,132 @@ DL32BUFFEROBJECT::DL32BUFFEROBJECT(int StartIndex,int VertexCount,int PrimitiveC
 
 bool dl32GraphicsClass::Frame()
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
 	DL32BUFFEROBJECT Object;
+	DWORD Ticks;
 	int RenderBufferLevelSize,ActiveLevelsSize=0;
 	int Index;
 
-	if (PreDrawProc!=NULL) PreDrawProc(this);
+	_d3dDevice->Clear(0,NULL,D3DCLEAR_TARGET,_backColor,0,0);
+	_d3dDevice->BeginScene();
 
-	device->Clear(0,NULL,D3DCLEAR_TARGET,BackColor,0,0);
-	device->BeginScene();
-	
-	if(FillD3DBuffers())
+	if(FillD3DBuffers() || _textDraw)
 	{
-		ActiveLevelsSize=RenderBufferActiveLevels.size();
+		ActiveLevelsSize=_renderBufferActiveLevels.size();
 
 		for(int i=0;i<ActiveLevelsSize;++i)
 		{
-			Index=RenderBufferActiveLevels[i];
-			RenderBufferLevelSize=RenderBuffer[Index]->size();
+			Index=_renderBufferActiveLevels[i];
+			RenderBufferLevelSize=_renderBuffer[Index]->size();
 
 			for(int j=0;j<RenderBufferLevelSize;++j)
 			{
-				Object=RenderBuffer[Index]->at(j);
+				Object=_renderBuffer[Index]->at(j);
 
-				if(Object.Texture!=RenderData.TextureIndex)
+				if(Object.textdata==NULL)
 				{
-					if(Object.Texture<0)
+					if(Object.Texture!=_renderData.TextureIndex)
 					{
-						RenderData.Texture=NULL;
-						RenderData.TextureIndex=-1;
-						device->SetTexture(0,NULL);
+						if(Object.Texture<0)
+						{
+							_renderData.Texture=NULL;
+							_renderData.TextureIndex=-1;
+							_d3dDevice->SetTexture(0,NULL);
+						}
+						else
+						{
+							_renderData.TextureIndex=Object.Texture;
+							_renderData.Texture=_textures[Object.Texture].Texture;
+
+							_d3dDevice->SetTexture(0,_textures[Object.Texture].Texture);
+						}
 					}
+
+					if(Object.BaseIndex<0)
+						_d3dDevice->DrawPrimitive(Object.PrimitiveType,Object.StartIndex,Object.PrimitiveCount);
 					else
-					{
-						RenderData.TextureIndex=Object.Texture;
-						RenderData.Texture=Textures[Object.Texture].Texture;
-
-						device->SetTexture(0,Textures[Object.Texture].Texture);
-					}
+						_d3dDevice->DrawIndexedPrimitive(Object.PrimitiveType,Object.BaseIndex,0,Object.VertexCount,Object.StartIndex,Object.PrimitiveCount);
 				}
-
-				if(Object.BaseIndex<0)
-					device->DrawPrimitive(Object.PrimitiveType,Object.StartIndex,Object.PrimitiveCount);
 				else
-					device->DrawIndexedPrimitive(Object.PrimitiveType,Object.BaseIndex,0,Object.VertexCount,Object.StartIndex,Object.PrimitiveCount);
+				{
+					Object.textdata->font->DrawText(NULL,Object.textdata->text,-1,&Object.textdata->rect,Object.textdata->format,Object.textdata->color);
+					delete Object.textdata;
+				}
 			}
 
-			delete RenderBuffer[Index];
-			RenderBuffer[Index]=NULL;
+			delete _renderBuffer[Index];
+			_renderBuffer[Index]=NULL;
 		}
 	}
 
-	device->EndScene();
-	device->Present(NULL,NULL,NULL,NULL);
+	_d3dDevice->EndScene();
+	_d3dDevice->Present(NULL,NULL,NULL,NULL);
 
-	if(d3dVertexBufferOK) d3dVertexBuffer->Release();
-	if(d3dIndexBufferOK) d3dIndexBuffer->Release();
-	VertexBuffer.clear();
-	IndexBuffer.clear();
-	RenderBufferActiveLevels.clear();
+	if(_d3dVertexBufferOK) _d3dVertexBuffer->Release();
+	if(_d3dIndexBufferOK) _d3dIndexBuffer->Release();
+	_vertexBuffer.clear();
+	_indexBuffer.clear();
+	_renderBufferActiveLevels.clear();
 
+	_textDraw=false;
 
-	if (PostDrawProc!=NULL) PostDrawProc(this);
+	Ticks=GetTickCount();
+	if(Ticks-_lastTicksCount>=1000)
+	{
+		_lastTicksCount=Ticks;
+		_frameRate=_frameCount;
+		_frameCount=0;
+	}
+	_frameCount++;
 
 	return true;
 }
 
 bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed)
 {
-	d3d=Direct3DCreate9(D3D_SDK_VERSION);
+	_d3d=Direct3DCreate9(D3D_SDK_VERSION);
 
-	ZeroMemory(&pp,sizeof(D3DPRESENT_PARAMETERS));
-	pp.Windowed=int(Windowed);
-	pp.SwapEffect=D3DSWAPEFFECT_DISCARD;
-	pp.BackBufferFormat=D3DFMT_UNKNOWN;
+	ZeroMemory(&_d3dPresentParameters,sizeof(D3DPRESENT_PARAMETERS));
+	_d3dPresentParameters.Windowed=int(Windowed);
+	_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
+	_d3dPresentParameters.BackBufferFormat=D3DFMT_UNKNOWN;
 
-	if(FAILED(d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&pp, &device)))
-		return false;
-	else
+	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)) || 
+		!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
 	{
-		device->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
+		_d3dDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
 		return true;
 	}
+	else
+		return false;
 }
 
 dl32GraphicsClass::dl32GraphicsClass()
 {
-	ConstructorError=DL32GCCE_DEFAULTCTOR;
-	Working=false;
-	UsingVertexBuffer=false;
+	_working=false;
+	_usingVertexBuffer=false;
 }
 
-dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height,bool Windowed)
+dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDepth colorDepth, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
 {
-	PreDrawProc=NULL;
-	PostDrawProc=NULL;
-
-	Working=false;
-	UsingVertexBuffer=false;
+	_working=false;
+	_usingVertexBuffer=false;
 
 	if(!InitializeDirect3D(hwnd,Width,Height,Windowed))
-		ConstructorError=DL32GCCE_D3DINITFAILED;
+		throw dl32Direct3DInitFailedException("Direct3D initialization failed");
 	else
 	{
-		BackColor=D3DCOLOR_ARGB(255,0,0,0);
-		GLOBALdl32GFXCLASS=this;
-		ConstructorError=DL32GCCE_NOERRORS;
-		Working=true;
+		_backColor=D3DCOLOR_ARGB(255,0,0,0);
 
-		for(int i=0;i<DL32GC_MAXZLEVEL-DL32GC_MINZLEVEL;++i)
-			RenderBuffer[i]=NULL;
+		for(int i=0;i<DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL;++i)
+			_renderBuffer[i]=NULL;
+
+		_lastTicksCount=GetTickCount();
+		_frameCount=0;
+		_frameRate=0;
+
+		_working=true;
 	}
 }
 
@@ -518,16 +552,16 @@ bool dl32GraphicsClass::Exit()
 
 void dl32GraphicsClass::Dispose()
 {
-	if(Working)
+	if(_working)
 	{
-		Working=false;
+		_working=false;
 
-		if(UsingVertexBuffer) d3dVertexBuffer->Release();
-		device->Release();
-		d3d->Release();
+		if(_usingVertexBuffer && _d3dVertexBuffer!=NULL) _d3dVertexBuffer->Release();
+		_d3dDevice->Release();
+		_d3d->Release();
 
-		for(int i=0;i<RenderBufferActiveLevels.size();++i)
-			delete RenderBuffer[RenderBufferActiveLevels[i]];
+		for(int i=0;i<_renderBufferActiveLevels.size();++i)
+			delete _renderBuffer[_renderBufferActiveLevels[i]];
 	}
 }
 
@@ -536,100 +570,66 @@ dl32GraphicsClass::~dl32GraphicsClass()
 	Dispose();
 }
 
-bool dl32GraphicsClass::NoErrors()
-{
-	return ConstructorError==DL32GCCE_NOERRORS;
-}
-
-DL32GRAPHICSCLASS_CTORERRORS dl32GraphicsClass::InitError()
-{
-	return ConstructorError;
-}
-
 bool dl32GraphicsClass::Start()
 {
-	if(ConstructorError==DL32GCCE_NOERRORS)
-	{
-		RenderData.TextureIndex=-1;
-		RenderData.Texture=NULL;
-		Working=true;
+	_renderData.TextureIndex=-1;
+	_renderData.Texture=NULL;
+	_working=true;
+	_textDraw=false;
 
-		return true;
-	}
-	else
-		return false;
-}
-
-void dl32GraphicsClass::DEVICE_SetPreDrawProc(PTRENDERLOOPPROC DrawProc)
-{
-	PreDrawProc=DrawProc;
-}
-
-void dl32GraphicsClass::DEVICE_SetPostDrawProc(PTRENDERLOOPPROC DrawProc)
-{
-	PreDrawProc=DrawProc;
-}
-
-void dl32GraphicsClass::DEVICE_RemovePreDrawProc()
-{
-	PreDrawProc=NULL;
-}
-
-void dl32GraphicsClass::DEVICE_RemovePostDrawProc()
-{
-	PostDrawProc=NULL;
+	return true;
 }
 
 void dl32GraphicsClass::DEVICE_SetBackgroundColor(dl32Color NewBackColor)
 {
-	BackColor=NewBackColor;
+	_backColor=NewBackColor;
 }
 
 dl32Color dl32GraphicsClass::DEVICE_GetBackgroundColor()
 {
-	return BackColor;
+	return _backColor;
 }
 
 bool dl32GraphicsClass::FillD3DBuffers()
 {
 	void *VertexBufferArray,*IndexBufferArray;
 	bool VertexBufferFailed;
-	d3dVertexBufferOK=false;
-	d3dIndexBufferOK=false;
+	_d3dVertexBufferOK=false;
+	_d3dIndexBufferOK=false;
 
-	VertexBufferFailed=FAILED(device->CreateVertexBuffer(DL32VERTEXTEXTURED_SIZE*VertexBuffer.size(),D3DUSAGE_DYNAMIC,DL32VERTEXTEXTURED_FVF,D3DPOOL_SYSTEMMEM,&d3dVertexBuffer,NULL));
+	VertexBufferFailed=FAILED(_d3dDevice->CreateVertexBuffer(DL32VERTEXTEXTURED_SIZE*_vertexBuffer.size(),D3DUSAGE_DYNAMIC,DL32VERTEXTEXTURED_FVF,D3DPOOL_SYSTEMMEM,&_d3dVertexBuffer,NULL));
 
 	if(VertexBufferFailed)
 		return false;
 	else
 	{
-		UsingVertexBuffer=true;
+		_usingVertexBuffer=true;
 
-		device->SetStreamSource(0,d3dVertexBuffer,0,DL32VERTEXTEXTURED_SIZE);
-		device->SetFVF(DL32VERTEXTEXTURED_FVF);
+		_d3dDevice->SetStreamSource(0,_d3dVertexBuffer,0,DL32VERTEXTEXTURED_SIZE);
+		_d3dDevice->SetFVF(DL32VERTEXTEXTURED_FVF);
 
-		if(FAILED(d3dVertexBuffer->Lock(0,0,&VertexBufferArray,D3DLOCK_DISCARD)))
+		if(FAILED(_d3dVertexBuffer->Lock(0,0,&VertexBufferArray,D3DLOCK_DISCARD)))
 			return false;
 		else
 		{
-			memcpy(VertexBufferArray,VertexBuffer.data(),VertexBuffer.size()*DL32VERTEXTEXTURED_SIZE);
-			d3dVertexBufferOK=true;
+			memcpy(VertexBufferArray,_vertexBuffer.data(),_vertexBuffer.size()*DL32VERTEXTEXTURED_SIZE);
+			_d3dVertexBufferOK=true;
 		}
 	}
 
-	if(IndexBuffer.size()>0)
+	if(_indexBuffer.size()>0)
 	{
-		if(FAILED(device->CreateIndexBuffer(sizeof(int)*IndexBuffer.size(),D3DUSAGE_DYNAMIC,D3DFMT_INDEX32,D3DPOOL_SYSTEMMEM,&d3dIndexBuffer,NULL)))
+		if(FAILED(_d3dDevice->CreateIndexBuffer(sizeof(int)*_indexBuffer.size(),D3DUSAGE_DYNAMIC,D3DFMT_INDEX32,D3DPOOL_SYSTEMMEM,&_d3dIndexBuffer,NULL)))
 			return false;
 		else
 		{
-			device->SetIndices(d3dIndexBuffer);
-			if(FAILED(d3dIndexBuffer->Lock(0,0,&IndexBufferArray,D3DLOCK_DISCARD)))
+			_d3dDevice->SetIndices(_d3dIndexBuffer);
+			if(FAILED(_d3dIndexBuffer->Lock(0,0,&IndexBufferArray,D3DLOCK_DISCARD)))
 				return false;
 			else
 			{
-				memcpy(IndexBufferArray,IndexBuffer.data(),IndexBuffer.size()*sizeof(int));
-				d3dIndexBufferOK=true;
+				memcpy(IndexBufferArray,_indexBuffer.data(),_indexBuffer.size()*sizeof(int));
+				_d3dIndexBufferOK=true;
 			}
 		}
 	}
@@ -639,10 +639,10 @@ bool dl32GraphicsClass::FillD3DBuffers()
 
 bool dl32GraphicsClass::ActivateRenderBufferLevel(int Index)
 {
-	if(RenderBuffer[Index]==NULL)
+	if(_renderBuffer[Index]==NULL)
 	{
-		RenderBuffer[Index]=new vector<DL32BUFFEROBJECT>;
-		RenderBufferActiveLevels.push_back(Index);
+		_renderBuffer[Index]=new vector<DL32BUFFEROBJECT>;
+		_renderBufferActiveLevels.push_back(Index);
 		return true;
 	}
 	else
@@ -651,12 +651,12 @@ bool dl32GraphicsClass::ActivateRenderBufferLevel(int Index)
 
 bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill,int Z)
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
 	DL32BUFFEROBJECT Object;
 	dl322DPoint NewVerts[3];
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		DL32VERTEXTEXTURED verts[3];
 
@@ -669,13 +669,13 @@ bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 		verts[1]=DL32VERTEXTEXTURED(NewVerts[1].x,NewVerts[1].y,Z,color,0,-1,-1);
 		verts[2]=DL32VERTEXTEXTURED(NewVerts[2].x,NewVerts[2].y,Z,color,0,-1,-1);
 
-		Object.StartIndex=VertexBuffer.size();
+		Object.StartIndex=_vertexBuffer.size();
 		Object.VertexCount=3;
 		Object.Texture=-1;
 
 		Object.CallType=RBCT_DRAWTRIANGLE;
 
-		VertexBuffer.insert(VertexBuffer.end(),verts,verts+3);
+		_vertexBuffer.insert(_vertexBuffer.end(),verts,verts+3);
 
 		if(fill)
 		{
@@ -686,11 +686,11 @@ bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=3;
-			VertexBuffer.push_back(verts[0]);
+			_vertexBuffer.push_back(verts[0]);
 		}
 
-		ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-		RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -700,11 +700,11 @@ bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 
 bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill,int Z)
 {	
-	if(!Working) return false;
+	if(!_working) return false;
 
 	DL32BUFFEROBJECT Object;
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		DL32VERTEXTEXTURED verts[3];
 		dl322DPoint NewVerts[3];
@@ -717,13 +717,13 @@ bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 		verts[1]=DL32VERTEXTEXTURED(NewVerts[1].x,NewVerts[1].y,Z,V1.color,0,-1,-1);
 		verts[2]=DL32VERTEXTEXTURED(NewVerts[2].x,NewVerts[2].y,Z,V2.color,0,-1,-1);
 
-		Object.StartIndex=VertexBuffer.size();
+		Object.StartIndex=_vertexBuffer.size();
 		Object.VertexCount=3;
 		Object.Texture=-1;
 
 		Object.CallType=RBCT_DRAWTRIANGLE;
 
-		VertexBuffer.insert(VertexBuffer.end(),verts,verts+3);
+		_vertexBuffer.insert(_vertexBuffer.end(),verts,verts+3);
 
 		if(fill)
 		{
@@ -734,11 +734,11 @@ bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=3;
-			VertexBuffer.push_back(verts[0]);
+			_vertexBuffer.push_back(verts[0]);
 		}
 
-		ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-		RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -748,15 +748,16 @@ bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 
 bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill,int Z)
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL && Count>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
 		DL32BUFFEROBJECT Object;
 		dl322DPoint Baricenter,NewVert,InitVert;
 		D3DCOLOR CenterColor=0;
 
-		Object.StartIndex=VertexBuffer.size();
+		Object.StartIndex=_vertexBuffer.size();
+		_vertexBuffer.reserve(_vertexBuffer.size()+Count);
 
 		for(int i=0;i<Count;++i)
 		{
@@ -767,7 +768,7 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 			Baricenter.y+=NewVert.y;
 			CenterColor+=Verts[i].color;
 
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,Verts[i].color,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,Verts[i].color,0,-1,-1));
 		}
 
 		Baricenter.x/=Count;
@@ -783,19 +784,19 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 			Object.PrimitiveType=D3DPT_TRIANGLEFAN;
 			Object.PrimitiveCount=Count;
 			Object.VertexCount=Count+2;
-			VertexBuffer.insert(VertexBuffer.begin()+VertexBuffer.size()-Count,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,CenterColor,0,-1,-1));
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
+			_vertexBuffer.insert(_vertexBuffer.begin()+_vertexBuffer.size()-Count,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,CenterColor,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
 		}
 		else
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=Count;
 			Object.VertexCount=Count+1;
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
 		}
 
-		ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-		RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -805,14 +806,19 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 
 bool dl32GraphicsClass::DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Color color,bool fill,int Z)
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL && Count>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
 		DL32BUFFEROBJECT Object;
 		dl322DPoint Baricenter,NewVert,InitVert;
 
-		Object.StartIndex=VertexBuffer.size();
+		Object.StartIndex=_vertexBuffer.size();
+
+		if(fill)
+			_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);
+		else
+			_vertexBuffer.reserve(_vertexBuffer.size()+Count+1);
 
 		for(int i=0;i<Count;++i)
 		{
@@ -822,7 +828,7 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Col
 			Baricenter.x+=NewVert.x;
 			Baricenter.y+=NewVert.y;
 
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,color,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,color,0,-1,-1));
 		}
 
 		Baricenter.x/=Count;
@@ -837,19 +843,19 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Col
 			Object.PrimitiveType=D3DPT_TRIANGLEFAN;
 			Object.PrimitiveCount=Count;
 			Object.VertexCount=Count+2;
-			VertexBuffer.insert(VertexBuffer.begin()+VertexBuffer.size()-Count,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,color,0,-1,-1));
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
+			_vertexBuffer.insert(_vertexBuffer.begin()+Object.StartIndex,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,color,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
 		}
 		else
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=Count;
 			Object.VertexCount=Count+1;
-			VertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
 		}
 
-		ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-		RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -866,9 +872,9 @@ bool dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32C
 
 bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z)
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL && texture>=0 && texture < Textures.size())
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && texture>=0 && texture < _textures.size())
 	{
 		DL32BUFFEROBJECT Object;
 		DL32VERTEXTEXTURED Verts[4];
@@ -886,16 +892,16 @@ bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 
 		Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
 		Object.PrimitiveCount=2;
-		Object.StartIndex=VertexBuffer.size();
+		Object.StartIndex=_vertexBuffer.size();
 		Object.VertexCount=4;
 		Object.Texture=texture;
 
 		Object.CallType=RBCT_DRAWVERTEXMAP;
 
-		VertexBuffer.insert(VertexBuffer.end(),Verts,Verts+4);
+		_vertexBuffer.insert(_vertexBuffer.end(),Verts,Verts+4);
 
-		ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-		RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -905,21 +911,21 @@ bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 
 bool dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 {
-	if(!Working) return false;
+	if(!_working) return false;
 
-	if(Z>=DL32GC_MINZLEVEL && Z<=DL32GC_MAXZLEVEL)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		DL32BUFFEROBJECT Object;
-		int BaseIndex=VertexBuffer.size();
+		int BaseIndex=_vertexBuffer.size();
 		int StripVertexCount;
 		int StripPrimitiveCount;
 
-		Mesh.Transform(Camera);
+		Mesh.Transformation(Camera);
 
 		for(int i=0;i<Mesh.verts.size();++i)
-			Mesh.verts[i].z=(Z-DL32GC_MINZLEVEL+1)*DL32D3DVERTEX_ZVALUE;
+			Mesh.verts[i].z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_D3DVERTEX_Z;
 
-		VertexBuffer.insert(VertexBuffer.end(),Mesh.verts.begin(),Mesh.verts.end());
+		_vertexBuffer.insert(_vertexBuffer.end(),Mesh.verts.begin(),Mesh.verts.end());
 
 		for(int i=0;i<Mesh.patches.size();++i)
 		{
@@ -930,7 +936,7 @@ bool dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 			for(int j=0;j<Mesh.patches[i].height-1;++j)
 			{
 				Object.BaseIndex=BaseIndex;
-				Object.StartIndex=IndexBuffer.size()+(j*Mesh.patches[i].width*2);
+				Object.StartIndex=_indexBuffer.size()+(j*Mesh.patches[i].width*2);
 				Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
 				Object.VertexCount=StripVertexCount;
 				Object.PrimitiveCount=StripPrimitiveCount;
@@ -938,12 +944,375 @@ bool dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 
 				Object.CallType=RBCT_MESH;
 
-				ActivateRenderBufferLevel(Z-DL32GC_MINZLEVEL);
-				RenderBuffer[Z-DL32GC_MINZLEVEL]->push_back(Object);
+				ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+				_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 			}
 
-			IndexBuffer.insert(IndexBuffer.end(),Mesh.indexes[i].begin(),Mesh.indexes[i].end());
+			_indexBuffer.insert(_indexBuffer.end(),Mesh.indexes[i].begin(),Mesh.indexes[i].end());
 		}
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && font>=0 && font < _fonts.size())
+	{
+		DL32BUFFEROBJECT Object;
+		RECT rect;
+
+		Camera.Apply(&x,&y);
+
+		Object.textdata=new DL32TEXTDATA;
+		Object.textdata->color=color;
+		Object.textdata->font=_fonts[font];
+		Object.textdata->format=DT_TOP | DT_LEFT;
+		Object.textdata->text=text.Copy();
+		rect.left=x;
+		rect.top=y;
+
+		Object.textdata->font->DrawText(NULL,Object.textdata->text,-1,&rect,DT_CALCRECT,color);
+
+		switch(align)
+		{
+		case DL32TA_UPLEFT:
+			Object.textdata->rect=rect;break;
+		case DL32TA_UPRIGHT:
+			Object.textdata->rect.left=rect.left+rect.left-rect.right;
+			Object.textdata->rect.right=rect.left;
+			Object.textdata->rect.top=rect.top;
+			Object.textdata->rect.bottom=rect.bottom;
+			break;
+		case DL32TA_DOWNRIGHT:
+			Object.textdata->rect.left=rect.left+rect.left-rect.right;
+			Object.textdata->rect.right=rect.left;
+			Object.textdata->rect.top=rect.top+rect.top-rect.bottom;
+			Object.textdata->rect.bottom=rect.top;
+			break;
+		case DL32TA_DOWNLEFT:
+			Object.textdata->rect.left=rect.left;
+			Object.textdata->rect.right=rect.right;
+			Object.textdata->rect.top=rect.top+rect.top-rect.bottom;
+			Object.textdata->rect.bottom=rect.top;
+			break;
+		case DL32TA_CENTER:
+			Object.textdata->rect.left=rect.left+(rect.left-rect.right)/2;
+			Object.textdata->rect.right=Object.textdata->rect.left+rect.right-rect.left;
+			Object.textdata->rect.top=rect.top+(rect.top-rect.bottom)/2;
+			Object.textdata->rect.bottom=Object.textdata->rect.top+rect.bottom-rect.top;
+			break;
+		case DL32TA_UP:
+			Object.textdata->rect.left=rect.left+(rect.left-rect.right)/2;
+			Object.textdata->rect.right=Object.textdata->rect.left+rect.right-rect.left;
+			Object.textdata->rect.top=rect.top;
+			Object.textdata->rect.bottom=rect.bottom;
+			break;
+		case DL32TA_RIGHT:
+			Object.textdata->rect.left=rect.left+rect.left-rect.right;
+			Object.textdata->rect.right=rect.left;
+			Object.textdata->rect.top=rect.top+(rect.top-rect.bottom)/2;
+			Object.textdata->rect.bottom=Object.textdata->rect.top+rect.bottom-rect.top;
+			break;
+		case DL32TA_DOWN:
+			Object.textdata->rect.left=rect.left+(rect.left-rect.right)/2;
+			Object.textdata->rect.right=Object.textdata->rect.left+rect.right-rect.left;
+			Object.textdata->rect.top=rect.top+rect.top-rect.bottom;
+			Object.textdata->rect.bottom=rect.top;
+			break;
+		case DL32TA_LEFT:
+			Object.textdata->rect.left=rect.left;
+			Object.textdata->rect.right=rect.right;
+			Object.textdata->rect.top=rect.top+(rect.top-rect.bottom)/2;
+			Object.textdata->rect.bottom=Object.textdata->rect.top+rect.bottom-rect.top;
+			break;
+		}
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+		_textDraw=true;
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
+	{
+		DL32BUFFEROBJECT Object;
+
+		Object.PrimitiveType=D3DPT_POINTLIST;
+		Object.PrimitiveCount=1;
+		Object.StartIndex=_vertexBuffer.size();
+		Object.VertexCount=1;
+
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(x,y,Z,color,0,-1,-1));
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
+	{
+		DL32BUFFEROBJECT Object;
+
+		_vertexBuffer.reserve(_vertexBuffer.size()+count);
+
+		Object.StartIndex=_vertexBuffer.size();
+		Object.PrimitiveCount=count;
+		Object.VertexCount=count;
+		Object.PrimitiveType=D3DPT_POINTLIST;
+
+		_vertexBuffer.insert(_vertexBuffer.end(),pixels,pixels+count);
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Pixels(dl322DPoint pixels[],dl32Color color,int count,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
+	{
+		DL32BUFFEROBJECT Object;
+
+		_vertexBuffer.reserve(_vertexBuffer.size()+count);
+
+		Object.StartIndex=_vertexBuffer.size();
+		Object.PrimitiveType=D3DPT_POINTLIST;
+		Object.PrimitiveCount=count;
+		Object.VertexCount=count;
+
+		for(int i=0;i<count;++i)
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(pixels[i]),Z,color));
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && width>0 && height>0)
+	{
+		DL32BUFFEROBJECT Object;
+
+		Object.StartIndex=_vertexBuffer.size();
+
+		_vertexBuffer.reserve(_vertexBuffer.size()+width*height);
+
+		for(int i=0;i<width;++i)
+			for(int j=0;j<height;++j)
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(x+i,y+j),Z,pixels[j][i]));
+
+		Object.PrimitiveType=D3DPT_POINTLIST;
+		Object.VertexCount=width*height;
+		Object.PrimitiveCount=width*height;
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+		return true;
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,int texture,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
+	{
+		if(pen.width<=1)
+			return true;//DRAW_Lines(points,Count,Z);
+		else
+		{
+			DL32BUFFEROBJECT Object;
+			dl322DLine Line;
+			dl322DVector preDirection,Direction;
+			dl322DPoint preTransformationed,Transformationed,preUp,preDown,up,down,aux;
+			int preSize,size,indexCount=0;
+			float t0,t1;
+
+			_vertexBuffer.reserve(_vertexBuffer.size()+Count);
+
+			if(texture==-1)
+			{
+				t0=-1;
+				t1=-1;
+			}
+			else
+			{
+				t0=0;
+				t1=1;
+			}
+
+			preSize=_vertexBuffer.size();
+
+			for(int i=0;i<Count;++i)
+			{
+				Transformationed=Camera.Apply(points[i]);
+				size=_vertexBuffer.size()-preSize;
+
+				if(i==0)
+				{
+					preDirection(Transformationed,Camera.Apply(points[1]));
+					Line=dl322DLine(Transformationed,dl322DVector(-preDirection.y,preDirection.x));
+					preUp=Line.GetPointByParameter(pen.width/2);
+					preDown=Line.GetPointByParameter(-pen.width/2);
+
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(preDown,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t1));
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(preUp,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t0));
+					_indexBuffer.push_back(0);
+					_indexBuffer.push_back(1);
+
+					indexCount+=2;	
+				}
+				else if(i<Count-1)
+				{
+					//FASE 1: Calculamos datos de la unión i-ésima:
+					Direction(preTransformationed,Transformationed);
+
+					if(Direction!=preDirection)
+						Line=dl322DLine(Transformationed,(Direction-preDirection));
+					else
+						Line=dl322DLine(Transformationed,dl322DVector(-Direction.y,Direction.x));
+
+
+
+					up=Line.GetPointByParameter(pen.width/2);
+					down=Line.GetPointByParameter(-pen.width/2);
+
+					if(dl322DLine(Transformationed,Direction).GetRelativePosition(up)<0)
+					{
+						aux=up;
+						up=down;
+						down=aux;
+					}
+
+					//FASE 2: Generamos el quad anterior:
+					if(texture==-1)//Si no se usan texturas, generamos un strip contínuo. En caso contrario, generamos quad a quad:
+					{
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
+						_indexBuffer.push_back(size);
+						_indexBuffer.push_back(size+1);
+
+						indexCount+=2;
+					}
+					else
+					{
+						//Como se ve, la unión está duplicada, para generar quads independientes:
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t1));
+						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t0));
+						_indexBuffer.push_back(size);
+						_indexBuffer.push_back(size+1);
+						_indexBuffer.push_back(size+2);
+						_indexBuffer.push_back(size+3);
+
+						indexCount+=4;
+					}
+				}
+				else
+				{
+					Direction(preTransformationed,Transformationed);
+					Line=dl322DLine(Transformationed,dl322DVector(-Direction.y,Direction.x));
+					up=Line.GetPointByParameter(pen.width/2);
+					down=Line.GetPointByParameter(-pen.width/2);
+
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
+					_indexBuffer.push_back(size);
+					_indexBuffer.push_back(size+1);
+
+					indexCount+=2;
+				}
+
+				if(i!=0)
+				{
+					preDirection=Direction;
+					preUp=up;
+					preDown=down;
+				}
+
+				preTransformationed=Transformationed;
+
+				//DRAW_Pixel(up.x,up.y,DL32COLOR_YELLOW);
+				//DRAW_Pixel(down.x,down.y,DL32COLOR_YELLOW);
+			}
+
+			Object.StartIndex=preSize;
+			Object.VertexCount=indexCount;
+			Object.PrimitiveCount=(texture==-1 ? 2*(Count-1) : 4*Count-6);
+			Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
+			Object.Texture=texture;
+
+			ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
+
+			return true;
+		}
+	}
+	else
+		return false;
+}
+
+bool dl32GraphicsClass::DRAW_Spline(dl322DSpline* spline,dl32Color color,int PointsPerInterval,int Z)
+{
+	if(!_working) return false;
+
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
+	{
+		DL32BUFFEROBJECT Object;
+		int vertexcount=0;
+		vector<dl322DPoint> points(spline->Interpolate(PointsPerInterval));
+
+		_vertexBuffer.reserve(_vertexBuffer.size()+points.size());
+
+		Object.StartIndex=_vertexBuffer.size();
+		Object.PrimitiveType=D3DPT_LINESTRIP;
+		Object.PrimitiveCount=points.size()-1;
+		Object.VertexCount=points.size();
+
+		for(int i=0;i<points.size();++i)
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,COLOR_RainbowGradient(i*1280/points.size())));
+
+		ActivateRenderBufferLevel(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z));
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)]->push_back(Object);
 
 		return true;
 	}
@@ -969,19 +1338,42 @@ int dl32GraphicsClass::MAP_Load(dl32String Filename,dl32Color ColorKey,bool Smoo
 	else
 		Format=D3DFMT_A8R8G8B8;
 
-	if(FAILED(D3DXCreateTextureFromFileEx(device,Filename.c_str(),D3DX_DEFAULT,D3DX_DEFAULT,D3DX_DEFAULT,0,Format,D3DPOOL_MANAGED,Filter,Filter,ColorKey,&ImageInfo,NULL,&Texture.Texture)))
+	if(FAILED(D3DXCreateTextureFromFileEx(_d3dDevice,Filename.c_str(),D3DX_DEFAULT,D3DX_DEFAULT,D3DX_DEFAULT,0,Format,D3DPOOL_MANAGED,Filter,Filter,ColorKey,&ImageInfo,NULL,&Texture.Texture)))
 		return DL32RETURN_ERRORCODE;
 	else
 	{
 		Texture.OriginalWidth=ImageInfo.Width;
 		Texture.OriginalHeight=ImageInfo.Height;
 		Texture.ColorKey=ColorKey;
-		Texture.Index=Textures.size();
+		Texture.Index=_textures.size();
 		Texture.Format=Format;
 
-		Textures.push_back(Texture);
+		_textures.push_back(Texture);
 
 		return Texture.Index;
 	}
+}
+
+int dl32GraphicsClass::FONT_LoadSystemFont(dl32String FontName,int size,bool bold,bool italic)
+{
+	D3DXFONT_DESC fdesc;
+	ID3DXFont *font=NULL;
+
+	ZeroMemory(&fdesc,sizeof(D3DXFONT_DESC));
+
+	fdesc.CharSet=DEFAULT_CHARSET;
+	fdesc.Width=size;
+	fdesc.Height=size*3;
+	fdesc.Weight=bold ? 1000 : 500;
+	fdesc.Italic=italic;
+	strcpy(fdesc.FaceName,FontName.c_str());
+
+	if(!FAILED(D3DXCreateFontIndirect(_d3dDevice,&fdesc,&font)))
+	{
+		_fonts.push_back(font);
+		return _fonts.size()-1;
+	}
+	else
+		return DL32RETURN_ERRORCODE;
 }
 

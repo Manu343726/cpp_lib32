@@ -12,13 +12,10 @@
 //////////////////////////////////////////////
 class dl32Exception:public std::exception
 {
-protected:
-	char* message;
 public:
-	dl32Exception(char* message=DL32DEFAULTEXCEPTIONMESSAGE){this->message=message;};
+	dl32Exception(char* message=DL32DEFAULTEXCEPTIONMESSAGE):exception(message){};
 
-	const char* what(){return message;};
-	char* GetMessage(){return message;};
+	const char* GetMessage(){return this->what();};
 };
 
 ///////////////////////////////////
@@ -31,7 +28,7 @@ protected:
 public:
 	dl32MemoryException(char* message=DL32DEFAULTMEMORYEXCEPTIONMESSAGE,void* pointer=NULL):dl32Exception(message){this->pointer=pointer;};
 
-	void* GetPOinter(){return pointer;};
+	void* GetPointer(){return pointer;};
 };
 
 struct dl32Range
@@ -91,4 +88,10 @@ class dl32ConsoleException:public dl32Exception
 public:
 	dl32ConsoleException(char* message):dl32Exception(message){};
 };
+
+class dl32Direct3DInitFailedException:public dl32Exception
+{
+public:
+	dl32Direct3DInitFailedException(char* message):dl32Exception(message){};
+}
 #endif

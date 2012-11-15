@@ -85,6 +85,55 @@ void dl32String::LongCasting(long Number)
 	Array[size]=DL32STRING_FINALSYMBOL;
 }
 
+void dl32String::FloatCasting(float Number,int Decimals)
+{
+   int c;
+   char car;
+   int bufferPos=0;
+   long parteEntera,parteDecimal,tamaño;
+   float mul10=1;
+   for(c=0;c<Decimals;c++)
+      mul10*=10;
+
+   parteEntera=floor(log10(abs(Number)))+1;
+   parteDecimal=abs((long)((Number-(long)Number)*mul10));
+   tamaño=parteEntera + (parteDecimal>0 ? parteDecimal+1 : 0) + (Number>0 ? 0 : 1);
+   Array=new char[tamaño+1];
+
+   do
+   {
+      Array[bufferPos]=(char)(parteEntera%10)+'0'; bufferPos++;
+      parteEntera/=10;
+   }
+   while(parteEntera>0);
+
+   if(Number<0)
+      Array[bufferPos]='-'; bufferPos++;
+
+   for(c=0;c<bufferPos/2;c++)
+      car=Array[c]; Array[c]=Array[bufferPos-c-1]; Array[bufferPos-c-1]=car;
+
+   if(Decimals>0)
+   {
+      Array[bufferPos]='.'; bufferPos++;
+      int parteDecimalPos=bufferPos;
+
+      for(c=0;c<Decimals;c++)
+      {
+         Array[bufferPos]=(char)(parteDecimal%10)+'0'; bufferPos++;
+         parteDecimal/=10;
+      }
+
+      for(c=0;c<Decimals/2;c++)
+      {
+         car=Array[c+parteDecimalPos]; 
+         Array[c+parteDecimalPos]=Array[bufferPos-c-1]; 
+         Array[bufferPos-c-1]=car;
+      }
+   }
+   Array[bufferPos]=DL32STRING_FINALSYMBOL;
+}
+
 dl32String::dl32String(const char Str[])
 {
 	size=strlen(Str);
@@ -149,14 +198,20 @@ dl32String::dl32String(const string &str)
 	Array[size]=DL32STRING_FINALSYMBOL;
 }
 
-dl32String::dl32String(long Number)
+dl32String::dl32String(long Number,bool Hex)
 {
-	LongCasting(Number);
+	if(Hex)
+		HexLongCasting(Number);
+	else
+		LongCasting(Number);
 }
 
-dl32String::dl32String(int Number)
+dl32String::dl32String(int Number,bool Hex)
 {
-	LongCasting(long(Number));
+	if(Hex)
+		HexLongCasting(long(Number));
+	else
+		LongCasting(long(Number));
 }
 
 dl32String::dl32String(float Number,int Decimals)
@@ -166,10 +221,15 @@ dl32String::dl32String(float Number,int Decimals)
 
 dl32String::dl32String(double Number,int Decimals)
 {
-	LongCasting(long(Number));
+	FloatCasting(float(Number),Decimals);
 }
 
 dl32String::dl32String(void* memoryaddress)
+{
+	HexLongCasting(long(memoryaddress));
+}
+
+void dl32String::HexLongCasting(long Number)
 {
 	size=10;//"0x" + ocho digitos hexadecimales (32 bits)
 	Array=new char[11];//Lo anterior más el caracter final (Cadena C-style)
@@ -181,7 +241,7 @@ dl32String::dl32String(void* memoryaddress)
 
 	for(int i=0;i<8;++i)//8 posiciones (cifras) hexadecimales (32 bits)
 	{
-		delta=int(memoryaddress)>>(i*4) & 0x0000000F;//delta es el numero (en decimal) de ésta posición
+		delta=int(Number)>>(i*4) & 0x0000000F;//delta es el numero (en decimal) de ésta posición
 		if(delta<=9)
 			realdelta=delta;
 		else
@@ -194,6 +254,14 @@ dl32String::dl32String(void* memoryaddress)
 char* dl32String::c_str()
 {
 	return Array;
+}
+
+char* dl32String::Copy()
+{
+	char *copy=new char[size+1];
+	strcpy(copy,Array);
+
+	return copy;
 }
 
 dl32String dl32String::Concat(dl32String &str1,dl32String &str2)

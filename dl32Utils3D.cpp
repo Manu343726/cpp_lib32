@@ -10,29 +10,29 @@ dl323DCamera::dl323DCamera()
 dl323DCamera::dl323DCamera(dl323DPoint position,dl323DVector direction)
 {
 	dl323DVector originalDirection(0,0,1);
-	dl323DTransform rotation,traslation;
+	dl323DTransformation rotation,Translation;
 	dl32Quaternion q(dl323DVector::VectorialMul(originalDirection,direction),dl323DVector::Angle(originalDirection,direction));
 
 	this->position=position;
 	this->direction=direction;
 	rotation=q;
-	traslation=dl323DTransform::Traslation(position.x,position.y,position.z);
-	SURtoSRC=rotation+traslation;
-	traslation=dl323DTransform::Traslation(-position.x,-position.y,-position.z);
-	rotation=dl323DTransform::Rotation(q);
-	SRCtoSUR=rotation+traslation;
+	Translation=dl323DTransformation::Translation(position.x,position.y,position.z);
+	SURtoSRC=rotation+Translation;
+	Translation=dl323DTransformation::Translation(-position.x,-position.y,-position.z);
+	rotation=dl323DTransformation::Rotation(q);
+	SRCtoSUR=rotation+Translation;
 }
 
 void dl323DCamera::SetPosition(dl323DPoint position)
 {
-	dl323DTransform traslation=dl323DTransform::Traslation(this->position,position);
-	SURtoSRC.Concat(traslation);
-	SRCtoSUR.ReverseConcat(traslation);
+	dl323DTransformation Translation=dl323DTransformation::Translation(this->position,position);
+	SURtoSRC.Concat(Translation);
+	SRCtoSUR.ReverseConcat(Translation);
 	this->position=position;
-	traslation.Apply(&LookAt);
+	Translation.Apply(&LookAt);
 }
 
-void dl323DCamera::ApplySURTransform(dl323DTransform transform)
+void dl323DCamera::ApplySURTransformation(dl323DTransformation Transformation)
 {
 
 }

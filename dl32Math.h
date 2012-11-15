@@ -4,6 +4,7 @@
 #include <vector>
 #include "dl32Preprocessor.h"
 #include "dl32Exceptions.h"
+
 using namespace std;
 
 #define DL32MACRO_TONATURAL(x) (x)>=0 ? (x) : 0
@@ -40,6 +41,9 @@ struct dl322DPoint
 	dl322DPoint(float ValX,float ValY){x=ValX;y=ValY;};
 	float operator [](int coord)throw (dl32OutOfRangeException);
 
+	dl322DPoint operator()(){x=0;y=0;return *this;};
+	dl322DPoint operator()(float x,float y){this->x=x;this->y=y;return *this;};
+
 	static dl322DPoint Add(dl322DPoint P1,dl322DPoint P2){return dl322DPoint(P1.x+P2.x,P1.y+P2.y);};
 	static dl322DPoint Sub(dl322DPoint P1,dl322DPoint P2){return dl322DPoint(P1.x-P2.x,P1.y-P2.y);};
 	static dl322DPoint Mul(dl322DPoint Point,float Factor){return dl322DPoint(Point.x*Factor,Point.y*Factor);};
@@ -66,14 +70,34 @@ struct dl322DVector:public dl322DPoint
 	dl322DVector(float ValX,float ValY){x=ValX;y=ValY;};
 	dl322DVector(dl322DPoint P1,dl322DPoint P2){x=P2.x-P1.x;y=P2.y-P1.y;};
 
+	dl322DVector operator()(){x=0;y=0;return *this;};
+	dl322DVector operator()(float x,float y){this->x=x;this->y=y;return *this;};
+	dl322DVector operator()(dl322DPoint P1,dl322DPoint P2){x=P2.x-P1.x;y=P2.y-P1.y;return *this;};
+
 	float GetLength(){return sqrt(x*x+y*y);};
+	void SetLength(float length){Normalize();x*=length;y*=length;};
+	float GetSquareLenght(){return x*x+y*y;};
 	void Normalize();
 	dl322DVector GetUnitary(){float m=sqrt(x*x+y*y);return dl322DVector(x/m,y/m);};
+	dl322DVector GetNormal(bool Up=true){return (Up ? dl322DVector(-y,x) : dl322DVector(y,-x));};
+
+	static dl322DVector Add(dl322DVector P1,dl322DVector P2){return dl322DVector(P1.x+P2.x,P1.y+P2.y);};
+	static dl322DVector Sub(dl322DVector P1,dl322DVector P2){return dl322DVector(P1.x-P2.x,P1.y-P2.y);};
+	static dl322DVector Mul(dl322DVector Vector,float Factor){return dl322DVector(Vector.x*Factor,Vector.y*Factor);};
+	static dl322DVector Div(dl322DVector Vector,float Divisor)throw(dl32DividedByCeroException);
+
+	dl322DVector operator+(dl322DVector Vector){return Add(*this,Vector);};
+	dl322DVector operator-(){return dl322DVector(-x,-y);};
+	dl322DVector operator-(dl322DVector Vector){return Sub(*this,Vector);};
+	dl322DVector operator*(float factor){return Mul(*this,factor);};
+	dl322DVector operator/(float div)throw(dl32DividedByCeroException){return Div(*this,div);};
+
+	dl322DVector operator+=(dl322DVector vector){*this=Add(*this,vector);return *this;};
+	dl322DVector operator-=(dl322DVector vector){*this=Sub(*this,vector);return *this;};
 
 	static float Mul(dl322DVector V1,dl322DVector V2){return V1.x*V2.x+V1.y*V2.y;};
 	static float Angle(dl322DVector V1, dl322DVector V2){return acos(Mul(V1,V2)/(V1.GetLength()*V2.GetLength()));};
 
-	dl322DVector operator-(){return dl322DVector(-x,-y);};
 	float operator*(dl322DVector vector){return Mul(*this,vector);};
 	float operator^(dl322DVector vector){return Angle(*this,vector);};
 };
@@ -118,7 +142,8 @@ public:
 /////////////////////////////////////////////////////
 enum dl322DOrientation
 {
-	OTHER,
+	INSIDE,
+	OUTSIDE,
 	NORTH,
 	SOUTH,
 	EAST,
@@ -154,6 +179,12 @@ public:
 	dl322DPoint GetUpRightCorner();
 	dl322DPoint GetDownRightCorner();
 	dl322DPoint GetDownLeftCorner();
+
+	float GetLeft(){return Position.x;};
+	float GetTop(){return Position.y;};
+	float GetRight(){return Position.x+mWidth;};
+	float GetBottom(){return Position.y+mHeight;};
+
 	//Setters:
 	void SetWidth(float Width);
 	void SetHeight(float Height);
@@ -161,7 +192,7 @@ public:
 	void SetCenter(dl322DPoint &Center);
 
 	bool BelongTo(dl322DPoint &Point){return BelongTo(Point.x,Point.y);};
-	bool BelongTo(float X,float Y){return (X>=Position.x && X<=(Position.x+mWidth) && Y>=Position.y && Y<=(Position.x+mHeight));};
+	bool BelongTo(float X,float Y){return (X>=Position.x && X<=(Position.x+mWidth) && Y>=Position.y && Y<=(Position.y+mHeight));};
 
 	static bool Collide(dl322DAABB A1,dl322DAABB A2);
 	static dl322DOrientation Orientation(dl322DAABB A1,dl322DAABB A2);
@@ -222,84 +253,86 @@ typedef struct dl323x3Matrix
 	dl323x3Matrix operator*(float mul){return Mul(*this,mul);};
 };
 ////////////////////////////////////////////////////
-///Represents a geometric transformation in 2D space
+///Represents a geometric Transformationation in 2D space
 ////////////////////////////////////////////////////
-class dl322DTransform: public dl323x3Matrix
+class dl322DTransformation: public dl323x3Matrix
 {
 public:
-	dl322DTransform();
-	dl322DTransform(dl323x3Matrix &matrix);
-	dl322DTransform(float m11,float m12,float m13,
+	dl322DTransformation():dl323x3Matrix(){};
+	dl322DTransformation(dl323x3Matrix &matrix):dl323x3Matrix(matrix){};
+	dl322DTransformation(float m11,float m12,float m13,
 				    float m21,float m22,float m23,
-				    float m31,float m32,float m33);
+				    float m31,float m32,float m33):dl323x3Matrix(m11,m12,m13,
+																 m21,m22,m23,
+																 m31,m32,m33){};
 
 	void Apply(dl322DPoint *Point);
 	void Apply(float *x,float *y);
 	dl322DPoint Apply(float x,float y) {return dl322DPoint(m11*x+m12*y+m13,m21*x+m22*y+m23);};
 	dl322DPoint Apply(dl322DPoint point) {return dl322DPoint(m11*point.x+m12*point.y+m13,m21*point.x+m22*point.y+m23);};
 
-	void Concat(dl322DTransform Transform) {*this=dl323x3Matrix::Mul(Transform,*this);};
-	dl322DTransform operator+(dl322DTransform &Transform){return dl322DTransform(dl323x3Matrix::Mul(Transform,*this));};
-	static dl322DTransform Concat(dl322DTransform &t1,dl322DTransform &t2) {return dl322DTransform(dl323x3Matrix::Mul(t2,t1));};
+	void Concat(dl322DTransformation Transformation) {*this=dl323x3Matrix::Mul(Transformation,*this);};
+	dl322DTransformation operator+(dl322DTransformation &Transformation){return dl322DTransformation(dl323x3Matrix::Mul(Transformation,*this));};
+	static dl322DTransformation Concat(dl322DTransformation &t1,dl322DTransformation &t2) {return dl322DTransformation(dl323x3Matrix::Mul(t2,t1));};
 
-	static dl322DTransform& Traslation(float dx,float dy)
+	static dl322DTransformation& Translation(float dx,float dy)
 	{
-		return dl322DTransform(1,0,dx,
+		return dl322DTransformation(1,0,dx,
 							   0,1,dy,
 							   0,0,1);
 	};
 
-	static dl322DTransform& Traslation(dl322DPoint origin,dl322DPoint destiny)
+	static dl322DTransformation& Translation(dl322DPoint origin,dl322DPoint destiny)
 	{
-		return dl322DTransform(1,0,destiny.x-origin.x,
+		return dl322DTransformation(1,0,destiny.x-origin.x,
 							   0,1,destiny.y-origin.y,
 							   0,0,1);
 	};
 	
-	static dl322DTransform& Traslation(dl322DVector traslation)
+	static dl322DTransformation& Translation(dl322DVector Translation)
 	{
-		return dl322DTransform(1,0,traslation.x,
-							   0,1,traslation.y,
+		return dl322DTransformation(1,0,Translation.x,
+							   0,1,Translation.y,
 							   0,0,1);
 	};
 
-	static dl322DTransform& Scale(float scale)
+	static dl322DTransformation& Scale(float scale)
 	{
-		return dl322DTransform(scale,0,0,
+		return dl322DTransformation(scale,0,0,
 							   0,scale,0,
 							   0,0,1);
 	};
 
-	static dl322DTransform& Scale(float sx,float sy)
+	static dl322DTransformation& Scale(float sx,float sy)
 	{
-			return dl322DTransform(sx,0,0,
+			return dl322DTransformation(sx,0,0,
 								   0,sy,0,
 								   0,0,1);
 	};
 
-	static dl322DTransform& Scale(dl322DVector scale)
+	static dl322DTransformation& Scale(dl322DVector scale)
 	{
-			return dl322DTransform(scale.x,0,0,
+			return dl322DTransformation(scale.x,0,0,
 								   0,scale.y,0,
 								   0,0,1);
 	};
 
-	static dl322DTransform& Rotation(float angle)
+	static dl322DTransformation& Rotation(float angle)
 	{
-			return dl322DTransform(cos(angle),sin(angle),0,
+			return dl322DTransformation(cos(angle),sin(angle),0,
 								   -sin(angle),cos(angle),0,
 								   0,0,1);
 	};
 
-	static dl322DTransform& Rotation(float sin_angle,float cos_angle)
+	static dl322DTransformation& Rotation(float sin_angle,float cos_angle)
 	{
-			return dl322DTransform(cos_angle,sin_angle,0,
+			return dl322DTransformation(cos_angle,sin_angle,0,
 								   -sin_angle,cos_angle,0,
 								   0,0,1);
 	};
 
-	static dl322DTransform& Rotation(float center_x,float center_y,float angle);
-	static dl322DTransform& Rotation(dl322DPoint center,float angle);
+	static dl322DTransformation& Rotation(float center_x,float center_y,float angle);
+	static dl322DTransformation& Rotation(dl322DPoint center,float angle);
 };
 
 //Represents a point in 3D space
@@ -475,14 +508,14 @@ public:
 };
 
 ////////////////////////////////////////////////////
-///Represents a geometric transformation in 3D space
+///Represents a geometric Transformationation in 3D space
 ////////////////////////////////////////////////////
-class dl323DTransform:public dl324x4Matrix
+class dl323DTransformation:public dl324x4Matrix
 {
 public:
-	dl323DTransform();
-	dl323DTransform(dl324x4Matrix &matrix);
-	dl323DTransform(float m11,float m12,float m13,float m14,
+	dl323DTransformation();
+	dl323DTransformation(dl324x4Matrix &matrix);
+	dl323DTransformation(float m11,float m12,float m13,float m14,
 					float m21,float m22,float m23,float m24,
 					float m31,float m32,float m33,float m34,
 					float m41,float m42,float m43,float m44);
@@ -492,58 +525,58 @@ public:
 	dl323DPoint Apply(float x,float y,float z) {return dl323DPoint(m11*x+m12*y+m13*z+m14,m21*x+m22*y+m23*z+m24,m31*x+m32*y+m33*z+m34);};
 	dl323DPoint Apply(dl323DPoint point) {return dl323DPoint(m11*point.x+m12*point.y+m13*point.z+m14,m21*point.x+m22*point.y+m23*point.z+m24,m31*point.x+m32*point.y+m33*point.z+m34);};
 
-	void Concat(dl323DTransform transform){*this=dl323DTransform(dl324x4Matrix::Mul(transform,*this));};
-	void ReverseConcat(dl323DTransform transform){*this=dl323DTransform(dl324x4Matrix::Mul(*this,transform));};
+	void Concat(dl323DTransformation Transformation){*this=dl323DTransformation(dl324x4Matrix::Mul(Transformation,*this));};
+	void ReverseConcat(dl323DTransformation Transformation){*this=dl323DTransformation(dl324x4Matrix::Mul(*this,Transformation));};
 
-	static dl323DTransform& Concat(dl323DTransform T1,dl323DTransform T2){return dl323DTransform(dl324x4Matrix::Mul(T2,T1));};
-	static dl323DTransform& ReverseConcat(dl323DTransform T1, dl323DTransform T2){return dl323DTransform(dl324x4Matrix::Mul(T1,T2));};
+	static dl323DTransformation& Concat(dl323DTransformation T1,dl323DTransformation T2){return dl323DTransformation(dl324x4Matrix::Mul(T2,T1));};
+	static dl323DTransformation& ReverseConcat(dl323DTransformation T1, dl323DTransformation T2){return dl323DTransformation(dl324x4Matrix::Mul(T1,T2));};
 
-	static dl323DTransform& Traslation(float tx,float ty,float tz)
+	static dl323DTransformation& Translation(float tx,float ty,float tz)
 	{
-		return dl323DTransform(1,0,0,tx,
+		return dl323DTransformation(1,0,0,tx,
 							   0,1,0,ty,
 						       0,0,1,tz,
 							   0,0,0,1);
 	};
 
-	static dl323DTransform& Traslation(dl323DVector traslation)
+	static dl323DTransformation& Translation(dl323DVector Translation)
 	{
-		return dl323DTransform(1,0,0,traslation.x,
-							   0,1,0,traslation.y,
-							   0,0,1,traslation.z,
+		return dl323DTransformation(1,0,0,Translation.x,
+							   0,1,0,Translation.y,
+							   0,0,1,Translation.z,
 							   0,0,0,1);
 	};
 
-	static dl323DTransform& Traslation(dl323DPoint origin,dl323DPoint destiny)
+	static dl323DTransformation& Translation(dl323DPoint origin,dl323DPoint destiny)
 	{
-		return dl323DTransform(1,0,0,destiny.x-origin.x,
+		return dl323DTransformation(1,0,0,destiny.x-origin.x,
 							   0,1,0,destiny.y-origin.y,
 							   0,0,1,destiny.z-origin.z,
 							   0,0,0,1);
 	};
 
-	static dl323DTransform& Scale(float tx,float ty,float tz)
+	static dl323DTransformation& Scale(float tx,float ty,float tz)
 	{
-		return dl323DTransform(1,0,0,tx,
+		return dl323DTransformation(1,0,0,tx,
 							   0,1,0,ty,
 							   0,0,1,tz,
 							   0,0,0,1);
 	};
 
-	static dl323DTransform& Scale(dl323DVector traslation)
+	static dl323DTransformation& Scale(dl323DVector Translation)
 	{
-		return dl323DTransform(1,0,0,traslation.x,
-							   0,1,0,traslation.y,
-							   0,0,1,traslation.z,
+		return dl323DTransformation(1,0,0,Translation.x,
+							   0,1,0,Translation.y,
+							   0,0,1,Translation.z,
 							   0,0,0,1);
 	};
 
-	static dl323DTransform& Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl323DTransform(rotation);};
-	static dl323DTransform& Rotation(dl323DPoint center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl323DTransform(dl324x4Matrix::Mul(dl323DTransform::Traslation(center.x,center.y,center.z),dl324x4Matrix::Mul(dl323DTransform(quaternion),dl323DTransform::Traslation(-center.x,-center.y,-center.z))));};
-	static dl323DTransform& Rotation(dl323DVector origin,dl323DVector destiny){return Rotation(dl32Quaternion(dl323DVector::VectorialMul(origin,destiny),dl323DVector::Angle(origin,destiny)));};
-	static dl323DTransform& Rotation(dl323DPoint center,dl323DVector origin,dl323DVector destiny){return Rotation(center,dl32Quaternion(dl323DVector::VectorialMul(origin,destiny),dl323DVector::Angle(origin,destiny)));};
-	static dl323DTransform& Rotation(dl323DVector axis,float angle){return dl323DTransform(dl32Quaternion(axis,angle));};
-	static dl323DTransform& Rotation(dl32CoordinateAxis axis,float angle){return dl323DTransform(dl32Quaternion(axis,angle));};
+	static dl323DTransformation& Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl323DTransformation(rotation);};
+	static dl323DTransformation& Rotation(dl323DPoint center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl323DTransformation(dl324x4Matrix::Mul(dl323DTransformation::Translation(center.x,center.y,center.z),dl324x4Matrix::Mul(dl323DTransformation(quaternion),dl323DTransformation::Translation(-center.x,-center.y,-center.z))));};
+	static dl323DTransformation& Rotation(dl323DVector origin,dl323DVector destiny){return Rotation(dl32Quaternion(dl323DVector::VectorialMul(origin,destiny),dl323DVector::Angle(origin,destiny)));};
+	static dl323DTransformation& Rotation(dl323DPoint center,dl323DVector origin,dl323DVector destiny){return Rotation(center,dl32Quaternion(dl323DVector::VectorialMul(origin,destiny),dl323DVector::Angle(origin,destiny)));};
+	static dl323DTransformation& Rotation(dl323DVector axis,float angle){return dl323DTransformation(dl32Quaternion(axis,angle));};
+	static dl323DTransformation& Rotation(dl32CoordinateAxis axis,float angle){return dl323DTransformation(dl32Quaternion(axis,angle));};
 
 };
 
@@ -712,5 +745,31 @@ public:
 	dl32SystemSolution GetSolution(){return Solution;};
 
 	dl32Matrix GetGaussMatrix(){return gaussmatrix;};
+};
+
+struct dl322DSplineInterval
+{
+	float a,b,c,d;//a + bu + cu^2 + du^3, con u en el intervalo [0,1]
+	float Interpolate(float u){return a + b*u + c*u*u + d*u*u*u;};
+};
+
+class dl322DSpline //http://t.co/CrHFdGmB
+{
+	friend class dl322DSpline;
+private:
+	vector<dl322DPoint> nodes;
+	int nodecount;
+	vector<dl322DSplineInterval> intervalsX;
+	vector<dl322DSplineInterval> intervalsY;
+
+	void Compute();
+public:
+	dl322DSpline(){nodecount=-1;};
+	dl322DSpline(dl322DPoint* Nodes,int Count);
+	~dl322DSpline();
+
+	vector<dl322DPoint> Interpolate(int PointsPerInterval=0);
+	int GetIntervalsCount(){return nodecount-1;};
+	int GetNodesCount(){return nodecount;};
 };
 #endif

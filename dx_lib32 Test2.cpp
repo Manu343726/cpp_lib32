@@ -19,7 +19,7 @@ int main()
 {
 	dl324x4Matrix m1,m2,m3;
 	dl323x3Matrix mm1,mm2,mm3;
-	dl322DTransform t;
+	dl322DTransformation t;
 
 	//Damos formato a la salida. En concreto, valores de dos digitos decimales
 	cout.setf(ios::fixed, ios::floatfield);
@@ -39,7 +39,7 @@ int main()
 	mm2=dl323x3Matrix::GetUnity()*2;
 	mm3=dl323x3Matrix::GetUnity()*4;
 
-	t=dl322DTransform::Traslation(1,1);
+	t=dl322DTransformation::Translation(1,1);
 
 	try
 	{
@@ -48,7 +48,7 @@ int main()
 		cout << dl323x3Matrix::GetInverse(mm3) << endl;
 		cout << dl323x3Matrix::GetInverse(t) << endl;
 	}
-	catch (dl32DividedByCeroException&)
+	catch (dl32InvalidMatrixOperationException&)
 	{
 		cout << "ERROR: Matriz no invertible" << endl;
 	}

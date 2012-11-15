@@ -14,15 +14,20 @@
 
 using namespace std;
 
-#define DL32GCDEFAULTS_WINDOWED true
+#define DL32DEFAULTS_GRAPHICSCOLORDEPTH DL32CD_16BIT
+#define DL32DEFAULTS_GRAPHICS_WINDOWED true
+#define DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER false 
+#define DL32DEFAULTS_GRAPHICS_VSYNC false 
+#define DL32DEFAULTS_GRAPHICS_REFRESHRATE 60
 
-#define DL32GCDEFAULTS_ZLEVEL 0
-#define DL32GC_MINZLEVEL -7
-#define DL32GC_MAXZLEVEL 7
-#define DL32GC_TOTALLEVELS DL32GC_MAXZLEVEL-DL32GC_MINZLEVEL
+#define DL32CONSTS_GRAPHICS_MINZLEVEL -7
+#define DL32CONSTS_GRAPHICS_MAXZLEVEL 7
+#define DL32DEFAULTS_GRAPHICS_ZLEVELSCOUNT DL32CONSTS_GRAPHICS_MAXZLEVEL - DL32CONSTS_GRAPHICS_MINZLEVEL + 1
+#define DL32DEFAULTS_GRAPHICS_ZLEVEL (DL32DEFAULTS_GRAPHICS_ZLEVELSCOUNT - 1) / 2
+#define DL32MACROS_GRAPHICS_ZLEVELINDEX(zLevel) zLevel - DL32CONSTS_GRAPHICS_MINZLEVEL
 
-#define DL32D3DVERTEX_ZVALUE 0.5
-#define DL32D3DVERTEX_RHWVALUE 1
+#define DL32CONSTS_D3DVERTEX_Z 0.5
+#define DL32CONSTS_D3DVERTEX_RHW 1
 
 class dl32GraphicsClass;
 typedef dl32GraphicsClass *PTDL32GRAPHICSCLASS;
@@ -47,6 +52,8 @@ typedef dl32Vertex dl32Triangle[3];
 typedef dl32Vertex dl32VertexTrapezoid[4];
 typedef dl322DPoint dl322DPointTrapezoid[4];
 
+typedef dl32Vertex dl32Pixel;
+
 #define GRAPHICS_GetTrapezoidCenter(x) dl322DPoint((x[0].x+x[1].x+x[2].x+x[3].x)/4,(x[0].y+x[1].y+x[2].y+x[3].y)/4)
 
 struct DL32VERTEXTEXTURED:public dl323DPoint
@@ -58,6 +65,7 @@ struct DL32VERTEXTEXTURED:public dl323DPoint
 
 	DL32VERTEXTEXTURED();
 	DL32VERTEXTEXTURED(const dl32Vertex &vertex);
+	DL32VERTEXTEXTURED(dl322DPoint &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
 	DL32VERTEXTEXTURED(float x,float y,int z,D3DCOLOR diffuse,D3DCOLOR specular,float tx,float ty);
 };
 
@@ -65,11 +73,11 @@ const DWORD DL32VERTEXTEXTURED_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SP
 typedef DL32VERTEXTEXTURED *PTDL32VERTEXTEXTURED_VERTEX;
 const int DL32VERTEXTEXTURED_SIZE=sizeof(DL32VERTEXTEXTURED);
 
-class dl322DCamera:public dl322DTransform
+class dl322DCamera:public dl322DTransformation
 {
 public:
 	dl322DCamera();
-	dl322DCamera(dl323x3Matrix &Transform);
+	dl322DCamera(dl323x3Matrix &Transformation);
 
 	void SetPosition(float x=0,float y=0);
 	void SetPosition(dl322DPoint &Position);
@@ -81,17 +89,22 @@ public:
 	float GetRotation();
 
 	void Traslate(float x,float y);
-	void Traslate(dl322DVector Traslation);
+	void Traslate(dl322DVector Translation);
 };
 
 struct DL32TEXTURE
 {
 	LPDIRECT3DTEXTURE9 Texture;
+	LPDIRECT3DSURFACE9 Surface;
 	int OriginalWidth;
 	int OriginalHeight;
 	D3DCOLOR ColorKey;
 	D3DFORMAT Format;
 	int Index;
+
+	DL32TEXTURE(){Texture=NULL;Surface=NULL;Index=-1;};
+	bool LoadSurface();
+	bool ReleaseSurface();
 };
 
 typedef DL32TEXTURE *PTDL32TEXTURE;
@@ -143,11 +156,50 @@ public:
 	dl322DPoint GetPatchCenter(dl32MeshPatch &patch);
 	dl322DPoint GetMeshCenter();
 
-	void Transform(dl322DTransform transform);
-	void Transform(dl322DTransform transform,dl32MeshPatch &patch);
-	void Transform(dl322DTransform transform,int PatchIndex);
+	void Transformation(dl322DTransformation Transformation);
+	void Transformation(dl322DTransformation Transformation,dl32MeshPatch &patch);
+	void Transformation(dl322DTransformation Transformation,int PatchIndex);
 
 	void SetColor(dl32Color color,dl32MeshPatch &patch);
+};
+
+struct dl32FontData
+{
+	int size;
+	bool italic;
+	bool underline;
+	bool strikeout;
+	dl32String name;
+};
+
+struct DL32TEXTDATA
+{
+	ID3DXFont *font;
+	char* text;
+	RECT rect;
+	DWORD format;
+	dl32Color color;
+
+	DL32TEXTDATA(){font=NULL;text=NULL;};
+};
+
+struct dl32Pen
+{
+	float width;
+	dl32Color color;
+};
+
+enum dl32TextAlign
+{
+	DL32TA_LEFT,
+	DL32TA_RIGHT,
+	DL32TA_UP,
+	DL32TA_DOWN,
+	DL32TA_UPLEFT,
+	DL32TA_UPRIGHT,
+	DL32TA_DOWNRIGHT,
+	DL32TA_DOWNLEFT,
+	DL32TA_CENTER
 };
 
 enum DL32RENDERBUFFERCALLTYPE
@@ -168,10 +220,11 @@ struct DL32BUFFEROBJECT
 	int VertexCount;
 	int PrimitiveCount;
 	int Texture;
+	DL32TEXTDATA *textdata;
 	D3DPRIMITIVETYPE PrimitiveType;
 	DL32RENDERBUFFERCALLTYPE CallType;
 
-	DL32BUFFEROBJECT() {BaseIndex=-1;};
+	DL32BUFFEROBJECT() {BaseIndex=-1;textdata=NULL;};
 	DL32BUFFEROBJECT(int StartIndex,int VertexCount,int PrimitiveCount,D3DPRIMITIVETYPE);
 	DL32BUFFEROBJECT(int StartIndex,int VertexCount,int BaseIndex,int IndexCount,int PrimitiveCount,D3DPRIMITIVETYPE);
 };
@@ -192,49 +245,62 @@ enum DL32GRAPHICSCLASS_CTORERRORS
 	DL32GCCE_CLASSRUNNING
 };
 
+enum dl32ColorDepth
+{
+	DL32CD_16BIT,
+	DL32CD_32BIT
+};
+
 class dl32GraphicsClass
 {
 private:
-	bool Working;
-	DL32GRAPHICSCLASS_CTORERRORS ConstructorError;
+	bool _working;
 protected:
-	LPDIRECT3D9 d3d;
-	
-	LPDIRECT3DDEVICE9 device;
-	D3DPRESENT_PARAMETERS pp;
+	LPDIRECT3D9 _d3d;	
+	LPDIRECT3DDEVICE9 _d3dDevice;
+	D3DPRESENT_PARAMETERS _d3dPresentParameters;
+	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed);
 
-	vector<DL32BUFFEROBJECT>* RenderBuffer[DL32GC_MAXZLEVEL-DL32GC_MINZLEVEL+1];
-	vector<int> RenderBufferActiveLevels;
-	vector<DL32VERTEXTEXTURED> VertexBuffer;
-	vector<int> IndexBuffer;
-	IDirect3DVertexBuffer9 *d3dVertexBuffer;
-	IDirect3DIndexBuffer9 *d3dIndexBuffer;
-	bool d3dVertexBufferOK;
-	bool d3dIndexBufferOK;
-	bool UsingVertexBuffer;
-	D3DCOLOR BackColor;
-	vector<DL32TEXTURE> Textures;
-	DL32RENDERSTATEDATA RenderData;
+	bool _clearScene;
+	bool _textDraw;
+	D3DCOLOR _backColor;
+	DL32RENDERSTATEDATA _renderData;
 
-	PTRENDERLOOPPROC PreDrawProc;
-	PTRENDERLOOPPROC PostDrawProc;
-
-	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed=DL32GCDEFAULTS_WINDOWED);
-	void WindowMessageLoop();
-	bool FillD3DBuffers();
+	vector<DL32BUFFEROBJECT>* _renderBuffer[DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL+1];
+	vector<int> _renderBufferActiveLevels;
 	bool ActivateRenderBufferLevel(int Index);
+
+	vector<DL32VERTEXTEXTURED> _vertexBuffer;
+	vector<int> _indexBuffer;
+	IDirect3DVertexBuffer9* _d3dVertexBuffer;
+	IDirect3DIndexBuffer9* _d3dIndexBuffer;
+	bool _d3dVertexBufferOK;
+	bool _d3dIndexBufferOK;
+	bool _usingVertexBuffer;
+	bool FillD3DBuffers();
+
+	vector<DL32TEXTURE> _textures;
+	vector<ID3DXFont*> _fonts;
+
+	int _renderTarget;
+
+	DWORD _lastTicksCount;
+	int _frameRate;
+	int _frameCount;
 public:
 	//Instanciamiento:
 	//-----------------------------------------
 	dl32GraphicsClass();
-	dl32GraphicsClass(HWND hwnd,int Width,int Height,bool Windowed=DL32GCDEFAULTS_WINDOWED);
+	dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDepth colorDepth=DL32DEFAULTS_GRAPHICSCOLORDEPTH,
+					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
+					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
+					  throw(dl32Direct3DInitFailedException);
+
 	~dl32GraphicsClass();
 
 	dl322DCamera Camera;
 
 	void Dispose();
-	bool NoErrors();
-	DL32GRAPHICSCLASS_CTORERRORS InitError();
 	bool Start();
 	bool Exit();
 	//RenderProcs:
@@ -243,6 +309,10 @@ public:
 	void DEVICE_SetPostDrawProc(PTRENDERLOOPPROC RenderProc);
 	void DEVICE_RemovePreDrawProc();
 	void DEVICE_RemovePostDrawProc();
+	//RenderTargets:
+	//----------------------------------------
+	bool DEVICE_SetCanvas(int Texture=-1);
+	bool DEVICE_SetDefaultCanvas(){return DEVICE_SetCanvas();};
 	//Dibujo:
 	// ----------------------------------------
 	bool Frame();
@@ -263,9 +333,9 @@ public:
 	bool DRAW_Polygon(vector<dl322DPoint> &Verts,dl32Color color,bool fill=true,int Z=0) {return DRAW_Polygon(Verts.data(),Verts.size(),color,fill,Z);};
 
 	bool DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill=true,int Z=0);
-	inline bool DRAW_Box(dl322DPoint position,float width,float height,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,width,height,color,fill,Z);};
-	inline bool DRAW_Box(dl322DPoint position,dl322DVector dimensions,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);};
-	inline bool DRAW_Box(dl322DAABB box,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);};
+	bool DRAW_Box(dl322DPoint position,float width,float height,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,width,height,color,fill,Z);};
+	bool DRAW_Box(dl322DPoint position,dl322DVector dimensions,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);};
+	bool DRAW_Box(dl322DAABB box,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);};
 
 	bool DRAW_Map(int texture,float x,float y,float width, float height,int Z=0);
 	bool DRAW_Map(int texture,dl322DPoint position,float width,float height,int Z=0);
@@ -275,9 +345,32 @@ public:
 	bool DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z=0);
 
 	bool DRAW_Mesh(dl32Mesh Mesh,int Z=0);
+
+	bool DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0);
+	bool DRAW_Text(int font,dl322DPoint position,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0){return DRAW_Text(font,position.x,position.y,text,color,align,Z);};
+
+	bool DRAW_Pixel(float x, float y,dl32Color color,int Z=0);
+	bool DRAW_Pixel(dl32Pixel pixel,int Z=0){return DRAW_Pixel(pixel.x,pixel.y,pixel.color,Z);};
+	bool DRAW_Pixels(dl32Pixel pixels[],int count,int Z=0);
+	bool DRAW_Pixels(dl322DPoint pixels[],dl32Color color,int count,int Z=0);
+	bool DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z=0);
+
+	bool DRAW_Lines(dl32Vertex points[],int Count,int Z=0);
+	bool DRAW_Lines(dl322DPoint points[],int Count,dl32Color color,int Z=0);
+	bool DRAW_Strip(dl32Pen pen,dl32Vertex points[],int Count,int texture=-1,int Z=0);
+	bool DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,int texture=-1,int Z=0);
+
+	bool DRAW_Spline(dl322DSpline* spline,dl32Color color,int PointsPerInterval=0,int Z=0);
+
 	//Texturas:
 	//-----------------------------------------
 	int MAP_Load(dl32String Filename,dl32Color ColorKey=0xFFFFFFFF,bool Smooth=false,bool GrayScale=false);
+	//Fuentes:
+	//-----------------------------------------
+	int FONT_LoadSystemFont(dl32String FontName,int size,bool bold,bool italic);
+	//Información:
+	//-----------------------------------------
+	int FPS(){return _frameRate;};
 };
 #endif
 
