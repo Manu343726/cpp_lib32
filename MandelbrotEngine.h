@@ -53,7 +53,7 @@ private:
 	int iterations;
 public:
 	MandelbrotEngine(){screen=NULL;};
-	MandelbrotEngine(dl322DAABB screenarea,float step=MANDELBROT_DEFAULTSTEP, int iterations=MANDELBROT_DEFAULTITERATIONS, float limit=MANDELBROT_DEFAULTLIMIT);
+	MandelbrotEngine(dl32AABB2D screenarea,float step=MANDELBROT_DEFAULTSTEP, int iterations=MANDELBROT_DEFAULTITERATIONS, float limit=MANDELBROT_DEFAULTLIMIT);
 	~MandelbrotEngine();
 
 	void TranslateX(int tx);
@@ -63,7 +63,7 @@ public:
 	void Compute();
 	void Refresh(dl32GraphicsClass* gfx);
 
-	ComplexNumber GetNumber(dl322DPoint pixel){return ComplexNumber(origin.a+pixel.x*stepx,origin.b+pixel.y*stepy);};
+	ComplexNumber GetNumber(dl32Point2D pixel){return ComplexNumber(origin.a+pixel.x*stepx,origin.b+pixel.y*stepy);};
 };
 
 #endif

@@ -8,7 +8,7 @@ void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32ConsoleEx
 	ready=false;
 	CONSOLE_SCREEN_BUFFER_INFO info;
 
-	if(instance==NULL)
+	if(instance==NULL)//Singleton
 	{
 		AllocConsole();
 		type=Type;
@@ -16,7 +16,7 @@ void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32ConsoleEx
 		if(type==DL32CT_STDOUT)
 			handle=GetStdHandle(STD_OUTPUT_HANDLE);
 		else
-			handle=GetStdHandle(STD_OUTPUT_HANDLE);
+			handle=GetStdHandle(STD_ERROR_HANDLE);
 
 		if(handle!=NULL)
 		{
@@ -34,13 +34,16 @@ void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32ConsoleEx
 		throw dl32ConsoleException("dl32Console::dl32Console(): Application console is running. Cannot create other console");
 }
 
+dl32Console::~dl32Console()
+{
+	FreeConsole();
+	instance=NULL;
+}
+
 void dl32Console::Close()
 {
-	if(instance!=NULL)
-	{
-		FreeConsole();
-		instance=NULL;
-	}
+	FreeConsole();
+	instance=NULL;
 }
 
 void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ConsoleException)

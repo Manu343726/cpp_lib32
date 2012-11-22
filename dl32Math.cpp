@@ -11,7 +11,7 @@ inline float Min(float a,float b)
 //Geometria (2D):
 
 // dl322DPoint: ////////////////////////////////
-float dl322DPoint::operator[](int coord)throw(dl32OutOfRangeException)
+float dl32Point2D::operator[](int coord)throw(dl32OutOfRangeException)
 {
 	switch(coord)
 	{
@@ -24,7 +24,7 @@ float dl322DPoint::operator[](int coord)throw(dl32OutOfRangeException)
 	}
 }
 
-dl322DPoint dl322DPoint::Div(dl322DPoint Point, float divisor)throw(dl32DividedByCeroException)
+dl32Point2D dl32Point2D::Div(dl32Point2D Point, float divisor)throw(dl32DividedByCeroException)
 {
 	if (divisor!=0)
 	{
@@ -36,9 +36,9 @@ dl322DPoint dl322DPoint::Div(dl322DPoint Point, float divisor)throw(dl32DividedB
 		throw dl32DividedByCeroException("dl322DPoint::Div(dl322DPoint point,float divisor): 'divisor' must be different from 0");
 }
 
-dl322DPoint dl322DPoint::Baricenter(dl322DPoint PointList[],int PointCount,int TypeSize)
+dl32Point2D dl32Point2D::Baricenter(dl32Point2D PointList[],int PointCount,int TypeSize)
 {
-	dl322DPoint Return;
+	dl32Point2D Return;
 
 	for(int i=0;i<PointCount;++i)
 	{
@@ -46,11 +46,11 @@ dl322DPoint dl322DPoint::Baricenter(dl322DPoint PointList[],int PointCount,int T
 		Return.y+=PointList[i].y;
 	}
 
-	return dl322DPoint(Return.x/PointCount,Return.y/PointCount);
+	return dl32Point2D(Return.x/PointCount,Return.y/PointCount);
 }
 
 // dl322DVector: ////////////////////////////////
-void dl322DVector::Normalize()
+void dl32Vector2D::Normalize()
 {
 	float m=sqrt(x*x+y*y);
 
@@ -62,14 +62,14 @@ void dl322DVector::Normalize()
 }
 
 // dl322DLine: //////////////////////////////////////////////
-dl322DLine::dl322DLine()
+dl32Line2D::dl32Line2D()
 {
 	a=0;
 	b=0;
 	c=0;
 }
 
-dl322DLine::dl322DLine(float A,float B,float C)
+dl32Line2D::dl32Line2D(float A,float B,float C)
 {
 	a=A;
 	b=B;
@@ -80,7 +80,7 @@ dl322DLine::dl322DLine(float A,float B,float C)
 	position.y=-c/B;
 }
 
-dl322DLine::dl322DLine(dl322DPoint P1,dl322DPoint P2)
+dl32Line2D::dl32Line2D(dl32Point2D P1,dl32Point2D P2)
 {
 	direction.x=P2.x-P1.x;
 	direction.y=P2.y-P1.y;
@@ -95,7 +95,7 @@ dl322DLine::dl322DLine(dl322DPoint P1,dl322DPoint P2)
 	c=-(position.x*a+position.x*b);
 }
 
-dl322DLine::dl322DLine(dl322DPoint Position,dl322DVector Direction)
+dl32Line2D::dl32Line2D(dl32Point2D Position,dl32Vector2D Direction)
 {
 	position=Position;
 	direction=Direction.GetUnitary();
@@ -108,7 +108,7 @@ dl322DLine::dl322DLine(dl322DPoint Position,dl322DVector Direction)
 	c=-(position.x*a+position.x*b);
 }
 
-dl322DLine::dl322DLine(dl322DPoint Position,float Slope)
+dl32Line2D::dl32Line2D(dl32Point2D Position,float Slope)
 {
 	float mod;
 	position=Position;
@@ -136,43 +136,43 @@ dl322DLine::dl322DLine(dl322DPoint Position,float Slope)
 	direction.y=a;
 }
 
-dl322DPoint dl322DLine::GetPoint(float x)
+dl32Point2D dl32Line2D::GetPoint(float x)
 {
-	return dl322DPoint(x,(a*x+c)/-b);
+	return dl32Point2D(x,(a*x+c)/-b);
 }
 
-dl322DPoint dl322DLine::GetPointByParameter(float param)
+dl32Point2D dl32Line2D::GetPointByParameter(float param)
 {
-	return dl322DPoint(position.x+direction.x*param,position.y+direction.y*param);
+	return dl32Point2D(position.x+direction.x*param,position.y+direction.y*param);
 }
 
-bool dl322DLine::BelongTo(float x, float y)
+bool dl32Line2D::BelongTo(float x, float y)
 {
 	return a*x+b*y+c==0;
 }
 
-float dl322DLine::GetRelativePosition(float x, float y)
+float dl32Line2D::GetRelativePosition(float x, float y)
 {
 	return a*x+b*y+c;
 }
 
-dl322DPoint dl322DLine::GetPosition()
+dl32Point2D dl32Line2D::GetPosition()
 {
 	return position;
 }
 
-dl322DVector dl322DLine::GetDirection()
+dl32Vector2D dl32Line2D::GetDirection()
 {
 	return direction;
 }
 
-float dl322DLine::GetSlope()
+float dl32Line2D::GetSlope()
 {
 	return -b/a;
 }
 
 // dl322DAABB: //////////////////////////////////////////////
-dl322DAABB::dl322DAABB()
+dl32AABB2D::dl32AABB2D()
 {
 	Position.x=0;
 	Position.y=0;
@@ -180,7 +180,7 @@ dl322DAABB::dl322DAABB()
 	mHeight=0;
 }
 
-dl322DAABB::dl322DAABB(float X, float Y, float Width, float Height)
+dl32AABB2D::dl32AABB2D(float X, float Y, float Width, float Height)
 {
 	Position.x=X;
 	Position.y=Y;
@@ -188,87 +188,87 @@ dl322DAABB::dl322DAABB(float X, float Y, float Width, float Height)
 	mHeight=DL32MACRO_TONATURAL(Height);
 }
 
-dl322DAABB::dl322DAABB(dl322DPoint Position, float Width, float Height)
+dl32AABB2D::dl32AABB2D(dl32Point2D Position, float Width, float Height)
 {
 	this->Position=Position;
 	mWidth=DL32MACRO_TONATURAL(Width);
 	mHeight=DL32MACRO_TONATURAL(Height);
 }
 
-dl322DAABB::dl322DAABB(dl322DPoint Position, dl322DVector Area)
+dl32AABB2D::dl32AABB2D(dl32Point2D Position, dl32Vector2D Area)
 {
 	this->Position=Position;
 	mWidth=DL32MACRO_TONATURAL(Area.x);
 	mHeight=DL32MACRO_TONATURAL(Area.y);
 }
 
-float dl322DAABB::GetWidth()
+float dl32AABB2D::GetWidth()
 {
 	return mWidth;
 }
 
-float dl322DAABB::GetHeight()
+float dl32AABB2D::GetHeight()
 {
 	return mHeight;
 }
 
-void dl322DAABB::SetWidth(float ValWidth)
+void dl32AABB2D::SetWidth(float ValWidth)
 {
 	if (ValWidth>0) mWidth=ValWidth;
 }
 
-void dl322DAABB::SetHeight(float ValHeight)
+void dl32AABB2D::SetHeight(float ValHeight)
 {
 	if (ValHeight>0) mHeight=ValHeight;
 }
 
-dl322DPoint dl322DAABB::GetCenter()
+dl32Point2D dl32AABB2D::GetCenter()
 {
-	return dl322DPoint(Position.x+(mWidth/2),Position.y+(mHeight/2));
+	return dl32Point2D(Position.x+(mWidth/2),Position.y+(mHeight/2));
 }
 
-dl322DPoint dl322DAABB::GetUpLeftCorner()
+dl32Point2D dl32AABB2D::GetUpLeftCorner()
 {
 	return Position;
 }
 
-dl322DPoint dl322DAABB::GetUpRightCorner()
+dl32Point2D dl32AABB2D::GetUpRightCorner()
 {
-	return dl322DPoint(Position.x+mWidth,Position.y);
+	return dl32Point2D(Position.x+mWidth,Position.y);
 }
 
-dl322DPoint dl322DAABB::GetDownRightCorner()
+dl32Point2D dl32AABB2D::GetDownRightCorner()
 {
-	return dl322DPoint(Position.x+mWidth,Position.y+mHeight);
+	return dl32Point2D(Position.x+mWidth,Position.y+mHeight);
 }
 
-dl322DPoint dl322DAABB::GetDownLeftCorner()
+dl32Point2D dl32AABB2D::GetDownLeftCorner()
 {
-	return dl322DPoint(Position.x,Position.y+mHeight);
+	return dl32Point2D(Position.x,Position.y+mHeight);
 }
 
-void dl322DAABB::SetCenter(float X, float Y)
+void dl32AABB2D::SetCenter(float X, float Y)
 {
 	Position.x=X-(mWidth/2);
 	Position.y=Y-(mHeight/2);
 }
 
-void dl322DAABB::SetCenter(dl322DPoint &Center)
+void dl32AABB2D::SetCenter(dl32Point2D &Center)
 {
 	Position.x=Center.x-(mWidth/2);
 	Position.y=Center.y-(mHeight/2);
 }
 
-bool dl322DAABB::Collide(dl322DAABB C1, dl322DAABB C2)
+bool dl32AABB2D::Collide(dl32AABB2D C1, dl32AABB2D C2)
 {
-	dl322DAABB BigAABB=dl322DAABB(C1.Position.x-C2.GetWidth(),C1.Position.y-C2.GetHeight(),C1.GetWidth()+C2.GetWidth(),C1.GetHeight()+C2.GetHeight());
+	dl32AABB2D BigAABB=dl32AABB2D(C1.Position.x-C2.GetWidth(),C1.Position.y-C2.GetHeight(),C1.GetWidth()+C2.GetWidth(),C1.GetHeight()+C2.GetHeight());
 
 	return BigAABB.BelongTo(C2.Position);
 }
 
-dl322DOrientation dl322DAABB::Orientation(dl322DAABB Origin, dl322DAABB AABB)
+dl32Orientation2D dl32AABB2D::Orientation(dl32AABB2D Origin, dl32AABB2D AABB)
 {
-	dl322DOrientation Retorno;
+	dl32Orientation2D Retorno;
 	bool ArribaIzquierda=Origin.BelongTo(AABB.GetUpLeftCorner());
 	bool ArribaDerecha=Origin.BelongTo(AABB.GetUpRightCorner());
 	bool AbajoDerecha=Origin.BelongTo(AABB.GetDownRightCorner());
@@ -381,13 +381,13 @@ dl323x3Matrix Get3x3Unity()
 		 throw dl32InvalidMatrixOperationException("dl323x3Matrix::GetInverse(dl323x3Matrix matrix): 'matrix' is no-invertible");
  }
 
-void dl322DTransformation::Apply(dl322DPoint *point)
+void dl32Transformation2D::Apply(dl32Point2D *point)
 {
-	*point=dl322DPoint(m11*point->x+m12*point->y+m13,
+	*point=dl32Point2D(m11*point->x+m12*point->y+m13,
 		  m21*point->x+m22*point->y+m23);
 }
 
-void dl322DTransformation::Apply(float *x,float *y)
+void dl32Transformation2D::Apply(float *x,float *y)
 {
 	float xx,yy;
 	xx=m11*(*x)+m12*(*y)+m13;
@@ -396,17 +396,17 @@ void dl322DTransformation::Apply(float *x,float *y)
 	*y=yy;
 }
 
-dl322DTransformation& dl322DTransformation::Rotation(float center_x,float center_y,float angle)
+dl32Transformation2D& dl32Transformation2D::Rotation(float center_x,float center_y,float angle)
 {
-		return dl322DTransformation(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl322DTransformation::Translation(center_x,center_y),dl322DTransformation::Rotation(angle)),dl322DTransformation::Translation(-center_x,-center_y)));
+		return dl32Transformation2D(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl32Transformation2D::Translation(center_x,center_y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center_x,-center_y)));
 };
 
-dl322DTransformation& dl322DTransformation::Rotation(dl322DPoint center,float angle)
+dl32Transformation2D& dl32Transformation2D::Rotation(dl32Point2D center,float angle)
 {
-		return dl322DTransformation(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl322DTransformation::Translation(center.x,center.y),dl322DTransformation::Rotation(angle)),dl322DTransformation::Translation(-center.x,-center.y)));
+		return dl32Transformation2D(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl32Transformation2D::Translation(center.x,center.y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center.x,-center.y)));
 };
 
-dl323DPoint dl323DPoint::Div(dl323DPoint Point,float divisor)throw(dl32DividedByCeroException)
+dl32Point3D dl32Point3D::Div(dl32Point3D Point,float divisor)throw(dl32DividedByCeroException)
 {
 	if(divisor!=0)
 	{
@@ -498,7 +498,7 @@ dl32Quaternion::dl32Quaternion(float a,float b,float c,float d,bool UseMatrix)
 	Normalize(a,b,c,d,UseMatrix);
 }
 
-dl32Quaternion::dl32Quaternion(dl323DVector axis,float angle,bool UseMatrix)
+dl32Quaternion::dl32Quaternion(dl32Vector3D axis,float angle,bool UseMatrix)
 {
 	float Sin=sin(angle/2),Cos=cos(angle/2);
 
@@ -564,7 +564,7 @@ void dl32Quaternion::SetupMatrix()
     m41=0; m42=0; m43=0; m44=1;
 }
 
-dl323DTransformation::dl323DTransformation()
+dl32Transformation3D::dl32Transformation3D()
 {
 	m11=1;m12=0;m13=0;m14=0;
 	m21=0;m22=1;m23=0;m24=0;
@@ -572,7 +572,7 @@ dl323DTransformation::dl323DTransformation()
 	m41=0;m42=0;m43=0;m44=1;
 }
 
-dl323DTransformation::dl323DTransformation(float m11,float m12,float m13,float m14,
+dl32Transformation3D::dl32Transformation3D(float m11,float m12,float m13,float m14,
 							  float m21,float m22,float m23,float m24,
 							  float m31,float m32,float m33,float m34,
 							  float m41,float m42,float m43,float m44)
@@ -583,7 +583,7 @@ dl323DTransformation::dl323DTransformation(float m11,float m12,float m13,float m
 	this->m41=m11;this->m42=m12;this->m43=m13;this->m44=m14;
 }
 
-dl323DTransformation::dl323DTransformation(dl324x4Matrix &matrix)
+dl32Transformation3D::dl32Transformation3D(dl324x4Matrix &matrix)
 {
 	this->m11=matrix.m11;this->m12=matrix.m12;this->m13=matrix.m13;this->m14=matrix.m14;
 	this->m21=matrix.m21;this->m22=matrix.m22;this->m23=matrix.m23;this->m24=matrix.m24;
@@ -591,12 +591,12 @@ dl323DTransformation::dl323DTransformation(dl324x4Matrix &matrix)
 	this->m41=matrix.m41;this->m42=matrix.m42;this->m43=matrix.m43;this->m44=matrix.m44;
 }
 
-void dl323DTransformation::Apply(dl323DPoint *point)
+void dl32Transformation3D::Apply(dl32Point3D *point)
 {
-	*point=dl323DPoint(m11*point->x+m12*point->y+m13*point->z+m14,m21*point->x+m22*point->y+m23*point->z+m24,m31*point->x+m32*point->y+m33*point->z+m34);
+	*point=dl32Point3D(m11*point->x+m12*point->y+m13*point->z+m14,m21*point->x+m22*point->y+m23*point->z+m24,m31*point->x+m32*point->y+m33*point->z+m34);
 }
 
-void dl323DTransformation::Apply(float *x,float *y,float *z)
+void dl32Transformation3D::Apply(float *x,float *y,float *z)
 {
 	float xx,yy,zz;
 	xx=m11*(*x)+m12*(*y)+m13*(*z)+m14;
@@ -1246,7 +1246,7 @@ void PrintMatrix(dl32Matrix &matrix)
 	}
 }
 
-dl322DSpline::dl322DSpline(dl322DPoint* Nodes,int Count)
+dl32Spline::dl32Spline(dl32Point2D* Nodes,int Count)
 {
 	if(Count>=2)
 	{
@@ -1256,12 +1256,12 @@ dl322DSpline::dl322DSpline(dl322DPoint* Nodes,int Count)
 	}
 }
 
-dl322DSpline::~dl322DSpline()
+dl32Spline::~dl32Spline()
 {
 	nodecount=-1;
 }
 
-void dl322DSpline::Compute()
+void dl32Spline::Compute()
 {
 	dl32EcuationsSystem *X,*Y;
 	dl32SystemSolution SolX,SolY;
@@ -1344,10 +1344,10 @@ void dl322DSpline::Compute()
 	delete Y;
 }
 
-vector<dl322DPoint> dl322DSpline::Interpolate(int PointsPerInterval)
+vector<dl32Point2D> dl32Spline::Interpolate(int PointsPerInterval)
 {
 	float LongitudX,LongitudY,Step;
-	vector<dl322DPoint> retorno;
+	vector<dl32Point2D> retorno;
 
 	for(int i=0;i<nodecount-1;++i)
 	{
@@ -1360,7 +1360,7 @@ vector<dl322DPoint> dl322DSpline::Interpolate(int PointsPerInterval)
 			Step=1.0/PointsPerInterval;
 		
 		for(float u=0;u<1;u+=Step)
-			retorno.push_back(dl322DPoint(intervalsX[i].Interpolate(u),intervalsY[i].Interpolate(u)));
+			retorno.push_back(dl32Point2D(intervalsX[i].Interpolate(u),intervalsY[i].Interpolate(u)));
 	}
 
 	retorno.push_back(nodes[nodecount-1]);

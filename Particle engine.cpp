@@ -5,13 +5,13 @@ void dl32ParticleEmmitter::Emmit(dl32ParticleData *data,dl32Particle *particle)
 	float angle=RANDOMFLOAT(0,PI2);
 	particle->x=position.x;
 	particle->y=position.y;
-	data->speed=dl322DVector(startspeed*cos(angle),startspeed*sin(angle));
-	data->acceleration=dl322DVector();
+	data->speed=dl32Vector2D(startspeed*cos(angle),startspeed*sin(angle));
+	data->acceleration=dl32Vector2D();
 	particle->color=RANDOM_COLOR;
 	data->life=0;
 }
 
-dl32ParticleSystem::dl32ParticleSystem(dl32GraphicsClass *gfx,int particlecount,dl322DAABB space)
+dl32ParticleSystem::dl32ParticleSystem(dl32GraphicsClass *gfx,int particlecount,dl32AABB2D space)
 {
 	this->gfx=gfx;
 	this->particlecount=particlecount;
@@ -40,7 +40,7 @@ void dl32ParticleSystem::Init()
 
 void dl32ParticleSystem::Frame()
 {
-	dl322DVector force,distance;
+	dl32Vector2D force,distance;
 	float value,length;
 	int j;
 	bool killed;
@@ -60,7 +60,7 @@ void dl32ParticleSystem::Frame()
 
 				while(!killed && j<holes.size())
 				{
-					distance=dl322DVector(particles[i],holes[j].position);
+					distance=dl32Vector2D(particles[i],holes[j].position);
 					length=distance.GetLength();
 
 					if(length<=holes[j].deadzone)
@@ -118,9 +118,10 @@ void dl32ParticleSystem::Frame()
 	}
 
 	gfx->DRAW_Pixels(particles,particlecount);
+	gfx->Frame();
 }
 
-bool dl32ParticleSystem::MoveEmmitter(int Emitter,dl322DPoint position)
+bool dl32ParticleSystem::MoveEmmitter(int Emitter,dl32Point2D position)
 {
 	if(Emitter>=0 && Emitter<emmitters.size())
 	{
@@ -131,7 +132,7 @@ bool dl32ParticleSystem::MoveEmmitter(int Emitter,dl322DPoint position)
 		return false;
 }
 
-bool dl32ParticleSystem::MoveHole(int Hole,dl322DPoint position)
+bool dl32ParticleSystem::MoveHole(int Hole,dl32Point2D position)
 {
 	if(Hole>=0 && Hole<holes.size())
 	{

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void PrintMatrix(dl32Matrix &matrix);
+void PrintMyMatrix(dl32Matrix &matrix);
 void PrintSystemType(dl32SystemSolutionType Type);
 void PrintSolutions(float *Solutions,int SolutionsCount);
 
@@ -52,9 +52,9 @@ int main()
 	Solution=System.GetSolution();
 
 	cout << endl << endl;
-	PrintMatrix(SystemMatrix);
+	PrintMyMatrix(SystemMatrix);
 	cout << "-------------------------------" << endl;
-	PrintMatrix(System.GetGaussMatrix());
+	PrintMyMatrix(System.GetGaussMatrix());
 
 	cout << endl << "RESULTADOS:" << endl;
 	cout << " - Rango matriz principal: " << System.GetMainMatrixRange() << endl;
@@ -72,7 +72,7 @@ int main()
 	cin.get();
 }
 
-void PrintMatrix(dl32Matrix &matrix)
+void PrintMyMatrix(dl32Matrix &matrix)
 {
 	for(int i=0;i<matrix.GetRowsCount();++i)
 	{

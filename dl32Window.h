@@ -1,8 +1,9 @@
 #ifndef WINDOW_H
 #define WINDOW_H
+
 #include <Windows.h>
-#include "dl32Graphics.h"
 #include "dl32String.h"
+#include "dl32Math.h"
 
 
 #define DL32WINDOWSDEFAULTS_LEFT CW_USEDEFAULT
@@ -62,7 +63,7 @@ enum dl32MouseButton
 
 struct dl32MouseData
 {
-	dl322DPoint Location;
+	dl32Point2D Location;
 	dl32MouseButton Button;
 	int Delta;
 };
@@ -94,7 +95,7 @@ typedef dl32KeyboardEvent dl32KeyPressEvent;
 typedef dl32KeyboardEvent dl32KeyDownEvent;
 typedef dl32KeyboardEvent dl32KeyUpEvent;
 
-typedef dl32Event<dl322DAABB> dl32AreaChangedEvent;
+typedef dl32Event<dl32AABB2D> dl32AreaChangedEvent;
 typedef dl32AreaChangedEvent dl32MoveEvent;
 typedef dl32AreaChangedEvent dl32ResizeEvent;
 typedef dl32AreaChangedEvent dl32ResizeBeginEvent;
@@ -103,8 +104,22 @@ typedef dl32AreaChangedEvent dl32ResizeEndEvent;
 typedef dl32Event<void> dl32VoidEvent;
 typedef dl32VoidEvent dl32PaintEvent;
 
+typedef dl32Event<bool*> dl32WindowCloseEvent;
+
 
 LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+class DEBUG_MessageLoopRunning
+{
+private:
+	bool _running;
+	int _stoppedCount;
+public:
+	DEBUG_MessageLoopRunning(){_running=true;_stoppedCount=0;}
+	void StopLoop(){_running=false;_stoppedCount++;}
+	bool Running(){return _running;}
+	int GetStoppedCount(){return _stoppedCount;};
+};
 
 class dl32Window
 {
@@ -115,12 +130,17 @@ private:
 
 	static vector<dl32Window*> WindowsList;
 	static dl32Window *LastWindowMessaged;
+	static bool MessageProcessed;
 
 	static void EraseWindow(dl32Window* window);
-	static void MessageLoop();
-	static bool Messagging;
+	static bool SearchWindow(HWND hwnd);
+	static void MessageLoop()throw(dl32UnhandledWindowMessage);
+	static DEBUG_MessageLoopRunning Messagging;
 
-	dl322DAABB Area;
+	static void Cleanup();
+	bool _mustBeDeleted;
+
+	dl32AABB2D Area;
 	bool KeyboardCapture;
 	bool MouseCapture;
 
@@ -166,9 +186,9 @@ public:
 	void SetWidth(float Width);
 	void SetHeight(float Height);
 
-	dl322DAABB GetScreenArea();
-	dl322DAABB GetClientArea();
-	void SetScreenArea(dl322DAABB Area);
+	dl32AABB2D GetScreenArea();
+	dl32AABB2D GetClientArea();
+	void SetScreenArea(dl32AABB2D Area);
 
 	dl32String GetText();
 	void SetText(dl32String Text);
@@ -190,5 +210,10 @@ public:
 	dl32KeyDownEvent KeyDown;
 	dl32KeyUpEvent KeyUp;
 	dl32VoidEvent Idle;
+	dl32WindowCloseEvent Close;
+
+	void DeleteWindow(){_mustBeDeleted=true;};
+
+	static int DEBUG_GetMessageLoopStoppedCount(){return Messagging.GetStoppedCount();};
 };
 #endif

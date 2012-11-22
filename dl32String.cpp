@@ -12,8 +12,7 @@ dl32String::~dl32String()
 {
 	if(Array!=NULL)
 	{
-		delete [] Array;
-		Array=NULL;
+		DL32MEMORY_SAFEDELETE_ARRAY(Array);
 		size=-1;
 	}
 }

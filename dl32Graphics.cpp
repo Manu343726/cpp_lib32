@@ -52,7 +52,7 @@ DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const dl32Vertex &vertex)
 	tx=-1;ty=-1;
 }
 
-DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(dl322DPoint &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
+DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
 {
 	x=point.x;
 	y=point.y;
@@ -104,9 +104,9 @@ dl32Vertex::dl32Vertex(float x, float y, dl32Color color,int Z)
 	this->color=color;
 }
 
-dl322DPoint dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
+dl32Point2D dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
 {
-	dl322DPoint Return;
+	dl32Point2D Return;
 
 	for(int i=0;i<PointCount;++i)
 	{
@@ -116,7 +116,7 @@ dl322DPoint dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
 		Return.y+=PointList[i].y;
 	}
 
-	return dl322DPoint(Return.x/PointCount,Return.y/PointCount);
+	return dl32Point2D(Return.x/PointCount,Return.y/PointCount);
 }
 
 dl322DCamera::dl322DCamera()
@@ -135,22 +135,22 @@ dl322DCamera::dl322DCamera(dl323x3Matrix &Transformation)
 
 void dl322DCamera::Rotate(float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransformation::Rotation(Rotation),*this);
+	*this=dl323x3Matrix::Mul(dl32Transformation2D::Rotation(Rotation),*this);
 }
 
-void dl322DCamera::Rotate(dl322DPoint Center,float Rotation)
+void dl322DCamera::Rotate(dl32Point2D Center,float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransformation::Rotation(Center,Rotation),*this);
+	*this=dl323x3Matrix::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
 }
 
 void dl322DCamera::Traslate(float x,float y)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransformation::Translation(-x,-y),*this);
+	*this=dl323x3Matrix::Mul(dl32Transformation2D::Translation(-x,-y),*this);
 }
 
-void dl322DCamera::Traslate(dl322DVector Translation)
+void dl322DCamera::Traslate(dl32Vector2D Translation)
 {
-	*this=dl323x3Matrix::Mul(dl322DTransformation::Translation(-Translation.x,-Translation.y),*this);
+	*this=dl323x3Matrix::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
 }
 
 void dl322DCamera::SetPosition(float x, float y)
@@ -159,15 +159,15 @@ void dl322DCamera::SetPosition(float x, float y)
 	m23=-y;
 }
 
-void dl322DCamera::SetPosition(dl322DPoint &Position)
+void dl322DCamera::SetPosition(dl32Point2D &Position)
 {
 	m13=-Position.x;
 	m23=-Position.y;
 }
 
-dl322DPoint dl322DCamera::GetPosition()
+dl32Point2D dl322DCamera::GetPosition()
 {
-	return dl322DPoint(-m13,-m23);
+	return dl32Point2D(-m13,-m23);
 }
 
 dl32MeshPatch::dl32MeshPatch(int texture,int x,int y,int width,int height,dl32Color color)
@@ -230,7 +230,7 @@ dl32Mesh::dl32Mesh(dl32VertexTrapezoid Verts,int width,int height,dl32MeshPatch 
 	this->~dl32Mesh();
 }
 
-dl32Mesh::dl32Mesh(dl322DAABB Area,int width, int height,dl32MeshPatch *patches,int PatchesCount)
+dl32Mesh::dl32Mesh(dl32AABB2D Area,int width, int height,dl32MeshPatch *patches,int PatchesCount)
 {
 	int areawidth,areaheight,stepx,stepy;
 
@@ -343,11 +343,11 @@ bool dl32Mesh::IsValid(dl32MeshPatch &patch)
 	return patch.x>=0 && patch.x+patch.width<=width && patch.y>=0 && patch.y+patch.height<=height;
 }
 
-dl322DPoint dl32Mesh::GetPatchCenter(dl32MeshPatch &patch)
+dl32Point2D dl32Mesh::GetPatchCenter(dl32MeshPatch &patch)
 {
 	if(IsValid(patch))
 	{
-		dl322DPoint center;
+		dl32Point2D center;
 		int vertexcount=patch.width*patch.height;
 
 		for(int i=patch.x;i<patch.x+patch.width;++i)
@@ -357,15 +357,15 @@ dl322DPoint dl32Mesh::GetPatchCenter(dl32MeshPatch &patch)
 				center.y+=verts[i+j*width].y;
 			}
 
-			return dl322DPoint(center.x/vertexcount,center.y/vertexcount);
+			return dl32Point2D(center.x/vertexcount,center.y/vertexcount);
 	}
 	else
-		return dl322DPoint();
+		return dl32Point2D();
 }
 
-dl322DPoint dl32Mesh::GetMeshCenter()
+dl32Point2D dl32Mesh::GetMeshCenter()
 {
-	dl322DPoint Center;
+	dl32Point2D Center;
 
 	for(int i=0;i<width*height;++i)
 	{
@@ -373,16 +373,16 @@ dl322DPoint dl32Mesh::GetMeshCenter()
 		Center.y+=verts[i].y;
 	}
 
-	return dl322DPoint(Center.x/(width*height),Center.y/(width*height));
+	return dl32Point2D(Center.x/(width*height),Center.y/(width*height));
 }
 
-void dl32Mesh::Transformation(dl322DTransformation Transformation)
+void dl32Mesh::Transformation(dl32Transformation2D Transformation)
 {
 	for(int i=0;i<verts.size();++i)
 		Transformation.Apply(&verts[i].x,&verts[i].y);
 }
 
-void dl32Mesh::Transformation(dl322DTransformation Transformation,dl32MeshPatch &patch)
+void dl32Mesh::Transformation(dl32Transformation2D Transformation,dl32MeshPatch &patch)
 {
 	if(IsValid(patch))
 	{
@@ -497,17 +497,43 @@ bool dl32GraphicsClass::Frame()
 	return true;
 }
 
-bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed)
+bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed,dl32ColorDepth colorDepth, bool tripleBuffer, bool vSync, int refreshRate)
 {
-	_d3d=Direct3DCreate9(D3D_SDK_VERSION);
+	D3DDISPLAYMODE displayMode;
 
 	ZeroMemory(&_d3dPresentParameters,sizeof(D3DPRESENT_PARAMETERS));
-	_d3dPresentParameters.Windowed=int(Windowed);
+	_d3d=Direct3DCreate9(D3D_SDK_VERSION);
+	_d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT,&displayMode);
+
+	if(vSync)
+		_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_ONE;
+	else
+		_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_IMMEDIATE;
+
 	_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
-	_d3dPresentParameters.BackBufferFormat=D3DFMT_UNKNOWN;
+	_d3dPresentParameters.Windowed=BOOL(Windowed);
+	_d3dPresentParameters.hDeviceWindow=hwnd;
+
+	if(Windowed)
+	{
+		_d3dPresentParameters.BackBufferFormat=displayMode.Format;
+		_d3dPresentParameters.BackBufferWidth=Width;
+		_d3dPresentParameters.BackBufferHeight=Height;
+	}
+	else
+	{
+		if(colorDepth==DL32CD_16BIT)
+			_d3dPresentParameters.BackBufferFormat=D3DFMT_R5G6B5;
+		else
+			_d3dPresentParameters.BackBufferFormat=D3DFMT_X8B8G8R8;
+
+		_d3dPresentParameters.BackBufferCount=2+abs(tripleBuffer);
+		_d3dPresentParameters.BackBufferWidth=displayMode.Width;
+		_d3dPresentParameters.BackBufferHeight=displayMode.Height;
+	}
 
 	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)) || 
-		!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
+	   !FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
 	{
 		_d3dDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
 		return true;
@@ -522,12 +548,12 @@ dl32GraphicsClass::dl32GraphicsClass()
 	_usingVertexBuffer=false;
 }
 
-dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDepth colorDepth, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
+dl32GraphicsClass::dl32GraphicsClass(dl32Window* window,dl32ColorDepth colorDepth, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
 {
 	_working=false;
 	_usingVertexBuffer=false;
 
-	if(!InitializeDirect3D(hwnd,Width,Height,Windowed))
+	if(!InitializeDirect3D(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,colorDepth,tripleBuffer,vSync,refreshRate))
 		throw dl32Direct3DInitFailedException("Direct3D initialization failed");
 	else
 	{
@@ -539,6 +565,32 @@ dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDep
 		_lastTicksCount=GetTickCount();
 		_frameCount=0;
 		_frameRate=0;
+
+		this->Start();
+
+		_working=true;
+	}
+}
+
+dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDepth colorDepth, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
+{
+	_working=false;
+	_usingVertexBuffer=false;
+
+	if(!InitializeDirect3D(hwnd,Width,Height,Windowed,colorDepth,tripleBuffer,vSync,refreshRate))
+		throw dl32Direct3DInitFailedException("Direct3D initialization failed");
+	else
+	{
+		_backColor=D3DCOLOR_ARGB(255,0,0,0);
+
+		for(int i=0;i<DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL;++i)
+			_renderBuffer[i]=NULL;
+
+		_lastTicksCount=GetTickCount();
+		_frameCount=0;
+		_frameRate=0;
+
+		this->Start();
 
 		_working=true;
 	}
@@ -567,7 +619,19 @@ void dl32GraphicsClass::Dispose()
 
 dl32GraphicsClass::~dl32GraphicsClass()
 {
-	Dispose();
+	if(_working)
+	{
+		_working=false;
+
+		if(_d3dVertexBufferOK && _d3dVertexBuffer!=NULL) _d3dVertexBuffer->Release();
+		if(_d3dIndexBufferOK && _d3dIndexBuffer!=NULL) _d3dIndexBuffer->Release();
+
+		_d3dDevice->Release();
+		_d3d->Release();
+
+		for(int i=0;i<_renderBufferActiveLevels.size();++i)
+			delete _renderBuffer[_renderBufferActiveLevels[i]];
+	}
 }
 
 bool dl32GraphicsClass::Start()
@@ -654,7 +718,7 @@ bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 	if(!_working) return false;
 
 	DL32BUFFEROBJECT Object;
-	dl322DPoint NewVerts[3];
+	dl32Point2D NewVerts[3];
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -707,7 +771,7 @@ bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		DL32VERTEXTEXTURED verts[3];
-		dl322DPoint NewVerts[3];
+		dl32Point2D NewVerts[3];
 
 		NewVerts[0]=Camera.Apply(V0);
 		NewVerts[1]=Camera.Apply(V1);
@@ -753,7 +817,7 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
 		DL32BUFFEROBJECT Object;
-		dl322DPoint Baricenter,NewVert,InitVert;
+		dl32Point2D Baricenter,NewVert,InitVert;
 		D3DCOLOR CenterColor=0;
 
 		Object.StartIndex=_vertexBuffer.size();
@@ -804,14 +868,14 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 		return false;
 }
 
-bool dl32GraphicsClass::DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Color color,bool fill,int Z)
+bool dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill,int Z)
 {
 	if(!_working) return false;
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
 		DL32BUFFEROBJECT Object;
-		dl322DPoint Baricenter,NewVert,InitVert;
+		dl32Point2D Baricenter,NewVert,InitVert;
 
 		Object.StartIndex=_vertexBuffer.size();
 
@@ -865,7 +929,7 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Col
 
 bool dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill,int Z)
 {
-	dl322DPointTrapezoid Verts={dl322DPoint(x,y),dl322DPoint(x+width,y),dl322DPoint(x+width,y+height),dl322DPoint(x,y+height)};
+	dl322DPointTrapezoid Verts={dl32Point2D(x,y),dl32Point2D(x+width,y),dl32Point2D(x+width,y+height),dl32Point2D(x,y+height)};
 
 	return DRAW_Trapezoid(Verts,color,fill,Z);
 }
@@ -878,7 +942,7 @@ bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 	{
 		DL32BUFFEROBJECT Object;
 		DL32VERTEXTEXTURED Verts[4];
-		dl322DPoint NewVerts[4];
+		dl32Point2D NewVerts[4];
 
 		NewVerts[0]=Camera.Apply(verts[0]);
 		NewVerts[1]=Camera.Apply(verts[1]);
@@ -1093,7 +1157,7 @@ bool dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 		return false;
 }
 
-bool dl32GraphicsClass::DRAW_Pixels(dl322DPoint pixels[],dl32Color color,int count,int Z)
+bool dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z)
 {
 	if(!_working) return false;
 
@@ -1149,7 +1213,7 @@ bool dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width
 		return false;
 }
 
-bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,int texture,int Z)
+bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture,int Z)
 {
 	if(!_working) return false;
 
@@ -1160,9 +1224,9 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,in
 		else
 		{
 			DL32BUFFEROBJECT Object;
-			dl322DLine Line;
-			dl322DVector preDirection,Direction;
-			dl322DPoint preTransformationed,Transformationed,preUp,preDown,up,down,aux;
+			dl32Line2D Line;
+			dl32Vector2D preDirection,Direction;
+			dl32Point2D preTransformationed,Transformationed,preUp,preDown,up,down,aux;
 			int preSize,size,indexCount=0;
 			float t0,t1;
 
@@ -1189,7 +1253,7 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,in
 				if(i==0)
 				{
 					preDirection(Transformationed,Camera.Apply(points[1]));
-					Line=dl322DLine(Transformationed,dl322DVector(-preDirection.y,preDirection.x));
+					Line=dl32Line2D(Transformationed,dl32Vector2D(-preDirection.y,preDirection.x));
 					preUp=Line.GetPointByParameter(pen.width/2);
 					preDown=Line.GetPointByParameter(-pen.width/2);
 
@@ -1206,16 +1270,16 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,in
 					Direction(preTransformationed,Transformationed);
 
 					if(Direction!=preDirection)
-						Line=dl322DLine(Transformationed,(Direction-preDirection));
+						Line=dl32Line2D(Transformationed,(Direction-preDirection));
 					else
-						Line=dl322DLine(Transformationed,dl322DVector(-Direction.y,Direction.x));
+						Line=dl32Line2D(Transformationed,dl32Vector2D(-Direction.y,Direction.x));
 
 
 
 					up=Line.GetPointByParameter(pen.width/2);
 					down=Line.GetPointByParameter(-pen.width/2);
 
-					if(dl322DLine(Transformationed,Direction).GetRelativePosition(up)<0)
+					if(dl32Line2D(Transformationed,Direction).GetRelativePosition(up)<0)
 					{
 						aux=up;
 						up=down;
@@ -1250,7 +1314,7 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,in
 				else
 				{
 					Direction(preTransformationed,Transformationed);
-					Line=dl322DLine(Transformationed,dl322DVector(-Direction.y,Direction.x));
+					Line=dl32Line2D(Transformationed,dl32Vector2D(-Direction.y,Direction.x));
 					up=Line.GetPointByParameter(pen.width/2);
 					down=Line.GetPointByParameter(-pen.width/2);
 
@@ -1291,7 +1355,7 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,in
 		return false;
 }
 
-bool dl32GraphicsClass::DRAW_Spline(dl322DSpline* spline,dl32Color color,int PointsPerInterval,int Z)
+bool dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int PointsPerInterval,int Z)
 {
 	if(!_working) return false;
 
@@ -1299,7 +1363,7 @@ bool dl32GraphicsClass::DRAW_Spline(dl322DSpline* spline,dl32Color color,int Poi
 	{
 		DL32BUFFEROBJECT Object;
 		int vertexcount=0;
-		vector<dl322DPoint> points(spline->Interpolate(PointsPerInterval));
+		vector<dl32Point2D> points(spline->Interpolate(PointsPerInterval));
 
 		_vertexBuffer.reserve(_vertexBuffer.size()+points.size());
 

@@ -3,6 +3,7 @@
 
 #include <string>
 #include "dl32Exceptions.h"
+#include "dl32Memory.h"
 
 using namespace std;
 

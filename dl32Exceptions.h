@@ -2,6 +2,7 @@
 #define DL32EXCEPTIONS_H
 
 #include <exception>
+#include <Windows.h>
 
 #define DL32DEFAULTEXCEPTIONMESSAGE "Unexpected dl32Exception"
 #define DL32DEFAULTMEMORYEXCEPTIONMESSAGE "Unexpected dl32MemoryException"
@@ -93,5 +94,23 @@ class dl32Direct3DInitFailedException:public dl32Exception
 {
 public:
 	dl32Direct3DInitFailedException(char* message):dl32Exception(message){};
-}
+};
+
+class dl32WindowException:dl32Exception
+{
+private:
+	HWND _hwnd;
+public:
+	dl32WindowException(HWND hwnd,char* message):dl32Exception(message){_hwnd=hwnd;};
+	HWND GethWnd(){return _hwnd;};
+};
+
+class dl32UnhandledWindowMessage: public dl32WindowException
+{
+private:
+	UINT _msg;
+public:
+	dl32UnhandledWindowMessage(UINT msg,HWND hwnd, char* message):dl32WindowException(hwnd,message){_msg=msg;};
+	UINT GetMessage(){return _msg;};
+};
 #endif

@@ -2,7 +2,7 @@
 
 #if DL32DEBUG_DEBUGTEST == 6
 #include "MandelbrotEngine.h"
-#include "dl32Windows.h"
+#include "dl32Window.h"
 
 enum GUIMode
 {

@@ -8,35 +8,35 @@
 class dl323DCamera
 {
 private:
-	dl323DTransformation SURtoSRC;
-	dl323DTransformation SRCtoSUR;
-	dl323DPoint position;
-	dl323DVector direction;
-	dl323DPoint LookAt;
+	dl32Transformation3D SURtoSRC;
+	dl32Transformation3D SRCtoSUR;
+	dl32Point3D position;
+	dl32Vector3D direction;
+	dl32Point3D LookAt;
 public:
 	dl323DCamera();
-	dl323DCamera(dl323DPoint position,dl323DVector direction);
-	dl323DCamera(dl323DPoint position,dl323DPoint LookAt){dl323DCamera(position,dl323DVector(position,LookAt));};
+	dl323DCamera(dl32Point3D position,dl32Vector3D direction);
+	dl323DCamera(dl32Point3D position,dl32Point3D LookAt){dl323DCamera(position,dl32Vector3D(position,LookAt));};
 
-	dl323DPoint GetPosition(){return position;};
-	dl323DVector GetDirection(){return direction;};
-	void SetPosition(dl323DPoint position);
-	void SetDirection(dl323DVector direction);
-	void SetLookAt(dl323DPoint LookAt){SetDirection(dl323DVector(position,LookAt));};
+	dl32Point3D GetPosition(){return position;};
+	dl32Vector3D GetDirection(){return direction;};
+	void SetPosition(dl32Point3D position);
+	void SetDirection(dl32Vector3D direction);
+	void SetLookAt(dl32Point3D LookAt){SetDirection(dl32Vector3D(position,LookAt));};
 
-	void ApplySURtoSRC(dl323DPoint* point){SURtoSRC.Apply(point);};
-	dl323DPoint ApplySURtoSRC(dl323DPoint &point){return SURtoSRC.Apply(point);};
-	void ApplySRCtoSUR(dl323DPoint* point){SRCtoSUR.Apply(point);};
-	dl323DPoint ApplySRCtoSUR(dl323DPoint &point){return SRCtoSUR.Apply(point);};
+	void ApplySURtoSRC(dl32Point3D* point){SURtoSRC.Apply(point);};
+	dl32Point3D ApplySURtoSRC(dl32Point3D &point){return SURtoSRC.Apply(point);};
+	void ApplySRCtoSUR(dl32Point3D* point){SRCtoSUR.Apply(point);};
+	dl32Point3D ApplySRCtoSUR(dl32Point3D &point){return SRCtoSUR.Apply(point);};
 
-	void ApplySURTransformation(dl323DTransformation Transformation);
-	void ApplySRCTrnasform(dl323DTransformation Transformation);
+	void ApplySURTransformation(dl32Transformation3D Transformation);
+	void ApplySRCTrnasform(dl32Transformation3D Transformation);
 };
 
 struct dl323DVertex
 {
-	dl323DPoint position;
-	dl323DVector normal;
+	dl32Point3D position;
+	dl32Vector3D normal;
 };
 
 typedef int* dl32FaceIndexes;
@@ -44,7 +44,7 @@ typedef int* dl32FaceIndexes;
 struct dl32Face
 {
 	dl32FaceIndexes indexes;
-	dl323DVector normal;
+	dl32Vector3D normal;
 };
 
 class dl32Polyedron
@@ -55,9 +55,9 @@ private:
 
 	void ComputeNormals();
 public:
-	dl32Polyedron(vector<dl323DPoint> &verts,vector<dl32FaceIndexes> &faces);
+	dl32Polyedron(vector<dl32Point3D> &verts,vector<dl32FaceIndexes> &faces);
 
-	vector<dl322DPoint> Proyect(dl323DCamera &Camera);
+	vector<dl32Point2D> Proyect(dl323DCamera &Camera);
 };
 
 #endif

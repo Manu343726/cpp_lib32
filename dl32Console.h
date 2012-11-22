@@ -2,6 +2,7 @@
 #define DL32CONSOLE_H
 #include "dl32String.h"
 #include "dl32Math.h"
+#include "dl32Memory.h"
 #include <Windows.h>
 
 enum dl32ConsoleType
@@ -51,7 +52,7 @@ private:
 public:
 	dl32Console(){ready=false;colorsettings=0;};
 	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32ConsoleException);
-	~dl32Console(){Close();};
+	~dl32Console();
 
 	void Close();
 	bool Ready(){return ready;};
@@ -69,8 +70,8 @@ public:
 	void SetBackgroundColor(dl32ConsolePalette color)throw(dl32ConsoleException);
 	void SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background)throw(dl32ConsoleException);
 
-	void SetCursorPosition(dl322DPoint Position)throw(dl32ConsoleException);
-	dl322DPoint GetCursorPosition()throw(dl32ConsoleException);
+	void SetCursorPosition(dl32Point2D Position)throw(dl32ConsoleException);
+	dl32Point2D GetCursorPosition()throw(dl32ConsoleException);
 
 	void SetScroll(int FirstLine)throw(dl32ConsoleException);
 	int GetScroll()throw(dl32ConsoleException);

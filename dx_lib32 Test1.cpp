@@ -2,17 +2,18 @@
 
 #if DL32DEBUG_DEBUGTEST == 1
 
-#include "dl32Windows.h"
+#include "dl32Window.h"
+#include "dl32Graphics.h"
 #include "dl32Console.h"
 
 #define RANDOM(min,max) (rand()%(max-min))+min
 #define RANDOM_COLOR COLOR_FromRGB(RANDOM(0,255),RANDOM(0,255),RANDOM(0,255))
-#define RANDOM_POINT(minX,minY,maxX,maxY) dl322DPoint(RANDOM(minX,maxX),RANDOM(minY,maxY))
+#define RANDOM_POINT(minX,minY,maxX,maxY) dl32Point2D(RANDOM(minX,maxX),RANDOM(minY,maxY))
 
 //Estructura que contiene las caracteristicas de un poligono regular:
 typedef struct _POLYGONDATA
 {
-	dl322DPoint Center;//Centro
+	dl32Point2D Center;//Centro
 	float Radius;//Radio
 	int Count;//Numero de lados
 	dl32Color Color;//Color
@@ -22,11 +23,11 @@ typedef struct _POLYGONDATA
 struct TEXTDATA
 {
 	char* text;
-	dl322DPoint position;
+	dl32Point2D position;
 	dl32Color color;
 };
 
-void PreDrawProc(PTDL32GRAPHICSCLASS gfx); //Funcion que se ejecuta antes del dibujo de la escena
+void Render();
 void DrawPolygon(PTDL32GRAPHICSCLASS gfx,POLYGONDATA PolygonData,float Angle); //Dibuja un poligono regular con las caracteristicas especificadas
 POLYGONDATA GetRandomPolygon(int WindowWidth,int WindowHeight,int MinRadius,int MaxRadius,int MaxCount,int Z=0);//Obtiene un poligono regular aleatorio dentro de los rangos especificados
 void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width, float height);//Obtiene un sprite rectangular con las caracteristicas especificadas
@@ -35,7 +36,7 @@ void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int Win
 const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
-const int POLYCOUNT=500;//Total de poligonos/sprites
+const int POLYCOUNT=100;//Total de poligonos/sprites
 const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
 const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
@@ -61,12 +62,14 @@ void OnMouseMove(dl32MouseData MouseData);//Captura del evento "MouseMove" de la
 void OnMouseUp(dl32MouseData MouseData);//Captura del evento "MouseUp" de la ventana
 void OnMouseDown(dl32MouseData MouseData);//Captura del evento "MouseDown" de la ventana
 void OnMouseWheel(dl32MouseData MouseData);//Captura del evento "MouseWheel" de la ventana
-void OnMove(dl322DAABB WindowArea);//Captura del evento "Move" de la ventana
+void OnMove(dl32AABB2D WindowArea);//Captura del evento "Move" de la ventana
 void OnKeyDown(dl32KeyboardData KeyboardData);//Captura del evento "KeyDown" de la ventana
 
+void OnClose(bool *cancel);
+
 bool DrawingSpline=false;
-vector<dl322DPoint> nodes;
-dl322DSpline spline;
+vector<dl32Point2D> nodes;
+dl32Spline spline;
 int selectedNode=0;
 
 INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
@@ -78,10 +81,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	try
 	{
 		Window = new dl32Window("dx_lib32 C++",0,0,WINDOWWIDTH,WINDOWHEIGHT);
-
-		Console.WriteLine("Setting PreDrawProc at " + dl32String(PreDrawProc));
-
-		gfx->DEVICE_SetPreDrawProc(PreDrawProc);//Asignamos la funci�n que se ejecuta antes del dibujo de la escena
+		gfx = new dl32GraphicsClass(Window);
 
 		Console << "Loading texture: '" << dl32String(FILE1PATH) << "'" << dl32endl;
 		Texture1=gfx->MAP_Load(FILE1PATH,0,false,true);//Cargamos la imagen
@@ -97,19 +97,23 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 
 		Window->KeyDown.AddHandler(OnKeyDown);
 
+		Window->Idle.AddHandler(Render);
+
+		Window->Close.AddHandler(OnClose);
+
 		Console.WriteLine("Setting up mesh patches (not used)");
 		Patch=dl32MeshPatch(Texture1,0,0,10,10,DL32COLOR_WHITE);
-		Mesh=dl32Mesh(dl322DAABB(0,0,1024,768),10,10);
+		Mesh=dl32Mesh(dl32AABB2D(0,0,1024,768),10,10);
 
 		Mesh.AddPatch(Patch);
 		//Mesh.AddPatch(dl32MeshPatch(Texture1,5,0,5,10));
 
-		Mesh.Transformation(dl322DTransformation::Rotation(Mesh.GetPatchCenter(TransformationPatch),PI/4),TransformationPatch);
+		Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetPatchCenter(TransformationPatch),PI/4),TransformationPatch);
 
 		Console.WriteLine("Starting message loop");
 
 		for(float i=0;i<10*PI;i+=(PI/4))
-			nodes.push_back(dl322DPoint(i*50,100+sin(float(i))*50));
+			nodes.push_back(dl32Point2D(i*50,100+sin(float(i))*50));
 
 		/*nodes.push_back(dl322DPoint(50,50));
 		nodes.push_back(dl322DPoint(400,50));
@@ -119,27 +123,27 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	}
 	catch(dl32Direct3DInitFailedException)
 	{
-		MessageBox(Window->GetHwnd(),"ERROR: DL32GCCE_D3DINITFAILED","dx_lib32 C++ - dl32GraphicsClass CTOR ERROR",MB_ICONERROR);
+		MessageBox(Window->GetHwnd(),"ERROR: Direct3D cannot be inititialized","dx_lib32 C++ - Error",MB_ICONERROR);
 	}
 
-	delete Window;
+	DL32MEMORY_SAFEDELETE(gfx);
 
 	return 0;
 }
 
 //�sta funci�n se ejecuta autom�ticamente en cada ciclo de renderizado antes de dibujar la escena
-void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
+void Render()
 {
-	dl322DTransformation Rotation;
-	dl322DTransformation InverseRotation;
+	dl32Transformation2D Rotation;
+	dl32Transformation2D InverseRotation;
 
 	if(Alfa<=PI2) //Si no se ha completado la vuelta:
 	{
 		Alfa+=(PI/100);
 		for(int i=0;i<POLYCOUNT;++i)
 		{
-			//Rotation=dl322DTransformation::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
-			//InverseRotation=dl322DTransformation::Rotation(dl32Vertex::Baricenter(Sprites[i],4),-Alfa); //Rotacion de -alfa grados alrededor del centro de la textura
+			//Rotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
+			//InverseRotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),-Alfa); //Rotacion de -alfa grados alrededor del centro de la textura
 
 			////Aplicamos la rotaci�n al sprite: (Ver NOTA al principio si no se entiende la sintaxis)
 			//Rotation.Apply(&Sprites[i][0]);
@@ -157,8 +161,8 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 			//InverseRotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el poligono actual:
-			//DrawPolygon(gfx,PDATA[i],Alfa);
-			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			DrawPolygon(gfx,PDATA[i],Alfa);
+			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 		}
 	}
 	else
@@ -168,15 +172,15 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			//GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
-			//PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,10,100,10);
+			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,10,100,10);
 			texts[i].color=RANDOM_COLOR;
 			texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
 			texts[i].text="dx_lib32 C++ !!!";
 
 			//Por supuesto, dibujamos. Si no, hay un ciclo de renderizado sin dibujar, lo que provoca parpadeos en la imagen
 			//gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aqu�, el valor Z es uno, para que los sprites salgan delante de los poligonos
-			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
-			//DrawPolygon(gfx,PDATA[i],Alfa);
+			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			DrawPolygon(gfx,PDATA[i],Alfa);
 		}
 
 		Console.WriteLine("OK");
@@ -214,11 +218,6 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 	gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
 	gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
 
-	dl32Pen Pen;
-	vector<dl322DPoint> points;
-	Pen.color=DL32COLOR_WHITE;
-	Pen.width=50;
-
 	if(!DrawingSpline)
 		gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
 	else
@@ -231,13 +230,15 @@ void PreDrawProc(PTDL32GRAPHICSCLASS gfx)
 	}
 
 	Window->SetText("dx_lib32 C++ (" + dl32String(gfx->FPS()) + " FPS)");
+
+	gfx->Frame();
 }
 
 void DrawPolygon(PTDL32GRAPHICSCLASS gfx,POLYGONDATA PolygonData,float Angle)
 {
 	if(PolygonData.Count>=3)
 	{
-		dl322DPoint *Polygon=new dl322DPoint[PolygonData.Count]; //Aqu� guardamos la geometria del poligono
+		dl32Point2D *Polygon=new dl32Point2D[PolygonData.Count]; //Aqu� guardamos la geometria del poligono
 
 		//M�todo para dibujar poligonos regulares (No era el m�todo de Euclides???):
 		////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ void OnMouseMove(dl32MouseData MouseData)
 	if(DrawingSpline && MouseData.Button==DL32MOUSEBUTTON_LEFT)
 	{
 		nodes[selectedNode]=MouseData.Location;
-		spline=dl322DSpline(nodes.data(),nodes.size());
+		spline=dl32Spline(nodes.data(),nodes.size());
 	}
 
 	/*if(true)
@@ -367,7 +368,7 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 	case 'c':
 		if(!DrawingSpline)
 		{
-			spline=dl322DSpline(nodes.data(),nodes.size());
+			spline=dl32Spline(nodes.data(),nodes.size());
 			DrawingSpline=true;
 		}
 		else
@@ -382,6 +383,14 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 	case '-':
 		if(selectedNode>0) selectedNode--;
 		break;
+	case 'e':
+		Window->DeleteWindow();
+		break;
 	}
+}
+
+void OnClose(bool *cancel)
+{
+	*cancel=false;
 }
 #endif

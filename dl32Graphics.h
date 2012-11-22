@@ -11,6 +11,7 @@
 #include "dl32Math.h"
 #include "dl32Color.h"
 #include "dl32String.h"
+#include "dl32Window.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ typedef dl32GraphicsClass *PTDL32GRAPHICSCLASS;
 typedef LPDIRECT3DDEVICE9 PTD3DDEVICE;
 typedef void (*PTRENDERLOOPPROC)(PTDL32GRAPHICSCLASS);
 
-struct dl32Vertex:dl322DPoint
+struct dl32Vertex:dl32Point2D
 {
 	dl32Color color;
 	int Z;
@@ -43,20 +44,20 @@ struct dl32Vertex:dl322DPoint
 	dl32Vertex();
 	dl32Vertex(float x, float y, dl32Color color,int Z=0);
 
-	static dl322DPoint Baricenter(dl32Vertex PointList[],int PointCount);
+	static dl32Point2D Baricenter(dl32Vertex PointList[],int PointCount);
 };
 
 typedef dl32Vertex *PTDL32VERTEX;
 
 typedef dl32Vertex dl32Triangle[3];
 typedef dl32Vertex dl32VertexTrapezoid[4];
-typedef dl322DPoint dl322DPointTrapezoid[4];
+typedef dl32Point2D dl322DPointTrapezoid[4];
 
 typedef dl32Vertex dl32Pixel;
 
-#define GRAPHICS_GetTrapezoidCenter(x) dl322DPoint((x[0].x+x[1].x+x[2].x+x[3].x)/4,(x[0].y+x[1].y+x[2].y+x[3].y)/4)
+#define GRAPHICS_GetTrapezoidCenter(x) dl32Point2D((x[0].x+x[1].x+x[2].x+x[3].x)/4,(x[0].y+x[1].y+x[2].y+x[3].y)/4)
 
-struct DL32VERTEXTEXTURED:public dl323DPoint
+struct DL32VERTEXTEXTURED:public dl32Point3D
 {
 	float rhw;
 	D3DCOLOR diffuse;
@@ -65,7 +66,7 @@ struct DL32VERTEXTEXTURED:public dl323DPoint
 
 	DL32VERTEXTEXTURED();
 	DL32VERTEXTEXTURED(const dl32Vertex &vertex);
-	DL32VERTEXTEXTURED(dl322DPoint &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
+	DL32VERTEXTEXTURED(dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
 	DL32VERTEXTEXTURED(float x,float y,int z,D3DCOLOR diffuse,D3DCOLOR specular,float tx,float ty);
 };
 
@@ -73,23 +74,23 @@ const DWORD DL32VERTEXTEXTURED_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SP
 typedef DL32VERTEXTEXTURED *PTDL32VERTEXTEXTURED_VERTEX;
 const int DL32VERTEXTEXTURED_SIZE=sizeof(DL32VERTEXTEXTURED);
 
-class dl322DCamera:public dl322DTransformation
+class dl322DCamera:public dl32Transformation2D
 {
 public:
 	dl322DCamera();
 	dl322DCamera(dl323x3Matrix &Transformation);
 
 	void SetPosition(float x=0,float y=0);
-	void SetPosition(dl322DPoint &Position);
-	dl322DPoint GetPosition();
+	void SetPosition(dl32Point2D &Position);
+	dl32Point2D GetPosition();
 
 	void Rotate(float Angle);
-	void Rotate(dl322DPoint Center,float Rotation);
+	void Rotate(dl32Point2D Center,float Rotation);
 	void SetRotation(float Rotation=0);
 	float GetRotation();
 
 	void Traslate(float x,float y);
-	void Traslate(dl322DVector Translation);
+	void Traslate(dl32Vector2D Translation);
 };
 
 struct DL32TEXTURE
@@ -137,7 +138,7 @@ public:
 	dl32Mesh();
 	dl32Mesh(dl32Mesh &Mesh);
 	dl32Mesh(dl32VertexTrapezoid Verts,int width,int height,dl32MeshPatch *Patches=NULL,int SectorsCount=0);
-	dl32Mesh(dl322DAABB Area,int width, int height,dl32MeshPatch *Patches=NULL,int SectorsCount=0);
+	dl32Mesh(dl32AABB2D Area,int width, int height,dl32MeshPatch *Patches=NULL,int SectorsCount=0);
 	~dl32Mesh();
 
 	dl32Mesh& operator=(dl32Mesh &Mesh);
@@ -153,12 +154,12 @@ public:
 	bool IsValid(dl32MeshPatch &patch);
 	bool AddPatch(dl32MeshPatch &patch);
 
-	dl322DPoint GetPatchCenter(dl32MeshPatch &patch);
-	dl322DPoint GetMeshCenter();
+	dl32Point2D GetPatchCenter(dl32MeshPatch &patch);
+	dl32Point2D GetMeshCenter();
 
-	void Transformation(dl322DTransformation Transformation);
-	void Transformation(dl322DTransformation Transformation,dl32MeshPatch &patch);
-	void Transformation(dl322DTransformation Transformation,int PatchIndex);
+	void Transformation(dl32Transformation2D Transformation);
+	void Transformation(dl32Transformation2D Transformation,dl32MeshPatch &patch);
+	void Transformation(dl32Transformation2D Transformation,int PatchIndex);
 
 	void SetColor(dl32Color color,dl32MeshPatch &patch);
 };
@@ -259,7 +260,7 @@ protected:
 	LPDIRECT3D9 _d3d;	
 	LPDIRECT3DDEVICE9 _d3dDevice;
 	D3DPRESENT_PARAMETERS _d3dPresentParameters;
-	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed);
+	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed,dl32ColorDepth colorDepth, bool tripleBuffer, bool vSync, int refreshRate);
 
 	bool _clearScene;
 	bool _textDraw;
@@ -296,6 +297,11 @@ public:
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
 					  throw(dl32Direct3DInitFailedException);
 
+	dl32GraphicsClass(dl32Window* window ,dl32ColorDepth colorDepth=DL32DEFAULTS_GRAPHICSCOLORDEPTH,
+		bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
+		bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
+		throw(dl32Direct3DInitFailedException);
+
 	~dl32GraphicsClass();
 
 	dl322DCamera Camera;
@@ -329,38 +335,38 @@ public:
 
 	bool DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill=true,int Z=0);
 	bool DRAW_Polygon(vector<dl32Vertex> &Verts,bool fill=true,int Z=0) {return DRAW_Polygon(Verts.data(),Verts.size(),fill,Z);};
-	bool DRAW_Polygon(const dl322DPoint Verts[],int Count,dl32Color color,bool fill=true,int Z=0);
-	bool DRAW_Polygon(vector<dl322DPoint> &Verts,dl32Color color,bool fill=true,int Z=0) {return DRAW_Polygon(Verts.data(),Verts.size(),color,fill,Z);};
+	bool DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill=true,int Z=0);
+	bool DRAW_Polygon(vector<dl32Point2D> &Verts,dl32Color color,bool fill=true,int Z=0) {return DRAW_Polygon(Verts.data(),Verts.size(),color,fill,Z);};
 
 	bool DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill=true,int Z=0);
-	bool DRAW_Box(dl322DPoint position,float width,float height,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,width,height,color,fill,Z);};
-	bool DRAW_Box(dl322DPoint position,dl322DVector dimensions,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);};
-	bool DRAW_Box(dl322DAABB box,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);};
+	bool DRAW_Box(dl32Point2D position,float width,float height,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,width,height,color,fill,Z);};
+	bool DRAW_Box(dl32Point2D position,dl32Vector2D dimensions,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);};
+	bool DRAW_Box(dl32AABB2D box,dl32Color color,bool fill=true,int Z=0) {return DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);};
 
 	bool DRAW_Map(int texture,float x,float y,float width, float height,int Z=0);
-	bool DRAW_Map(int texture,dl322DPoint position,float width,float height,int Z=0);
-	bool DRAW_Map(int texture,dl322DPoint position,dl322DVector dimensions,int Z=0);
-	bool DRAW_Map(int texture,dl322DAABB Box,int Z=0);
+	bool DRAW_Map(int texture,dl32Point2D position,float width,float height,int Z=0);
+	bool DRAW_Map(int texture,dl32Point2D position,dl32Vector2D dimensions,int Z=0);
+	bool DRAW_Map(int texture,dl32AABB2D Box,int Z=0);
 
 	bool DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z=0);
 
 	bool DRAW_Mesh(dl32Mesh Mesh,int Z=0);
 
 	bool DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0);
-	bool DRAW_Text(int font,dl322DPoint position,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0){return DRAW_Text(font,position.x,position.y,text,color,align,Z);};
+	bool DRAW_Text(int font,dl32Point2D position,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0){return DRAW_Text(font,position.x,position.y,text,color,align,Z);};
 
 	bool DRAW_Pixel(float x, float y,dl32Color color,int Z=0);
 	bool DRAW_Pixel(dl32Pixel pixel,int Z=0){return DRAW_Pixel(pixel.x,pixel.y,pixel.color,Z);};
 	bool DRAW_Pixels(dl32Pixel pixels[],int count,int Z=0);
-	bool DRAW_Pixels(dl322DPoint pixels[],dl32Color color,int count,int Z=0);
+	bool DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z=0);
 	bool DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z=0);
 
 	bool DRAW_Lines(dl32Vertex points[],int Count,int Z=0);
-	bool DRAW_Lines(dl322DPoint points[],int Count,dl32Color color,int Z=0);
+	bool DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z=0);
 	bool DRAW_Strip(dl32Pen pen,dl32Vertex points[],int Count,int texture=-1,int Z=0);
-	bool DRAW_Strip(dl32Pen pen,dl322DPoint points[],int Count,int texture=-1,int Z=0);
+	bool DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture=-1,int Z=0);
 
-	bool DRAW_Spline(dl322DSpline* spline,dl32Color color,int PointsPerInterval=0,int Z=0);
+	bool DRAW_Spline(dl32Spline* spline,dl32Color color,int PointsPerInterval=0,int Z=0);
 
 	//Texturas:
 	//-----------------------------------------

@@ -1,5 +1,6 @@
 #include "Particle engine.h"
-#include "dl32Windows.h"
+#include "dl32Preprocessor.h"
+#include "dl32Window.h"
 #include "dl32Console.h"
 
 #if DL32DEBUG_DEBUGTEST == 4
@@ -8,11 +9,13 @@ dl32ParticleSystem *engine;
 dl32Window *Window;
 int selected=0;
 
-void PreDrawProc(dl32GraphicsClass *gfx);
+void PreDrawProc();
 
 void OnMouseMove(dl32MouseData MouseData);
 void OnMouseWheel(dl32MouseData MouseData);
 void OnKeyDown(dl32KeyboardData KeyboardData);
+
+dl32GraphicsClass* gfx;
 
 dl32Pixel *screen;
 
@@ -21,19 +24,20 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	Console.Open("dx_lib32 C++ Particle engine test (Debug)");
 
 	Window=new dl32Window("dx_lib32 C++ - Particle engine test",0,0,1440,900);
-	engine=new dl32ParticleSystem(Window->Graphics,1000,Window->GetClientArea());
+	gfx=new dl32GraphicsClass(Window);
+	engine=new dl32ParticleSystem(gfx,10000,Window->GetClientArea());
 	screen=new dl32Pixel[1280*900];
 
 	Window->MouseMove.AddHandler(OnMouseMove);
 	Window->MouseWheel.AddHandler(OnMouseWheel);
 	Window->KeyDown.AddHandler(OnKeyDown);
 
-	engine->AddEmmitter(dl32ParticleEmmitter(3,dl322DPoint(100,100)));
+	engine->AddEmmitter(dl32ParticleEmmitter(3,dl32Point2D(100,100)));
 	//engine->AddEmmitter(dl32ParticleEmmitter(3,dl322DPoint(1000,500)));
 
-	engine->AddHole(dl32ParticleHole(dl322DPoint(400,400),20,10000));
+	engine->AddHole(dl32ParticleHole(dl32Point2D(400,400),20,10000));
 
-	Window->Graphics->DEVICE_SetPreDrawProc(PreDrawProc);
+	Window->Idle.AddHandler(PreDrawProc);
 
 	engine->Init();
 
@@ -44,7 +48,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	delete screen;
 }
 
-void PreDrawProc(dl32GraphicsClass *gfx)
+void PreDrawProc()
 {
 	engine->Frame();
 	Window->SetText("dx_lib32 C++ - Particle engine test (" + dl32String(gfx->FPS()) + " FPS)");

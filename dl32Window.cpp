@@ -1,4 +1,4 @@
-#include "dl32Windows.h"
+#include "dl32Window.h"
 #include <WindowsX.h>
 #include "dl32Console.h"
 
@@ -6,11 +6,26 @@ WNDCLASSEX dl32Window::WndClass;
 vector<dl32Window*> dl32Window::WindowsList=vector<dl32Window*>();
 dl32Window* dl32Window::LastWindowMessaged=NULL;
 bool dl32Window::WindowClassNotRegistered=true;
-bool dl32Window::Messagging=false;
+DEBUG_MessageLoopRunning dl32Window::Messagging;
+bool dl32Window::MessageProcessed=false;
 
 LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	if(msg==WM_CLOSE || msg==WM_DESTROY || msg==WM_QUIT)
+	{
+		if(dl32Window::SearchWindow(hWnd));
+		{
+			dl32Window::LastWindowMessaged->ProcessMessage(hWnd,msg,wParam,lParam);
+		
+			if(dl32Window::LastWindowMessaged->_mustBeDeleted)
+				dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
+		}
+	}	
+
+	if(!dl32Window::MessageProcessed)
+		return DefWindowProc(hWnd, msg, wParam, lParam);
+	else
+		return 0;
 }
 
 dl32Window::dl32Window()
@@ -58,6 +73,8 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
 	LastWindowMessaged=this;
 	hwnd=CreateWindowEx(0,DL32WINDOWCLASS,LPCSTR(Text.c_str()),WS_OVERLAPPEDWINDOW,Left,Top,Width,Height,HWND_DESKTOP,NULL,WndClass.hInstance,NULL);
 
+	_mustBeDeleted=false;
+
 	if(ready)
 	{
 		if(hwnd!=NULL)
@@ -91,15 +108,21 @@ dl32Window::~dl32Window()
 	{
 		ShowWindow(hwnd,SW_HIDE);
 		DestroyWindow(hwnd);
-		dl32Window::WindowsList.erase(WindowsList.begin()+Index);
 		Index=-1;
 
-		if(WindowsList.size()==0)
-		{
-			UnregisterClass(DL32WINDOWCLASS,WndClass.hInstance);
-			WindowClassNotRegistered=true;
-		}
+		ready=false;
 	}
+}
+
+void dl32Window::Cleanup()
+{
+	for(int i=0;i<dl32Window::WindowsList.size();++i)
+		delete dl32Window::WindowsList[i];
+
+	dl32Window::WindowsList.clear();
+
+	UnregisterClass(DL32WINDOWCLASS,WndClass.hInstance);
+	WindowClassNotRegistered=true;
 }
 
 void dl32Window::Start()
@@ -109,19 +132,19 @@ void dl32Window::Start()
 
 void dl32Window::Exit()
 {
-	Messagging=false;
+	Messagging.StopLoop();
 }
 
 bool dl32Window::Started()
 {
-	return Messagging;
+	return Messagging.Running();
 }
 
 void dl32Window::UpdateArea()
 {
 	RECT area;
 	GetWindowRect(hwnd,&area);
-	Area=dl322DAABB(area.left,area.top,area.right-area.left,area.bottom-area.top);
+	Area=dl32AABB2D(area.left,area.top,area.right-area.left,area.bottom-area.top);
 }
 
 inline dl32MouseData dl32Window::GetMouseData(MSG &Message)
@@ -243,17 +266,17 @@ void dl32Window::SetHeight(float Height)
 	MoveWindow(hwnd,Area.Position.y,Area.Position.y,Area.GetWidth(),Height,true);
 }
 
-dl322DAABB dl32Window::GetClientArea()
+dl32AABB2D dl32Window::GetClientArea()
 {
-	return dl322DAABB(0,0,Area.GetWidth(),Area.GetHeight()); //NOTA: Provisional. (Area es el area total de la ventana)
+	return dl32AABB2D(0,0,Area.GetWidth(),Area.GetHeight()); //NOTA: Provisional. (Area es el area total de la ventana)
 }
 
-dl322DAABB dl32Window::GetScreenArea()
+dl32AABB2D dl32Window::GetScreenArea()
 {
 	return Area;
 }
 
-void dl32Window::SetScreenArea(dl322DAABB Area)
+void dl32Window::SetScreenArea(dl32AABB2D Area)
 {
 	this->Area=Area;
 	MoveWindow(hwnd,Area.Position.x,Area.Position.y,Area.GetWidth(),Area.GetHeight(),true);
@@ -271,35 +294,62 @@ void dl32Window::SetText(dl32String Text)
 	SetWindowText(hwnd,Text.c_str());
 }
 
-void dl32Window::MessageLoop()
+void dl32Window::EraseWindow(dl32Window* window)
+{
+	if(window->Index>=0 && window->Index<dl32Window::WindowsList.size())
+	{
+		WindowsList.erase(WindowsList.begin()+window->Index);
+		delete window;	
+
+		for(int i=window->Index;i<WindowsList.size();++i)
+			WindowsList[i]->Index--;
+	}
+}
+
+bool dl32Window::SearchWindow(HWND hwnd)
+{
+	int i=0;
+	LastWindowMessaged=NULL;
+
+	while(i>=0 && i<WindowsList.size())
+	{
+		if(WindowsList[i]->hwnd==hwnd)
+		{
+			LastWindowMessaged=WindowsList[i];
+			i=-1;
+		}
+		else
+			++i;
+	}
+
+	return LastWindowMessaged!=NULL;
+}
+
+void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 {
 	MSG message;
-	Messagging=true;
-	int i;
+	bool PreMessaging = true;
 
-	while(Messagging && WindowsList.size()>0)
+	while(Messagging.Running() && WindowsList.size()>0)
 	{
+		MessageProcessed=false;
 		if(PeekMessage(&message,NULL,0,0,PM_REMOVE))
 		{
-			i=0;
-			while(i>=0 && i<WindowsList.size())
-			{
-				if(WindowsList[i]->hwnd==message.hwnd)
-				{
-					LastWindowMessaged=WindowsList[i];
-					i=-1;
-				}
-				else
-					++i;
-			}
-
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 
-			if(message.message==WM_QUIT)
-				message=message;
+			if(dl32Window::SearchWindow(message.hwnd))
+			{
+				dl32Window::LastWindowMessaged->ProcessMessage(message);
 
-			dl32Window::LastWindowMessaged->ProcessMessage(message);
+				if(dl32Window::LastWindowMessaged->_mustBeDeleted)
+					dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
+			}
+			else
+			{
+				message=message;
+				//if(WindowsList.size()>0) throw(dl32UnhandledWindowMessage(message.message,message.hwnd,"dl32Window::MessageLoop(): The message hwnd not matches with any window in dx_lib32 windows list"));
+			}
 		}
 		else
 		{
@@ -308,11 +358,14 @@ void dl32Window::MessageLoop()
 		}
 	}
 
-	Messagging=false;
+	Cleanup();
 }
 
 void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)
 {
+	bool cancel=false;
+	bool* cancelAdress = &cancel;
+
 	switch(msg)
 	{
 	case WM_MOVE:
@@ -365,14 +418,31 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_QUIT:
-	case WM_DESTROY:
+		Console.WriteLine("PRE-PROCESSED WINDOWS MESSAGE: WM_QUIT",DL32CP_PURPLE,DL32CP_BLACK);
+		break;
 	case WM_CLOSE:
+		Console.WriteLine("PRE-PROCESSED WINDOWS MESSAGE: WM_CLOSE",DL32CP_PURPLE,DL32CP_BLACK);
+
+		Close.RaiseEvent(&cancelAdress);
+		
+		if(!cancel)
+		{
+			this->DeleteWindow();
+		}
+		else
+			this->Show();
+
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+		break;
+	case WM_DESTROY:
+		Console.WriteLine("PRE-PROCESSED WINDOWS MESSAGE: WM_DESTROY",DL32CP_PURPLE,DL32CP_BLACK);
 		break;
 	default:
 		if(Console.Ready()) Console.WriteLine("UNKNOWN MESSAGE: " + dl32String(long(msg),true),DL32CP_WHITE,DL32CP_BLACK);
 		Idle.RaiseEvent();
 	}
+
+	dl32Window::MessageProcessed=true;
 }
 
 inline void dl32Window::ProcessMessage(MSG &Message)

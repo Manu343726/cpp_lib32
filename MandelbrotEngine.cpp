@@ -1,6 +1,6 @@
 #include "MandelbrotEngine.h"
 
-MandelbrotEngine::MandelbrotEngine(dl322DAABB screenarea,float step, int iterations, float limit)
+MandelbrotEngine::MandelbrotEngine(dl32AABB2D screenarea,float step, int iterations, float limit)
 {
 	width=screenarea.GetWidth();
 	height=screenarea.GetHeight();

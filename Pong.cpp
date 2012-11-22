@@ -1,18 +1,20 @@
 #include "dl32Preprocessor.h"
 
 #if DL32DEBUG_DEBUGTEST == 5
-#include "dl32Windows.h"
+#include "dl32Window.h"
+#include "dl32Graphics.h"
 #include "dl32Console.h"
 
 //MACROS: (De ésto no te preocupes, ya te lo explicaré. Cosas de C...
 #define RANDOM_FLOAT(HI,LO) LO + (float)rand()/((float)RAND_MAX/(HI-LO))
 #define RANDOM_INT(min,max) ((rand()%(max-min))+min)
 #define RANDOM_COLOR COLOR_FromRGB(RANDOM(0,255),RANDOM_INT(0,255),RANDOM_INT(0,255))
-#define RANDOM_POINT(minX,minY,maxX,maxY) dl322DPoint(RANDOM_FLOAT(minX,maxX),RANDOM_FLOAT(minY,maxY))
+#define RANDOM_POINT(minX,minY,maxX,maxY) dl32Point2D(RANDOM_FLOAT(minX,maxX),RANDOM_FLOAT(minY,maxY))
 
 //Constantes del juego:
 const float VIDASINICIALES=5;
-const float VELOCIDADINICIAL=10;
+const float VELOCIDADINICIAL=0.1;
+const float AUMENTOVELOCIDAD=0.1;
 const float ANCHOPALETA=30;
 const float ALTOPALETA=300;
 
@@ -25,34 +27,34 @@ Está definida por sus coordenadas y sus dimensiones. Más información: http://mat
 La estructura dl322DAABB representa un AABB bidimensional. Contiene sus coordenadas (Campo público "Position",de tipo dl322DPoint), y sus dimensiones (Privadas).
 Sus coordenadas se corresponden con las de su esquina superior izquierda.
 Métodos principales:
- - float GetWidth(): Obtiene el ancho del AABB
- - float GetHeight(): Obtiene el alto del AABB
- - void SetWidth(float Width): Establece el ancho del AABB
- - void SetHeight(float Height): Establece el alto del AABB
+- float GetWidth(): Obtiene el ancho del AABB
+- float GetHeight(): Obtiene el alto del AABB
+- void SetWidth(float Width): Establece el ancho del AABB
+- void SetHeight(float Height): Establece el alto del AABB
 
- - dl322DPoint GetCenter(): Obtiene el centro del AABB
- - void SetCenter(dl322DPoint Center): Establece el centro del AABB
+- dl322DPoint GetCenter(): Obtiene el centro del AABB
+- void SetCenter(dl322DPoint Center): Establece el centro del AABB
 
- - bool BelongTo(dl322DPoint point): Devuelve verdadero si el punto especificado pertenece al AABB. Devuelve falso en caso contrario.
- - bool Collide(dl322DAABB A1,dl322DAABB A2): Devuelve verdadero si los dos AABBs especificados colisionan. Devuelve falso en caso contrario. (Es una función static, échale un ojo a tu libro)
+- bool BelongTo(dl322DPoint point): Devuelve verdadero si el punto especificado pertenece al AABB. Devuelve falso en caso contrario.
+- bool Collide(dl322DAABB A1,dl322DAABB A2): Devuelve verdadero si los dos AABBs especificados colisionan. Devuelve falso en caso contrario. (Es una función static, échale un ojo a tu libro)
 */
 
 //Definimos una bola como su area y su velocidad
 struct Bola
 {
-	dl322DAABB AABB;//El área de la bola.
-	dl322DVector velocidad;
+	dl32AABB2D AABB;//El área de la bola.
+	dl32Vector2D velocidad;
 };
 
 //Definimos a un jugador como el área de su paleta, su puntuación, sus vidas, y un identificador
 struct Jugador
 {
-	dl322DAABB AABB;
+	dl32AABB2D AABB;
 	int puntuacion;
 	int vidas;
 	int ID;
 	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;};//Constructor predeterminado (o por defecto, como lo llame tu libro)
-	Jugador(dl322DAABB AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;};//Constructor
+	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;};//Constructor
 };
 
 /*
@@ -75,40 +77,42 @@ la función que le indiquemos. Un ejemplo es la función "OnMouseMove()" definida 
 La clase dl32Window representa una ventana. Permite realizar las operaciones más importantes, ya sean cambiar su posición/tamaño, cambiar el título, dibujar en la ventana,etc.
 Además, los objetos de ésta clase contienen varios campos, que se corresponden con los eventos que la ventana puede lanzar.
 Éstos son los más importantes:
- - MouseMove: Se lanza al mover el ratón por la ventana. Tiene como parámetro una estructura del tipo dl32MouseData que contiene los datos del ratón (Coordenadas, boton pulsado, y rotación de la rueda)
- - MouseDown: Se lanza al pulsar un botón del ratón. Tambien tiene un parámetro dl32MouseData
- - MouseUp: Se lanza al soltar un botón del ratón. Tambien tiene un parámetro dl32MouseData
- - KeyDown: Se lanza al pulsar una tecla. Contiene un parámetro del tipo dl32KeyboardData con los datos del teclado (Tecla pulsada, número de pulsaciones anteriores, y si la tecla ya estaba pulsada antes)
- NOTA: Cuando mantienes pulsada una tecla, el sistema avisa de que se ha pulsado la tecla una y otra vez, hasta que se deje de presionar. Ésto provoca que el evento KeyDown se ejecute todo el
- rato mientras tengas pulsada la tecla. Por ello, dl32KeyboardData contiene dos campos, "PreviousPressed" y "RepeatCount", que indican si la tecla ya estaba pulsada antes, y en ese caso el número de pulsaciones capturadas.
- - KeyUp: Se lanza al dejar de presionar una tecla. Aunque tenga un parametro dl32KeyboardData, los campos "PreviousPressed" y "RepeatCount" no guardan información util (No tienen sentido)
+- MouseMove: Se lanza al mover el ratón por la ventana. Tiene como parámetro una estructura del tipo dl32MouseData que contiene los datos del ratón (Coordenadas, boton pulsado, y rotación de la rueda)
+- MouseDown: Se lanza al pulsar un botón del ratón. Tambien tiene un parámetro dl32MouseData
+- MouseUp: Se lanza al soltar un botón del ratón. Tambien tiene un parámetro dl32MouseData
+- KeyDown: Se lanza al pulsar una tecla. Contiene un parámetro del tipo dl32KeyboardData con los datos del teclado (Tecla pulsada, número de pulsaciones anteriores, y si la tecla ya estaba pulsada antes)
+NOTA: Cuando mantienes pulsada una tecla, el sistema avisa de que se ha pulsado la tecla una y otra vez, hasta que se deje de presionar. Ésto provoca que el evento KeyDown se ejecute todo el
+rato mientras tengas pulsada la tecla. Por ello, dl32KeyboardData contiene dos campos, "PreviousPressed" y "RepeatCount", que indican si la tecla ya estaba pulsada antes, y en ese caso el número de pulsaciones capturadas.
+- KeyUp: Se lanza al dejar de presionar una tecla. Aunque tenga un parametro dl32KeyboardData, los campos "PreviousPressed" y "RepeatCount" no guardan información util (No tienen sentido)
 
- Como decía antes, para capturar un evento, es necesario indicar una función (o más) que lo manejen. Para ello se llama a la función "AddHandler()" del evento.
- Por ejemplo: Window->MouseMove.AddHandler(OnMouseMove) Añadimos la función "OnmouseMove()" a la lista de manejadores del evento "MouseMove" de la ventana.
- */
+Como decía antes, para capturar un evento, es necesario indicar una función (o más) que lo manejen. Para ello se llama a la función "AddHandler()" del evento.
+Por ejemplo: Window->MouseMove.AddHandler(OnMouseMove) Añadimos la función "OnmouseMove()" a la lista de manejadores del evento "MouseMove" de la ventana.
+*/
 
 //NOTA: Por el tipo de implementación que hice de la clase dl32Window, no es bueno usar variables (instancias) de la clase, mejor usar punteros:
 dl32Window *Window;
+dl32GraphicsClass *gfx;
 int Fuente;
 Bola bola;
 Jugador Jugador1,Jugador2;
 float velocidadJuego=VELOCIDADINICIAL;
+bool FinJuego=false;
 
 //FUNCIONES DEL JUEGO:
 void InicializarJuego();
 void Puntuar(int Ganador);
 void Reestablecer();
 void IA();
-dl322DVector CalcularRebote(Bola bola,Jugador jugador);
+dl32Vector2D CalcularRebote(Bola bola,Jugador jugador);
 bool TestColisionJugadores();
 
 //MANEJADORES DE EVENTOS:
 void OnMouseMove(dl32MouseData data);
-void OnResize(dl322DAABB area);
-void OnDraw(dl32GraphicsClass *gfx);
+void OnResize(dl32AABB2D area);
+void OnDraw();
 
 //HERRAMIENTAS VARIAS:
-dl32String ToString(dl322DPoint point);//Devuelve la representación en cadena de caracteres de un punto 2D
+dl32String ToString(dl32Point2D point);//Devuelve la representación en cadena de caracteres de un punto 2D
 
 //Éste es el punto de entrada de una aplicación gráfica en Windows:
 INT WINAPI wWinMain(HINSTANCE,HINSTANCE,LPWSTR,INT)
@@ -116,20 +120,32 @@ INT WINAPI wWinMain(HINSTANCE,HINSTANCE,LPWSTR,INT)
 	Console.Open("PONG! (Debug)");
 	Console << "Inicializando...";
 
-	Window=new dl32Window("PONG!",0,0,1440,900);
-	Window->MouseMove.AddHandler(OnMouseMove);
-	Window->Graphics->DEVICE_SetPreDrawProc(OnDraw);//Ésto indica que la función "OnPaint" se ejecutará antes de pintar la ventana
-	
-	//Cargamos la fuente que usaremos para pintar texto:
-	Fuente=Window->Graphics->FONT_LoadSystemFont("Lucilda Console",5,false,false);
+	try
+	{
+		Window=new dl32Window("PONG!",0,0,1440,900);
+		gfx=new dl32GraphicsClass(Window);
 
-	//Inicializamos los elementos del juego (Jugadores y bola):
-	InicializarJuego();
+		Window->MouseMove.AddHandler(OnMouseMove);
+		Window->Idle.AddHandler(OnDraw);
 
-	Console.WriteLine("Listo. Iniciando bucle de mensajes");
-	dl32Window::Start();
+		//Cargamos la fuente que usaremos para pintar texto:
+		Fuente=gfx->FONT_LoadSystemFont("Lucilda Console",5,false,false);
 
-	delete Window;
+		//Inicializamos los elementos del juego (Jugadores y bola):
+		InicializarJuego();
+
+		Console.WriteLine("Listo. Iniciando bucle de mensajes");
+		dl32Window::Start();
+
+		Console.WriteLine("dl32Window MessageLoop stopped count: " + dl32String(dl32Window::DEBUG_GetMessageLoopStoppedCount()));
+		Console.Close();
+	}
+	catch(dl32Direct3DInitFailedException)
+	{
+		MessageBox(Window->GetHwnd(),"ERROR: Direct3D cannot be inititialized","dx_lib32 C++ - Error",MB_ICONERROR);
+	}
+
+	DL32MEMORY_SAFEDELETE(gfx);
 }
 
 void InicializarJuego()
@@ -143,7 +159,7 @@ void InicializarJuego()
 	Jugador2.ID=2;
 }
 
-void OnDraw(dl32GraphicsClass *gfx)
+void OnDraw()
 {
 	if(!TestColisionJugadores())
 	{
@@ -155,68 +171,75 @@ void OnDraw(dl32GraphicsClass *gfx)
 		//Si no sale INSIDE significa que, o está en un borde (y por tanto hay que hacerla rebotar), o se le ha escapado a alguno de los jugadores.
 		//Como excepción está el caso OUTSIDE, que significa que ha habido un error (La bola va tan rapido que salió de la ventana antes de que detectáramos el fallo de un jugador)
 
-		switch(dl322DAABB::Orientation(Window->GetClientArea(),bola.AABB))
+		switch(dl32AABB2D::Orientation(Window->GetClientArea(),bola.AABB))
 		{
-		case dl322DOrientation::NORTH:
+		case dl32Orientation2D::NORTH:
 			//Le damos a la parte vertical de la velocidad sentido positivo, para que vuelva hacia abajo
 			//Recuerdas las leyes de Snell de óptica? Pues eso.
 			bola.velocidad.y=abs(bola.velocidad.y);	Console.WriteLine("REBOTE (SUPERIOR): Velocidad " + ToString(bola.velocidad) + "(Posicion " + ToString(bola.AABB.GetCenter()) + ")",DL32CP_AQUA);
 			break;
-		case dl322DOrientation::SOUTH:
+		case dl32Orientation2D::SOUTH:
 			//Le damos a la parte vertical de la velocidad sentido negativo, para que vuelva hacia abajo
 			//Recuerdas las leyes de Snell de óptica? Pues eso.
 			bola.velocidad.y=-abs(bola.velocidad.y); Console.WriteLine("REBOTE (INFERIOR): Velocidad " + ToString(bola.velocidad) + "(Posicion " + ToString(bola.AABB.GetCenter()) + ")",DL32CP_AQUA);
 			break;
-		case dl322DOrientation::WEST:
-		case dl322DOrientation::NORTHWEST:
-		case dl322DOrientation::SOUTHWEST:
+		case dl32Orientation2D::WEST:
+		case dl32Orientation2D::NORTHWEST:
+		case dl32Orientation2D::SOUTHWEST:
 			Puntuar(2); Console.WriteLine("FALLO DE JUGADOR 1",DL32CP_LIGHTYELLOW);
 			break;
-		case dl322DOrientation::EAST:
-		case dl322DOrientation::NORTHEAST:
-		case dl322DOrientation::SOUTHEAST:
+		case dl32Orientation2D::EAST:
+		case dl32Orientation2D::NORTHEAST:
+		case dl32Orientation2D::SOUTHEAST:
 			Puntuar(1); Console.WriteLine("FALLO DE JUGADOR 2",DL32CP_LIGHTYELLOW);
 			break;
-		case dl322DOrientation::OUTSIDE:
+		case dl32Orientation2D::OUTSIDE:
 			Console.WriteLine("PERDIDA DE BOLA (Pero que cojones a pasado???",DL32CP_LIGHTRED);
 			velocidadJuego=VELOCIDADINICIAL;
 			Reestablecer();
 		}
 	}
 
-	//La nueva posición de la bola es la actual más el vector velocidad:
-	bola.AABB.SetCenter(bola.AABB.GetCenter()+bola.velocidad);
+	if(!FinJuego)
+	{
+		//La nueva posición de la bola es la actual más el vector velocidad:
+		bola.AABB.SetCenter(bola.AABB.GetCenter()+bola.velocidad);
 
-	//Ejecutamos la "IA":
-	IA();
+		//Ejecutamos la "IA":
+		IA();
 
-	//Dibujamos:
-	gfx->DRAW_Box(bola.AABB,DL32COLOR_WHITE,true);
-	gfx->DRAW_Box(Jugador1.AABB,DL32COLOR_WHITE,true);
-	gfx->DRAW_Box(Jugador2.AABB,DL32COLOR_WHITE,true);
+		//Dibujamos:
+		gfx->DRAW_Box(bola.AABB,DL32COLOR_WHITE,true);
+		gfx->DRAW_Box(Jugador1.AABB,DL32COLOR_WHITE,true);
+		gfx->DRAW_Box(Jugador2.AABB,DL32COLOR_WHITE,true);
 
-	//Escribimos las puntuaciones:
-	gfx->DRAW_Text(Fuente,0,0,"Jugador 1: " + dl32String(Jugador1.puntuacion) + " puntos (" + dl32String(Jugador1.vidas) + " vidas)",DL32COLOR_WHITE,DL32TA_UPLEFT);
-	gfx->DRAW_Text(Fuente,Window->GetClientArea().GetWidth(),0,"Jugador 2: " + dl32String(Jugador2.puntuacion) + " puntos (" + dl32String(Jugador2.vidas) + " vidas)",DL32COLOR_WHITE,DL32TA_UPRIGHT);
+		//Escribimos las puntuaciones:
+		gfx->DRAW_Text(Fuente,0,0,"Jugador 1: " + dl32String(Jugador1.puntuacion) + " puntos (" + dl32String(Jugador1.vidas) + " vidas)",DL32COLOR_WHITE,DL32TA_UPLEFT);
+		gfx->DRAW_Text(Fuente,Window->GetClientArea().GetWidth(),0,"Jugador 2: " + dl32String(Jugador2.puntuacion) + " puntos (" + dl32String(Jugador2.vidas) + " vidas)",DL32COLOR_WHITE,DL32TA_UPRIGHT);
 
-	Window->SetText("PONG! (" + dl32String(gfx->FPS()) + ")");
+		Window->SetText("PONG! (" + dl32String(gfx->FPS()) + " FPS)");
+
+		gfx->Frame();
+	}
+	else
+		dl32Window::Exit();//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
 };
 
 bool TestColisionJugadores()
 {
-	if(dl322DAABB::Collide(bola.AABB,Jugador1.AABB))//Si la bola a chocado con la paleta del jugador 1...
+	if(dl32AABB2D::Collide(bola.AABB,Jugador1.AABB))//Si la bola a chocado con la paleta del jugador 1...
 	{
 		Console.Write("COLISION (JUGADOR 1): Vin " + ToString(bola.velocidad),DL32CP_PURPLE);
 		bola.velocidad=CalcularRebote(bola,Jugador1);
-		velocidadJuego++;//Cada vez que la bola rebota en una paleta, aumentamos la velocidad de la bola para darle más gracia
+		velocidadJuego+=AUMENTOVELOCIDAD;//Cada vez que la bola rebota en una paleta, aumentamos la velocidad de la bola para darle más gracia
 		Jugador1.puntuacion++;
 		Console.WriteLine(" Vout " + ToString(bola.velocidad),DL32CP_PURPLE);
 	}
-	else if(dl322DAABB::Collide(bola.AABB,Jugador2.AABB))//Si la bola a chocado con la paleta del jugador 2...
+	else if(dl32AABB2D::Collide(bola.AABB,Jugador2.AABB))//Si la bola a chocado con la paleta del jugador 2...
 	{
 		Console.Write("COLISION (JUGADOR 2): Vin " + ToString(bola.velocidad),DL32CP_PURPLE);
 		bola.velocidad=CalcularRebote(bola,Jugador2);
-		velocidadJuego++;//Cada vez que la bola rebota en una paleta, aumentamos la velocidad de la bola para darle más gracia
+		velocidadJuego+=AUMENTOVELOCIDAD;//Cada vez que la bola rebota en una paleta, aumentamos la velocidad de la bola para darle más gracia
 		Jugador2.puntuacion++;
 		Console.WriteLine(" Vout " + ToString(bola.velocidad),DL32CP_PURPLE);
 	}
@@ -228,9 +251,9 @@ bool TestColisionJugadores()
 
 //Calcula la velocidad de salida de la bola cuando rebota con una paleta:
 //Para poder controlar la bola, dependiendo de con que zona de la paleta le demos, sale con un ángulo diferente (Máximo 45º)
-dl322DVector CalcularRebote(Bola bola,Jugador jugador)
+dl32Vector2D CalcularRebote(Bola bola,Jugador jugador)
 {
-	dl322DVector retorno;
+	dl32Vector2D retorno;
 
 	//Ésto es pura trigonometría. Imagina el caso del jugador1: Hacemos un triángulo rectángulo, un cateto horizontal positivo (retorno.x), otro vertical (retorno.y)
 	//y la hipotenusa es la velocidad. El vertice del ángulo rectángulo en el centro de la paleta.
@@ -242,7 +265,7 @@ dl322DVector CalcularRebote(Bola bola,Jugador jugador)
 	else
 		retorno.x=-ALTOPALETA/2;//Si es el jugador 2, la bola tiene que salir con sentido horizontal negativo para que rebote.
 
-	
+
 	//Recuerda: El cateto vertical es la distancia centro bola-centro paleta:
 	retorno.y=bola.AABB.GetCenter().y-jugador.AABB.GetCenter().y;
 
@@ -257,8 +280,7 @@ void Puntuar(int Ganador)
 		Jugador2.vidas--;
 		if(Jugador2.vidas<=0)
 		{
-			MessageBox(Window->GetHwnd(),"Felicidades Jugador 1, has ganado!","PONG! - Fin del juego",MB_ICONINFORMATION);
-			dl32Window::Exit();//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
+			FinJuego=true;
 		}
 		else
 			Reestablecer();
@@ -268,8 +290,7 @@ void Puntuar(int Ganador)
 		Jugador1.vidas--;
 		if(Jugador1.vidas<=0)
 		{
-			MessageBox(Window->GetHwnd(),"Felicidades Jugador 2, has ganado!","PONG! - Fin del juego",MB_ICONINFORMATION);
-			dl32Window::Exit();//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
+			FinJuego=true;
 		}
 		else
 			Reestablecer();
@@ -283,8 +304,8 @@ void Reestablecer()
 	bola.velocidad.x=-velocidadJuego;
 	bola.velocidad.y=0;
 
-	Jugador1.AABB=dl322DAABB(3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
-	Jugador2.AABB=dl322DAABB(Window->GetClientArea().GetWidth()-ANCHOPALETA-3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
+	Jugador1.AABB=dl32AABB2D(3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
+	Jugador2.AABB=dl32AABB2D(Window->GetClientArea().GetWidth()-ANCHOPALETA-3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
 }
 
 void IA()
@@ -305,7 +326,7 @@ void OnMouseMove(dl32MouseData data)
 	//NOTA: Si DOBLEIA está a true, significa que juega ordenador vs ordenador, por eso no movemos la paleta
 }
 
-dl32String ToString(dl322DPoint point)
+dl32String ToString(dl32Point2D point)
 {
 	return "{X=" + dl32String(point.x) + ",Y=" + dl32String(point.y) + "}";//Uso un casting de float a dl32String (Ya te explicaré como se hace)
 }
