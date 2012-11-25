@@ -78,7 +78,7 @@ class dl322DCamera:public dl32Transformation2D
 {
 public:
 	dl322DCamera();
-	dl322DCamera(dl323x3Matrix &Transformation);
+	dl322DCamera(dl32Matrix3x3 &Transformation);
 
 	void SetPosition(float x=0,float y=0);
 	void SetPosition(dl32Point2D &Position);
@@ -266,6 +266,10 @@ protected:
 	bool _textDraw;
 	D3DCOLOR _backColor;
 	DL32RENDERSTATEDATA _renderData;
+
+	void ResetRenderStates();
+	void ResetBlendingStages();
+	void ResetTextureStages();
 
 	vector<DL32BUFFEROBJECT>* _renderBuffer[DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL+1];
 	vector<int> _renderBufferActiveLevels;

@@ -49,7 +49,7 @@ struct dl32Point2D
 	static dl32Point2D Mul(dl32Point2D Point,float Factor){return dl32Point2D(Point.x*Factor,Point.y*Factor);};
 	static dl32Point2D Div(dl32Point2D Point,float Divisor)throw(dl32DividedByCeroException);
 
-	static dl32Point2D Baricenter(dl32Point2D PointList[],int PointCount,int TypeSize=sizeof(dl32Point2D));
+	static dl32Point2D Baricenter(dl32Point2D PointList[],int PointCount);
 
 	dl32Point2D operator+(dl32Point2D point){return Add(*this,point);};
 	dl32Point2D operator-(){return dl32Point2D(-x,-y);};
@@ -170,6 +170,7 @@ public:
 	dl32AABB2D(float X, float Y, float Width, float Height);
 	dl32AABB2D(dl32Point2D Position, float Width, float Height);
 	dl32AABB2D(dl32Point2D Position, dl32Vector2D Area);
+	dl32AABB2D(dl32Point2D pointCloud[],int pointCount);
 
 	//Getters:
 	float GetWidth();
@@ -190,6 +191,7 @@ public:
 	void SetHeight(float Height);
 	void SetCenter(float X, float Y);
 	void SetCenter(dl32Point2D &Center);
+	void SetArea(dl32Vector2D area);
 
 	bool BelongTo(dl32Point2D &Point){return BelongTo(Point.x,Point.y);};
 	bool BelongTo(float X,float Y){return (X>=Position.x && X<=(Position.x+mWidth) && Y>=Position.y && Y<=(Position.y+mHeight));};
@@ -209,7 +211,7 @@ public:
 ////////////////////////////////
 ///Represents a 3x3 float matrix
 ////////////////////////////////
-typedef struct dl323x3Matrix
+typedef struct dl32Matrix3x3
 {
 	union
 	{
@@ -222,117 +224,156 @@ typedef struct dl323x3Matrix
 		float m[3][3];
 	};
 
-	dl323x3Matrix();
-	dl323x3Matrix(float m11,float m12,float m13,
+	dl32Matrix3x3();
+	dl32Matrix3x3(float m11,float m12,float m13,
 				  float m21,float m22,float m23,
 				  float m31,float m32,float m33);
 
 	float* operator[](int index){return m[index];};
 
 	float GetDeterminant(){return GetDeterminant(*this);};
-	dl323x3Matrix GetInverse(){return GetInverse(*this);};
+	dl32Matrix3x3 GetInverse(){return GetInverse(*this);};
 
-	static dl323x3Matrix& GetUnity()
+	static dl32Matrix3x3& GetUnity()
 	{
-		return dl323x3Matrix(1,0,0,
+		return dl32Matrix3x3(1,0,0,
 							 0,1,0,
 							 0,0,1);
 	};
 	
-	static dl323x3Matrix Add(dl323x3Matrix m1,dl323x3Matrix m2);
-	static dl323x3Matrix Sub(dl323x3Matrix m1,dl323x3Matrix m2);
-	static dl323x3Matrix Mul(dl323x3Matrix m1,dl323x3Matrix m2);
-	static dl323x3Matrix Mul(dl323x3Matrix matrix,float mul);
+	static dl32Matrix3x3 Add(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
+	static dl32Matrix3x3 Sub(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
+	static dl32Matrix3x3 Mul(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
+	static dl32Matrix3x3 Mul(dl32Matrix3x3 matrix,float mul);
 
-	static float GetDeterminant(dl323x3Matrix matrix);
-	static dl323x3Matrix GetInverse(dl323x3Matrix matrix)throw(dl32InvalidMatrixOperationException);
+	static float GetDeterminant(dl32Matrix3x3 matrix);
+	static dl32Matrix3x3 GetInverse(dl32Matrix3x3 matrix)throw(dl32InvalidMatrixOperationException);
 
-	dl323x3Matrix operator+(dl323x3Matrix matrix){return Add(*this,matrix);};
-	dl323x3Matrix operator-(dl323x3Matrix matrix){return Sub(*this,matrix);};
-	dl323x3Matrix operator*(dl323x3Matrix matrix){return Mul(*this,matrix);};
-	dl323x3Matrix operator*(float mul){return Mul(*this,mul);};
+	dl32Matrix3x3 operator+(dl32Matrix3x3 matrix){return Add(*this,matrix);};
+	dl32Matrix3x3 operator-(dl32Matrix3x3 matrix){return Sub(*this,matrix);};
+	dl32Matrix3x3 operator*(dl32Matrix3x3 matrix){return Mul(*this,matrix);};
+	dl32Matrix3x3 operator*(float mul){return Mul(*this,mul);};
 };
 ////////////////////////////////////////////////////
 ///Represents a geometric Transformationation in 2D space
 ////////////////////////////////////////////////////
-class dl32Transformation2D: public dl323x3Matrix
+class dl32Transformation2D: public dl32Matrix3x3
 {
 public:
-	dl32Transformation2D():dl323x3Matrix(){};
-	dl32Transformation2D(dl323x3Matrix &matrix):dl323x3Matrix(matrix){};
+	dl32Transformation2D():dl32Matrix3x3(1,0,0,
+									     0,1,0,
+										 0,0,1){};
+	dl32Transformation2D(dl32Matrix3x3 &matrix):dl32Matrix3x3(matrix){};
 	dl32Transformation2D(float m11,float m12,float m13,
-				    float m21,float m22,float m23,
-				    float m31,float m32,float m33):dl323x3Matrix(m11,m12,m13,
-																 m21,m22,m23,
-																 m31,m32,m33){};
+						 float m21,float m22,float m23,
+						 float m31,float m32,float m33):dl32Matrix3x3(m11,m12,m13,
+																	  m21,m22,m23,
+																	  m31,m32,m33){};
 
 	void Apply(dl32Point2D *Point);
+	void Apply(dl32Point2D pointList[], int pointCount);
 	void Apply(float *x,float *y);
 	dl32Point2D Apply(float x,float y) {return dl32Point2D(m11*x+m12*y+m13,m21*x+m22*y+m23);};
 	dl32Point2D Apply(dl32Point2D point) {return dl32Point2D(m11*point.x+m12*point.y+m13,m21*point.x+m22*point.y+m23);};
 
-	void Concat(dl32Transformation2D Transformation) {*this=dl323x3Matrix::Mul(Transformation,*this);};
-	dl32Transformation2D operator+(dl32Transformation2D &Transformation){return dl32Transformation2D(dl323x3Matrix::Mul(Transformation,*this));};
-	static dl32Transformation2D Concat(dl32Transformation2D &t1,dl32Transformation2D &t2) {return dl32Transformation2D(dl323x3Matrix::Mul(t2,t1));};
+	void Concat(dl32Transformation2D Transformation) {*this=dl32Matrix3x3::Mul(Transformation,*this);};
+	dl32Transformation2D operator+(dl32Transformation2D Transformation){return dl32Transformation2D(dl32Matrix3x3::Mul(Transformation,*this));};
+	static dl32Transformation2D Concat(dl32Transformation2D t1,dl32Transformation2D t2) {return dl32Transformation2D(dl32Matrix3x3::Mul(t2,t1));};
 
-	static dl32Transformation2D& Translation(float dx,float dy)
+	static dl32Transformation2D Translation(float dx,float dy)
 	{
 		return dl32Transformation2D(1,0,dx,
-							   0,1,dy,
-							   0,0,1);
+							        0,1,dy,
+							        0,0,1);
 	};
 
-	static dl32Transformation2D& Translation(dl32Point2D origin,dl32Point2D destiny)
+	static dl32Transformation2D Translation(dl32Point2D origin,dl32Point2D destiny)
 	{
 		return dl32Transformation2D(1,0,destiny.x-origin.x,
-							   0,1,destiny.y-origin.y,
-							   0,0,1);
+							        0,1,destiny.y-origin.y,
+							        0,0,1);
 	};
 	
-	static dl32Transformation2D& Translation(dl32Vector2D Translation)
+	static dl32Transformation2D Translation(dl32Vector2D Translation)
 	{
 		return dl32Transformation2D(1,0,Translation.x,
-							   0,1,Translation.y,
-							   0,0,1);
+							        0,1,Translation.y,
+							        0,0,1);
 	};
 
-	static dl32Transformation2D& Scale(float scale)
+	static dl32Transformation2D Scale(float scale)
 	{
 		return dl32Transformation2D(scale,0,0,
-							   0,scale,0,
-							   0,0,1);
+							        0,scale,0,
+							        0,0,1);
 	};
 
-	static dl32Transformation2D& Scale(float sx,float sy)
+	static dl32Transformation2D Scale(float sx,float sy)
 	{
 			return dl32Transformation2D(sx,0,0,
-								   0,sy,0,
-								   0,0,1);
+								        0,sy,0,
+								        0,0,1);
 	};
 
-	static dl32Transformation2D& Scale(dl32Vector2D scale)
+	static dl32Transformation2D Scale(dl32Vector2D scale)
 	{
 			return dl32Transformation2D(scale.x,0,0,
-								   0,scale.y,0,
-								   0,0,1);
+								        0,scale.y,0,
+								        0,0,1);
 	};
 
-	static dl32Transformation2D& Rotation(float angle)
+	static dl32Transformation2D Rotation(float angle)
 	{
 			return dl32Transformation2D(cos(angle),sin(angle),0,
-								   -sin(angle),cos(angle),0,
-								   0,0,1);
+								        -sin(angle),cos(angle),0,
+								        0,0,1);
 	};
 
-	static dl32Transformation2D& Rotation(float sin_angle,float cos_angle)
+	static dl32Transformation2D Rotation(float sin_angle,float cos_angle)
 	{
 			return dl32Transformation2D(cos_angle,sin_angle,0,
-								   -sin_angle,cos_angle,0,
-								   0,0,1);
+								        -sin_angle,cos_angle,0,
+								        0,0,1);
 	};
 
-	static dl32Transformation2D& Rotation(float center_x,float center_y,float angle);
-	static dl32Transformation2D& Rotation(dl32Point2D center,float angle);
+	static dl32Transformation2D Rotation(float center_x,float center_y,float angle);
+	static dl32Transformation2D Rotation(dl32Point2D center,float angle);
+};
+
+
+class dl32OBB2D
+{
+private:
+	dl32AABB2D _aabb; //ABB in local space
+	dl32Transformation2D _toWorld;
+	dl32Transformation2D _toLocal;
+public:
+	dl32OBB2D(){};//Inicializa a transformaciones unitarias (Ver constructor predeterminado de dl32Transformation2D) La inversa de una unitaria es una unitaria (Gracias Laura) joder que espeso estoy hoy...
+	dl32OBB2D(dl32Point2D center, dl32Vector2D area, dl32Vector2D xAxis);
+	dl32OBB2D(dl32Point2D center, dl32Vector2D area, float rotation);
+	dl32OBB2D(dl32Vector2D area, dl32Transformation2D WorldToLocal);
+	dl32OBB2D(dl32Point2D pointCloud[],int pointCount);
+
+	dl32Transformation2D WorldToLocal(){return _toLocal;};
+	dl32Transformation2D LocalToWorld(){return _toWorld;};
+
+	bool BelongTo(dl32Point2D point){return _aabb.BelongTo(_toLocal.Apply(point));};
+	bool BelongTo(float x, float y){return _aabb.BelongTo(_toLocal.Apply(x,y));};
+
+	static bool Collide(dl32OBB2D O1, dl32OBB2D O2);
+	bool Collide(dl32OBB2D OBB){return Collide(*this,OBB);};
+
+	dl32Point2D GetUpLeftCorner(){return _toWorld.Apply(_aabb.GetUpLeftCorner());};
+	dl32Point2D GetUpRightCorner(){return _toWorld.Apply(_aabb.GetUpRightCorner());};
+	dl32Point2D GetDownRightCorner(){return _toWorld.Apply(_aabb.GetDownRightCorner());};
+	dl32Point2D GetDownLeftCorner(){return _toWorld.Apply(_aabb.GetDownLeftCorner());};
+
+	//dl32Point2D GetUpLeftCorner(){return _aabb.GetUpLeftCorner();};
+	//dl32Point2D GetUpRightCorner(){return _aabb.GetUpRightCorner();};
+	//dl32Point2D GetDownRightCorner(){return _aabb.GetDownRightCorner();};
+	//dl32Point2D GetDownLeftCorner(){return _aabb.GetDownLeftCorner();};
+
+	void ApplyTransformation(dl32Transformation2D transformation);
 };
 
 //Represents a point in 3D space
@@ -391,7 +432,7 @@ struct dl32Vector3D:public dl32Point3D
 ////////////////////////////////
 ///Represents a 4x4 float matrix
 ////////////////////////////////
-struct dl324x4Matrix
+struct dl32Matrix4x4
 {
 	union
 	{
@@ -405,33 +446,33 @@ struct dl324x4Matrix
 		float m[4][4];
 	};
 
-	dl324x4Matrix();
-	dl324x4Matrix(float m11,float m12,float m13,float m14,
+	dl32Matrix4x4();
+	dl32Matrix4x4(float m11,float m12,float m13,float m14,
 				  float m21,float m22,float m23,float m24,
 				  float m31,float m32,float m33,float m34,
 				  float m41,float m42,float m43,float m44);
 
 	float* operator[](int index){return m[index];};
 
-	static dl324x4Matrix GetUnity()
+	static dl32Matrix4x4 GetUnity()
 	{
-		return dl324x4Matrix(1,0,0,0,
+		return dl32Matrix4x4(1,0,0,0,
 							 0,1,0,0,
 							 0,0,1,0,
 							 0,0,0,1);
 	};
 	
-	static dl324x4Matrix Add(dl324x4Matrix m1,dl324x4Matrix m2);
-	static dl324x4Matrix Sub(dl324x4Matrix m1,dl324x4Matrix m2);
-	static dl324x4Matrix Mul(dl324x4Matrix m1,dl324x4Matrix m2);
-	static dl324x4Matrix Mul(dl324x4Matrix matrix,float mul);
+	static dl32Matrix4x4 Add(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
+	static dl32Matrix4x4 Sub(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
+	static dl32Matrix4x4 Mul(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
+	static dl32Matrix4x4 Mul(dl32Matrix4x4 matrix,float mul);
 
-	static float GetDeterminant(dl324x4Matrix &matrix);
+	static float GetDeterminant(dl32Matrix4x4 &matrix);
 
-	dl324x4Matrix operator+(dl324x4Matrix matrix){return Add(*this,matrix);};
-	dl324x4Matrix operator-(dl324x4Matrix matrix){return Sub(*this,matrix);};
-	dl324x4Matrix operator*(dl324x4Matrix matrix){return Mul(*this,matrix);};
-	dl324x4Matrix operator*(float mul){return Mul(*this,mul);};
+	dl32Matrix4x4 operator+(dl32Matrix4x4 matrix){return Add(*this,matrix);};
+	dl32Matrix4x4 operator-(dl32Matrix4x4 matrix){return Sub(*this,matrix);};
+	dl32Matrix4x4 operator*(dl32Matrix4x4 matrix){return Mul(*this,matrix);};
+	dl32Matrix4x4 operator*(float mul){return Mul(*this,mul);};
 };
 
 /////////////////////////////////////////////
@@ -452,7 +493,7 @@ enum dl32CoordinateAxis
 //////////////////////////////////
 ///Represents a unitary quaternion
 //////////////////////////////////
-class dl32Quaternion:public dl324x4Matrix
+class dl32Quaternion:public dl32Matrix4x4
 {
 	friend dl32Quaternion Add(dl32Quaternion Q1,dl32Quaternion Q2);
 	friend dl32Quaternion Sub(dl32Quaternion Q1,dl32Quaternion Q2);
@@ -510,11 +551,11 @@ public:
 ////////////////////////////////////////////////////
 ///Represents a geometric Transformationation in 3D space
 ////////////////////////////////////////////////////
-class dl32Transformation3D:public dl324x4Matrix
+class dl32Transformation3D:public dl32Matrix4x4
 {
 public:
 	dl32Transformation3D();
-	dl32Transformation3D(dl324x4Matrix &matrix);
+	dl32Transformation3D(dl32Matrix4x4 &matrix);
 	dl32Transformation3D(float m11,float m12,float m13,float m14,
 					float m21,float m22,float m23,float m24,
 					float m31,float m32,float m33,float m34,
@@ -525,11 +566,11 @@ public:
 	dl32Point3D Apply(float x,float y,float z) {return dl32Point3D(m11*x+m12*y+m13*z+m14,m21*x+m22*y+m23*z+m24,m31*x+m32*y+m33*z+m34);};
 	dl32Point3D Apply(dl32Point3D point) {return dl32Point3D(m11*point.x+m12*point.y+m13*point.z+m14,m21*point.x+m22*point.y+m23*point.z+m24,m31*point.x+m32*point.y+m33*point.z+m34);};
 
-	void Concat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl324x4Matrix::Mul(Transformation,*this));};
-	void ReverseConcat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl324x4Matrix::Mul(*this,Transformation));};
+	void Concat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(Transformation,*this));};
+	void ReverseConcat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(*this,Transformation));};
 
-	static dl32Transformation3D& Concat(dl32Transformation3D T1,dl32Transformation3D T2){return dl32Transformation3D(dl324x4Matrix::Mul(T2,T1));};
-	static dl32Transformation3D& ReverseConcat(dl32Transformation3D T1, dl32Transformation3D T2){return dl32Transformation3D(dl324x4Matrix::Mul(T1,T2));};
+	static dl32Transformation3D& Concat(dl32Transformation3D T1,dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T2,T1));};
+	static dl32Transformation3D& ReverseConcat(dl32Transformation3D T1, dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T1,T2));};
 
 	static dl32Transformation3D& Translation(float tx,float ty,float tz)
 	{
@@ -572,7 +613,7 @@ public:
 	};
 
 	static dl32Transformation3D& Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl32Transformation3D(rotation);};
-	static dl32Transformation3D& Rotation(dl32Point3D center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl32Transformation3D(dl324x4Matrix::Mul(dl32Transformation3D::Translation(center.x,center.y,center.z),dl324x4Matrix::Mul(dl32Transformation3D(quaternion),dl32Transformation3D::Translation(-center.x,-center.y,-center.z))));};
+	static dl32Transformation3D& Rotation(dl32Point3D center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl32Transformation3D(dl32Matrix4x4::Mul(dl32Transformation3D::Translation(center.x,center.y,center.z),dl32Matrix4x4::Mul(dl32Transformation3D(quaternion),dl32Transformation3D::Translation(-center.x,-center.y,-center.z))));};
 	static dl32Transformation3D& Rotation(dl32Vector3D origin,dl32Vector3D destiny){return Rotation(dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));};
 	static dl32Transformation3D& Rotation(dl32Point3D center,dl32Vector3D origin,dl32Vector3D destiny){return Rotation(center,dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));};
 	static dl32Transformation3D& Rotation(dl32Vector3D axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));};
@@ -623,8 +664,8 @@ public:
 	dl32Matrix();
 	dl32Matrix(dl32Matrix &matrix);
 	dl32Matrix(int rows, int columns);
-	dl32Matrix(dl323x3Matrix &matrix);
-	dl32Matrix(dl324x4Matrix &matrix);
+	dl32Matrix(dl32Matrix3x3 &matrix);
+	dl32Matrix(dl32Matrix4x4 &matrix);
 
 	dl32Matrix& operator=(dl32Matrix &matrix);
 

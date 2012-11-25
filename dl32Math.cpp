@@ -2,6 +2,7 @@
 #include "dl32String.h"
 #include "dl32Console.h"
 #include <cmath>
+#include <cfloat>
 
 inline float Min(float a,float b)
 {
@@ -36,7 +37,7 @@ dl32Point2D dl32Point2D::Div(dl32Point2D Point, float divisor)throw(dl32DividedB
 		throw dl32DividedByCeroException("dl322DPoint::Div(dl322DPoint point,float divisor): 'divisor' must be different from 0");
 }
 
-dl32Point2D dl32Point2D::Baricenter(dl32Point2D PointList[],int PointCount,int TypeSize)
+dl32Point2D dl32Point2D::Baricenter(dl32Point2D PointList[],int PointCount)
 {
 	dl32Point2D Return;
 
@@ -202,6 +203,34 @@ dl32AABB2D::dl32AABB2D(dl32Point2D Position, dl32Vector2D Area)
 	mHeight=DL32MACRO_TONATURAL(Area.y);
 }
 
+dl32AABB2D::dl32AABB2D(dl32Point2D pointCloud[],int pointCount)
+{
+	dl32Point2D cloudCenter = dl32Point2D::Baricenter(pointCloud,pointCount);
+	dl32Point2D north, south, east, west;//Extermos de la nube en coordenadas locales
+
+	north.y=FLT_MIN;
+	south.y=FLT_MAX;
+	west.x=FLT_MIN;
+	east.x=FLT_MAX;
+	
+	for(int i=0;i<pointCount;++i)
+	{
+		if(pointCloud[i].x>east.x)
+			east=pointCloud[i];
+		if(pointCloud[i].x<west.x)
+			west=pointCloud[i];
+		if(pointCloud[i].y>south.y)
+			south=pointCloud[i];
+		if(pointCloud[i].y<north.y)
+			north=pointCloud[i];
+	}
+
+	Position.x=-abs(west.x);
+	Position.y=-abs(north.y);
+	mWidth=abs(west.x)+abs(east.x);
+	mHeight=abs(north.y)+abs(south.y);
+}
+
 float dl32AABB2D::GetWidth()
 {
 	return mWidth;
@@ -220,6 +249,15 @@ void dl32AABB2D::SetWidth(float ValWidth)
 void dl32AABB2D::SetHeight(float ValHeight)
 {
 	if (ValHeight>0) mHeight=ValHeight;
+}
+
+void dl32AABB2D::SetArea(dl32Vector2D area)
+{
+	if(area.x>0 && area.y>0)
+	{
+		mWidth=area.x;
+		mHeight=area.y;
+	}
 }
 
 dl32Point2D dl32AABB2D::GetCenter()
@@ -298,17 +336,123 @@ dl32Orientation2D dl32AABB2D::Orientation(dl32AABB2D Origin, dl32AABB2D AABB)
 	return Retorno;
 }
 
+dl32OBB2D::dl32OBB2D(dl32Point2D center, dl32Vector2D area, float rotation)
+{
+	_aabb.SetArea(area);
+	_toLocal=dl32Transformation2D::Rotation(rotation)+dl32Transformation2D::Translation(center.x,center.y);
+	_toWorld=_toLocal.GetInverse();
+}
+
+dl32OBB2D::dl32OBB2D(dl32Vector2D area, dl32Transformation2D WorldToLocal)
+{
+	_aabb.SetArea(area);
+	_toLocal=WorldToLocal;
+	_toWorld=_toLocal.GetInverse();
+}
+
+dl32OBB2D::dl32OBB2D(dl32Point2D pointCloud[],int pointCount)
+{
+	dl32Point2D cloudCenter = dl32Point2D::Baricenter(pointCloud,pointCount);//Centro de la nube en coordenadas de mundo
+	dl32Vector2D aux;//Vector auxiliar para la búsqueda del eje x local (En coordenadas de mundo)
+	dl32Vector2D xAxis;//El eje x local en coordenadas de mundo
+
+	//FASE 1: Encontrar el eje x óptimo, en coordenadas de mundo, para el OBB que envuelve la nube:
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	/******************************************************************************************************************************************
+	* Éste método consiste en obtener el eje x como el sumatorio de los radiovectores de todos los vértices respecto al baricentro de la nube.*
+	* El problema es que si se suman los radiovectores, seguramente se anulen unos con otros, ya que muchos tendrán sentidos opuestos.		  *
+	* Como lo que nos interesa es la dirección, no el sentido, sumamos los vectores siempre en la misma dirección, es decir, si el sumatorio  *
+	* actual y el radiovector son opuestos, se suma el opuesto del radiovector																  *
+	******************************************************************************************************************************************/
+
+	for(int i=0;i<pointCount;++i)
+	{
+		aux=dl32Vector2D(cloudCenter,pointCloud[i]);//El radiovector actual
+
+		if(aux*xAxis>0)//Producto escalar: Es positivo si ambos vectores apuntan en el mismo sentido
+			xAxis+=aux;
+		else
+			xAxis-=aux;
+	}
+
+	xAxis.Normalize();//Normalizamos el eje x
+
+	//FASE 2: Calculamos las transformaciones:
+	//////////////////////////////////////////
+
+	/***************************************************************************************************************************************
+	* La transformación de local a mundo (_toWorld) es la concatenación de la rotación que lleva el eje x del mundo al eje x local (xAxis) *
+	* más una traslación que lleve el origen de coordenadas al centro de la nube (cloudCenter). 										   *
+	* Por supuesto, la transformación de mundo a local (_toLocal) es la transformación inversa.											   *
+	***************************************************************************************************************************************/
+
+	//NOTA: Como el eje x es unitario, el seno del ángulo de rotación es la coordenada y del eje, y el coseno la coordenada x:
+	_toWorld=dl32Transformation2D::Rotation(dl32Vector2D::Angle(dl32Vector2D(1,0),xAxis))+dl32Transformation2D::Translation(cloudCenter.x,cloudCenter.y);
+	_toLocal=dl32Transformation2D::Translation(-cloudCenter.x,-cloudCenter.y)+dl32Transformation2D::Rotation(-dl32Vector2D::Angle(dl32Vector2D(1,0),xAxis));
+
+	//FASE 3: Generamos el AABB en coordenadas locales:
+	///////////////////////////////////////////////////
+
+	dl32Point2D north, south, east, west;//Extermos de la nube en coordenadas locales
+
+	north.y=cloudCenter.y;
+	south.y=-cloudCenter.y;
+	west.x=cloudCenter.x;
+	east.x=-cloudCenter.x;
+
+	for(int i=0;i<pointCount;++i)
+	{
+		dl32Point2D p=_toLocal.Apply(pointCloud[i]);
+
+		if(p.x>east.x)
+			east=p;
+
+		if(p.x<west.x)
+			west=p;
+
+		if(p.y>south.y)
+			south=p;
+
+		if(p.y<north.y)
+			north=p;
+	}
+
+	_aabb=dl32AABB2D(west.x,north.y,abs(east.x-west.x),abs(south.y-north.y));
+}
+
+void dl32OBB2D::ApplyTransformation(dl32Transformation2D transformation)
+{
+	_toLocal=_toLocal+transformation;//Se encadenan las dos transformaciones (Premultiplica la actual por la transformación)
+	_toWorld=_toWorld*transformation;//Multiplicar la actual por la transformación es equivalente a premultiplicar por la inversa de la transformación
+}
+
+bool dl32OBB2D::Collide(dl32OBB2D O1, dl32OBB2D O2)
+{
+	dl32AABB2D A1,A2;
+
+	/*********************************************************************************************************************************************************
+	* El método consiste en testear la colisión a través de los AABBs correspondientes a los dos OBBs en sus coordenadas locales.                            *
+	* Para ello, se hacen dos test de colisión, uno en las coordenadas locales de un OBB, y otro en las coordenadas locales del otro OBB.                    *
+	* Si ambos test detectan colisión, los OBBs colisionan.																									 *                                                                                                                               *
+	* Es necesario calcular dos AABBs extra: Un AABB correspondiente al AABB del OBB1 en el espacio local del OBB2 (A1), y otro correspondiente al AABB del  *
+	* OBB2 en coordenadas locales de OBB1 (A2).                                                                                                              *
+	*********************************************************************************************************************************************************/
+
+	return true;
+}
+
 //Matrices 2D (Matrices 3x3, Transformationaciones 2D):
 //////////////////////////////////////////////////
 
-dl323x3Matrix::dl323x3Matrix()
+dl32Matrix3x3::dl32Matrix3x3()
 {
 	m11=0;m12=0;m13=0;
 	m21=0;m22=0;m23=0;
 	m31=0;m32=0;m33=0;
 }
 
-dl323x3Matrix::dl323x3Matrix(float m11,float m12,float m13,
+dl32Matrix3x3::dl32Matrix3x3(float m11,float m12,float m13,
 							  float m21,float m22,float m23,
 						      float m31,float m32,float m33)
 {
@@ -317,30 +461,30 @@ dl323x3Matrix::dl323x3Matrix(float m11,float m12,float m13,
 	this->m31=m31;this->m32=m32;this->m33=m33;
 }
 
-dl323x3Matrix Get3x3Unity()
+dl32Matrix3x3 Get3x3Unity()
 {
-	return dl323x3Matrix(1,0,0,
+	return dl32Matrix3x3(1,0,0,
 						 0,1,0,
 						 0,0,1);
 }
 
- dl323x3Matrix dl323x3Matrix::Add(dl323x3Matrix m1,dl323x3Matrix m2)
+ dl32Matrix3x3 dl32Matrix3x3::Add(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
 {
-	return dl323x3Matrix(m1.m11+m2.m11,m1.m12+m1.m12,m1.m13+m2.m13,
+	return dl32Matrix3x3(m1.m11+m2.m11,m1.m12+m1.m12,m1.m13+m2.m13,
 						 m1.m21+m2.m21,m1.m22+m1.m22,m1.m23+m2.m23,
 						 m1.m31+m2.m31,m1.m32+m1.m32,m1.m33+m2.m33);
 }
 
- dl323x3Matrix dl323x3Matrix::Sub(dl323x3Matrix m1,dl323x3Matrix m2)
+ dl32Matrix3x3 dl32Matrix3x3::Sub(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
 {
-	return dl323x3Matrix(m1.m11-m2.m11,m1.m12-m1.m12,m1.m13-m2.m13,
+	return dl32Matrix3x3(m1.m11-m2.m11,m1.m12-m1.m12,m1.m13-m2.m13,
 						 m1.m21-m2.m21,m1.m22-m1.m22,m1.m23-m2.m23,
 						 m1.m31-m2.m31,m1.m32-m1.m32,m1.m33-m2.m33);
 }
 
- dl323x3Matrix dl323x3Matrix::Mul(dl323x3Matrix m1,dl323x3Matrix m2)
+ dl32Matrix3x3 dl32Matrix3x3::Mul(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
 {
-	return dl323x3Matrix(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31,
+	return dl32Matrix3x3(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31,
 						 m1.m11*m2.m12+m1.m12*m2.m22+m1.m13*m2.m32,
 						 m1.m11*m2.m13+m1.m12*m2.m23+m1.m13*m2.m33,
 
@@ -353,29 +497,29 @@ dl323x3Matrix Get3x3Unity()
 						 m1.m31*m2.m13+m1.m32*m2.m23+m1.m33*m2.m33);
 }
 
- dl323x3Matrix dl323x3Matrix::Mul(dl323x3Matrix matrix,float mul)
+ dl32Matrix3x3 dl32Matrix3x3::Mul(dl32Matrix3x3 matrix,float mul)
 {
-	return dl323x3Matrix(matrix.m11*mul,matrix.m12*mul,matrix.m13*mul,
+	return dl32Matrix3x3(matrix.m11*mul,matrix.m12*mul,matrix.m13*mul,
 						 matrix.m21*mul,matrix.m22*mul,matrix.m23*mul,
 						 matrix.m31*mul,matrix.m32*mul,matrix.m33*mul);
 }
 
- float dl323x3Matrix::GetDeterminant(dl323x3Matrix matrix)
+ float dl32Matrix3x3::GetDeterminant(dl32Matrix3x3 matrix)
 {
 	return (matrix.m11*matrix.m22*matrix.m33+
-		   matrix.m12*matrix.m23*matrix.m31+
-		   matrix.m21*matrix.m33*matrix.m13-
-		   matrix.m13*matrix.m22*matrix.m31-
-		   matrix.m12*matrix.m21*matrix.m33-
-		   matrix.m11*matrix.m23*matrix.m32);
+		    matrix.m12*matrix.m23*matrix.m31+
+		    matrix.m21*matrix.m33*matrix.m13-
+		    matrix.m13*matrix.m22*matrix.m31-
+		    matrix.m12*matrix.m21*matrix.m33-
+		    matrix.m11*matrix.m23*matrix.m32);
 }  
- dl323x3Matrix dl323x3Matrix::GetInverse(dl323x3Matrix matrix)throw(dl32InvalidMatrixOperationException)
+ dl32Matrix3x3 dl32Matrix3x3::GetInverse(dl32Matrix3x3 matrix)throw(dl32InvalidMatrixOperationException)
  {
-	 float det=dl323x3Matrix::GetDeterminant(matrix);
+	 float det=dl32Matrix3x3::GetDeterminant(matrix);
 
 	 if(det!=0)
-		 return dl323x3Matrix((matrix.m22*matrix.m33-matrix.m23*matrix.m32)/det,-(matrix.m12*matrix.m33-matrix.m13*matrix.m32)/det,(matrix.m12*matrix.m23-matrix.m13*matrix.m22)/det,
-							  -(matrix.m21*matrix.m33-matrix.m23*matrix.m31)/det,(matrix.m11*matrix.m33-matrix.m13*matrix.m31)/det,-(matrix.m11*matrix.m23-matrix.m13*matrix.m21)/det,
+		 return dl32Matrix3x3((matrix.m22*matrix.m33-matrix.m23*matrix.m32)/det,-(matrix.m12*matrix.m33-matrix.m13*matrix.m32)/det,(matrix.m12*matrix.m23-matrix.m13*matrix.m22)/det,
+							 -(matrix.m21*matrix.m33-matrix.m23*matrix.m31)/det,(matrix.m11*matrix.m33-matrix.m13*matrix.m31)/det,-(matrix.m11*matrix.m23-matrix.m13*matrix.m21)/det,
 							  (matrix.m21*matrix.m32-matrix.m22*matrix.m31)/det,-(matrix.m11*matrix.m32-matrix.m12*matrix.m31)/det,(matrix.m11*matrix.m22-matrix.m12*matrix.m21)/det);
 	 else
 		 throw dl32InvalidMatrixOperationException("dl323x3Matrix::GetInverse(dl323x3Matrix matrix): 'matrix' is no-invertible");
@@ -396,14 +540,20 @@ void dl32Transformation2D::Apply(float *x,float *y)
 	*y=yy;
 }
 
-dl32Transformation2D& dl32Transformation2D::Rotation(float center_x,float center_y,float angle)
+void dl32Transformation2D::Apply(dl32Point2D pointList[], int pointCount)
 {
-		return dl32Transformation2D(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl32Transformation2D::Translation(center_x,center_y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center_x,-center_y)));
+	for(int i=0;i<pointCount;++i)
+		pointList[i]=Apply(pointList[i]);
+}
+
+dl32Transformation2D dl32Transformation2D::Rotation(float center_x,float center_y,float angle)
+{
+		return dl32Transformation2D(dl32Matrix3x3::Mul(dl32Matrix3x3::Mul(dl32Transformation2D::Translation(center_x,center_y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center_x,-center_y)));
 };
 
-dl32Transformation2D& dl32Transformation2D::Rotation(dl32Point2D center,float angle)
+dl32Transformation2D dl32Transformation2D::Rotation(dl32Point2D center,float angle)
 {
-		return dl32Transformation2D(dl323x3Matrix::Mul(dl323x3Matrix::Mul(dl32Transformation2D::Translation(center.x,center.y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center.x,-center.y)));
+		return dl32Transformation2D(dl32Matrix3x3::Mul(dl32Matrix3x3::Mul(dl32Transformation2D::Translation(center.x,center.y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center.x,-center.y)));
 };
 
 dl32Point3D dl32Point3D::Div(dl32Point3D Point,float divisor)throw(dl32DividedByCeroException)
@@ -419,7 +569,7 @@ dl32Point3D dl32Point3D::Div(dl32Point3D Point,float divisor)throw(dl32DividedBy
 		throw dl32DividedByCeroException("dl323DPoint::Div(dl323DPoint point,float divisor): 'divisor' must be different from 0");
 }
 
-dl324x4Matrix::dl324x4Matrix()
+dl32Matrix4x4::dl32Matrix4x4()
 {
 	m11=0;m12=0;m13=0;m14=0;
 	m21=0;m22=0;m23=0;m24=0;
@@ -427,7 +577,7 @@ dl324x4Matrix::dl324x4Matrix()
 	m41=0;m42=0;m43=0;m44=0;
 }
 
-dl324x4Matrix::dl324x4Matrix(float m11,float m12,float m13,float m14,
+dl32Matrix4x4::dl32Matrix4x4(float m11,float m12,float m13,float m14,
 							  float m21,float m22,float m23,float m24,
 							  float m31,float m32,float m33,float m34,
 							  float m41,float m42,float m43,float m44)
@@ -438,25 +588,25 @@ dl324x4Matrix::dl324x4Matrix(float m11,float m12,float m13,float m14,
 	this->m41=m41;this->m42=m42;this->m43=m43;this->m44=m44;
 }
 
-dl324x4Matrix dl324x4Matrix::Add(dl324x4Matrix m1,dl324x4Matrix m2)
+dl32Matrix4x4 dl32Matrix4x4::Add(dl32Matrix4x4 m1,dl32Matrix4x4 m2)
 {
-	return dl324x4Matrix(m1.m11+m2.m11,m1.m12+m2.m12,m1.m13+m2.m13,m1.m14+m2.m14,
+	return dl32Matrix4x4(m1.m11+m2.m11,m1.m12+m2.m12,m1.m13+m2.m13,m1.m14+m2.m14,
 						 m1.m21+m2.m21,m1.m22+m2.m22,m1.m23+m2.m23,m1.m24+m2.m24,
 						 m1.m31+m2.m31,m1.m32+m2.m32,m1.m33+m2.m33,m1.m34+m2.m34,
 						 m1.m41+m2.m41,m1.m42+m2.m42,m1.m43+m2.m43,m1.m44+m2.m44);
 }
 
-dl324x4Matrix dl324x4Matrix::Sub(dl324x4Matrix m1,dl324x4Matrix m2)
+dl32Matrix4x4 dl32Matrix4x4::Sub(dl32Matrix4x4 m1,dl32Matrix4x4 m2)
 {
-	return dl324x4Matrix(m1.m11-m2.m11,m1.m12-m2.m12,m1.m13-m2.m13,m1.m14-m2.m14,
+	return dl32Matrix4x4(m1.m11-m2.m11,m1.m12-m2.m12,m1.m13-m2.m13,m1.m14-m2.m14,
 						 m1.m21-m2.m21,m1.m22-m2.m22,m1.m23-m2.m23,m1.m24-m2.m24,
 						 m1.m31-m2.m31,m1.m32-m2.m32,m1.m33-m2.m33,m1.m34-m2.m34,
 						 m1.m41-m2.m41,m1.m42-m2.m42,m1.m43-m2.m43,m1.m44-m2.m44);
 }
 
- dl324x4Matrix dl324x4Matrix::Mul(dl324x4Matrix m1,dl324x4Matrix m2)
+ dl32Matrix4x4 dl32Matrix4x4::Mul(dl32Matrix4x4 m1,dl32Matrix4x4 m2)
 {
-	return dl324x4Matrix(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31+m1.m14*m2.m41,
+	return dl32Matrix4x4(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31+m1.m14*m2.m41,
 						 m1.m11*m2.m12+m1.m12*m2.m22+m1.m13*m2.m32+m1.m14*m2.m42,
 						 m1.m11*m2.m13+m1.m12*m2.m23+m1.m13*m2.m33+m1.m14*m2.m43,
 						 m1.m11*m2.m14+m1.m12*m2.m24+m1.m13*m2.m34+m1.m14*m2.m44,
@@ -477,15 +627,15 @@ dl324x4Matrix dl324x4Matrix::Sub(dl324x4Matrix m1,dl324x4Matrix m2)
 						 m1.m41*m2.m14+m1.m42*m2.m24+m1.m43*m2.m34+m1.m44*m2.m44);
 }
 
-dl324x4Matrix dl324x4Matrix::Mul(dl324x4Matrix matrix,float factor)
+dl32Matrix4x4 dl32Matrix4x4::Mul(dl32Matrix4x4 matrix,float factor)
 {
-	return dl324x4Matrix(matrix.m11*factor,matrix.m12*factor,matrix.m13*factor,matrix.m14*factor,
+	return dl32Matrix4x4(matrix.m11*factor,matrix.m12*factor,matrix.m13*factor,matrix.m14*factor,
 						 matrix.m21*factor,matrix.m22*factor,matrix.m23*factor,matrix.m24*factor,
 						 matrix.m31*factor,matrix.m32*factor,matrix.m33*factor,matrix.m34*factor,
 						 matrix.m41*factor,matrix.m42*factor,matrix.m43*factor,matrix.m44*factor);
 }
 
-float dl324x4Matrix::GetDeterminant(dl324x4Matrix &matrix)
+float dl32Matrix4x4::GetDeterminant(dl32Matrix4x4 &matrix)
 {
 	return (matrix.m11*(matrix.m22*(matrix.m33*matrix.m44-matrix.m34*matrix.m43)-matrix.m23*(matrix.m32*matrix.m44-matrix.m34*matrix.m42)+matrix.m24*(matrix.m32*matrix.m43-matrix.m33*matrix.m42))-
 			matrix.m12*(matrix.m21*(matrix.m33*matrix.m44-matrix.m34*matrix.m43)-matrix.m23*(matrix.m31*matrix.m44-matrix.m34*matrix.m41)+matrix.m24*(matrix.m31*matrix.m43-matrix.m33*matrix.m41))+
@@ -583,7 +733,7 @@ dl32Transformation3D::dl32Transformation3D(float m11,float m12,float m13,float m
 	this->m41=m11;this->m42=m12;this->m43=m13;this->m44=m14;
 }
 
-dl32Transformation3D::dl32Transformation3D(dl324x4Matrix &matrix)
+dl32Transformation3D::dl32Transformation3D(dl32Matrix4x4 &matrix)
 {
 	this->m11=matrix.m11;this->m12=matrix.m12;this->m13=matrix.m13;this->m14=matrix.m14;
 	this->m21=matrix.m21;this->m22=matrix.m22;this->m23=matrix.m23;this->m24=matrix.m24;
@@ -687,7 +837,7 @@ dl32Matrix& dl32Matrix::operator=(dl32Matrix &matrix)
 	return *this;
 }
 
-dl32Matrix::dl32Matrix(dl323x3Matrix &Matrix)
+dl32Matrix::dl32Matrix(dl32Matrix3x3 &Matrix)
 {
 	rows=3;
 	columns=3;
@@ -712,7 +862,7 @@ dl32Matrix::dl32Matrix(dl323x3Matrix &Matrix)
 	Array[2][2]=Matrix.m[2][2];
 }
 
-dl32Matrix::dl32Matrix(dl324x4Matrix &Matrix)
+dl32Matrix::dl32Matrix(dl32Matrix4x4 &Matrix)
 {
 	rows=3;
 	columns=3;

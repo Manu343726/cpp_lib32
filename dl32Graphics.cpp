@@ -126,7 +126,7 @@ dl322DCamera::dl322DCamera()
 	m31=0;m32=0;m33=1;
 }
 
-dl322DCamera::dl322DCamera(dl323x3Matrix &Transformation)
+dl322DCamera::dl322DCamera(dl32Matrix3x3 &Transformation)
 {
 	m11=Transformation.m11;m12=Transformation.m12;m13=Transformation.m13;
 	m21=Transformation.m21;m22=Transformation.m22;m23=Transformation.m23;
@@ -135,22 +135,22 @@ dl322DCamera::dl322DCamera(dl323x3Matrix &Transformation)
 
 void dl322DCamera::Rotate(float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl32Transformation2D::Rotation(Rotation),*this);
+	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Rotation),*this);
 }
 
 void dl322DCamera::Rotate(dl32Point2D Center,float Rotation)
 {
-	*this=dl323x3Matrix::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
+	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
 }
 
 void dl322DCamera::Traslate(float x,float y)
 {
-	*this=dl323x3Matrix::Mul(dl32Transformation2D::Translation(-x,-y),*this);
+	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-x,-y),*this);
 }
 
 void dl322DCamera::Traslate(dl32Vector2D Translation)
 {
-	*this=dl323x3Matrix::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
+	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
 }
 
 void dl322DCamera::SetPosition(float x, float y)
@@ -413,6 +413,43 @@ DL32BUFFEROBJECT::DL32BUFFEROBJECT(int StartIndex,int VertexCount,int PrimitiveC
 	this->PrimitiveType=PrimitiveType;
 }
 
+void dl32GraphicsClass::ResetRenderStates()
+{
+	_d3dDevice->SetFVF(DL32VERTEXTEXTURED_FVF);
+
+	_d3dDevice->SetRenderState(D3DRS_LIGHTING, 0);
+	_d3dDevice->SetRenderState(D3DRS_SPECULARENABLE, 1);
+	_d3dDevice->SetRenderState(D3DRS_CULLMODE, 0);
+
+	_d3dDevice->SetRenderState(D3DRS_LASTPIXEL, 1);
+
+	_d3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, 1);
+	_d3dDevice->SetRenderState(D3DRS_ALPHATESTENABLE, 1);
+	_d3dDevice->SetRenderState(D3DRS_ALPHAREF, 1);
+	_d3dDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
+	_d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS,1);
+}
+
+void dl32GraphicsClass::ResetBlendingStages()
+{
+	_d3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	_d3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+}
+
+void dl32GraphicsClass::ResetTextureStages()
+{
+	_d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	_d3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_CURRENT);
+	_d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+	_d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	_d3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+	_d3dDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+	_d3dDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	_d3dDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
+}
+
 bool dl32GraphicsClass::Frame()
 {
 	if(!_working) return false;
@@ -428,6 +465,9 @@ bool dl32GraphicsClass::Frame()
 	if(FillD3DBuffers() || _textDraw)
 	{
 		ActiveLevelsSize=_renderBufferActiveLevels.size();
+
+		ResetTextureStages();
+		ResetBlendingStages();
 
 		for(int i=0;i<ActiveLevelsSize;++i)
 		{
@@ -510,32 +550,41 @@ bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool W
 	else
 		_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_IMMEDIATE;
 
-	_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
 	_d3dPresentParameters.Windowed=BOOL(Windowed);
 	_d3dPresentParameters.hDeviceWindow=hwnd;
+	_d3dPresentParameters.BackBufferFormat=displayMode.Format;
+	_d3dPresentParameters.BackBufferWidth=Width;
+	_d3dPresentParameters.BackBufferHeight=Height;
 
 	if(Windowed)
 	{
-		_d3dPresentParameters.BackBufferFormat=displayMode.Format;
-		_d3dPresentParameters.BackBufferWidth=Width;
-		_d3dPresentParameters.BackBufferHeight=Height;
+		_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_DEFAULT;
+
+		if(vSync)
+			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_FLIP;
+		else
+			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_COPY;
 	}
 	else
 	{
-		if(colorDepth==DL32CD_16BIT)
-			_d3dPresentParameters.BackBufferFormat=D3DFMT_R5G6B5;
+		if(vSync)
+		{
+			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_FLIP;
+			_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_DEFAULT;
+		}
 		else
-			_d3dPresentParameters.BackBufferFormat=D3DFMT_X8B8G8R8;
+		{
+			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
+			_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_IMMEDIATE;
+		}
 
 		_d3dPresentParameters.BackBufferCount=2+abs(tripleBuffer);
-		_d3dPresentParameters.BackBufferWidth=displayMode.Width;
-		_d3dPresentParameters.BackBufferHeight=displayMode.Height;
 	}
 
 	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)) || 
 	   !FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
 	{
-		_d3dDevice->SetRenderState(D3DRS_CULLMODE,D3DCULL_NONE);
+		ResetRenderStates();
 		return true;
 	}
 	else

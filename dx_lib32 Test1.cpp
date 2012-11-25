@@ -36,7 +36,7 @@ void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int Win
 const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
-const int POLYCOUNT=100;//Total de poligonos/sprites
+const int POLYCOUNT=10;//Total de poligonos/sprites
 const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
 const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
@@ -81,7 +81,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	try
 	{
 		Window = new dl32Window("dx_lib32 C++",0,0,WINDOWWIDTH,WINDOWHEIGHT);
-		gfx = new dl32GraphicsClass(Window);
+		gfx = new dl32GraphicsClass(Window,DL32CD_32BIT);
 
 		Console << "Loading texture: '" << dl32String(FILE1PATH) << "'" << dl32endl;
 		Texture1=gfx->MAP_Load(FILE1PATH,0,false,true);//Cargamos la imagen
@@ -142,27 +142,27 @@ void Render()
 		Alfa+=(PI/100);
 		for(int i=0;i<POLYCOUNT;++i)
 		{
-			//Rotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
-			//InverseRotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),-Alfa); //Rotacion de -alfa grados alrededor del centro de la textura
+			Rotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
+			InverseRotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),-Alfa); //Rotacion de -alfa grados alrededor del centro de la textura
 
-			////Aplicamos la rotaciï¿½n al sprite: (Ver NOTA al principio si no se entiende la sintaxis)
-			//Rotation.Apply(&Sprites[i][0]);
-			//Rotation.Apply(&Sprites[i][1]);
-			//Rotation.Apply(&Sprites[i][2]);
-			//Rotation.Apply(&Sprites[i][3]);
+			//Aplicamos la rotaciï¿½n al sprite: (Ver NOTA al principio si no se entiende la sintaxis)
+			Rotation.Apply(&Sprites[i][0]);
+			Rotation.Apply(&Sprites[i][1]);
+			Rotation.Apply(&Sprites[i][2]);
+			Rotation.Apply(&Sprites[i][3]);
 
-			////Dibujamos el sprite:
-			//gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
+			//Dibujamos el sprite:
+			gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
 
-			////Devolvemos el sprite a su posición original: (Ver NOTA al principio si no se entiende la sintaxis)
-			//InverseRotation.Apply(&Sprites[i][0]);
-			//InverseRotation.Apply(&Sprites[i][1]);
-			//InverseRotation.Apply(&Sprites[i][2]);
-			//InverseRotation.Apply(&Sprites[i][3]);
+			//Devolvemos el sprite a su posición original: (Ver NOTA al principio si no se entiende la sintaxis)
+			InverseRotation.Apply(&Sprites[i][0]);
+			InverseRotation.Apply(&Sprites[i][1]);
+			InverseRotation.Apply(&Sprites[i][2]);
+			InverseRotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el poligono actual:
 			DrawPolygon(gfx,PDATA[i],Alfa);
-			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 		}
 	}
 	else
@@ -171,15 +171,15 @@ void Render()
 		Console.Write("Recalculating sprites/polygons...");
 		for(int i=0;i<POLYCOUNT;++i)
 		{
-			//GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
-			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,10,100,10);
+			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
+			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
 			texts[i].color=RANDOM_COLOR;
 			texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
 			texts[i].text="dx_lib32 C++ !!!";
 
 			//Por supuesto, dibujamos. Si no, hay un ciclo de renderizado sin dibujar, lo que provoca parpadeos en la imagen
-			//gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
-			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
+			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 			DrawPolygon(gfx,PDATA[i],Alfa);
 		}
 
@@ -256,6 +256,17 @@ void DrawPolygon(PTDL32GRAPHICSCLASS gfx,POLYGONDATA PolygonData,float Angle)
 		//Dibujamos el poligono:
 		gfx->DRAW_Polygon(Polygon,PolygonData.Count,PolygonData.Color,true,PolygonData.Z);
 
+
+		//dl322DPointTrapezoid obbVertex;
+		//dl32OBB2D obb=dl32OBB2D(Polygon,PolygonData.Count);
+
+		//obbVertex[0]=obb.GetUpLeftCorner();
+		//obbVertex[1]=obb.GetUpRightCorner();
+		//obbVertex[2]=obb.GetDownRightCorner();
+		//obbVertex[3]=obb.GetDownLeftCorner();
+
+		//gfx->DRAW_Polygon(obbVertex,4,DL32COLOR_GREEN,false);
+
 		//Eliminamos el poligono:
 		delete Polygon;
 	}
@@ -266,7 +277,7 @@ POLYGONDATA GetRandomPolygon(int WindowWidth,int WindowHeight,int MinRadius,int 
 	POLYGONDATA RetVal;
 	RetVal.Center=RANDOM_POINT(0,0,WindowWidth,WindowHeight);
 	RetVal.Color=RANDOM_COLOR;
-	RetVal.Radius=RANDOM(MinRadius,MaxRadius);
+	RetVal.Radius=RANDOM(MinRadius,MaxRadius+1);
 	RetVal.Count=RANDOM(3,MaxCount);
 	RetVal.Z=Z;
 
