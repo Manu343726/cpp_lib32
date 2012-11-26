@@ -556,33 +556,16 @@ bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool W
 	_d3dPresentParameters.BackBufferWidth=Width;
 	_d3dPresentParameters.BackBufferHeight=Height;
 
-	if(Windowed)
-	{
-		_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_DEFAULT;
 
-		if(vSync)
-			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_FLIP;
-		else
-			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_COPY;
-	}
-	else
-	{
-		if(vSync)
-		{
-			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_FLIP;
-			_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_DEFAULT;
-		}
-		else
-		{
-			_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
-			_d3dPresentParameters.PresentationInterval=D3DPRESENT_INTERVAL_IMMEDIATE;
-		}
+	_d3dPresentParameters.SwapEffect=D3DSWAPEFFECT_DISCARD;
+	_d3dPresentParameters.Windowed=BOOL(Windowed);
+	_d3dPresentParameters.hDeviceWindow=hwnd;
 
+	if(!Windowed)
 		_d3dPresentParameters.BackBufferCount=2+abs(tripleBuffer);
-	}
 
 	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)) || 
-	   !FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
+		!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
 	{
 		ResetRenderStates();
 		return true;
