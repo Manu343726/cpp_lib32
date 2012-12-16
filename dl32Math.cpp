@@ -75,8 +75,8 @@ dl32Line2D::dl32Line2D(float A,float B,float C)
 	a=A;
 	b=B;
 	c=C;
-	direction.x=-b;
-	direction.y=a;
+	direction.x=b;
+	direction.y=-a;
 	position.x=0;
 	position.y=-c/B;
 }
@@ -91,8 +91,8 @@ dl32Line2D::dl32Line2D(dl32Point2D P1,dl32Point2D P2)
 	//Ax+By+C=0
 	//A*Px+B*Py+C=0 (Si P pertenece a la recta)
 	//Por tanto:
-	a=direction.y;
-	b=-direction.x;
+	a=-direction.y;
+	b=direction.x;
 	c=-(position.x*a+position.x*b);
 }
 
@@ -100,8 +100,8 @@ dl32Line2D::dl32Line2D(dl32Point2D Position,dl32Vector2D Direction)
 {
 	position=Position;
 	direction=Direction.GetUnitary();
-	a=direction.y;
-	b=-direction.x;
+	a=-direction.y;
+	b=direction.x;
 	//Ecuacion general: 
 	//Ax+By+C=0
 	//A*Px+B*Py+C=0 (Si P pertenece a la recta)
@@ -133,43 +133,50 @@ dl32Line2D::dl32Line2D(dl32Point2D Position,float Slope)
 	a=Slope/mod;
 	b=-1/mod;
 	c=(position.y-Slope*position.x)/mod;
-	direction.x=-b;
-	direction.y=a;
+	direction.x=b;
+	direction.y=-a;
 }
 
-dl32Point2D dl32Line2D::GetPoint(float x)
+dl32Point2D dl32Line2D::Intersection(dl32Line2D L1, dl32Line2D L2,bool externalParallelCheck) throw(dl32InfiniteIntersectionException)
 {
-	return dl32Point2D(x,(a*x+c)/-b);
+	if(externalParallelCheck || !dl32Line2D::AreParallel(L1,L2))
+	{
+		//Resolución del sistema de ecuaciones formado por las ecuaciones parametricas de las rectas:
+
+		dl32Point2D P1,P2;
+		dl32Vector2D V1,V2;
+
+		P1 = L1.GetPosition();
+		V1 = L1.GetDirection();
+		P2 = L2.GetPosition();
+		V2 = L2.GetDirection();
+
+		float e1[] = {V1.x,-V2.x,P2.x-P1.x};
+		float e2[] = {V1.y,-V2.y,P2.y-P1.y};
+		float* ecuations[] = {e1,e2};
+		float lambda,omega;
+
+		dl32EcuationsSystem system(ecuations,2,2);
+
+		if(system.GetSolution().Type == SCD)
+		{
+			lambda = system.GetSolution().Solutions[0];
+			omega = system.GetSolution().Solutions[1];
+		
+			return L1.GetPointByParameter(lambda);
+		}
+		else
+			throw dl32InfiniteIntersectionException("dl32Line2D::Intersection(dl32Line2D L1, dl32Line2D L2): The lines are parallel. (");
+	}
+	else
+		throw dl32InfiniteIntersectionException("dl32Line2D::Intersection(dl32Line2D L1, dl32Line2D L2): The lines are parallel");
 }
 
-dl32Point2D dl32Line2D::GetPointByParameter(float param)
+dl32Segment2D::dl32Segment2D(dl32Point2D begin, dl32Point2D end)
 {
-	return dl32Point2D(position.x+direction.x*param,position.y+direction.y*param);
-}
-
-bool dl32Line2D::BelongTo(float x, float y)
-{
-	return a*x+b*y+c==0;
-}
-
-float dl32Line2D::GetRelativePosition(float x, float y)
-{
-	return a*x+b*y+c;
-}
-
-dl32Point2D dl32Line2D::GetPosition()
-{
-	return position;
-}
-
-dl32Vector2D dl32Line2D::GetDirection()
-{
-	return direction;
-}
-
-float dl32Line2D::GetSlope()
-{
-	return -b/a;
+	_begin=begin;
+	_end=end;
+	_line=dl32Line2D(_begin,_end);
 }
 
 // dl322DAABB: //////////////////////////////////////////////
@@ -208,10 +215,10 @@ dl32AABB2D::dl32AABB2D(dl32Point2D pointCloud[],int pointCount)
 	dl32Point2D cloudCenter = dl32Point2D::Baricenter(pointCloud,pointCount);
 	dl32Point2D north, south, east, west;//Extermos de la nube en coordenadas locales
 
-	north.y=FLT_MIN;
-	south.y=FLT_MAX;
-	west.x=FLT_MIN;
-	east.x=FLT_MAX;
+	north.y=pointCloud[0].y;
+	south.y=pointCloud[0].y;
+	west.x=pointCloud[0].x;
+	east.x=pointCloud[0].x;
 	
 	for(int i=0;i<pointCount;++i)
 	{
@@ -225,10 +232,10 @@ dl32AABB2D::dl32AABB2D(dl32Point2D pointCloud[],int pointCount)
 			north=pointCloud[i];
 	}
 
-	Position.x=-abs(west.x);
-	Position.y=-abs(north.y);
-	mWidth=abs(west.x)+abs(east.x);
-	mHeight=abs(north.y)+abs(south.y);
+	Position.x=west.x;
+	Position.y=north.y;
+	mWidth=abs(west.x+east.x);
+	mHeight=abs(north.y+south.y);
 }
 
 float dl32AABB2D::GetWidth()
@@ -430,6 +437,7 @@ void dl32OBB2D::ApplyTransformation(dl32Transformation2D transformation)
 bool dl32OBB2D::Collide(dl32OBB2D O1, dl32OBB2D O2)
 {
 	dl32AABB2D A1,A2;
+	dl32Point2D O1corners[4], O2corners[4];
 
 	/*********************************************************************************************************************************************************
 	* El método consiste en testear la colisión a través de los AABBs correspondientes a los dos OBBs en sus coordenadas locales.                            *
@@ -439,7 +447,28 @@ bool dl32OBB2D::Collide(dl32OBB2D O1, dl32OBB2D O2)
 	* OBB2 en coordenadas locales de OBB1 (A2).                                                                                                              *
 	*********************************************************************************************************************************************************/
 
-	return true;
+	//Coordenadas de las esquinas del AABB de O1 en coordenadas de O2:
+	O1corners[0]=O2.WorldToLocal().Apply(O1.GetUpLeftCorner());
+	O1corners[1]=O2.WorldToLocal().Apply(O1.GetUpRightCorner());
+	O1corners[2]=O2.WorldToLocal().Apply(O1.GetDownRightCorner());
+	O1corners[3]=O2.WorldToLocal().Apply(O1.GetDownLeftCorner());
+
+	A1=dl32AABB2D(O1corners,4);
+
+	if(O2.Collide(A1))
+	{
+		//Coordenadas de las esquinas del AABB de O2 en coordenadas de O1:
+		O2corners[0]=O1.WorldToLocal().Apply(O2.GetUpLeftCorner());
+		O2corners[1]=O1.WorldToLocal().Apply(O2.GetUpRightCorner());
+		O2corners[2]=O1.WorldToLocal().Apply(O2.GetDownRightCorner());
+		O2corners[3]=O1.WorldToLocal().Apply(O2.GetDownLeftCorner());
+
+		A2=dl32AABB2D(O2corners,4);
+
+		return O1.Collide(A2);
+	}
+	else
+		return false;
 }
 
 //Matrices 2D (Matrices 3x3, Transformationaciones 2D):
@@ -728,9 +757,9 @@ dl32Transformation3D::dl32Transformation3D(float m11,float m12,float m13,float m
 							  float m41,float m42,float m43,float m44)
 {
 	this->m11=m11;this->m12=m12;this->m13=m13;this->m14=m14;
-	this->m21=m11;this->m22=m12;this->m23=m13;this->m24=m14;
-	this->m31=m11;this->m32=m12;this->m33=m13;this->m34=m14;
-	this->m41=m11;this->m42=m12;this->m43=m13;this->m44=m14;
+	this->m21=m21;this->m22=m22;this->m23=m23;this->m24=m24;
+	this->m31=m31;this->m32=m32;this->m33=m33;this->m34=m34;
+	this->m41=m41;this->m42=m42;this->m43=m43;this->m44=m44;
 }
 
 dl32Transformation3D::dl32Transformation3D(dl32Matrix4x4 &matrix)
@@ -1416,8 +1445,6 @@ void dl32Spline::Compute()
 	dl32EcuationsSystem *X,*Y;
 	dl32SystemSolution SolX,SolY;
 	dl32LinearEcuationArray ArrayX,ArrayY;
-	float PreOmegaX,PreDeltaX,OmegaX,DeltaX;
-	float PreOmegaY,PreDeltaY,OmegaY,DeltaY;
 
 	//FASE 1: Rellenamos el sistema de ecuaciones para calcular las derivadas:
 
@@ -1485,7 +1512,19 @@ void dl32Spline::Compute()
 		intervalsY[i].c=3*(nodes[i+1].y-nodes[i].y)-SolY.Solutions[i+1]-2*SolY.Solutions[i];
 		intervalsY[i].d=2*(nodes[i].y-nodes[i+1].y)+SolY.Solutions[i]+SolY.Solutions[i+1];
 
-		Console << "X(" << dl32String(i) << "): a=" << intervalsX[i].a << dl32endl;
+		#if DL32DEBUG_SPLINE_PROMPTINTERVALDATA
+			Console << "dl32Spline - Intervalo " << dl32String(i+1) << " de " << dl32String(nodecount-1) << ":" << dl32endl;
+			Console << " ==> X:" << dl32endl;
+			Console << "	a (Termino independiente): " << intervalsX[i].a << dl32endl;
+			Console << "	b (Termino de X): " << intervalsX[i].b << dl32endl;
+			Console << "	c (Termino de X^2): " << intervalsX[i].c << dl32endl;
+			Console << "	d (Termino de X^3): " << intervalsX[i].d << dl32endl;
+			Console << " ==> Y:" << dl32endl;
+			Console << "	a (Termino independiente): " << intervalsY[i].a << dl32endl;
+			Console << "	b (Termino de Y): " << intervalsY[i].b << dl32endl;
+			Console << "	c (Termino de Y^2): " << intervalsY[i].c << dl32endl;
+			Console << "	d (Termino de Y^3): " << intervalsY[i].d << dl32endl;
+		#endif
 	}
 
 	delete ArrayX;

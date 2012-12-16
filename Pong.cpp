@@ -1,6 +1,6 @@
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 
-#if DL32DEBUG_DEBUGTEST == 5
+#if DL32TESTS_CURRENTTEST == DL32TEST_LAURA_PONG_PSEUDOPLAYABLE
 #include "dl32Window.h"
 #include "dl32Graphics.h"
 #include "dl32Console.h"
@@ -13,8 +13,8 @@
 
 //Constantes del juego:
 const float VIDASINICIALES=5;
-const float VELOCIDADINICIAL=0.1;
-const float AUMENTOVELOCIDAD=0.1;
+const float VELOCIDADINICIAL=1;
+const float AUMENTOVELOCIDAD=0;
 const float ANCHOPALETA=30;
 const float ALTOPALETA=300;
 

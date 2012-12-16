@@ -1,7 +1,7 @@
 #ifndef DL32MEMORY
 #define DL32MEMORY
 
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 #ifndef NULL 
 #define NULL 0 
 #endif

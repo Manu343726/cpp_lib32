@@ -1,6 +1,6 @@
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 
-#if DL32DEBUG_DEBUGTEST == 6
+#if DL32TESTS_CURRENTTEST == DL32TEST_MANDELBROTFRACTAL_SIMPLETEST
 #include "MandelbrotEngine.h"
 #include "dl32Window.h"
 

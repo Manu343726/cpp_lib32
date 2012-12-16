@@ -1,6 +1,6 @@
 #include "dl32Math.h"
 
-#if DL32DEBUG_DEBUGTEST == 3
+#if DL32TESTS_CURRENTTEST == DL32TEST_GENERAL_ECUATIONSYSTEM
 
 #include <iostream>
 

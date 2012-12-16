@@ -1,6 +1,6 @@
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 
-#if DL32DEBUG_DEBUGTEST == 1
+#if DL32TESTS_CURRENTTEST == DL32TEST_GENERAL_STRESS
 
 #include "dl32Window.h"
 #include "dl32Graphics.h"
@@ -68,6 +68,8 @@ void OnKeyDown(dl32KeyboardData KeyboardData);//Captura del evento "KeyDown" de 
 void OnClose(bool *cancel);
 
 bool DrawingSpline=false;
+bool PolylineQueue=true;
+const int POLYLINEQUEUESIZE = 100;
 vector<dl32Point2D> nodes;
 dl32Spline spline;
 int selectedNode=0;
@@ -224,7 +226,8 @@ void Render()
 	{
 		if(nodes.size()>=2)
 		{
-			gfx->DRAW_Spline(&spline,DL32COLOR_GREEN);
+			//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
+			gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
 			gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
 		}
 	}
@@ -308,6 +311,14 @@ void OnMouseMove(dl32MouseData MouseData)
 		nodes[selectedNode]=MouseData.Location;
 		spline=dl32Spline(nodes.data(),nodes.size());
 	}
+	/*else if(PolylineQueue)
+	{
+		if(nodes.size()>=POLYLINEQUEUESIZE)
+			nodes.erase(nodes.begin());
+		
+		if(nodes.size() == 0 ||dl32Vector2D(nodes[nodes.size()-1],MouseData.Location).GetLength() > 20)
+			nodes.push_back(MouseData.Location);
+	}*/
 
 	/*if(true)
 	{
@@ -402,6 +413,6 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 
 void OnClose(bool *cancel)
 {
-	*cancel=false;
+	*cancel=true;
 }
 #endif

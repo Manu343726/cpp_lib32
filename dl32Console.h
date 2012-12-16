@@ -49,12 +49,13 @@ private:
 	DWORD colorsettings;
 	dl32ConsoleType type;
 	bool ready;
-public:
-	dl32Console(){ready=false;colorsettings=0;};
-	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32ConsoleException);
+	
+	dl32Console() throw (dl32ConsoleSingletonException);
 	~dl32Console();
-
+public:
+	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32ConsoleException);
 	void Close();
+	
 	bool Ready(){return ready;};
 
 	void Write(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ConsoleException);

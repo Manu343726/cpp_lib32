@@ -1,6 +1,6 @@
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 
-#if DL32DEBUG_DEBUGTEST == 2
+#if DL32TESTS_CURRENTTEST == DL32TEST_GENERAL_MATRIX
 
 #include <iostream>
 #include "dl32Math.h"

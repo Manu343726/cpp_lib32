@@ -43,6 +43,7 @@ struct dl32Vertex:dl32Point2D
 
 	dl32Vertex();
 	dl32Vertex(float x, float y, dl32Color color,int Z=0);
+	dl32Vertex(dl32Point2D point, dl32Color color, int Z=0){x=point.x;y=point.y;this->color=color;this->Z=Z;};
 
 	static dl32Point2D Baricenter(dl32Vertex PointList[],int PointCount);
 };
@@ -60,14 +61,14 @@ typedef dl32Vertex dl32Pixel;
 struct DL32VERTEXTEXTURED:public dl32Point3D
 {
 	float rhw;
-	D3DCOLOR diffuse;
-	D3DCOLOR specular;
+	dl32Color diffuse;
+	dl32Color specular;
 	float tx,ty;
 
 	DL32VERTEXTEXTURED();
 	DL32VERTEXTEXTURED(const dl32Vertex &vertex);
 	DL32VERTEXTEXTURED(dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
-	DL32VERTEXTEXTURED(float x,float y,int z,D3DCOLOR diffuse,D3DCOLOR specular,float tx,float ty);
+	DL32VERTEXTEXTURED(float x,float y,int z,dl32Color diffuse,dl32Color specular,float tx,float ty);
 };
 
 const DWORD DL32VERTEXTEXTURED_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1);
@@ -77,8 +78,8 @@ const int DL32VERTEXTEXTURED_SIZE=sizeof(DL32VERTEXTEXTURED);
 class dl322DCamera:public dl32Transformation2D
 {
 public:
-	dl322DCamera();
-	dl322DCamera(dl32Matrix3x3 &Transformation);
+	dl322DCamera(){};
+	dl322DCamera(dl32Matrix3x3 &Transformation):dl32Transformation2D(Transformation){};
 
 	void SetPosition(float x=0,float y=0);
 	void SetPosition(dl32Point2D &Position);
@@ -99,7 +100,7 @@ struct DL32TEXTURE
 	LPDIRECT3DSURFACE9 Surface;
 	int OriginalWidth;
 	int OriginalHeight;
-	D3DCOLOR ColorKey;
+	dl32Color ColorKey;
 	D3DFORMAT Format;
 	int Index;
 
@@ -230,7 +231,7 @@ struct DL32BUFFEROBJECT
 	DL32BUFFEROBJECT(int StartIndex,int VertexCount,int BaseIndex,int IndexCount,int PrimitiveCount,D3DPRIMITIVETYPE);
 };
 
-typedef struct DL32RENDERSTATEDATA
+struct DL32RENDERSTATEDATA
 {
 	int TextureIndex;
 	LPDIRECT3DTEXTURE9 Texture;
@@ -260,20 +261,18 @@ protected:
 	LPDIRECT3D9 _d3d;	
 	LPDIRECT3DDEVICE9 _d3dDevice;
 	D3DPRESENT_PARAMETERS _d3dPresentParameters;
-	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed,dl32ColorDepth colorDepth, bool tripleBuffer, bool vSync, int refreshRate);
+	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed, bool tripleBuffer, bool vSync, int refreshRate);
 
 	bool _clearScene;
 	bool _textDraw;
-	D3DCOLOR _backColor;
+	dl32Color _backColor;
 	DL32RENDERSTATEDATA _renderData;
 
 	void ResetRenderStates();
 	void ResetBlendingStages();
 	void ResetTextureStages();
 
-	vector<DL32BUFFEROBJECT>* _renderBuffer[DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL+1];
-	vector<int> _renderBufferActiveLevels;
-	bool ActivateRenderBufferLevel(int Index);
+	vector<DL32BUFFEROBJECT> _renderBuffer[DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL+1];
 
 	vector<DL32VERTEXTEXTURED> _vertexBuffer;
 	vector<int> _indexBuffer;
@@ -296,12 +295,12 @@ public:
 	//Instanciamiento:
 	//-----------------------------------------
 	dl32GraphicsClass();
-	dl32GraphicsClass(HWND hwnd,int Width,int Height,dl32ColorDepth colorDepth=DL32DEFAULTS_GRAPHICSCOLORDEPTH,
+	dl32GraphicsClass(HWND hwnd,int Width,int Height,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
 					  throw(dl32Direct3DInitFailedException);
 
-	dl32GraphicsClass(dl32Window* window ,dl32ColorDepth colorDepth=DL32DEFAULTS_GRAPHICSCOLORDEPTH,
+	dl32GraphicsClass(dl32Window* window ,
 		bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 		bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
 		throw(dl32Direct3DInitFailedException);
@@ -313,12 +312,6 @@ public:
 	void Dispose();
 	bool Start();
 	bool Exit();
-	//RenderProcs:
-	//-----------------------------------------
-	void DEVICE_SetPreDrawProc(PTRENDERLOOPPROC RenderProc);
-	void DEVICE_SetPostDrawProc(PTRENDERLOOPPROC RenderProc);
-	void DEVICE_RemovePreDrawProc();
-	void DEVICE_RemovePostDrawProc();
 	//RenderTargets:
 	//----------------------------------------
 	bool DEVICE_SetCanvas(int Texture=-1);
@@ -330,9 +323,21 @@ public:
 	void DEVICE_SetBackgroundColor(dl32Color BackColor);
 	dl32Color DEVICE_GetBackgroundColor();
 
+	bool DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color color, int Z=0);
+	bool DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z=0);
+	bool DRAW_Lines(dl32Vertex points[],int Count,int Z=0);
+	bool DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z=0);
+
+	bool DRAW_Polyline(dl32Point2D points[],int Count,dl32Color color,float width, bool fill = true,int Z=0);
+	bool DRAW_Polyline(dl32Vertex vertices[],int Count,float width, bool fill = true,int Z=0);
+
 	bool DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill=true,int Z=0);
 	bool DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill=true,int Z=0);
+	bool DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2D V2,dl32Color color,bool fill=true,int Z=0);
 	bool DRAW_Triangle(const dl32Triangle Triangle,bool fill=true,int Z=0) {return DRAW_Triangle(Triangle[0],Triangle[1],Triangle[2],fill,Z);};
+
+	bool DRAW_TriangleStrip(dl32Point2D points[], int pointsCount, dl32Color color, bool fill = true, int Z=0);
+	bool DRAW_TriangleStrip(dl32Vertex points[], int pointsCount, bool fill = true, int Z=0);
 
 	bool DRAW_Trapezoid(const dl322DPointTrapezoid Trapezoid,dl32Color color,bool fill=true,int Z=0) {return DRAW_Polygon(Trapezoid,4,color,fill,Z);};
 	bool DRAW_Trapezoid(const dl32VertexTrapezoid Trapezoid,bool fill=true,int Z=0) {return DRAW_Polygon(Trapezoid,4,fill,Z);};
@@ -365,8 +370,6 @@ public:
 	bool DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z=0);
 	bool DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z=0);
 
-	bool DRAW_Lines(dl32Vertex points[],int Count,int Z=0);
-	bool DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z=0);
 	bool DRAW_Strip(dl32Pen pen,dl32Vertex points[],int Count,int texture=-1,int Z=0);
 	bool DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture=-1,int Z=0);
 

@@ -90,6 +90,12 @@ public:
 	dl32ConsoleException(char* message):dl32Exception(message){};
 };
 
+class dl32ConsoleSingletonException:public dl32ConsoleException
+{
+public:
+	dl32ConsoleSingletonException(char* message):dl32ConsoleException(message){};
+};
+
 class dl32Direct3DInitFailedException:public dl32Exception
 {
 public:
@@ -112,5 +118,11 @@ private:
 public:
 	dl32UnhandledWindowMessage(UINT msg,HWND hwnd, char* message):dl32WindowException(hwnd,message){_msg=msg;};
 	UINT GetMessage(){return _msg;};
+};
+
+class dl32InfiniteIntersectionException : dl32MathException
+{
+public:
+	dl32InfiniteIntersectionException(char* message):dl32MathException(message){};
 };
 #endif

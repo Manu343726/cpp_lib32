@@ -1,9 +1,9 @@
 #include "Particle engine.h"
-#include "dl32Preprocessor.h"
+#include "dl32Config.h"
 #include "dl32Window.h"
 #include "dl32Console.h"
 
-#if DL32DEBUG_DEBUGTEST == 4
+#if DL32TESTS_CURRENTTEST == 4
 
 dl32ParticleSystem *engine;
 dl32Window *Window;
