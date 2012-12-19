@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="DirectXPrueba1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="dx_lib32" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="$(DXSDK_DIR)Include" />
+					<Add directory="$(IncludePath)" />
+				</Compiler>
+				<Linker>
+					<Add library="d3d9.lib" />
+					<Add library="d3dx10d.lib" />
+					<Add library="d3dx9d.lib" />
+					<Add library="dxerr.lib" />
+					<Add library="dxguid.lib" />
+					<Add library="winmm.lib" />
+					<Add library="comctl32.lib" />
+					<Add directory="$(DXSDK_DIR)Lib/x86" />
+					<Add directory="$(LibraryPath)" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="dx_lib32" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="$(DXSDK_DIR)Include" />
+					<Add directory="$(IncludePath)" />
+				</Compiler>
+				<Linker>
+					<Add directory="$(DXSDK_DIR)Lib/x86" />
+					<Add directory="$(LibraryPath)" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="EcuationSolverTest.cpp" />
+		<Unit filename="GeneralStressTest.cpp" />
+		<Unit filename="MandelbrotEngine.cpp" />
+		<Unit filename="MandelbrotEngine.h" />
+		<Unit filename="MandelbrotFractalTest.cpp" />
+		<Unit filename="MatrixTest.cpp" />
+		<Unit filename="Particle engine.cpp" />
+		<Unit filename="Particle engine.h" />
+		<Unit filename="ParticleEngineTest.cpp" />
+		<Unit filename="Polyline.h" />
+		<Unit filename="PolylineTest.cpp" />
+		<Unit filename="Pong.cpp" />
+		<Unit filename="dl32Color.cpp" />
+		<Unit filename="dl32Color.h" />
+		<Unit filename="dl32Config.h" />
+		<Unit filename="dl32Console.cpp" />
+		<Unit filename="dl32Console.h" />
+		<Unit filename="dl32Exceptions.h" />
+		<Unit filename="dl32Graphics.cpp" />
+		<Unit filename="dl32Graphics.h" />
+		<Unit filename="dl32Math.cpp" />
+		<Unit filename="dl32Math.h" />
+		<Unit filename="dl32Memory.h" />
+		<Unit filename="dl32String.cpp" />
+		<Unit filename="dl32String.h" />
+		<Unit filename="dl32Utils3D.cpp" />
+		<Unit filename="dl32Utils3D.h" />
+		<Unit filename="dl32Window.cpp" />
+		<Unit filename="dl32Window.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

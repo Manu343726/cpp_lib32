@@ -22,6 +22,48 @@ using namespace std;
 
 float MATH_Min(float a,float b);
 
+//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+///////////////////////////////////////////////////////
+
+//////////////////////////////////////
+///A base for dx_lib32 math exceptions
+//////////////////////////////////////
+class dl32MathException:public dl32Exception
+{
+public:
+	dl32MathException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32MathException)):dl32Exception(message){};
+};
+
+///////////////////////////////////////
+///Represents a math overflow exception
+///////////////////////////////////////
+class dl32OverflowException:public dl32MathException
+{
+public:
+	dl32OverflowException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OverflowException)):dl32MathException(message){};
+};
+
+class dl32DividedByCeroException:public dl32OverflowException
+{
+public:
+	dl32DividedByCeroException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32DividedByCeroException)):dl32OverflowException(message){};
+};
+
+class dl32InvalidMatrixOperationException:dl32MathException
+{
+public:
+	dl32InvalidMatrixOperationException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32InvalidMatrixOperationException)):dl32MathException(message){};
+};
+
+class dl32InfiniteIntersectionException : dl32MathException
+{
+public:
+	dl32InfiniteIntersectionException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32InfiniteIntersectionException)):dl32MathException(message){};
+};
+
+//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//////////////////////////////////////
+
 ////////////////////////////////
 ///Represents a 3x3 float matrix
 ////////////////////////////////

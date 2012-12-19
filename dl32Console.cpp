@@ -15,7 +15,7 @@ dl32Console::dl32Console()throw(dl32ConsoleSingletonException)
 		throw dl32ConsoleSingletonException("dl32Console::dl32Console(): Can only create one instance of dl32Console");
 }
 
-void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32ConsoleException)
+void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32OpenedConsoleException,dl32ConsoleOpenFailed)
 {
 	ready=false;
 	CONSOLE_SCREEN_BUFFER_INFO info;
@@ -40,10 +40,10 @@ void dl32Console::Open(dl32String Title,dl32ConsoleType Type)throw(dl32ConsoleEx
 			colorsettings=info.wAttributes;
 		}
 		else
-			throw dl32ConsoleException("dl32Console::dl32Console(): Error creating console. Cannot get console handle");
+			throw dl32ConsoleOpenFailed("dl32Console::dl32Console(): Error creating console. Cannot get console handle");
 	}
 	else
-		throw dl32ConsoleException("dl32Console::dl32Console(): Application console is running. Cannot create other console");
+		throw dl32OpenedConsoleException("dl32Console::dl32Console(): Application console is running. Cannot create other console");
 }
 
 dl32Console::~dl32Console()
@@ -61,7 +61,7 @@ void dl32Console::Close()
 	}
 }
 
-void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ConsoleException)
+void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ClosedConsoleException)
 {
 	if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
 	{
@@ -78,10 +78,10 @@ void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32Co
 			WriteConsole(handle,str.c_str(),str.GetLength(),NULL,NULL);
 	}
 	else
-		throw dl32ConsoleException("dl32Console::Write(dl32String str): Console is not ready");
+		throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
 }
 
-void dl32Console::WriteLine(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ConsoleException)
+void dl32Console::WriteLine(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ClosedConsoleException)
 {
 	if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
 	{
@@ -110,24 +110,24 @@ void dl32Console::WriteLine(dl32String str,dl32ConsolePalette foregroundcolor,dl
 		delete strArray;
 	}
 	else
-		throw dl32ConsoleException("dl32Console::Write(dl32String str): Console is not ready");
+		throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
 }
 
-dl32Console& dl32Console::operator<<(dl32String str)throw(dl32ConsoleException)
+dl32Console& dl32Console::operator<<(dl32String str)throw(dl32ClosedConsoleException)
 {
 	Write(str);
 	return *this;
 }
 
-void dl32Console::SetTitle(dl32String title)throw(dl32ConsoleException)
+void dl32Console::SetTitle(dl32String title)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed)
 {
 	if(ready)
-		if(!SetConsoleTitle(title.c_str())) throw dl32ConsoleException("dl32Console::SetTitle(dl32String title): An error ocurred setting up title. Please check console status");
+		if(!SetConsoleTitle(title.c_str())) throw dl32ConsoleSettingsFailed("dl32Console::SetTitle(dl32String title): An error ocurred setting up title. Please check console status");
 	else
 		throw dl32ConsoleException("dl32Console::SetTitle(dl32String title): Console is not ready");
 }
 
-dl32String dl32Console::GetTitle()throw(dl32ConsoleException)
+dl32String dl32Console::GetTitle()throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed)
 {
 	if(ready)
 	{
@@ -136,13 +136,13 @@ dl32String dl32Console::GetTitle()throw(dl32ConsoleException)
 		if(length>0)
 			return dl32String(strpointer,length);
 		else
-			throw dl32ConsoleException("dl32Console::GetTitle(): An error ocurred getting title. Please check console status");
+			throw dl32ConsoleSettingsFailed("dl32Console::GetTitle(): An error ocurred getting title. Please check console status");
 	}
 	else
 		throw dl32ConsoleException("dl32Console::GetTitle(): Console is not ready");
 }
 
-void dl32Console::SetForegroundColor(dl32ConsolePalette color)throw(dl32Exception)
+void dl32Console::SetForegroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed)
 {
 	if(ready)
 	{
@@ -150,13 +150,13 @@ void dl32Console::SetForegroundColor(dl32ConsolePalette color)throw(dl32Exceptio
 		if(SetConsoleTextAttribute(handle,settings))
 			colorsettings=settings;
 		else
-			throw dl32ConsoleException("dl32Console::SetForegroundColor(dl32ConsolePalette color): An error ocurred setting up color. Please check console status");
+			throw dl32ConsoleSettingsFailed("dl32Console::SetForegroundColor(dl32ConsolePalette color): An error ocurred setting up color. Please check console status");
 	}
 	else
 		throw dl32ConsoleException("dl32Console::SetForegroundColor(dl32ConsolePalette color): Console is not ready");
 }
 
-void dl32Console::SetBackgroundColor(dl32ConsolePalette color)throw(dl32Exception)
+void dl32Console::SetBackgroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed)
 {
 	if(ready)
 	{
@@ -164,7 +164,7 @@ void dl32Console::SetBackgroundColor(dl32ConsolePalette color)throw(dl32Exceptio
 		if(SetConsoleTextAttribute(handle,settings))
 			colorsettings=settings;
 		else
-			throw dl32ConsoleException("dl32Console::SetBackgroundColor(dl32ConsolePalette color): An error ocurred setting up color. Please check console status");
+			throw dl32ConsoleSettingsFailed("dl32Console::SetBackgroundColor(dl32ConsolePalette color): An error ocurred setting up color. Please check console status");
 	}
 	else
 		throw dl32ConsoleException("dl32Console::SetBackgroundColor(dl32ConsolePalette color): Console is not ready");
@@ -178,7 +178,7 @@ void dl32Console::SetColors(dl32ConsolePalette foreground,dl32ConsolePalette bac
 		if(SetConsoleTextAttribute(handle,settings))
 			colorsettings=settings;
 		else
-			throw dl32ConsoleException("dl32Console::SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background): An error ocurred setting up colors. Please check console status");
+			throw dl32ConsoleSettingsFailed("dl32Console::SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background): An error ocurred setting up colors. Please check console status");
 	}
 	else
 		throw dl32ConsoleException("dl32Console::SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background): Console is not ready");

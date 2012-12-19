@@ -455,9 +455,9 @@ void dl32GraphicsClass::ResetTextureStages()
 	_d3dDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 }
 
-bool dl32GraphicsClass::Frame()
+void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
 	DWORD Ticks;
@@ -533,8 +533,6 @@ bool dl32GraphicsClass::Frame()
 		_frameCount=0;
 	}
 	_frameCount++;
-
-	return true;
 }
 
 bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)
@@ -580,34 +578,17 @@ dl32GraphicsClass::dl32GraphicsClass()
 	_usingVertexBuffer=false;
 }
 
-dl32GraphicsClass::dl32GraphicsClass(dl32Window* window, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
+void dl32GraphicsClass::_setup(HWND hwnd,int Width,int Height, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
 {
 	_working=false;
 	_usingVertexBuffer=false;
 
-	if(!InitializeDirect3D(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate))
-		throw dl32Direct3DInitFailedException("Direct3D initialization failed");
-	else
-	{
-		_backColor=DL32COLOR_BLACK;
+	dl32Vector2D windowSize = dl32Window::GetWindowSize(Width,Height,!Windowed);
+	SetWindowPos(hwnd,NULL,0,0,(int)windowSize.x,(int)windowSize.y,SWP_NOMOVE | SWP_NOZORDER);
 
-		_lastTicksCount=GetTickCount();
-		_frameCount=0;
-		_frameRate=0;
-
-		this->Start();
-
-		_working=true;
-	}
-}
-
-dl32GraphicsClass::dl32GraphicsClass(HWND hwnd,int Width,int Height, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
-{
-	_working=false;
-	_usingVertexBuffer=false;
 
 	if(!InitializeDirect3D(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate))
-		throw dl32Direct3DInitFailedException("Direct3D initialization failed");
+		throw dl32Direct3DInitFailedException(_d3dPresentParameters);
 	else
 	{
 		_backColor=DL32COLOR_BLACK;
@@ -813,9 +794,9 @@ dl32Point2D* vertexArrayToPoint2D(dl32Vertex vertexArray[],int Count)
 	return points;
 }
 
-bool dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color color, int Z)
+void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color color, int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -831,16 +812,14 @@ bool dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 		object.PrimitiveCount = 1;
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
+void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -855,17 +834,14 @@ bool dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 		object.PrimitiveType = D3DPT_LINESTRIP;
 		object.PrimitiveCount = 1;
 
-		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
+void dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
 	{
@@ -882,16 +858,14 @@ bool dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
 		object.PrimitiveCount = Count-1;
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z)
+void dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
 	{
@@ -908,16 +882,14 @@ bool dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color colo
 		object.PrimitiveCount = Count-1;
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Polyline(dl32Point2D points[],int Count,dl32Color color,float width, bool fill,int Z)
+void dl32GraphicsClass::DRAW_Polyline(dl32Point2D points[],int Count,dl32Color color,float width, bool fill,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
 	{
@@ -928,20 +900,18 @@ bool dl32GraphicsClass::DRAW_Polyline(dl32Point2D points[],int Count,dl32Color c
 		ComputePolyline(points,Count,width,joints);
 		ParseJointsToVertexBuffer(joints,Count,vertices);
 
-		retVal = DRAW_TriangleStrip(vertices,Count*2,color,fill);
+		DRAW_TriangleStrip(vertices,Count*2,color,fill);
 
 		DL32MEMORY_SAFEDELETE_ARRAY(joints);
 		DL32MEMORY_SAFEDELETE_ARRAY(vertices);
-
-		return retVal;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Polyline(dl32Vertex points[],int Count,float width, bool fill,int Z)
+void dl32GraphicsClass::DRAW_Polyline(dl32Vertex points[],int Count,float width, bool fill,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
 	{
@@ -953,21 +923,19 @@ bool dl32GraphicsClass::DRAW_Polyline(dl32Vertex points[],int Count,float width,
 		ComputePolyline(points2d,Count,width,joints);
 		ParseJointsToVertexBuffer(joints,points,Count,vertices);
 
-		retVal = DRAW_TriangleStrip(vertices,Count*2,fill);
+		DRAW_TriangleStrip(vertices,Count*2,fill);
 
 		DL32MEMORY_SAFEDELETE_ARRAY(joints);
 		DL32MEMORY_SAFEDELETE_ARRAY(vertices);
 		DL32MEMORY_SAFEDELETE_ARRAY(points2d);
-
-		return retVal;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
 	dl32Point2D NewVerts[3];
@@ -1006,16 +974,14 @@ bool dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill,int Z)
 {	
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
 
@@ -1054,21 +1020,19 @@ bool dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2D V2,dl32Color color,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2D V2,dl32Color color,bool fill,int Z)
 {
 	return DRAW_Triangle(dl32Vertex(V0,color,Z),dl32Vertex(V1,color,Z),dl32Vertex(V2,color,Z),fill,Z);
 }
 
-bool dl32GraphicsClass::DRAW_TriangleStrip(dl32Point2D points[], int pointsCount, dl32Color color, bool fill, int Z)
+void dl32GraphicsClass::DRAW_TriangleStrip(dl32Point2D points[], int pointsCount, dl32Color color, bool fill, int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && pointsCount>=3)
 	{
@@ -1095,22 +1059,18 @@ bool dl32GraphicsClass::DRAW_TriangleStrip(dl32Point2D points[], int pointsCount
 
 			while(retVal && i<pointsCount-2)
 			{
-				retVal = DRAW_Triangle(points[i],points[i+1],points[i+2],color,fill,Z);
+				DRAW_Triangle(points[i],points[i+1],points[i+2],color,fill,Z);
 				++i;
 			}
-
-			return retVal;
 		}
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_TriangleStrip(dl32Vertex points[], int pointsCount, bool fill, int Z)
+void dl32GraphicsClass::DRAW_TriangleStrip(dl32Vertex points[], int pointsCount, bool fill, int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && pointsCount>=3)
 	{
@@ -1137,22 +1097,18 @@ bool dl32GraphicsClass::DRAW_TriangleStrip(dl32Vertex points[], int pointsCount,
 
 			while(retVal && i<pointsCount-2)
 			{
-				retVal = DRAW_Triangle(points[i],points[i+1],points[i+2],fill,Z);
+				DRAW_Triangle(points[i],points[i+1],points[i+2],fill,Z);
 				++i;
 			}
-
-			return retVal;
 		}
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
@@ -1200,16 +1156,14 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
 	{
@@ -1258,23 +1212,21 @@ bool dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Col
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill,int Z)
+void dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill,int Z)
 {
 	dl322DPointTrapezoid Verts={dl32Point2D(x,y),dl32Point2D(x+width,y),dl32Point2D(x+width,y+height),dl32Point2D(x,y+height)};
 
 	return DRAW_Trapezoid(Verts,color,fill,Z);
 }
 
-bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z)
+void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && texture>=0 && texture < _textures.size())
 	{
@@ -1303,16 +1255,14 @@ bool dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 		_vertexBuffer.insert(_vertexBuffer.end(),Verts,Verts+4);
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
+void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1350,16 +1300,14 @@ bool dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 
 			_indexBuffer.insert(_indexBuffer.end(),Mesh.indexes[i].begin(),Mesh.indexes[i].end());
 		}
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align,int Z)
+void dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && font>=0 && font < _fonts.size())
 	{
@@ -1435,16 +1383,14 @@ bool dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32C
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 
 		_textDraw=true;
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
+void dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1458,16 +1404,14 @@ bool dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
 		_vertexBuffer.push_back(DL32VERTEXTEXTURED(x,y,Z,color,0,-1,-1));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
+void dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
 	{
@@ -1483,16 +1427,14 @@ bool dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 		_vertexBuffer.insert(_vertexBuffer.end(),pixels,pixels+count);
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z)
+void dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
 	{
@@ -1509,16 +1451,14 @@ bool dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int cou
 			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(pixels[i]),Z,color));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z)
+void dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && width>0 && height>0)
 	{
@@ -1537,21 +1477,19 @@ bool dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width
 		Object.PrimitiveCount=width*height;
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture,int Z)
+void dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		if(pen.width<=1)
-			return true;//DRAW_Lines(points,Count,Z);
+			DRAW_Lines(points,Count,Z);
 		else
 		{
 			DL32BUFFEROBJECT Object;
@@ -1677,17 +1615,15 @@ bool dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,in
 			Object.Texture=texture;
 
 			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-			return true;
 		}
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
-bool dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int PointsPerInterval,int Z)
+void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int PointsPerInterval,int Z)
 {
-	if(!_working) return false;
+	if(!_working) throw new dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1706,11 +1642,9 @@ bool dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int Point
 			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,color));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-
-		return true;
 	}
 	else
-		return false;
+		throw new dl32ZLevelOutOfRangeException(Z);
 }
 
 

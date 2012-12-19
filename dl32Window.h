@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include "dl32String.h"
 #include "dl32Math.h"
+#include "dl32Exceptions.h"
 
 
 #define DL32WINDOWSDEFAULTS_LEFT CW_USEDEFAULT
@@ -14,6 +15,41 @@
 #define DL32WINDOWFLAGS_MAXTEXTLENGHT 100
 
 const LPCSTR DL32WINDOWCLASS = "DXLIB32WINDOWCLASS";
+
+//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+///////////////////////////////////////////////////////
+class dl32WindowException:dl32Exception
+{
+private:
+	HWND _hwnd;
+public:
+	dl32WindowException(HWND hwnd = (HWND)NULL,char* message = DEFAULTEXCEPTIONMESSAGE(dl32WindowException)):dl32Exception(){_hwnd=hwnd;};
+	HWND GethWnd(){return _hwnd;};
+};
+
+class dl32UnhandledWindowMessage: public dl32WindowException
+{
+private:
+	UINT _msg;
+public:
+	dl32UnhandledWindowMessage(UINT msg,HWND hwnd, char* message):dl32WindowException(hwnd,message){_msg=msg;};
+	UINT GetMessage(){return _msg;};
+};
+
+class dl32WindowCreationFailedException: public dl32WindowException
+{
+public:
+	dl32WindowCreationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){};
+};
+
+class dl32WindowClassRegistrationFailedException: public dl32WindowException
+{
+public:
+	dl32WindowClassRegistrationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){};
+};
+
+//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//////////////////////////////////////
 
 template <class PARAMTYPE>
 class dl32Event
@@ -162,7 +198,7 @@ protected:
 	static dl32KeyboardData GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
 public:
 	dl32Window();
-	dl32Window(string Title,int Left=DL32WINDOWSDEFAULTS_LEFT,int Top=DL32WINDOWSDEFAULTS_TOP,int Width=DL32WINDOWSDEFAULTS_WIDTH,int Height=DL32WINDOWSDEFAULTS_HEIGHT);
+	dl32Window(string Title,int Left=DL32WINDOWSDEFAULTS_LEFT,int Top=DL32WINDOWSDEFAULTS_TOP,int Width=DL32WINDOWSDEFAULTS_WIDTH,int Height=DL32WINDOWSDEFAULTS_HEIGHT) throw(dl32WindowCreationFailedException);
 	~dl32Window();
 
 	static void Start();
@@ -189,6 +225,8 @@ public:
 	dl32AABB2D GetScreenArea();
 	dl32AABB2D GetClientArea();
 	void SetScreenArea(dl32AABB2D Area);
+
+	static dl32Vector2D GetWindowSize(float width,float height, bool flat);
 
 	dl32String GetText();
 	void SetText(dl32String Text);

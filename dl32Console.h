@@ -41,6 +41,47 @@ enum dl32ConsolePalette
 
 const dl32String dl32endl=dl32String(DL32TRING_ENDLINE);
 
+//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+///////////////////////////////////////////////////////
+class dl32ConsoleException:public dl32Exception
+{
+public:
+	dl32ConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleException)):dl32Exception(message){};
+};
+
+class dl32ClosedConsoleException:public dl32ConsoleException
+{
+public:
+	dl32ClosedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ClosedConsoleException)):dl32ConsoleException(message){};
+};
+
+class dl32OpenedConsoleException:public dl32ConsoleException
+{
+public:
+	dl32OpenedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OpenedConsoleException)):dl32ConsoleException(message){};
+};
+
+class dl32ConsoleOpenFailed:public dl32ConsoleException
+{
+public:
+	dl32ConsoleOpenFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleOpenFailed)):dl32ConsoleException(message){};
+};
+
+class dl32ConsoleSettingsFailed:public dl32ConsoleException
+{
+public:
+	dl32ConsoleSettingsFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSettingsFailed)):dl32ConsoleException(message){};
+};
+
+class dl32ConsoleSingletonException:public dl32ConsoleException
+{
+public:
+	dl32ConsoleSingletonException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){};
+};
+
+//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//////////////////////////////////////
+
 class dl32Console
 {
 private:
@@ -53,29 +94,29 @@ private:
 	dl32Console() throw (dl32ConsoleSingletonException);
 	~dl32Console();
 public:
-	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32ConsoleException);
+	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32OpenedConsoleException,dl32ConsoleOpenFailed);
 	void Close();
 	
 	bool Ready(){return ready;};
 
-	void Write(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ConsoleException);
-	void WriteLine(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ConsoleException);
-	void Clear()throw(dl32ConsoleException);
+	void Write(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ClosedConsoleException);
+	void WriteLine(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ClosedConsoleException);
+	void Clear()throw(dl32ClosedConsoleException);
 
-	dl32Console& operator<<(dl32String str)throw(dl32ConsoleException);
+	dl32Console& operator<<(dl32String str)throw(dl32ClosedConsoleException,dl32ClosedConsoleException);
 
-	void SetTitle(dl32String Title)throw(dl32ConsoleException);
-	dl32String GetTitle()throw(dl32ConsoleException);
+	void SetTitle(dl32String Title)throw(dl32ConsoleSettingsFailed);
+	dl32String GetTitle()throw(dl32ConsoleSettingsFailed);
 
-	void SetForegroundColor(dl32ConsolePalette color)throw(dl32ConsoleException);
-	void SetBackgroundColor(dl32ConsolePalette color)throw(dl32ConsoleException);
-	void SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background)throw(dl32ConsoleException);
+	void SetForegroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
+	void SetBackgroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
+	void SetColors(dl32ConsolePalette foreground,dl32ConsolePalette background)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 
-	void SetCursorPosition(dl32Point2D Position)throw(dl32ConsoleException);
-	dl32Point2D GetCursorPosition()throw(dl32ConsoleException);
+	void SetCursorPosition(dl32Point2D Position)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
+	dl32Point2D GetCursorPosition()throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 
-	void SetScroll(int FirstLine)throw(dl32ConsoleException);
-	int GetScroll()throw(dl32ConsoleException);
+	void SetScroll(int FirstLine)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
+	int GetScroll()throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 
 	static dl32Console console;
 };

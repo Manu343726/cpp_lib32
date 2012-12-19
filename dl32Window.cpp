@@ -11,12 +11,15 @@ bool dl32Window::MessageProcessed=false;
 
 LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if(dl32Window::SearchWindow(hWnd));
+	if(msg==WM_CLOSE || msg==WM_DESTROY || msg==WM_QUIT)
 	{
-		dl32Window::LastWindowMessaged->ProcessMessage(hWnd,msg,wParam,lParam);
+		if(dl32Window::SearchWindow(hWnd));
+		{
+			dl32Window::LastWindowMessaged->ProcessMessage(hWnd,msg,wParam,lParam);
 		
-		if(dl32Window::LastWindowMessaged!=NULL && dl32Window::LastWindowMessaged->_mustBeDeleted)
-			dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
+			if(dl32Window::LastWindowMessaged!=NULL && dl32Window::LastWindowMessaged->_mustBeDeleted)
+				dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
+		}
 	}
 
 	if(!dl32Window::MessageProcessed)
@@ -34,7 +37,7 @@ dl32Window::dl32Window()
 	Index=-1;
 }
 
-dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
+dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)throw(dl32WindowCreationFailedException)
 {
 	if(WindowClassNotRegistered) 
 	{
@@ -56,13 +59,10 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
 		{
 			WindowClassNotRegistered=false;
 			LastWindowMessaged=NULL;
-			ready=true;
 		}
 		else
-			ready=false;
+			throw new dl32WindowClassRegistrationFailedException((HWND)NULL,"Failed to register window class");
 	}
-	else
-		ready=true;
 
 	if (Width<=0) Width=DL32WINDOWSDEFAULTS_WIDTH;
 	if (Height<=0) Height=DL32WINDOWSDEFAULTS_HEIGHT;
@@ -72,31 +72,21 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)
 
 	_mustBeDeleted=false;
 
-	if(ready)
+	if(hwnd!=NULL)
 	{
-		if(hwnd!=NULL)
-		{
-			ready=true;
-			KeyboardCapture=true;
-			MouseCapture=true;
+		ready=true;
+		KeyboardCapture=true;
+		MouseCapture=true;
 
-			UpdateArea();
+		UpdateArea();
 
-			WindowsList.push_back(this);
-			Index=WindowsList.size()-1;
+		WindowsList.push_back(this);
+		Index=WindowsList.size()-1;
 
-			ShowWindow(hwnd,SW_SHOWDEFAULT);
-		}
-		else
-		{
-			DWORD Error;
-			Error=GetLastError();
-			Error=Error;
-			ready=false;
-		}
+		ShowWindow(hwnd,SW_SHOWDEFAULT);
 	}
 	else
-		ready=false;
+		throw new dl32WindowCreationFailedException(hwnd,"Failed to create window");
 }
 
 dl32Window::~dl32Window()
@@ -192,6 +182,15 @@ dl32KeyboardData dl32Window::GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wPar
 	//NOTA (05/09/12): Que aquí conste que si en algún momento gano dinero con ésto, no os pienso dar un duro. Estáis avisados.
 
 	return Data;
+}
+
+dl32Vector2D dl32Window::GetWindowSize(float width, float height, bool flat)
+{
+	if(flat)
+		return dl32Vector2D(width,height);
+	else
+		return dl32Vector2D(width + GetSystemMetrics(SM_CXBORDER)*2 + GetSystemMetrics(SM_CXEDGE),
+							width + GetSystemMetrics(SM_CYBORDER)*2 + GetSystemMetrics(SM_CYEDGE));
 }
 
 bool dl32Window::Ready()
@@ -371,16 +370,17 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 
 	switch(msg)
 	{
-	case WM_MOVE:
-		UpdateArea();
-		Move.RaiseEvent(&Area);
-		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
-		break;
-	case WM_PAINT:
-		UpdateArea();
-		Paint.RaiseEvent();
-		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
-		break;
+	//NOTA: Error en el procesamiento de WM_MOVE. La ventana deja de dibujarse correctamente. 
+	//case WM_MOVE:
+	//	UpdateArea();
+	//	Move.RaiseEvent(&Area);
+	//	LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+	//	break;
+	//case WM_PAINT:
+	//	UpdateArea();
+	//	Paint.RaiseEvent();
+	//	LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+	//	break;
 	case WM_MOUSEMOVE:
 		MouseMove.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;

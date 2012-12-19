@@ -123,9 +123,21 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 
 		dl32Window::Start();//Iniciamos el bucle de captura de mensajes
 	}
+	catch(dl32Exception ex)
+	{
+		MessageBox(GetDesktopWindow(),ex.what(),"dx_lib32 C++ - Error",MB_ICONERROR);
+	}
 	catch(dl32Direct3DInitFailedException)
 	{
-		MessageBox(Window->GetHwnd(),"ERROR: Direct3D cannot be inititialized","dx_lib32 C++ - Error",MB_ICONERROR);
+		MessageBox(GetDesktopWindow(),"ERROR: Direct3D cannot be inititialized","dx_lib32 C++ - Error",MB_ICONERROR);
+	}
+	catch(dl32WindowCreationFailedException)
+	{
+		MessageBox(GetDesktopWindow(),"ERROR: Cannot get HWND","dx_lib32 C++ - Error",MB_ICONERROR);
+	}
+	catch(dl32WindowClassRegistrationFailedException)
+	{
+		MessageBox(GetDesktopWindow(),"ERROR: Cannot register window class","dx_lib32 C++ - Error",MB_ICONERROR);
 	}
 
 	DL32MEMORY_SAFEDELETE(gfx);
@@ -220,7 +232,7 @@ void Render()
 	gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
 	gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
 
-	if(!DrawingSpline)
+	if(!DrawingSpline && nodes.size()>0)
 		gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
 	else
 	{
