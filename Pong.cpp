@@ -18,7 +18,7 @@ const float AUMENTOVELOCIDAD=0;
 const float ANCHOPALETA=30;
 const float ALTOPALETA=300;
 
-const bool DOBLEIA = false;
+const bool DOBLEIA = true;
 
 /*Leeme por favor!
 Un AABB (Siglas en ingles de "Axis Aligned Bounding Box") es, como su nombre indica, una caja alineada con los ejes de coordenadas; que define un área del espacio.
@@ -227,7 +227,7 @@ void OnDraw()
 
 bool TestColisionJugadores()
 {
-	if(dl32AABB2D::Collide(bola.AABB,Jugador1.AABB))//Si la bola a chocado con la paleta del jugador 1...
+	if(dl32AABB2D::Collide(bola.AABB,Jugador1.AABB))//Si la bola ha chocado con la paleta del jugador 1...
 	{
 		Console.Write("COLISION (JUGADOR 1): Vin " + ToString(bola.velocidad),DL32CP_PURPLE);
 		bola.velocidad=CalcularRebote(bola,Jugador1);
@@ -235,7 +235,7 @@ bool TestColisionJugadores()
 		Jugador1.puntuacion++;
 		Console.WriteLine(" Vout " + ToString(bola.velocidad),DL32CP_PURPLE);
 	}
-	else if(dl32AABB2D::Collide(bola.AABB,Jugador2.AABB))//Si la bola a chocado con la paleta del jugador 2...
+	else if(dl32AABB2D::Collide(bola.AABB,Jugador2.AABB))//Si la bola ha chocado con la paleta del jugador 2...
 	{
 		Console.Write("COLISION (JUGADOR 2): Vin " + ToString(bola.velocidad),DL32CP_PURPLE);
 		bola.velocidad=CalcularRebote(bola,Jugador2);

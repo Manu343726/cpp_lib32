@@ -83,7 +83,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	try
 	{
 		Window = new dl32Window("dx_lib32 C++",0,0,WINDOWWIDTH,WINDOWHEIGHT);
-		gfx = new dl32GraphicsClass(Window,DL32CD_32BIT);
+		gfx = new dl32GraphicsClass(Window);
 
 		Console << "Loading texture: '" << dl32String(FILE1PATH) << "'" << dl32endl;
 		Texture1=gfx->MAP_Load(FILE1PATH,0,false,true);//Cargamos la imagen

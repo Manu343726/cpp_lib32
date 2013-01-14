@@ -59,4 +59,5 @@ void MandelbrotEngine::Compute()
 void MandelbrotEngine::Refresh(dl32GraphicsClass* gfx)
 {
 	gfx->DRAW_Pixels(screen,0,0,width,height);
+	gfx->Frame();
 }

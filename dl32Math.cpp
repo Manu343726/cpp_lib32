@@ -9,10 +9,28 @@ inline float Min(float a,float b)
 	return a<b ? a:b;
 }
 
+float DL32FLOAT_INVSQRT(float number)
+{
+	//La gran mayoría lo entiendo, pero me gustaría saber de donde se sacó el número mágico.....
+	long i;
+	float x2, y;
+	const float threehalfs = 1.5F;
+
+	x2 = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;                       // evil floating point bit level hacking
+	i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
+	y  = * ( float * ) &i;
+	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
+	//      y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+
+	return y;
+}
+
 //Geometria (2D):
 
 // dl322DPoint: ////////////////////////////////
-float dl32Point2D::operator[](int coord)throw(dl32OutOfRangeException)
+const float dl32Point2D::operator[](int coord) const throw(dl32OutOfRangeException)
 {
 	switch(coord)
 	{
@@ -25,14 +43,10 @@ float dl32Point2D::operator[](int coord)throw(dl32OutOfRangeException)
 	}
 }
 
-dl32Point2D dl32Point2D::Div(dl32Point2D Point, float divisor)throw(dl32DividedByCeroException)
+const dl32Point2D dl32Point2D::Div(const dl32Point2D &Point, float divisor)throw(dl32DividedByCeroException)
 {
 	if (divisor!=0)
-	{
-		Point.x/=divisor;
-		Point.y/=divisor;		
-		return Point;
-	}
+		return dl32Point2D(Point.x/divisor,Point.y/divisor);
 	else
 		throw dl32DividedByCeroException("dl322DPoint::Div(dl322DPoint point,float divisor): 'divisor' must be different from 0");
 }
@@ -53,12 +67,12 @@ dl32Point2D dl32Point2D::Baricenter(dl32Point2D PointList[],int PointCount)
 // dl322DVector: ////////////////////////////////
 void dl32Vector2D::Normalize()
 {
-	float m=sqrt(x*x+y*y);
+	float m = DL32FLOAT_INVSQRT(x*x+y*y);
 
 	if(m>0)
 	{
-		x/=m;
-		y/=m;
+		x*=m;
+		y*=m;
 	}
 }
 
@@ -180,34 +194,27 @@ dl32Segment2D::dl32Segment2D(dl32Point2D begin, dl32Point2D end)
 }
 
 // dl322DAABB: //////////////////////////////////////////////
-dl32AABB2D::dl32AABB2D()
-{
-	Position.x=0;
-	Position.y=0;
-	mWidth=0;
-	mHeight=0;
-}
 
 dl32AABB2D::dl32AABB2D(float X, float Y, float Width, float Height)
 {
 	Position.x=X;
 	Position.y=Y;
-	mWidth=DL32MACRO_TONATURAL(Width);
-	mHeight=DL32MACRO_TONATURAL(Height);
+	_width=DL32MACRO_TONATURAL(Width);
+	_height=DL32MACRO_TONATURAL(Height);
 }
 
 dl32AABB2D::dl32AABB2D(dl32Point2D Position, float Width, float Height)
 {
 	this->Position=Position;
-	mWidth=DL32MACRO_TONATURAL(Width);
-	mHeight=DL32MACRO_TONATURAL(Height);
+	_width=DL32MACRO_TONATURAL(Width);
+	_height=DL32MACRO_TONATURAL(Height);
 }
 
 dl32AABB2D::dl32AABB2D(dl32Point2D Position, dl32Vector2D Area)
 {
 	this->Position=Position;
-	mWidth=DL32MACRO_TONATURAL(Area.x);
-	mHeight=DL32MACRO_TONATURAL(Area.y);
+	_width=DL32MACRO_TONATURAL(Area.x);
+	_height=DL32MACRO_TONATURAL(Area.y);
 }
 
 dl32AABB2D::dl32AABB2D(dl32Point2D pointCloud[],int pointCount)
@@ -234,84 +241,49 @@ dl32AABB2D::dl32AABB2D(dl32Point2D pointCloud[],int pointCount)
 
 	Position.x=west.x;
 	Position.y=north.y;
-	mWidth=abs(west.x+east.x);
-	mHeight=abs(north.y+south.y);
-}
-
-float dl32AABB2D::GetWidth()
-{
-	return mWidth;
-}
-
-float dl32AABB2D::GetHeight()
-{
-	return mHeight;
+	_width=abs(west.x+east.x);
+	_height=abs(north.y+south.y);
 }
 
 void dl32AABB2D::SetWidth(float ValWidth)
 {
-	if (ValWidth>0) mWidth=ValWidth;
+	if (ValWidth>0) _width=ValWidth;
 }
 
 void dl32AABB2D::SetHeight(float ValHeight)
 {
-	if (ValHeight>0) mHeight=ValHeight;
+	if (ValHeight>0) _height=ValHeight;
 }
 
-void dl32AABB2D::SetArea(dl32Vector2D area)
+void dl32AABB2D::SetArea(const dl32Vector2D &area)
 {
 	if(area.x>0 && area.y>0)
 	{
-		mWidth=area.x;
-		mHeight=area.y;
+		_width=area.x;
+		_height=area.y;
 	}
-}
-
-dl32Point2D dl32AABB2D::GetCenter()
-{
-	return dl32Point2D(Position.x+(mWidth/2),Position.y+(mHeight/2));
-}
-
-dl32Point2D dl32AABB2D::GetUpLeftCorner()
-{
-	return Position;
-}
-
-dl32Point2D dl32AABB2D::GetUpRightCorner()
-{
-	return dl32Point2D(Position.x+mWidth,Position.y);
-}
-
-dl32Point2D dl32AABB2D::GetDownRightCorner()
-{
-	return dl32Point2D(Position.x+mWidth,Position.y+mHeight);
-}
-
-dl32Point2D dl32AABB2D::GetDownLeftCorner()
-{
-	return dl32Point2D(Position.x,Position.y+mHeight);
 }
 
 void dl32AABB2D::SetCenter(float X, float Y)
 {
-	Position.x=X-(mWidth/2);
-	Position.y=Y-(mHeight/2);
+	Position.x=X-(_width/2);
+	Position.y=Y-(_height/2);
 }
 
-void dl32AABB2D::SetCenter(dl32Point2D &Center)
+void dl32AABB2D::SetCenter(const dl32Point2D &Center)
 {
-	Position.x=Center.x-(mWidth/2);
-	Position.y=Center.y-(mHeight/2);
+	Position.x=Center.x-(_width/2);
+	Position.y=Center.y-(_height/2);
 }
 
-bool dl32AABB2D::Collide(dl32AABB2D C1, dl32AABB2D C2)
+bool dl32AABB2D::Collide(const dl32AABB2D &C1, const dl32AABB2D &C2)
 {
 	dl32AABB2D BigAABB=dl32AABB2D(C1.Position.x-C2.GetWidth(),C1.Position.y-C2.GetHeight(),C1.GetWidth()+C2.GetWidth(),C1.GetHeight()+C2.GetHeight());
 
 	return BigAABB.BelongTo(C2.Position);
 }
 
-dl32Orientation2D dl32AABB2D::Orientation(dl32AABB2D Origin, dl32AABB2D AABB)
+dl32Orientation2D dl32AABB2D::Orientation(const dl32AABB2D &Origin, const dl32AABB2D &AABB)
 {
 	dl32Orientation2D Retorno;
 	bool ArribaIzquierda=Origin.BelongTo(AABB.GetUpLeftCorner());
@@ -395,8 +367,8 @@ dl32OBB2D::dl32OBB2D(dl32Point2D pointCloud[],int pointCount)
 	***************************************************************************************************************************************/
 
 	//NOTA: Como el eje x es unitario, el seno del ángulo de rotación es la coordenada y del eje, y el coseno la coordenada x:
-	_toWorld=dl32Transformation2D::Rotation(dl32Vector2D::Angle(dl32Vector2D(1,0),xAxis))+dl32Transformation2D::Translation(cloudCenter.x,cloudCenter.y);
-	_toLocal=dl32Transformation2D::Translation(-cloudCenter.x,-cloudCenter.y)+dl32Transformation2D::Rotation(-dl32Vector2D::Angle(dl32Vector2D(1,0),xAxis));
+	_toWorld=dl32Transformation2D::Rotation(xAxis.y,xAxis.x)+dl32Transformation2D::Translation(cloudCenter.x,cloudCenter.y);
+	_toLocal=dl32Transformation2D::Translation(-cloudCenter.x,-cloudCenter.y)+dl32Transformation2D::Rotation(-xAxis.y,xAxis.x);
 
 	//FASE 3: Generamos el AABB en coordenadas locales:
 	///////////////////////////////////////////////////
@@ -490,50 +462,7 @@ dl32Matrix3x3::dl32Matrix3x3(float m11,float m12,float m13,
 	this->m31=m31;this->m32=m32;this->m33=m33;
 }
 
-dl32Matrix3x3 Get3x3Unity()
-{
-	return dl32Matrix3x3(1,0,0,
-						 0,1,0,
-						 0,0,1);
-}
-
- dl32Matrix3x3 dl32Matrix3x3::Add(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
-{
-	return dl32Matrix3x3(m1.m11+m2.m11,m1.m12+m1.m12,m1.m13+m2.m13,
-						 m1.m21+m2.m21,m1.m22+m1.m22,m1.m23+m2.m23,
-						 m1.m31+m2.m31,m1.m32+m1.m32,m1.m33+m2.m33);
-}
-
- dl32Matrix3x3 dl32Matrix3x3::Sub(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
-{
-	return dl32Matrix3x3(m1.m11-m2.m11,m1.m12-m1.m12,m1.m13-m2.m13,
-						 m1.m21-m2.m21,m1.m22-m1.m22,m1.m23-m2.m23,
-						 m1.m31-m2.m31,m1.m32-m1.m32,m1.m33-m2.m33);
-}
-
- dl32Matrix3x3 dl32Matrix3x3::Mul(dl32Matrix3x3 m1,dl32Matrix3x3 m2)
-{
-	return dl32Matrix3x3(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31,
-						 m1.m11*m2.m12+m1.m12*m2.m22+m1.m13*m2.m32,
-						 m1.m11*m2.m13+m1.m12*m2.m23+m1.m13*m2.m33,
-
-						 m1.m21*m2.m11+m1.m22*m2.m21+m1.m23*m2.m31,
-						 m1.m21*m2.m12+m1.m22*m2.m22+m1.m23*m2.m32,
-						 m1.m21*m2.m13+m1.m22*m2.m23+m1.m23*m2.m33,
-						 
-						 m1.m31*m2.m11+m1.m32*m2.m21+m1.m33*m2.m31,
-						 m1.m31*m2.m12+m1.m32*m2.m22+m1.m33*m2.m32,
-						 m1.m31*m2.m13+m1.m32*m2.m23+m1.m33*m2.m33);
-}
-
- dl32Matrix3x3 dl32Matrix3x3::Mul(dl32Matrix3x3 matrix,float mul)
-{
-	return dl32Matrix3x3(matrix.m11*mul,matrix.m12*mul,matrix.m13*mul,
-						 matrix.m21*mul,matrix.m22*mul,matrix.m23*mul,
-						 matrix.m31*mul,matrix.m32*mul,matrix.m33*mul);
-}
-
- float dl32Matrix3x3::GetDeterminant(dl32Matrix3x3 matrix)
+ float dl32Matrix3x3::GetDeterminant(const dl32Matrix3x3 &matrix)
 {
 	return (matrix.m11*matrix.m22*matrix.m33+
 		    matrix.m12*matrix.m23*matrix.m31+
@@ -542,7 +471,7 @@ dl32Matrix3x3 Get3x3Unity()
 		    matrix.m12*matrix.m21*matrix.m33-
 		    matrix.m11*matrix.m23*matrix.m32);
 }  
- dl32Matrix3x3 dl32Matrix3x3::GetInverse(dl32Matrix3x3 matrix)throw(dl32InvalidMatrixOperationException)
+ dl32Matrix3x3 dl32Matrix3x3::GetInverse(const dl32Matrix3x3 &matrix)throw(dl32InvalidMatrixOperationException)
  {
 	 float det=dl32Matrix3x3::GetDeterminant(matrix);
 
@@ -554,13 +483,13 @@ dl32Matrix3x3 Get3x3Unity()
 		 throw dl32InvalidMatrixOperationException("dl323x3Matrix::GetInverse(dl323x3Matrix matrix): 'matrix' is no-invertible");
  }
 
-void dl32Transformation2D::Apply(dl32Point2D *point)
+void dl32Transformation2D::Apply(dl32Point2D *point) const
 {
 	*point=dl32Point2D(m11*point->x+m12*point->y+m13,
 		  m21*point->x+m22*point->y+m23);
 }
 
-void dl32Transformation2D::Apply(float *x,float *y)
+void dl32Transformation2D::Apply(float *x,float *y) const
 {
 	float xx,yy;
 	xx=m11*(*x)+m12*(*y)+m13;
@@ -569,7 +498,7 @@ void dl32Transformation2D::Apply(float *x,float *y)
 	*y=yy;
 }
 
-void dl32Transformation2D::Apply(dl32Point2D pointList[], int pointCount)
+void dl32Transformation2D::Apply(dl32Point2D pointList[], int pointCount) const
 {
 	for(int i=0;i<pointCount;++i)
 		pointList[i]=Apply(pointList[i]);

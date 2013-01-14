@@ -23,14 +23,11 @@ private:
 protected:
 	void LongCasting(long Number);
 	void HexLongCasting(long Number);
-	void FloatCasting(float Number, int Decimals=DL32STRINGDEFAULTS_DECIMALS);
 public:
 	dl32String();
-	dl32String(char Str);
+	dl32String(const char Str);
 	dl32String(const char Str[]);
 	dl32String(char Str[],int Size);
-	dl32String(string &Str);
-	dl32String(dl32String &Str);
 	dl32String(const string &Str);
 	dl32String(const dl32String &Str);
 	dl32String(int Number,bool Hex=false);
@@ -41,39 +38,79 @@ public:
 
 	~dl32String();
 
-	bool Ready();
+	bool Ready() const;
 
-	char* c_str();
-	char* Copy();
+	char* c_str(); 
+	char* Copy() const;
 	char At(int pos)throw(dl32OutOfRangeException);
 	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);};
 
-	dl32String& operator=(dl32String &Str);
+	dl32String& operator=(const dl32String &Str);
 
-	int GetLength(){return size;};
+	int GetLength()const{return size;};
 
-	static dl32String Concat(dl32String &str1,dl32String &str2);
-	void Concat(dl32String &str);
+	static dl32String Concat(const dl32String &str1,const dl32String &str2);
 
-	dl32String& operator+=(dl32String &str);
+	void Concat(const dl32String &str);
 	
 	void Erase(int StartIndex,int Lenght=1);
-	dl32String GetSubString(int StartIndex,int Lenght=1);
+	dl32String GetSubString(int StartIndex,int Lenght=1)const;
 };
 
-dl32String operator+(dl32String &str1,dl32String &str2);
+inline dl32String operator+(const dl32String &str1,const dl32String &str2)
+{
+	return dl32String::Concat(str1,str2);
+}
 
-dl32String operator+(char str1[],dl32String &str2);
-dl32String operator+(dl32String &str1,char str2[]);
+inline dl32String operator+(const char str1[],const dl32String &str2)
+{
+	return dl32String::Concat(dl32String(str1),str2);
+}
 
-dl32String operator+(dl32String &str,long &number);
-dl32String operator+(long &number,dl32String &str);
-dl32String operator+(dl32String &str,int &number);
-dl32String operator+(int &number,dl32String &str);
-dl32String operator+(dl32String &str,double &number);
-dl32String operator+(double &number,dl32String &str);
-dl32String operator+(dl32String &str,float &number);
-dl32String operator+(float &number,dl32String &str);
+inline dl32String operator+(const dl32String &str1,const char str2[])
+{
+	return dl32String::Concat(str1,dl32String(str2));
+}
+
+inline dl32String operator+(const dl32String &str,const long &number)
+{
+	return dl32String::Concat(str,dl32String(number));
+}
+
+inline dl32String operator+(const long &number,const dl32String &str)
+{
+	return dl32String::Concat(dl32String(number),str);
+}
+
+inline dl32String operator+(const dl32String &str,const int &number)
+{
+	return dl32String::Concat(str,dl32String(number));
+}
+
+inline dl32String operator+(const int &number,const dl32String &str)
+{
+	return dl32String::Concat(dl32String(number),str);
+}
+
+inline dl32String operator+(const dl32String &str,const double &number)
+{
+	return dl32String::Concat(str,dl32String(number));
+}
+
+inline dl32String operator+(const double &number,const dl32String &str)
+{
+	return dl32String::Concat(dl32String(number),str);
+}
+
+inline dl32String operator+(const dl32String &str,const float &number)
+{
+	return dl32String::Concat(str,dl32String(number));
+}
+
+inline dl32String operator+(const float &number,const dl32String &str)
+{
+	return dl32String::Concat(dl32String(number),str);
+}
 
 //dl32String& operator+(char str[],long &number);
 //dl32String& operator+(long &number,char str[]);

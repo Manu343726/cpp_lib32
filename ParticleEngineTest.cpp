@@ -25,7 +25,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 
 	Window=new dl32Window("dx_lib32 C++ - Particle engine test",0,0,1440,900);
 	gfx=new dl32GraphicsClass(Window);
-	engine=new dl32ParticleSystem(gfx,10000,Window->GetClientArea());
+	engine=new dl32ParticleSystem(gfx,1000,Window->GetClientArea());
 	screen=new dl32Pixel[1280*900];
 
 	Window->MouseMove.AddHandler(OnMouseMove);
@@ -44,16 +44,16 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	dl32Window::Start();
 
 	delete engine;
-	delete Window;
+	delete gfx;
 	delete screen;
 }
 
 void PreDrawProc()
 {
-	engine->Frame();
+	/*engine->Frame();*/
 	Window->SetText("dx_lib32 C++ - Particle engine test (" + dl32String(gfx->FPS()) + " FPS)");
 
-	/*for(int i=0;i<1280;++i)
+	for(int i=0;i<1280;++i)
 		for(int j=0;j<900;++j)
 		{
 			screen[i*900+j].color=COLOR_RainbowGradient(i);
@@ -61,7 +61,8 @@ void PreDrawProc()
 			screen[i*900+j].y=j;
 		}
 
-	gfx->DRAW_Pixels(screen,1280*900);*/
+	gfx->DRAW_Pixels(screen,1280*900);
+	gfx->Frame();
 }
 
 void OnMouseMove(dl32MouseData MouseData)

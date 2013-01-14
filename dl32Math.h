@@ -22,6 +22,8 @@ using namespace std;
 
 float MATH_Min(float a,float b);
 
+float DL32FLOAT_INVSQRT(float x);
+
 //DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////
 
@@ -82,33 +84,61 @@ struct dl32Matrix3x3
 
 	dl32Matrix3x3();
 	dl32Matrix3x3(float m11,float m12,float m13,
-				  float m21,float m22,float m23,
-				  float m31,float m32,float m33);
+		float m21,float m22,float m23,
+		float m31,float m32,float m33);
 
 	float* operator[](int index){return m[index];};
 
-	float GetDeterminant(){return GetDeterminant(*this);};
-	dl32Matrix3x3 GetInverse(){return GetInverse(*this);};
+	float GetDeterminant() const {return GetDeterminant(*this);};
+	dl32Matrix3x3 GetInverse() const {return GetInverse(*this);};
 
 	static dl32Matrix3x3& GetUnity()
 	{
 		return dl32Matrix3x3(1,0,0,
-							 0,1,0,
-							 0,0,1);
+			0,1,0,
+			0,0,1);
 	};
-	
-	static dl32Matrix3x3 Add(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
-	static dl32Matrix3x3 Sub(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
-	static dl32Matrix3x3 Mul(dl32Matrix3x3 m1,dl32Matrix3x3 m2);
-	static dl32Matrix3x3 Mul(dl32Matrix3x3 matrix,float mul);
 
-	static float GetDeterminant(dl32Matrix3x3 matrix);
-	static dl32Matrix3x3 GetInverse(dl32Matrix3x3 matrix)throw(dl32InvalidMatrixOperationException);
+	static dl32Matrix3x3 Add(const dl32Matrix3x3 &m1,const dl32Matrix3x3 &m2)
+	{
+		return dl32Matrix3x3(m1.m11+m2.m11,m1.m12+m1.m12,m1.m13+m2.m13,
+			m1.m21+m2.m21,m1.m22+m1.m22,m1.m23+m2.m23,
+			m1.m31+m2.m31,m1.m32+m1.m32,m1.m33+m2.m33);
+	};
+	static dl32Matrix3x3 Sub(const dl32Matrix3x3 &m1,const dl32Matrix3x3 &m2)
+	{
+		return dl32Matrix3x3(m1.m11-m2.m11,m1.m12-m1.m12,m1.m13-m2.m13,
+			m1.m21-m2.m21,m1.m22-m1.m22,m1.m23-m2.m23,
+			m1.m31-m2.m31,m1.m32-m1.m32,m1.m33-m2.m33);
+	};
+	static dl32Matrix3x3 Mul(const dl32Matrix3x3 &m1,const dl32Matrix3x3 &m2)
+	{
+		return dl32Matrix3x3(m1.m11*m2.m11+m1.m12*m2.m21+m1.m13*m2.m31,
+			m1.m11*m2.m12+m1.m12*m2.m22+m1.m13*m2.m32,
+			m1.m11*m2.m13+m1.m12*m2.m23+m1.m13*m2.m33,
 
-	dl32Matrix3x3 operator+(dl32Matrix3x3 matrix){return Add(*this,matrix);};
-	dl32Matrix3x3 operator-(dl32Matrix3x3 matrix){return Sub(*this,matrix);};
-	dl32Matrix3x3 operator*(dl32Matrix3x3 matrix){return Mul(*this,matrix);};
-	dl32Matrix3x3 operator*(float mul){return Mul(*this,mul);};
+			m1.m21*m2.m11+m1.m22*m2.m21+m1.m23*m2.m31,
+			m1.m21*m2.m12+m1.m22*m2.m22+m1.m23*m2.m32,
+			m1.m21*m2.m13+m1.m22*m2.m23+m1.m23*m2.m33,
+
+			m1.m31*m2.m11+m1.m32*m2.m21+m1.m33*m2.m31,
+			m1.m31*m2.m12+m1.m32*m2.m22+m1.m33*m2.m32,
+			m1.m31*m2.m13+m1.m32*m2.m23+m1.m33*m2.m33);
+	};
+	static dl32Matrix3x3 Mul(const dl32Matrix3x3 &matrix,float mul)
+	{
+		return dl32Matrix3x3(matrix.m11*mul,matrix.m12*mul,matrix.m13*mul,
+			matrix.m21*mul,matrix.m22*mul,matrix.m23*mul,
+			matrix.m31*mul,matrix.m32*mul,matrix.m33*mul);
+	};
+
+	static float GetDeterminant(const dl32Matrix3x3 &matrix);
+	static dl32Matrix3x3 GetInverse(const dl32Matrix3x3 &matrix)throw(dl32InvalidMatrixOperationException);
+
+	dl32Matrix3x3 operator+(const dl32Matrix3x3 &matrix) const {return Add(*this,matrix);};
+	dl32Matrix3x3 operator-(const dl32Matrix3x3 &matrix) const {return Sub(*this,matrix);};
+	dl32Matrix3x3 operator*(const dl32Matrix3x3 &matrix) const {return Mul(*this,matrix);};
+	dl32Matrix3x3 operator*(float mul) const {return Mul(*this,mul);};
 };
 
 ////////////////////////////////
@@ -130,20 +160,20 @@ struct dl32Matrix4x4
 
 	dl32Matrix4x4();
 	dl32Matrix4x4(float m11,float m12,float m13,float m14,
-				  float m21,float m22,float m23,float m24,
-				  float m31,float m32,float m33,float m34,
-				  float m41,float m42,float m43,float m44);
+		float m21,float m22,float m23,float m24,
+		float m31,float m32,float m33,float m34,
+		float m41,float m42,float m43,float m44);
 
 	float* operator[](int index){return m[index];};
 
 	static dl32Matrix4x4 GetUnity()
 	{
 		return dl32Matrix4x4(1,0,0,0,
-							 0,1,0,0,
-							 0,0,1,0,
-							 0,0,0,1);
+			0,1,0,0,
+			0,0,1,0,
+			0,0,0,1);
 	};
-	
+
 	static dl32Matrix4x4 Add(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
 	static dl32Matrix4x4 Sub(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
 	static dl32Matrix4x4 Mul(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
@@ -210,7 +240,7 @@ public:
 	~dl32Matrix();
 
 	bool Ready(){return Array!=NULL;};
-	
+
 	float At(int row,int column)throw(dl32OutOfRangeException);
 	dl32MatrixRow operator[](int row)throw(dl32OutOfRangeException);
 
@@ -340,30 +370,31 @@ struct dl32Point2D
 	};
 
 	dl32Point2D(){x=0;y=0;};
-	dl32Point2D(float ValX,float ValY){x=ValX;y=ValY;};
-	dl32Point2D(float* coordsArray){x=coordsArray[0];y=coordsArray[1];};
-	float operator [](int coord)throw (dl32OutOfRangeException);
+	dl32Point2D(float ValX,float ValY)                                               {x=ValX;y=ValY;};
+	dl32Point2D(float* coordsArray)                                                  {x=coordsArray[0];y=coordsArray[1];};
 
-	dl32Point2D operator()(){x=0;y=0;return *this;};
-	dl32Point2D operator()(float x,float y){this->x=x;this->y=y;return *this;};
+	const float operator [](int coord) const throw (dl32OutOfRangeException);
 
-	static dl32Point2D Add(dl32Point2D P1,dl32Point2D P2){return dl32Point2D(P1.x+P2.x,P1.y+P2.y);};
-	static dl32Point2D Sub(dl32Point2D P1,dl32Point2D P2){return dl32Point2D(P1.x-P2.x,P1.y-P2.y);};
-	static dl32Point2D Mul(dl32Point2D Point,float Factor){return dl32Point2D(Point.x*Factor,Point.y*Factor);};
-	static dl32Point2D Div(dl32Point2D Point,float Divisor)throw(dl32DividedByCeroException);
+	dl32Point2D& operator()()                                                        {x=0;y=0;return *this;};
+	dl32Point2D& operator()(float x,float y)                                         {this->x=x;this->y=y;return *this;};
+
+	static const dl32Point2D Add(const dl32Point2D &P1,const dl32Point2D &P2)        {return dl32Point2D(P1.x+P2.x,P1.y+P2.y);};
+	static const dl32Point2D Sub(const dl32Point2D &P1,const dl32Point2D &P2)        {return dl32Point2D(P1.x-P2.x,P1.y-P2.y);};
+	static const dl32Point2D Mul(const dl32Point2D &Point,float Factor)              {return dl32Point2D(Point.x*Factor,Point.y*Factor);};
+	static const dl32Point2D Div(const dl32Point2D &Point,float Divisor)throw(dl32DividedByCeroException);
 
 	static dl32Point2D Baricenter(dl32Point2D PointList[],int PointCount);
 
-	dl32Point2D operator+(dl32Point2D point){return Add(*this,point);};
-	dl32Point2D operator-(){return dl32Point2D(-x,-y);};
-	dl32Point2D operator-(dl32Point2D point){return Sub(*this,point);};
-	dl32Point2D operator*(float factor){return Mul(*this,factor);};
-	dl32Point2D operator/(float div)throw(dl32DividedByCeroException){return Div(*this,div);};
+	const dl32Point2D operator+(const dl32Point2D &point) const                       {return Add(*this,point);};
+	const dl32Point2D operator-()                         const                       {return dl32Point2D(-x,-y);};
+	const dl32Point2D operator-(const dl32Point2D &point) const                       {return Sub(*this,point);};
+	const dl32Point2D operator*(float factor) const                                   {return Mul(*this,factor);};
+	const dl32Point2D operator/(float div)    const throw(dl32DividedByCeroException) {return Div(*this,div);};
 
-	bool operator==(dl32Point2D point){return DL32FLOAT_EQ(x,point.x) && DL32FLOAT_EQ(y,point.y);};
-	bool operator!=(dl32Point2D point){return DL32FLOAT_NE(x,point.x) || DL32FLOAT_NE(y,point.y);};
+	bool operator==(dl32Point2D point)                                                {return DL32FLOAT_EQ(x,point.x) && DL32FLOAT_EQ(y,point.y);};
+	bool operator!=(dl32Point2D point)                                                {return DL32FLOAT_NE(x,point.x) || DL32FLOAT_NE(y,point.y);};
 
-	static float GetSignedArea(dl32Point2D P1, dl32Point2D P2, dl32Point2D P3){return (P2.x-P1.x)*(P3.y-P1.y) - (P3.x-P1.x)*(P2.y-P1.y);};
+	static float GetSignedArea(dl32Point2D P1, dl32Point2D P2, dl32Point2D P3)        {return (P2.x-P1.x)*(P3.y-P1.y) - (P3.x-P1.x)*(P2.y-P1.y);};
 };
 
 //////////////////////////////////
@@ -379,32 +410,32 @@ struct dl32Vector2D:public dl32Point2D
 	dl32Vector2D operator()(float x,float y){this->x=x;this->y=y;return *this;};
 	dl32Vector2D operator()(dl32Point2D P1,dl32Point2D P2){x=P2.x-P1.x;y=P2.y-P1.y;return *this;};
 
-	float GetLength(){return sqrt(x*x+y*y);};
+	float GetLength() const {return sqrt(x*x+y*y);}; 
 	void SetLength(float length){Normalize();x*=length;y*=length;};
-	float GetSquareLenght(){return x*x+y*y;};
+	float GetSquareLenght() const {return x*x+y*y;}; 
 	void Normalize();
 	dl32Vector2D GetUnitary(){float m=sqrt(x*x+y*y);return dl32Vector2D(x/m,y/m);};
 	dl32Vector2D GetNormal(bool Clockwise=true){return (Clockwise ? dl32Vector2D(-y,x) : dl32Vector2D(y,-x));};
 
-	static dl32Vector2D Add(dl32Vector2D P1,dl32Vector2D P2){return dl32Vector2D(P1.x+P2.x,P1.y+P2.y);};
-	static dl32Vector2D Sub(dl32Vector2D P1,dl32Vector2D P2){return dl32Vector2D(P1.x-P2.x,P1.y-P2.y);};
-	static dl32Vector2D Mul(dl32Vector2D Vector,float Factor){return dl32Vector2D(Vector.x*Factor,Vector.y*Factor);};
-	static dl32Vector2D Div(dl32Vector2D Vector,float Divisor)throw(dl32DividedByCeroException);
+	static const dl32Vector2D Add(const dl32Vector2D &P1,const dl32Vector2D &P2){return dl32Vector2D(P1.x+P2.x,P1.y+P2.y);};
+	static const dl32Vector2D Sub(const dl32Vector2D &P1,const dl32Vector2D &P2){return dl32Vector2D(P1.x-P2.x,P1.y-P2.y);};
+	static const dl32Vector2D Mul(const dl32Vector2D &Vector,float Factor){return dl32Vector2D(Vector.x*Factor,Vector.y*Factor);};
+	static const dl32Vector2D Div(const dl32Vector2D &Vector,float Divisor)throw(dl32DividedByCeroException);
 
-	dl32Vector2D operator+(dl32Vector2D Vector){return Add(*this,Vector);};
-	dl32Vector2D operator-(){return dl32Vector2D(-x,-y);};
-	dl32Vector2D operator-(dl32Vector2D Vector){return Sub(*this,Vector);};
-	dl32Vector2D operator*(float factor){return Mul(*this,factor);};
-	dl32Vector2D operator/(float div)throw(dl32DividedByCeroException){return Div(*this,div);};
+	const dl32Vector2D operator+(const dl32Vector2D &Vector){return Add(*this,Vector);};
+	const dl32Vector2D operator-(){return dl32Vector2D(-x,-y);};
+	const dl32Vector2D operator-(const dl32Vector2D &Vector){return Sub(*this,Vector);};
+	const dl32Vector2D operator*(float factor){return Mul(*this,factor);};
+	const dl32Vector2D operator/(float div)throw(dl32DividedByCeroException){return Div(*this,div);};
 
-	dl32Vector2D operator+=(dl32Vector2D vector){*this=Add(*this,vector);return *this;};
-	dl32Vector2D operator-=(dl32Vector2D vector){*this=Sub(*this,vector);return *this;};
+	dl32Vector2D& operator+=(dl32Vector2D vector){*this=Add(*this,vector);return *this;};
+	dl32Vector2D& operator-=(dl32Vector2D vector){*this=Sub(*this,vector);return *this;};
 
-	static float Mul(dl32Vector2D V1,dl32Vector2D V2){return V1.x*V2.x+V1.y*V2.y;};
-	static float Angle(dl32Vector2D V1, dl32Vector2D V2){return acos(Mul(V1,V2)/(V1.GetLength()*V2.GetLength()));};
+	static float Mul(const dl32Vector2D &V1,const dl32Vector2D &V2){return V1.x*V2.x+V1.y*V2.y;};
+	static float Angle(const dl32Vector2D &V1, const dl32Vector2D &V2){return acos(Mul(V1,V2)*DL32FLOAT_INVSQRT(V1.x*V1.x+V1.y*V1.y)*DL32FLOAT_INVSQRT(V2.x*V2.x+V2.y*V2.y));};//Una pequeña optimización...
 
-	float operator*(dl32Vector2D vector){return Mul(*this,vector);};
-	float operator^(dl32Vector2D vector){return Angle(*this,vector);};
+	float operator*(const dl32Vector2D &vector){return Mul(*this,vector);};
+	float operator^(const dl32Vector2D &vector){return Angle(*this,vector);};
 };
 
 ////////////////////////////////
@@ -480,52 +511,54 @@ enum dl32Orientation2D
 /////////////////////////////////////////////////////
 class dl32AABB2D
 {
-	friend class dl32AABB2D;
+	friend class dl32AABB2D;//Algo guarro, lo se, pero es para no pasar por tanto getter (Aunque igual con las inline no es necesario...)
 private:
-	float mWidth;
-	float mHeight;
+	float _width;
+	float _height;
 public:
 	dl32Point2D Position; //Coordenadas de la esquina superior izquierda del AABB
 
-	dl32AABB2D();
+	dl32AABB2D() {_width = 0; _height = 0;};
 	dl32AABB2D(float X, float Y, float Width, float Height);
 	dl32AABB2D(dl32Point2D Position, float Width, float Height);
 	dl32AABB2D(dl32Point2D Position, dl32Vector2D Area);
 	dl32AABB2D(dl32Point2D pointCloud[],int pointCount);
-	//Getters:
-	float GetWidth();
-	float GetHeight();
-	dl32Point2D GetCenter();
-	dl32Point2D GetUpLeftCorner();
-	dl32Point2D GetUpRightCorner();
-	dl32Point2D GetDownRightCorner();
-	dl32Point2D GetDownLeftCorner();
 
-	float GetLeft(){return Position.x;};
-	float GetTop(){return Position.y;};
-	float GetRight(){return Position.x+mWidth;};
-	float GetBottom(){return Position.y+mHeight;};
+	//Getters:
+	float GetWidth()				 const {return _width;};
+	float GetHeight()				 const {return _height;};
+
+	dl32Point2D GetCenter()          const {return dl32Point2D(Position.x+_width*0.5,Position.y+_height*0.5);};
+	dl32Point2D GetUpLeftCorner()    const {return Position;};
+	dl32Point2D GetUpRightCorner()   const {return dl32Point2D(Position.x+_width,Position.y);};
+	dl32Point2D GetDownRightCorner() const {return dl32Point2D(Position.x+_width,Position.y+_height);};
+	dl32Point2D GetDownLeftCorner()  const {return dl32Point2D(Position.x,Position.y+_height);};
+
+	float GetLeft()					 const {return Position.x;};
+	float GetTop()					 const {return Position.y;};
+	float GetRight()				 const {return Position.x+_width;};
+	float GetBottom()				 const {return Position.y+_height;};
 
 	//Setters:
 	void SetWidth(float Width);
 	void SetHeight(float Height);
 	void SetCenter(float X, float Y);
-	void SetCenter(dl32Point2D &Center);
-	void SetArea(dl32Vector2D area);
+	void SetCenter(const dl32Point2D &Center);
+	void SetArea(const dl32Vector2D &area);
 
-	bool BelongTo(dl32Point2D &Point){return BelongTo(Point.x,Point.y);};
-	bool BelongTo(float X,float Y){return (X>=Position.x && X<=(Position.x+mWidth) && Y>=Position.y && Y<=(Position.y+mHeight));};
+	bool BelongTo(const dl32Point2D &Point)		          const {return BelongTo(Point.x,Point.y);};
+	bool BelongTo(float X,float Y)				          const {return (X>=Position.x && X<=(Position.x+_width) && Y>=Position.y && Y<=(Position.y+_height));};
 
-	static bool Collide(dl32AABB2D A1,dl32AABB2D A2);
-	static dl32Orientation2D Orientation(dl32AABB2D A1,dl32AABB2D A2);
+	bool operator&(dl32AABB2D &AABB)					        {return Collide(*this,AABB);};
+	bool operator&(dl32Point2D &point)					        {return BelongTo(point);};
+	bool operator ==(dl32AABB2D &AABB)					        {return Position==AABB.Position && DL32FLOAT_EQ(_width,AABB._width) && DL32FLOAT_EQ(_height,AABB._height);};
+	bool operator !=(dl32AABB2D &AABB)					        {return Position!=AABB.Position || DL32FLOAT_NE(_width,AABB._width) || DL32FLOAT_NE(_height,AABB._height);};
 
-	bool operator&(dl32AABB2D &AABB){return Collide(*this,AABB);};
-	bool operator&(dl32Point2D &point){return BelongTo(point);};
-	bool operator ==(dl32AABB2D &AABB){return Position==AABB.Position && DL32FLOAT_EQ(mWidth,AABB.mWidth) && DL32FLOAT_EQ(mHeight,AABB.mHeight);};
-	bool operator !=(dl32AABB2D &AABB){return Position!=AABB.Position || DL32FLOAT_NE(mWidth,AABB.mWidth) || DL32FLOAT_NE(mHeight,AABB.mHeight);};
+	bool Collide(dl32AABB2D AABB)                         const {return Collide(*this,AABB);};
+	dl32Orientation2D Orientation(const dl32AABB2D &AABB) const {return Orientation(*this,AABB);};
 
-	bool Collide(dl32AABB2D AABB){return Collide(*this,AABB);};
-	dl32Orientation2D Orientation(dl32AABB2D AABB){return Orientation(*this,AABB);};
+	static bool Collide(const dl32AABB2D &A1,const dl32AABB2D &A2);
+	static dl32Orientation2D Orientation(const dl32AABB2D &A1,const dl32AABB2D &A2);
 };
 
 class dl32Polygon2D
@@ -540,80 +573,104 @@ private:
 class dl32Transformation2D: public dl32Matrix3x3
 {
 public:
-	dl32Transformation2D():dl32Matrix3x3(1,0,0,
-									     0,1,0,
-										 0,0,1){};
-	dl32Transformation2D(dl32Matrix3x3 &matrix):dl32Matrix3x3(matrix){};
-	dl32Transformation2D(float m11,float m12,float m13,
-						 float m21,float m22,float m23,
-						 float m31,float m32,float m33):dl32Matrix3x3(m11,m12,m13,
-																	  m21,m22,m23,
-																	  m31,m32,m33){};
+	dl32Transformation2D():dl32Matrix3x3(
+		1,0,0,
+		0,1,0,
+		0,0,1)
+	{};
+	dl32Transformation2D(const dl32Matrix3x3 &matrix):dl32Matrix3x3(matrix){};
+	dl32Transformation2D(
+		float m11,float m12,float m13,
+		float m21,float m22,float m23,
+		float m31,float m32,float m33
+		):dl32Matrix3x3(
+		m11,m12,m13,
+		m21,m22,m23,
+		m31,m32,m33
+		)
+	{};
 
-	void Apply(dl32Point2D *Point);
-	void Apply(dl32Point2D pointList[], int pointCount);
-	void Apply(float *x,float *y);
-	dl32Point2D Apply(float x,float y) {return dl32Point2D(m11*x+m12*y+m13,m21*x+m22*y+m23);};
-	dl32Point2D Apply(dl32Point2D point) {return dl32Point2D(m11*point.x+m12*point.y+m13,m21*point.x+m22*point.y+m23);};
+	void Apply(dl32Point2D *Point)																const;
+	void Apply(dl32Point2D pointList[], int pointCount)											const;
+	void Apply(float *x,float *y)																const;
 
-	void Concat(dl32Transformation2D Transformation) {*this=dl32Matrix3x3::Mul(Transformation,*this);};
-	dl32Transformation2D operator+(dl32Transformation2D Transformation){return dl32Transformation2D(dl32Matrix3x3::Mul(Transformation,*this));};
-	static dl32Transformation2D Concat(dl32Transformation2D t1,dl32Transformation2D t2) {return dl32Transformation2D(dl32Matrix3x3::Mul(t2,t1));};
+	dl32Point2D Apply(float x,float y)															const {return dl32Point2D(m11*x+m12*y+m13,m21*x+m22*y+m23);};
+	dl32Point2D Apply(const dl32Point2D &point)													const {return dl32Point2D(m11*point.x+m12*point.y+m13,m21*point.x+m22*point.y+m23);};
+
+	void Concat(dl32Transformation2D Transformation)                                                  {*this =Concat(*this,Transformation);};
+	dl32Transformation2D operator+(const dl32Transformation2D &Transformation)                        {return Concat(*this,Transformation);};
+	static dl32Transformation2D Concat(const dl32Transformation2D &t1,const dl32Transformation2D &t2) {return (dl32Transformation2D)dl32Matrix3x3::Mul(t2,t1);};
 
 	static dl32Transformation2D Translation(float dx,float dy)
 	{
-		return dl32Transformation2D(1,0,dx,
-							        0,1,dy,
-							        0,0,1);
+		return dl32Transformation2D(
+			1,0,dx,
+			0,1,dy,
+			0,0,1
+		);
 	};
 
 	static dl32Transformation2D Translation(dl32Point2D origin,dl32Point2D destiny)
 	{
-		return dl32Transformation2D(1,0,destiny.x-origin.x,
-							        0,1,destiny.y-origin.y,
-							        0,0,1);
+		return dl32Transformation2D(
+			1,0,destiny.x-origin.x,
+			0,1,destiny.y-origin.y,
+			0,0,1
+		);
 	};
-	
+
 	static dl32Transformation2D Translation(dl32Vector2D Translation)
 	{
-		return dl32Transformation2D(1,0,Translation.x,
-							        0,1,Translation.y,
-							        0,0,1);
+		return dl32Transformation2D(
+			1,0,Translation.x,
+			0,1,Translation.y,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Scale(float scale)
 	{
-		return dl32Transformation2D(scale,0,0,
-							        0,scale,0,
-							        0,0,1);
+		return dl32Transformation2D(
+			scale,0,0,
+			0,scale,0,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Scale(float sx,float sy)
 	{
-			return dl32Transformation2D(sx,0,0,
-								        0,sy,0,
-								        0,0,1);
+		return dl32Transformation2D(
+			sx,0,0,
+			0,sy,0,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Scale(dl32Vector2D scale)
 	{
-			return dl32Transformation2D(scale.x,0,0,
-								        0,scale.y,0,
-								        0,0,1);
+		return dl32Transformation2D(
+			scale.x,0,0,
+			0,scale.y,0,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Rotation(float angle)
 	{
-			return dl32Transformation2D(cos(angle),sin(angle),0,
-								        -sin(angle),cos(angle),0,
-								        0,0,1);
+		return dl32Transformation2D(
+			cos(angle),sin(angle),0,
+			-sin(angle),cos(angle),0,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Rotation(float sin_angle,float cos_angle)
 	{
-			return dl32Transformation2D(cos_angle,sin_angle,0,
-								        -sin_angle,cos_angle,0,
-								        0,0,1);
+		return dl32Transformation2D(
+			cos_angle,sin_angle,0,
+			-sin_angle,cos_angle,0,
+			0,0,1
+			);
 	};
 
 	static dl32Transformation2D Rotation(float center_x,float center_y,float angle);
@@ -634,21 +691,20 @@ public:
 	dl32OBB2D(dl32Vector2D area, dl32Transformation2D WorldToLocal);
 	dl32OBB2D(dl32Point2D pointCloud[],int pointCount);
 
-	dl32Transformation2D WorldToLocal(){return _toLocal;};
-	dl32Transformation2D LocalToWorld(){return _toWorld;};
+	dl32Point2D GetUpLeftCorner()       const {return _toWorld.Apply(_aabb.GetUpLeftCorner());};
+	dl32Point2D GetUpRightCorner()      const {return _toWorld.Apply(_aabb.GetUpRightCorner());};
+	dl32Point2D GetDownRightCorner()    const {return _toWorld.Apply(_aabb.GetDownRightCorner());};
+	dl32Point2D GetDownLeftCorner()     const {return _toWorld.Apply(_aabb.GetDownLeftCorner());};
 
-	bool BelongTo(dl32Point2D point){return _aabb.BelongTo(_toLocal.Apply(point));};
-	bool BelongTo(float x, float y){return _aabb.BelongTo(_toLocal.Apply(x,y));};
+	dl32Transformation2D WorldToLocal() const {return _toLocal;};
+	dl32Transformation2D LocalToWorld() const {return _toWorld;};
 
+	bool BelongTo(dl32Point2D point)    const {return _aabb.BelongTo(_toLocal.Apply(point));};
+	bool BelongTo(float x, float y)     const {return _aabb.BelongTo(_toLocal.Apply(x,y));};
+
+	bool Collide(dl32OBB2D OBB)         const {return Collide(*this,OBB);};
+	bool Collide(dl32AABB2D localAABB)  const {return dl32AABB2D::Collide(_aabb,localAABB);}
 	static bool Collide(dl32OBB2D O1, dl32OBB2D O2);
-	bool Collide(dl32OBB2D OBB){return Collide(*this,OBB);};
-
-	bool Collide(dl32AABB2D localAABB){return dl32AABB2D::Collide(_aabb,localAABB);}
-
-	dl32Point2D GetUpLeftCorner(){return _toWorld.Apply(_aabb.GetUpLeftCorner());};
-	dl32Point2D GetUpRightCorner(){return _toWorld.Apply(_aabb.GetUpRightCorner());};
-	dl32Point2D GetDownRightCorner(){return _toWorld.Apply(_aabb.GetDownRightCorner());};
-	dl32Point2D GetDownLeftCorner(){return _toWorld.Apply(_aabb.GetDownLeftCorner());};
 
 	//dl32Point2D GetUpLeftCorner(){return _aabb.GetUpLeftCorner();};
 	//dl32Point2D GetUpRightCorner(){return _aabb.GetUpRightCorner();};
@@ -696,7 +752,7 @@ struct dl32Vector3D:public dl32Point3D
 	dl32Vector3D(){x=0;y=0;z=0;};
 	dl32Vector3D(float x,float y,float z){this->x=x;this->y=y;this->z=z;};
 	dl32Vector3D(dl32Point3D P1,dl32Point3D P2){this->x=P2.x-P1.x;y=P2.y-P1.y;z=P2.z-P1.z;};
-	
+
 	float GetLength(){return sqrt(x*x+y*y+z*z);};
 	void Normalize();
 	dl32Vector3D GetUnitary(){float m=sqrt(x*x+y*y+z*z);return dl32Vector3D(x/m,y/m,z/m);};
@@ -774,13 +830,15 @@ public:
 	static dl32Quaternion Mul(dl32Quaternion quaternion, float factor){return dl32Quaternion(quaternion.a*factor,quaternion.b*factor,quaternion.c*factor,quaternion.d*factor);};
 	static dl32Quaternion Div(dl32Quaternion quaternion, float div)throw(dl32DividedByCeroException);
 	static dl32Quaternion Div(dl32Quaternion Q1,dl32Quaternion Q2){return Mul(Q1,Q2.GetInversed());};
-	
+
 	static dl32Quaternion Mul(dl32Quaternion Q1,dl32Quaternion Q2)
 	{
-		return dl32Quaternion((Q1.a * Q2.a) - (Q1.b * Q2.b) - (Q1.c * Q2.c) - (Q1.d * Q2.d),
-						      (Q1.a * Q2.b) + (Q1.b * Q2.a) + (Q1.c * Q2.d) - (Q1.d * Q2.c),
-						      (Q1.a * Q2.c) - (Q1.b * Q2.d) + (Q1.c * Q2.a) + (Q1.d * Q2.b),
-						      (Q1.a * Q2.d) + (Q1.b + Q2.c) - (Q1.c * Q2.b) + (Q1.d * Q2.a));
+		return dl32Quaternion(
+			(Q1.a * Q2.a) - (Q1.b * Q2.b) - (Q1.c * Q2.c) - (Q1.d * Q2.d),
+			(Q1.a * Q2.b) + (Q1.b * Q2.a) + (Q1.c * Q2.d) - (Q1.d * Q2.c),
+			(Q1.a * Q2.c) - (Q1.b * Q2.d) + (Q1.c * Q2.a) + (Q1.d * Q2.b),
+			(Q1.a * Q2.d) + (Q1.b + Q2.c) - (Q1.c * Q2.b) + (Q1.d * Q2.a)
+			);
 	};
 };
 
@@ -793,9 +851,9 @@ public:
 	dl32Transformation3D();
 	dl32Transformation3D(dl32Matrix4x4 &matrix);
 	dl32Transformation3D(float m11,float m12,float m13,float m14,
-					float m21,float m22,float m23,float m24,
-					float m31,float m32,float m33,float m34,
-					float m41,float m42,float m43,float m44);
+		float m21,float m22,float m23,float m24,
+		float m31,float m32,float m33,float m34,
+		float m41,float m42,float m43,float m44);
 
 	void Apply(dl32Point3D *Point);
 	void Apply(float *x,float *y,float *z);
@@ -811,41 +869,41 @@ public:
 	static dl32Transformation3D& Translation(float tx,float ty,float tz)
 	{
 		return dl32Transformation3D(1,0,0,tx,
-							   0,1,0,ty,
-						       0,0,1,tz,
-							   0,0,0,1);
+			0,1,0,ty,
+			0,0,1,tz,
+			0,0,0,1);
 	};
 
 	static dl32Transformation3D& Translation(dl32Vector3D Translation)
 	{
 		return dl32Transformation3D(1,0,0,Translation.x,
-							   0,1,0,Translation.y,
-							   0,0,1,Translation.z,
-							   0,0,0,1);
+			0,1,0,Translation.y,
+			0,0,1,Translation.z,
+			0,0,0,1);
 	};
 
 	static dl32Transformation3D& Translation(dl32Point3D origin,dl32Point3D destiny)
 	{
 		return dl32Transformation3D(1,0,0,destiny.x-origin.x,
-							   0,1,0,destiny.y-origin.y,
-							   0,0,1,destiny.z-origin.z,
-							   0,0,0,1);
+			0,1,0,destiny.y-origin.y,
+			0,0,1,destiny.z-origin.z,
+			0,0,0,1);
 	};
 
 	static dl32Transformation3D& Scale(float tx,float ty,float tz)
 	{
 		return dl32Transformation3D(1,0,0,tx,
-							   0,1,0,ty,
-							   0,0,1,tz,
-							   0,0,0,1);
+			0,1,0,ty,
+			0,0,1,tz,
+			0,0,0,1);
 	};
 
 	static dl32Transformation3D& Scale(dl32Vector3D Translation)
 	{
 		return dl32Transformation3D(1,0,0,Translation.x,
-							   0,1,0,Translation.y,
-							   0,0,1,Translation.z,
-							   0,0,0,1);
+			0,1,0,Translation.y,
+			0,0,1,Translation.z,
+			0,0,0,1);
 	};
 
 	static dl32Transformation3D& Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl32Transformation3D(rotation);};

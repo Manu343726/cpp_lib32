@@ -89,5 +89,5 @@ dl32Color COLOR_RainbowGradient(DWORD value)
 	else if(value<1280)
 		return COLOR_FromRGB(value-1279,0,255);//Azul-Magenta
 	else
-		return DL32COLOR_BLACK;
+		return DL32COLOR_MAGENTA;
 }

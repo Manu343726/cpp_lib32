@@ -17,7 +17,7 @@ dl32String::~dl32String()
 	}
 }
 
-bool dl32String::Ready()
+bool dl32String::Ready()const
 {
 	return size>=0;
 }
@@ -84,55 +84,6 @@ void dl32String::LongCasting(long Number)
 	Array[size]=DL32STRING_FINALSYMBOL;
 }
 
-void dl32String::FloatCasting(float Number,int Decimals)
-{
-   int c;
-   char car;
-   int bufferPos=0;
-   long parteEntera,parteDecimal,tamaño;
-   float mul10=1;
-   for(c=0;c<Decimals;c++)
-      mul10*=10;
-
-   parteEntera=floor(log10(abs(Number)))+1;
-   parteDecimal=abs((long)((Number-(long)Number)*mul10));
-   tamaño=parteEntera + (parteDecimal>0 ? parteDecimal+1 : 0) + (Number>0 ? 0 : 1);
-   Array=new char[tamaño+1];
-
-   do
-   {
-      Array[bufferPos]=(char)(parteEntera%10)+'0'; bufferPos++;
-      parteEntera/=10;
-   }
-   while(parteEntera>0);
-
-   if(Number<0)
-      Array[bufferPos]='-'; bufferPos++;
-
-   for(c=0;c<bufferPos/2;c++)
-      car=Array[c]; Array[c]=Array[bufferPos-c-1]; Array[bufferPos-c-1]=car;
-
-   if(Decimals>0)
-   {
-      Array[bufferPos]='.'; bufferPos++;
-      int parteDecimalPos=bufferPos;
-
-      for(c=0;c<Decimals;c++)
-      {
-         Array[bufferPos]=(char)(parteDecimal%10)+'0'; bufferPos++;
-         parteDecimal/=10;
-      }
-
-      for(c=0;c<Decimals/2;c++)
-      {
-         car=Array[c+parteDecimalPos]; 
-         Array[c+parteDecimalPos]=Array[bufferPos-c-1]; 
-         Array[bufferPos-c-1]=car;
-      }
-   }
-   Array[bufferPos]=DL32STRING_FINALSYMBOL;
-}
-
 dl32String::dl32String(const char Str[])
 {
 	size=strlen(Str);
@@ -149,29 +100,6 @@ dl32String::dl32String(char Str[],int Size)
 {
 	size=Size;
 	Array=Str;
-}
-
-dl32String::dl32String(dl32String &str)
-{
-	if(this != &str)
-	{
-		size=str.size;
-		Array=new char[size+1];
-
-		for(int i=0;i<=size;++i)
-			Array[i]=str.Array[i];
-	}
-}
-
-dl32String::dl32String(string &str)
-{
-	size=str.length();
-	Array=new char[size+1];
-
-	for(int i=0;i<size;++i)
-		Array[i]=str[i];
-
-	Array[size]=DL32STRING_FINALSYMBOL;
 }
 
 dl32String::dl32String(const dl32String &str)
@@ -220,7 +148,7 @@ dl32String::dl32String(float Number,int Decimals)
 
 dl32String::dl32String(double Number,int Decimals)
 {
-	FloatCasting(float(Number),Decimals);
+	LongCasting(long(Number));
 }
 
 dl32String::dl32String(void* memoryaddress)
@@ -255,7 +183,7 @@ char* dl32String::c_str()
 	return Array;
 }
 
-char* dl32String::Copy()
+char* dl32String::Copy() const
 {
 	char *copy=new char[size+1];
 	strcpy(copy,Array);
@@ -263,7 +191,7 @@ char* dl32String::Copy()
 	return copy;
 }
 
-dl32String dl32String::Concat(dl32String &str1,dl32String &str2)
+dl32String dl32String::Concat(const dl32String &str1,const dl32String &str2)
 {
 	if(str1.Ready() && str2.Ready())
 	{
@@ -294,7 +222,7 @@ char dl32String::At(int pos)throw(dl32OutOfRangeException)
 		throw dl32OutOfRangeException(dl32Range(size),pos,"dl32String::At(int pos): 'pos' is out of range");
 }
 
-dl32String& dl32String::operator=(dl32String &string)
+dl32String& dl32String::operator=(const dl32String &string)
 {
 	if(this != &string)
 	{
@@ -309,99 +237,4 @@ dl32String& dl32String::operator=(dl32String &string)
 
 	return *this;
 }
-
-dl32String operator+(dl32String &str1,dl32String &str2)
-{
-	return dl32String::Concat(str1,str2);
-}
-
-dl32String operator+(char str1[],dl32String &str2)
-{
-	return dl32String::Concat(dl32String(str1),str2);
-}
-
-dl32String operator+(dl32String &str1,char str2[])
-{
-	return dl32String::Concat(str1,dl32String(str2));
-}
-
-dl32String operator+(dl32String &str,long &number)
-{
-	return dl32String::Concat(str,dl32String(number));
-}
-
-dl32String operator+(long &number,dl32String &str)
-{
-	return dl32String::Concat(dl32String(number),str);
-}
-
-dl32String operator+(dl32String &str,int &number)
-{
-	return dl32String::Concat(str,dl32String(number));
-}
-
-dl32String operator+(int &number,dl32String &str)
-{
-	return dl32String::Concat(dl32String(number),str);
-}
-
-dl32String operator+(dl32String &str,double &number)
-{
-	return dl32String::Concat(str,dl32String(number));
-}
-
-dl32String operator+(double &number,dl32String &str)
-{
-	return dl32String::Concat(dl32String(number),str);
-}
-
-dl32String operator+(dl32String &str,float &number)
-{
-	return dl32String::Concat(str,dl32String(number));
-}
-
-dl32String operator+(float &number,dl32String &str)
-{
-	return dl32String::Concat(dl32String(number),str);
-}
-
-//dl32String& operator+(char str[],long &number)
-//{
-//	return dl32String::Concat(dl32String(str),dl32String(number));
-//}
-//
-//dl32String& operator+(long &number,char str[])
-//{
-//	return dl32String::Concat(dl32String(number),dl32String(str));
-//}
-//
-//dl32String& operator+(char str[],int &number)
-//{
-//	return dl32String::Concat(dl32String(str),dl32String(number));
-//}
-//
-//dl32String& operator+(int &number,char str[])
-//{
-//	return dl32String::Concat(dl32String(number),dl32String(str));
-//}
-//
-//dl32String& operator+(char str[],double &number)
-//{
-//	return dl32String::Concat(dl32String(str),dl32String(number));
-//}
-//
-//dl32String& operator+(double &number,char str[])
-//{
-//	return dl32String::Concat(dl32String(number),dl32String(str));
-//}
-//
-//dl32String& operator+(char str[],float &number)
-//{
-//	return dl32String::Concat(dl32String(str),dl32String(number));
-//}
-//
-//dl32String& operator+(float &number,char str[])
-//{
-//	return dl32String::Concat(dl32String(number),dl32String(str));
-//}
 

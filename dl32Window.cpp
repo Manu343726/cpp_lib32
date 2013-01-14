@@ -9,25 +9,6 @@ bool dl32Window::WindowClassNotRegistered=true;
 DEBUG_MessageLoopRunning dl32Window::Messagging;
 bool dl32Window::MessageProcessed=false;
 
-LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if(msg==WM_CLOSE || msg==WM_DESTROY || msg==WM_QUIT)
-	{
-		if(dl32Window::SearchWindow(hWnd));
-		{
-			dl32Window::LastWindowMessaged->ProcessMessage(hWnd,msg,wParam,lParam);
-		
-			if(dl32Window::LastWindowMessaged!=NULL && dl32Window::LastWindowMessaged->_mustBeDeleted)
-				dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
-		}
-	}
-
-	if(!dl32Window::MessageProcessed)
-		return DefWindowProc(hWnd, msg, wParam, lParam);
-	else
-		return 0;
-}
-
 dl32Window::dl32Window()
 {
 	ready=false;
@@ -61,7 +42,7 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)throw(d
 			LastWindowMessaged=NULL;
 		}
 		else
-			throw new dl32WindowClassRegistrationFailedException((HWND)NULL,"Failed to register window class");
+			throw  dl32WindowClassRegistrationFailedException((HWND)NULL,"Failed to register window class");
 	}
 
 	if (Width<=0) Width=DL32WINDOWSDEFAULTS_WIDTH;
@@ -86,7 +67,7 @@ dl32Window::dl32Window(string Text,int Left,int Top,int Width,int Height)throw(d
 		ShowWindow(hwnd,SW_SHOWDEFAULT);
 	}
 	else
-		throw new dl32WindowCreationFailedException(hwnd,"Failed to create window");
+		throw  dl32WindowCreationFailedException(hwnd,"Failed to create window");
 }
 
 dl32Window::~dl32Window()
@@ -190,7 +171,7 @@ dl32Vector2D dl32Window::GetWindowSize(float width, float height, bool flat)
 		return dl32Vector2D(width,height);
 	else
 		return dl32Vector2D(width + GetSystemMetrics(SM_CXBORDER)*2 + GetSystemMetrics(SM_CXEDGE),
-							width + GetSystemMetrics(SM_CYBORDER)*2 + GetSystemMetrics(SM_CYEDGE));
+							height + GetSystemMetrics(SM_CYBORDER)*2 + GetSystemMetrics(SM_CYEDGE));
 }
 
 bool dl32Window::Ready()
@@ -307,13 +288,10 @@ bool dl32Window::SearchWindow(HWND hwnd)
 	int i=0;
 	LastWindowMessaged=NULL;
 
-	while(i>=0 && i<WindowsList.size())
+	while(LastWindowMessaged == NULL && i<WindowsList.size())
 	{
 		if(WindowsList[i]->hwnd==hwnd)
-		{
 			LastWindowMessaged=WindowsList[i];
-			i=-1;
-		}
 		else
 			++i;
 	}
@@ -336,17 +314,12 @@ void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 				TranslateMessage(&message);
 				DispatchMessage(&message);
 
-				if(dl32Window::SearchWindow(message.hwnd))
+				if(!dl32Window::MessageProcessed && dl32Window::SearchWindow(message.hwnd))
 				{
 					dl32Window::LastWindowMessaged->ProcessMessage(message);
-
-					if(dl32Window::LastWindowMessaged->_mustBeDeleted)
+		
+					if(dl32Window::LastWindowMessaged!=NULL && dl32Window::LastWindowMessaged->_mustBeDeleted)
 						dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
-				}
-				else
-				{
-					message=message;
-					//if(WindowsList.size()>0) throw(dl32UnhandledWindowMessage(message.message,message.hwnd,"dl32Window::MessageLoop(): The message hwnd not matches with any window in dx_lib32 windows list"));
 				}
 			}
 			else
@@ -361,6 +334,24 @@ void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 	{
 		MessageBox(GetDesktopWindow(),strcat("UNHANDLED DL32EXCEPTION: ",e.what()),"dx_lib32 - Unhandled Exception (Debug)",MB_ICONERROR);
 	}
+}
+
+LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	dl32Window::MessageProcessed = false;
+
+	if((msg == WM_CLOSE || msg == WM_DESTROY || msg == WM_QUIT) && dl32Window::SearchWindow(hWnd))
+	{
+		dl32Window::LastWindowMessaged->ProcessMessage(hWnd,msg,wParam,lParam);
+		
+		if(dl32Window::LastWindowMessaged!=NULL && dl32Window::LastWindowMessaged->_mustBeDeleted)
+			dl32Window::EraseWindow(dl32Window::LastWindowMessaged);
+	}
+
+	if(!dl32Window::MessageProcessed)
+		return DefWindowProc(hWnd, msg, wParam, lParam);
+	else
+		return 0;
 }
 
 void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)

@@ -12,11 +12,12 @@ enum GUIMode
 };
 
 dl32Window* Window; 
+dl32GraphicsClass* gfx;
 MandelbrotEngine* Engine;
 float zoom=1;
 GUIMode mode=GUIMODE_IDLE;
 
-void PreDrawProc(dl32GraphicsClass* gfx);
+void OnIdle();
 
 void OnMouseWheel(dl32MouseData MouseData);
 void OnMouseMove(dl32MouseData MouseData);
@@ -25,22 +26,26 @@ void OnMouseDown(dl32MouseData MouseData);
 INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 {
 	Window=new dl32Window("dx_lib32 - Fractal de Mandelbrot",0,0,1440,900);
-	Window->Graphics->DEVICE_SetPreDrawProc(PreDrawProc);
+	gfx = new dl32GraphicsClass(Window);
+
 	Window->MouseWheel.AddHandler(OnMouseWheel);
 	Window->MouseMove.AddHandler(OnMouseMove);
 	Window->MouseDown.AddHandler(OnMouseDown);
+
+	Window->Idle.AddHandler(OnIdle);
 
 	Engine=new MandelbrotEngine(Window->GetClientArea());
 	Engine->Compute();
 
 	dl32Window::Start();
 
-	delete Window;
+	DL32MEMORY_SAFEDELETE(gfx);
 }
 
-void PreDrawProc(dl32GraphicsClass* gfx)
+void OnIdle()
 {
 	Engine->Refresh(gfx);
+	Window->SetText("dx_lib32 - Mandelbrot Set (" + (dl32String)gfx->FPS() + " FPS)");
 }
 
 void OnMouseWheel(dl32MouseData MouseData)
@@ -56,12 +61,12 @@ void OnMouseWheel(dl32MouseData MouseData)
 
 void OnMouseMove(dl32MouseData MouseData)
 {
-	if(mode==GUIMODE_SELECTING)
-	{
+	//if(mode==GUIMODE_SELECTING)
+	//{
 
-	}
-	else if(mode==GUIMODE_IDLE)
-		Window->SetText("dx_lib32 - Fractal de Mandelbrot. [" + Engine->GetNumber(MouseData.Location).ToString() + "]");
+	//}
+	//else if(mode==GUIMODE_IDLE)
+	//	//Window->SetText("dx_lib32 - Fractal de Mandelbrot. [" + Engine->GetNumber(MouseData.Location).ToString() + "]");
 }
 
 void OnMouseDown(dl32MouseData MouseData)

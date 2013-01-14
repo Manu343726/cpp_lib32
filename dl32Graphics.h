@@ -101,8 +101,9 @@ struct DL32VERTEXTEXTURED:public dl32Point3D
 
 	DL32VERTEXTEXTURED();
 	DL32VERTEXTEXTURED(const dl32Vertex &vertex);
-	DL32VERTEXTEXTURED(dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
-	DL32VERTEXTEXTURED(float x,float y,int z,dl32Color diffuse,dl32Color specular,float tx,float ty);
+	DL32VERTEXTEXTURED(const dl32Vertex &vertex,int Z,float tx = -1, float ty = -1);
+	DL32VERTEXTEXTURED(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
+	DL32VERTEXTEXTURED(float x,float y,int z,dl32Color diffuse,dl32Color specular = DL32COLOR_BLACK,float tx = -1,float ty = -1);
 };
 
 const DWORD DL32VERTEXTEXTURED_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1);
@@ -291,6 +292,9 @@ class dl32GraphicsClass
 {
 private:
 	bool _working;
+
+	dl32GraphicsClass(const dl32GraphicsClass&); //Así evitamos que se realicen copias
+	dl32GraphicsClass& operator=(const dl32GraphicsClass&);//Así evitamos que se hagan asignaciones
 protected:
 	LPDIRECT3D9 _d3d;	
 	LPDIRECT3DDEVICE9 _d3dDevice;
@@ -315,7 +319,10 @@ protected:
 	bool _d3dVertexBufferOK;
 	bool _d3dIndexBufferOK;
 	bool _usingVertexBuffer;
-	bool FillD3DBuffers();
+	bool _FillD3DBuffers();
+	void _applyCameraTransform(DL32VERTEXTEXTURED* vertexBuffer);
+
+	bool _cameraEnabled;
 
 	vector<DL32TEXTURE> _textures;
 	vector<ID3DXFont*> _fonts;
@@ -334,16 +341,21 @@ public:
 	dl32GraphicsClass(HWND hwnd,int Width,int Height,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-	throw(dl32Direct3DInitFailedException){_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);};
+	throw(dl32Direct3DInitFailedException){_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);}; //ERROR: NO DEBERÍA SER INLINE 
 
 	dl32GraphicsClass(dl32Window* window ,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-					  throw(dl32Direct3DInitFailedException){_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);};
-
+					  throw(dl32Direct3DInitFailedException){_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);}; //ERROR: NO DEBERÍA SER INLINE 
+	
 	~dl32GraphicsClass();
 
+	//Cámara:
+	//----------------------------------------
 	dl322DCamera Camera;
+	bool CAMERA_IsEnabled(){return _cameraEnabled;};
+	bool CAMERA_Enable(){_cameraEnabled = true;};
+	bool CAMERA_Disable(){_cameraEnabled = false;};
 
 	void Dispose();
 	bool Start();
@@ -413,7 +425,7 @@ public:
 
 	//Texturas:
 	//-----------------------------------------
-	int MAP_Load(dl32String Filename,dl32Color ColorKey=0xFFFFFFFF,bool Smooth=false,bool GrayScale=false);
+	int MAP_Load(dl32String Filename,dl32Color ColorKey=DL32COLOR_WHITE,bool Smooth=false,bool GrayScale=false);
 	//Fuentes:
 	//-----------------------------------------
 	int FONT_LoadSystemFont(dl32String FontName,int size,bool bold,bool italic);

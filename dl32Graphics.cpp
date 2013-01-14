@@ -71,7 +71,16 @@ DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const dl32Vertex &vertex)
 	tx=-1;ty=-1;
 }
 
-DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
+DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const dl32Vertex &vertex,int Z,float tx,float ty)
+{
+	x=vertex.x;y=vertex.y;z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_D3DVERTEX_Z;
+	rhw=DL32CONSTS_D3DVERTEX_RHW;
+	diffuse=vertex.color;specular=DL32COLOR_BLACK;
+	this->tx = tx;
+	this->ty = ty;
+}
+
+DL32VERTEXTEXTURED::DL32VERTEXTEXTURED(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
 {
 	x=point.x;
 	y=point.y;
@@ -232,7 +241,7 @@ dl32Mesh::dl32Mesh(dl32Mesh &Mesh)
 
 dl32Mesh::dl32Mesh(dl32VertexTrapezoid Verts,int width,int height,dl32MeshPatch *Sectors,int SectorsCount)
 {
-	
+
 }
 
 dl32Mesh::dl32Mesh(dl32AABB2D Area,int width, int height,dl32MeshPatch *patches,int PatchesCount)
@@ -457,7 +466,7 @@ void dl32GraphicsClass::ResetTextureStages()
 
 void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
 	DWORD Ticks;
@@ -467,7 +476,7 @@ void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 	_d3dDevice->Clear(0,NULL,D3DCLEAR_TARGET,_backColor,0,0);
 	_d3dDevice->BeginScene();
 
-	if(FillD3DBuffers() || _textDraw)
+	if(_FillD3DBuffers() || _textDraw)
 	{
 		ResetTextureStages();
 		ResetBlendingStages();
@@ -576,6 +585,7 @@ dl32GraphicsClass::dl32GraphicsClass()
 {
 	_working=false;
 	_usingVertexBuffer=false;
+	_cameraEnabled = false;
 }
 
 void dl32GraphicsClass::_setup(HWND hwnd,int Width,int Height, bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)throw(dl32Direct3DInitFailedException)
@@ -586,7 +596,6 @@ void dl32GraphicsClass::_setup(HWND hwnd,int Width,int Height, bool Windowed, bo
 	dl32Vector2D windowSize = dl32Window::GetWindowSize(Width,Height,!Windowed);
 	SetWindowPos(hwnd,NULL,0,0,(int)windowSize.x,(int)windowSize.y,SWP_NOMOVE | SWP_NOZORDER);
 
-
 	if(!InitializeDirect3D(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate))
 		throw dl32Direct3DInitFailedException(_d3dPresentParameters);
 	else
@@ -596,6 +605,8 @@ void dl32GraphicsClass::_setup(HWND hwnd,int Width,int Height, bool Windowed, bo
 		_lastTicksCount=GetTickCount();
 		_frameCount=0;
 		_frameRate=0;
+
+		_cameraEnabled = false;
 
 		this->Start();
 
@@ -655,9 +666,16 @@ dl32Color dl32GraphicsClass::DEVICE_GetBackgroundColor()
 	return _backColor;
 }
 
-bool dl32GraphicsClass::FillD3DBuffers()
+void dl32GraphicsClass::_applyCameraTransform(DL32VERTEXTEXTURED* vertexBuffer)
+{
+	for(int i=0;i<_vertexBuffer.size();++i)
+		Camera.Apply(&vertexBuffer[i].x,&vertexBuffer[i].y);
+}
+
+bool dl32GraphicsClass::_FillD3DBuffers()
 {
 	void *VertexBufferArray,*IndexBufferArray;
+	DL32VERTEXTEXTURED* vertexBufferData = _vertexBuffer.data();
 	bool VertexBufferFailed;
 	_d3dVertexBufferOK=false;
 	_d3dIndexBufferOK=false;
@@ -677,7 +695,9 @@ bool dl32GraphicsClass::FillD3DBuffers()
 			return false;
 		else
 		{
-			memcpy(VertexBufferArray,_vertexBuffer.data(),_vertexBuffer.size()*DL32VERTEXTEXTURED_SIZE);
+			if(_cameraEnabled) _applyCameraTransform(vertexBufferData);
+
+			memcpy(VertexBufferArray,vertexBufferData,_vertexBuffer.size()*DL32VERTEXTEXTURED_SIZE);
 			_d3dVertexBufferOK=true;
 		}
 	}
@@ -719,7 +739,7 @@ void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoi
 			direction = dl32Vector2D(points[i],points[i+1]);
 			jointLine = dl32Line2D(points[i],dl32Vector2D(points[i],points[i+1]).GetNormal()); //Recta perpendicular al segmento 
 			joints[i] = PolylineJoint(jointLine.GetPointByParameter(width),
-									  jointLine.GetPointByParameter(-width));
+				jointLine.GetPointByParameter(-width));
 
 			centerLine = dl32Line2D((points[i]+points[i+1])/2,direction.GetNormal()); //Recta perpendicular al segmento (centrada en él)
 
@@ -738,21 +758,21 @@ void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoi
 			{
 				jointLine = dl32Line2D(points[i],centerLine.GetDirection());
 				joints[i] = PolylineJoint(jointLine.GetPointByParameter(width),
-									      jointLine.GetPointByParameter(-width));
+					jointLine.GetPointByParameter(-width));
 			}
 			else//Si no, los extremos del joint son las intersecciones entre los bordes de los segmentos contíguos:
 			{
 				joints[i] = PolylineJoint(dl32Line2D::Intersection(supi,supi_1,true),//Ya hemos chequeado antes el paralelismo
-											dl32Line2D::Intersection(infi,infi_1,true));//Ya hemos chequeado antes el paralelismo
+					dl32Line2D::Intersection(infi,infi_1,true));//Ya hemos chequeado antes el paralelismo
 			}
 		}
-		else//Caso 3:  extremo inicial: El joint es un joint perpendicular normal
+		else//Caso 3:  extremo final: El joint es un joint perpendicular normal
 		{
 			direction = dl32Vector2D(points[i-1],points[i]);
 			jointLine = dl32Line2D(points[i],direction.GetNormal()); //Recta perpendicular al segmento
 
 			joints[i] = PolylineJoint(jointLine.GetPointByParameter(width),
-									  jointLine.GetPointByParameter(-width));
+				jointLine.GetPointByParameter(-width));
 		}	
 
 		supi_1 = supi;
@@ -796,7 +816,7 @@ dl32Point2D* vertexArrayToPoint2D(dl32Vertex vertexArray[],int Count)
 
 void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color color, int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -804,8 +824,8 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 
 		object.StartIndex = _vertexBuffer.size();
 
-		_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(P1),Z,color));
-		_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(P2),Z,color));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(P1,Z,color));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(P2,Z,color));
 
 		object.VertexCount = 2;
 		object.PrimitiveType = D3DPT_LINESTRIP;
@@ -814,12 +834,12 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -827,139 +847,143 @@ void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 
 		object.StartIndex = _vertexBuffer.size();
 
-		_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(V1),Z,V1.color));
-		_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(V2),Z,V2.color));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(V1,Z));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(V2,Z));
 
 		object.VertexCount = 2;
 		object.PrimitiveType = D3DPT_LINESTRIP;
 		object.PrimitiveCount = 1;
 
+		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32BUFFEROBJECT object;
+		if(Count >= 2)
+		{
+			DL32BUFFEROBJECT object;
 
-		object.StartIndex = _vertexBuffer.size();
-		_vertexBuffer.reserve(_vertexBuffer.size() + Count);
+			object.StartIndex = _vertexBuffer.size();
+			_vertexBuffer.reserve(_vertexBuffer.size() + Count);
 
-		for(int i=0;i<Count;++i)
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,points[i].color));
+			for(int i=0;i<Count;++i)
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z));
 
-		object.VertexCount = Count;
-		object.PrimitiveType = D3DPT_LINESTRIP;
-		object.PrimitiveCount = Count-1;
+			object.VertexCount = Count;
+			object.PrimitiveType = D3DPT_LINESTRIP;
+			object.PrimitiveCount = Count-1;
 
-		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32BUFFEROBJECT object;
+		if(Count >= 2)
+		{
+			DL32BUFFEROBJECT object;
 
-		object.StartIndex = _vertexBuffer.size();
-		_vertexBuffer.reserve(_vertexBuffer.size() + Count);
+			object.StartIndex = _vertexBuffer.size();
+			_vertexBuffer.reserve(_vertexBuffer.size() + Count);
 
-		for(int i=0;i<Count;++i)
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,color));
+			for(int i=0;i<Count;++i)
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z,color));
 
-		object.VertexCount = Count;
-		object.PrimitiveType = D3DPT_LINESTRIP;
-		object.PrimitiveCount = Count-1;
+			object.VertexCount = Count;
+			object.PrimitiveType = D3DPT_LINESTRIP;
+			object.PrimitiveCount = Count-1;
 
-		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Polyline(dl32Point2D points[],int Count,dl32Color color,float width, bool fill,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		PolylineJoint* joints;
-		dl32Point2D* vertices;
-		bool retVal;
+		if(Count >= 2)
+		{
+			PolylineJoint* joints;
+			dl32Point2D* vertices;
+			bool retVal;
 
-		ComputePolyline(points,Count,width,joints);
-		ParseJointsToVertexBuffer(joints,Count,vertices);
+			ComputePolyline(points,Count,width,joints);
+			ParseJointsToVertexBuffer(joints,Count,vertices);
 
-		DRAW_TriangleStrip(vertices,Count*2,color,fill);
+			DRAW_TriangleStrip(vertices,Count*2,color,fill);
 
-		DL32MEMORY_SAFEDELETE_ARRAY(joints);
-		DL32MEMORY_SAFEDELETE_ARRAY(vertices);
+			DL32MEMORY_SAFEDELETE_ARRAY(joints);
+			DL32MEMORY_SAFEDELETE_ARRAY(vertices);
+		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Polyline(dl32Vertex points[],int Count,float width, bool fill,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=2)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		PolylineJoint* joints;
-		dl32Vertex* vertices;
-		dl32Point2D* points2d = vertexArrayToPoint2D(points,Count);
-		bool retVal;
+		if(Count >= 2)
+		{
+			PolylineJoint* joints;
+			dl32Vertex* vertices;
+			dl32Point2D* points2d = vertexArrayToPoint2D(points,Count);
+			bool retVal;
 
-		ComputePolyline(points2d,Count,width,joints);
-		ParseJointsToVertexBuffer(joints,points,Count,vertices);
+			ComputePolyline(points2d,Count,width,joints);
+			ParseJointsToVertexBuffer(joints,points,Count,vertices);
 
-		DRAW_TriangleStrip(vertices,Count*2,fill);
+			DRAW_TriangleStrip(vertices,Count*2,fill);
 
-		DL32MEMORY_SAFEDELETE_ARRAY(joints);
-		DL32MEMORY_SAFEDELETE_ARRAY(vertices);
-		DL32MEMORY_SAFEDELETE_ARRAY(points2d);
+			DL32MEMORY_SAFEDELETE_ARRAY(joints);
+			DL32MEMORY_SAFEDELETE_ARRAY(vertices);
+			DL32MEMORY_SAFEDELETE_ARRAY(points2d);
+		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
-	dl32Point2D NewVerts[3];
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32VERTEXTEXTURED verts[3];
-
-		NewVerts[0]=Camera.Apply(x0,y0);
-		NewVerts[1]=Camera.Apply(x1,y1);
-		NewVerts[2]=Camera.Apply(x2,y2);
-
-
-		verts[0]=DL32VERTEXTEXTURED(NewVerts[0].x,NewVerts[0].y,Z,color,0,-1,-1);
-		verts[1]=DL32VERTEXTEXTURED(NewVerts[1].x,NewVerts[1].y,Z,color,0,-1,-1);
-		verts[2]=DL32VERTEXTEXTURED(NewVerts[2].x,NewVerts[2].y,Z,color,0,-1,-1);
-
-		Object.StartIndex=_vertexBuffer.size();
 		Object.VertexCount=3;
 		Object.Texture=-1;
-
 		Object.CallType=RBCT_DRAWTRIANGLE;
+		Object.StartIndex=_vertexBuffer.size();
 
-		_vertexBuffer.insert(_vertexBuffer.end(),verts,verts+3);
+		_vertexBuffer.reserve(Object.StartIndex + 3);
+
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(x0,y0,Z,color,0,-1,-1));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(x1,y1,Z,color,0,-1,-1));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(x2,y2,Z,color,0,-1,-1));
 
 		if(fill)
 		{
@@ -970,59 +994,50 @@ void dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=3;
-			_vertexBuffer.push_back(verts[0]);
+			_vertexBuffer.push_back(_vertexBuffer[Object.StartIndex]);
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill,int Z)
 {	
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	DL32BUFFEROBJECT Object;
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32VERTEXTEXTURED verts[3];
-		dl32Point2D NewVerts[3];
-
-		NewVerts[0]=Camera.Apply(V0);
-		NewVerts[1]=Camera.Apply(V1);
-		NewVerts[2]=Camera.Apply(V2);
-
-		verts[0]=DL32VERTEXTEXTURED(NewVerts[0].x,NewVerts[0].y,Z,V0.color,0,-1,-1);
-		verts[1]=DL32VERTEXTEXTURED(NewVerts[1].x,NewVerts[1].y,Z,V1.color,0,-1,-1);
-		verts[2]=DL32VERTEXTEXTURED(NewVerts[2].x,NewVerts[2].y,Z,V2.color,0,-1,-1);
-
-		Object.StartIndex=_vertexBuffer.size();
+		Object.VertexCount=3;
 		Object.Texture=-1;
-
 		Object.CallType=RBCT_DRAWTRIANGLE;
+		Object.StartIndex=_vertexBuffer.size();
 
-		_vertexBuffer.insert(_vertexBuffer.end(),verts,verts+3);
+		_vertexBuffer.reserve(Object.StartIndex + 3);
+
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(V0,Z));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(V1,Z));
+		_vertexBuffer.push_back(DL32VERTEXTEXTURED(V2,Z));
 
 		if(fill)
 		{
 			Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
 			Object.PrimitiveCount=1;
-			Object.VertexCount=3;
 		}
 		else
 		{
 			Object.PrimitiveType=D3DPT_LINESTRIP;
 			Object.PrimitiveCount=3;
-			Object.VertexCount=4;
-			_vertexBuffer.push_back(verts[0]);
+			_vertexBuffer.push_back(_vertexBuffer[Object.StartIndex]);
 		}
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2D V2,dl32Color color,bool fill,int Z)
@@ -1032,189 +1047,195 @@ void dl32GraphicsClass::DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2
 
 void dl32GraphicsClass::DRAW_TriangleStrip(dl32Point2D points[], int pointsCount, dl32Color color, bool fill, int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && pointsCount>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		if(fill)
+		if(pointsCount >= 3)
 		{
-			DL32BUFFEROBJECT object;
-
-			object.StartIndex = _vertexBuffer.size();
-			_vertexBuffer.reserve(_vertexBuffer.size()+pointsCount);
-
-			for(int i=0;i<pointsCount;++i)
-				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,color));
-
-			object.PrimitiveCount = pointsCount-2;
-			object.VertexCount = pointsCount;
-			object.PrimitiveType = D3DPT_TRIANGLESTRIP;
-
-			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-		}
-		else
-		{
-			bool retVal = true;
-			int i=0;
-
-			while(retVal && i<pointsCount-2)
+			if(fill)
 			{
-				DRAW_Triangle(points[i],points[i+1],points[i+2],color,fill,Z);
-				++i;
+				DL32BUFFEROBJECT object;
+
+				object.StartIndex = _vertexBuffer.size();
+				_vertexBuffer.reserve(_vertexBuffer.size()+pointsCount);
+
+				for(int i=0;i<pointsCount;++i)
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z,color));
+
+				object.PrimitiveCount = pointsCount-2;
+				object.VertexCount = pointsCount;
+				object.PrimitiveType = D3DPT_TRIANGLESTRIP;
+
+				_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+			}
+			else
+			{
+				bool retVal = true;
+				int i=0;
+
+				while(retVal && i<pointsCount-2)
+				{
+					DRAW_Triangle(points[i],points[i+1],points[i+2],color,fill,Z);
+					++i;
+				}
 			}
 		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_TriangleStrip(dl32Vertex points[], int pointsCount, bool fill, int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && pointsCount>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		if(fill)
+		if(pointsCount >= 3)
 		{
-			DL32BUFFEROBJECT object;
-
-			object.StartIndex = _vertexBuffer.size();
-			_vertexBuffer.reserve(_vertexBuffer.size()+pointsCount);
-
-			for(int i=0;i<pointsCount;++i)
-				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,points[i].color));
-
-			object.PrimitiveCount = pointsCount-2;
-			object.VertexCount = pointsCount;
-			object.PrimitiveType = D3DPT_TRIANGLESTRIP;
-
-			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
-		}
-		else
-		{
-			bool retVal = true;
-			int i=0;
-
-			while(retVal && i<pointsCount-2)
+			if(fill)
 			{
-				DRAW_Triangle(points[i],points[i+1],points[i+2],fill,Z);
-				++i;
+				DL32BUFFEROBJECT object;
+
+				object.StartIndex = _vertexBuffer.size();
+				_vertexBuffer.reserve(_vertexBuffer.size()+pointsCount);
+
+				for(int i=0;i<pointsCount;++i)
+					_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z));
+
+				object.PrimitiveCount = pointsCount-2;
+				object.VertexCount = pointsCount;
+				object.PrimitiveType = D3DPT_TRIANGLESTRIP;
+
+				_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(object);
+			}
+			else
+			{
+				bool retVal = true;
+				int i=0;
+
+				while(retVal && i<pointsCount-2)
+				{
+					DRAW_Triangle(points[i],points[i+1],points[i+2],fill,Z);
+					++i;
+				}
 			}
 		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32BUFFEROBJECT Object;
-		dl32Point2D Baricenter,NewVert,InitVert;
-		dl32Color CenterColor=0;
-
-		Object.StartIndex=_vertexBuffer.size();
-		_vertexBuffer.reserve(_vertexBuffer.size()+Count);
-
-		for(int i=0;i<Count;++i)
+		if(Count >= 3)
 		{
-			NewVert=Camera.Apply(Verts[i]);
-			if(i==0) InitVert=NewVert;
+			DL32BUFFEROBJECT Object;
+			dl32Point2D Baricenter,InitVert;
+			dl32Color CenterColor=0;
 
-			Baricenter.x+=NewVert.x;
-			Baricenter.y+=NewVert.y;
-			CenterColor+=Verts[i].color;
+			Object.StartIndex=_vertexBuffer.size();
+			_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);//En el peor de los casos (fill = false) sobra un hueco reservado. Se usará posteriormente en otras llamadas
 
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,Verts[i].color,0,-1,-1));
+			for(int i=0;i<Count;++i)
+			{
+				Baricenter.x+=Verts[i].x;
+				Baricenter.y+=Verts[i].y;
+				CenterColor+=Verts[i].color;
+
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[i],Z));
+			}
+
+			Baricenter.x/=Count;
+			Baricenter.y/=Count;
+			CenterColor/=Count;
+
+			Object.Texture=-1;
+
+			Object.CallType=RBCT_DRAWPOLYGON;
+
+			if(fill)
+			{
+				Object.PrimitiveType=D3DPT_TRIANGLEFAN;
+				Object.PrimitiveCount=Count;
+				Object.VertexCount=Count+2;
+				_vertexBuffer.insert(_vertexBuffer.begin()+_vertexBuffer.size()-Count,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,CenterColor,0,-1,-1));
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[0],Z));
+			}
+			else
+			{
+				Object.PrimitiveType=D3DPT_LINESTRIP;
+				Object.PrimitiveCount=Count;
+				Object.VertexCount=Count+1;
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[0],Z));
+			}
+
+			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 		}
-
-		Baricenter.x/=Count;
-		Baricenter.y/=Count;
-		CenterColor/=Count;
-
-		Object.Texture=-1;
-
-		Object.CallType=RBCT_DRAWPOLYGON;
-
-		if(fill)
-		{
-			Object.PrimitiveType=D3DPT_TRIANGLEFAN;
-			Object.PrimitiveCount=Count;
-			Object.VertexCount=Count+2;
-			_vertexBuffer.insert(_vertexBuffer.begin()+_vertexBuffer.size()-Count,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,CenterColor,0,-1,-1));
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
-		}
-		else
-		{
-			Object.PrimitiveType=D3DPT_LINESTRIP;
-			Object.PrimitiveCount=Count;
-			Object.VertexCount=Count+1;
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,Verts[0].color,0,-1,-1));
-		}
-
-		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && Count>=3)
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
-		DL32BUFFEROBJECT Object;
-		dl32Point2D Baricenter,NewVert,InitVert;
-
-		Object.StartIndex=_vertexBuffer.size();
-
-		if(fill)
-			_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);
-		else
-			_vertexBuffer.reserve(_vertexBuffer.size()+Count+1);
-
-		for(int i=0;i<Count;++i)
+		if(Count >= 3)
 		{
-			NewVert=Camera.Apply(Verts[i]);
-			if(i==0) InitVert=NewVert;
+			DL32BUFFEROBJECT Object;
+			dl32Point2D Baricenter,NewVert,InitVert;
 
-			Baricenter.x+=NewVert.x;
-			Baricenter.y+=NewVert.y;
+			Object.StartIndex=_vertexBuffer.size();
 
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(NewVert.x,NewVert.y,Z,color,0,-1,-1));
+			if(fill)
+				_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);
+			else
+				_vertexBuffer.reserve(_vertexBuffer.size()+Count+1);
+
+			for(int i=0;i<Count;++i)
+			{
+				Baricenter.x+=Verts[i].x;
+				Baricenter.y+=Verts[i].y;
+
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[i],Z,color,0,-1,-1));
+			}
+
+			Baricenter.x/=Count;
+			Baricenter.y/=Count;
+
+			Object.Texture=-1;
+
+			Object.CallType=RBCT_DRAWPOLYGON;
+
+			if(fill)
+			{
+				Object.PrimitiveType=D3DPT_TRIANGLEFAN;
+				Object.PrimitiveCount=Count;
+				Object.VertexCount=Count+2;
+				_vertexBuffer.insert(_vertexBuffer.begin()+Object.StartIndex,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,color,0,-1,-1));
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[0],Z,color,0,-1,-1));
+			}
+			else
+			{
+				Object.PrimitiveType=D3DPT_LINESTRIP;
+				Object.PrimitiveCount=Count;
+				Object.VertexCount=Count+1;
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Verts[0],Z,color,0,-1,-1));
+			}
+
+			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 		}
-
-		Baricenter.x/=Count;
-		Baricenter.y/=Count;
-
-		Object.Texture=-1;
-
-		Object.CallType=RBCT_DRAWPOLYGON;
-
-		if(fill)
-		{
-			Object.PrimitiveType=D3DPT_TRIANGLEFAN;
-			Object.PrimitiveCount=Count;
-			Object.VertexCount=Count+2;
-			_vertexBuffer.insert(_vertexBuffer.begin()+Object.StartIndex,DL32VERTEXTEXTURED(Baricenter.x,Baricenter.y,Z,color,0,-1,-1));
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
-		}
-		else
-		{
-			Object.PrimitiveType=D3DPT_LINESTRIP;
-			Object.PrimitiveCount=Count;
-			Object.VertexCount=Count+1;
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(InitVert.x,InitVert.y,Z,color,0,-1,-1));
-		}
-
-		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill,int Z)
@@ -1226,23 +1247,17 @@ void dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32C
 
 void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && texture>=0 && texture < _textures.size())
 	{
 		DL32BUFFEROBJECT Object;
 		DL32VERTEXTEXTURED Verts[4];
-		dl32Point2D NewVerts[4];
 
-		NewVerts[0]=Camera.Apply(verts[0]);
-		NewVerts[1]=Camera.Apply(verts[1]);
-		NewVerts[2]=Camera.Apply(verts[2]);
-		NewVerts[3]=Camera.Apply(verts[3]);
-
-		Verts[0]=DL32VERTEXTEXTURED(NewVerts[0].x,NewVerts[0].y,Z,verts[0].color,0,0,0);
-		Verts[1]=DL32VERTEXTEXTURED(NewVerts[1].x,NewVerts[1].y,Z,verts[1].color,0,1,0);
-		Verts[3]=DL32VERTEXTEXTURED(NewVerts[2].x,NewVerts[2].y,Z,verts[2].color,0,1,1);
-		Verts[2]=DL32VERTEXTEXTURED(NewVerts[3].x,NewVerts[3].y,Z,verts[3].color,0,0,1);
+		Verts[0]=DL32VERTEXTEXTURED(verts[0],Z,0,0);
+		Verts[1]=DL32VERTEXTEXTURED(verts[1],Z,1,0);
+		Verts[3]=DL32VERTEXTEXTURED(verts[2],Z,1,1);
+		Verts[2]=DL32VERTEXTEXTURED(verts[3],Z,0,1);
 
 		Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
 		Object.PrimitiveCount=2;
@@ -1257,12 +1272,12 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1270,8 +1285,6 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 		int BaseIndex=_vertexBuffer.size();
 		int StripVertexCount;
 		int StripPrimitiveCount;
-
-		Mesh.Transformation(Camera);
 
 		for(int i=0;i<Mesh.verts.size();++i)
 			Mesh.verts[i].z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_D3DVERTEX_Z;
@@ -1302,19 +1315,17 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 		}
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && font>=0 && font < _fonts.size())
 	{
 		DL32BUFFEROBJECT Object;
 		RECT rect;
-
-		Camera.Apply(&x,&y);
 
 		Object.textdata=new DL32TEXTDATA;
 		Object.textdata->color=color;
@@ -1385,12 +1396,12 @@ void dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32C
 		_textDraw=true;
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1406,12 +1417,12 @@ void dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
 	{
@@ -1429,12 +1440,12 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && count>0)
 	{
@@ -1448,17 +1459,17 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int cou
 		Object.VertexCount=count;
 
 		for(int i=0;i<count;++i)
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(pixels[i]),Z,color));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(pixels[i],Z,color));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && width>0 && height>0)
 	{
@@ -1470,7 +1481,7 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width
 
 		for(int i=0;i<width;++i)
 			for(int j=0;j<height;++j)
-				_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(x+i,y+j),Z,pixels[j][i]));
+				_vertexBuffer.push_back(DL32VERTEXTEXTURED(x+i,y+j,Z,pixels[j][i]));
 
 		Object.PrimitiveType=D3DPT_POINTLIST;
 		Object.VertexCount=width*height;
@@ -1479,151 +1490,12 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
-}
-
-void dl32GraphicsClass::DRAW_Strip(dl32Pen pen,dl32Point2D points[],int Count,int texture,int Z)
-{
-	if(!_working) throw new dl32NotInitializedGraphicsException();
-
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
-	{
-		if(pen.width<=1)
-			DRAW_Lines(points,Count,Z);
-		else
-		{
-			DL32BUFFEROBJECT Object;
-			dl32Line2D Line;
-			dl32Vector2D preDirection,Direction;
-			dl32Point2D preTransformationed,Transformationed,preUp,preDown,up,down,aux;
-			int preSize,size,indexCount=0;
-			float t0,t1;
-
-			_vertexBuffer.reserve(_vertexBuffer.size()+Count);
-
-			if(texture==-1)
-			{
-				t0=-1;
-				t1=-1;
-			}
-			else
-			{
-				t0=0;
-				t1=1;
-			}
-
-			preSize=_vertexBuffer.size();
-
-			for(int i=0;i<Count;++i)
-			{
-				Transformationed=Camera.Apply(points[i]);
-				size=_vertexBuffer.size()-preSize;
-
-				if(i==0)
-				{
-					preDirection(Transformationed,Camera.Apply(points[1]));
-					Line=dl32Line2D(Transformationed,dl32Vector2D(-preDirection.y,preDirection.x));
-					preUp=Line.GetPointByParameter(pen.width/2);
-					preDown=Line.GetPointByParameter(-pen.width/2);
-
-					_vertexBuffer.push_back(DL32VERTEXTEXTURED(preDown,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t1));
-					_vertexBuffer.push_back(DL32VERTEXTEXTURED(preUp,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t0));
-					_indexBuffer.push_back(0);
-					_indexBuffer.push_back(1);
-
-					indexCount+=2;	
-				}
-				else if(i<Count-1)
-				{
-					//FASE 1: Calculamos datos de la unión i-ésima:
-					Direction(preTransformationed,Transformationed);
-
-					if(Direction!=preDirection)
-						Line=dl32Line2D(Transformationed,(Direction-preDirection));
-					else
-						Line=dl32Line2D(Transformationed,dl32Vector2D(-Direction.y,Direction.x));
-
-
-
-					up=Line.GetPointByParameter(pen.width/2);
-					down=Line.GetPointByParameter(-pen.width/2);
-
-					if(dl32Line2D(Transformationed,Direction).GetRelativePosition(up)<0)
-					{
-						aux=up;
-						up=down;
-						down=aux;
-					}
-
-					//FASE 2: Generamos el quad anterior:
-					if(texture==-1)//Si no se usan texturas, generamos un strip contínuo. En caso contrario, generamos quad a quad:
-					{
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
-						_indexBuffer.push_back(size);
-						_indexBuffer.push_back(size+1);
-
-						indexCount+=2;
-					}
-					else
-					{
-						//Como se ve, la unión está duplicada, para generar quads independientes:
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t1));
-						_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t0,t0));
-						_indexBuffer.push_back(size);
-						_indexBuffer.push_back(size+1);
-						_indexBuffer.push_back(size+2);
-						_indexBuffer.push_back(size+3);
-
-						indexCount+=4;
-					}
-				}
-				else
-				{
-					Direction(preTransformationed,Transformationed);
-					Line=dl32Line2D(Transformationed,dl32Vector2D(-Direction.y,Direction.x));
-					up=Line.GetPointByParameter(pen.width/2);
-					down=Line.GetPointByParameter(-pen.width/2);
-
-					_vertexBuffer.push_back(DL32VERTEXTEXTURED(down,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t1));
-					_vertexBuffer.push_back(DL32VERTEXTEXTURED(up,Z,pen.color,COLOR_RainbowGradient(i*1280/Count),t1,t0));
-					_indexBuffer.push_back(size);
-					_indexBuffer.push_back(size+1);
-
-					indexCount+=2;
-				}
-
-				if(i!=0)
-				{
-					preDirection=Direction;
-					preUp=up;
-					preDown=down;
-				}
-
-				preTransformationed=Transformationed;
-
-				//DRAW_Pixel(up.x,up.y,DL32COLOR_YELLOW);
-				//DRAW_Pixel(down.x,down.y,DL32COLOR_YELLOW);
-			}
-
-			Object.StartIndex=preSize;
-			Object.VertexCount=indexCount;
-			Object.PrimitiveCount=(texture==-1 ? 2*(Count-1) : 4*Count-6);
-			Object.PrimitiveType=D3DPT_TRIANGLESTRIP;
-			Object.Texture=texture;
-
-			_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
-		}
-	}
-	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int PointsPerInterval,int Z)
 {
-	if(!_working) throw new dl32NotInitializedGraphicsException();
+	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
@@ -1639,12 +1511,12 @@ void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int Point
 		Object.VertexCount=points.size();
 
 		for(int i=0;i<points.size();++i)
-			_vertexBuffer.push_back(DL32VERTEXTEXTURED(Camera.Apply(points[i]),Z,color));
+			_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z,color));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);
 	}
 	else
-		throw new dl32ZLevelOutOfRangeException(Z);
+		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 
