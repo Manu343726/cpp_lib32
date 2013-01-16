@@ -315,7 +315,7 @@ dl32Vertex dl32Mesh::GetVertex(int x, int y)
 
 dl32MeshPatch& dl32Mesh::GetPatch(int Index)
 {
-	if(Index>=0 && Index<patches.size())
+	if(Index>=0 && (unsigned int)Index<patches.size())
 		return patches[Index];
 	else
 		return dl32MeshPatch();
@@ -392,7 +392,7 @@ dl32Point2D dl32Mesh::GetMeshCenter()
 
 void dl32Mesh::Transformation(dl32Transformation2D Transformation)
 {
-	for(int i=0;i<verts.size();++i)
+	for(unsigned int i=0;i<verts.size();++i)
 		Transformation.Apply(&verts[i].x,&verts[i].y);
 }
 
@@ -668,7 +668,7 @@ dl32Color dl32GraphicsClass::DEVICE_GetBackgroundColor()
 
 void dl32GraphicsClass::_applyCameraTransform(DL32VERTEXTEXTURED* vertexBuffer)
 {
-	for(int i=0;i<_vertexBuffer.size();++i)
+	for(unsigned int i=0;i<_vertexBuffer.size();++i)
 		Camera.Apply(&vertexBuffer[i].x,&vertexBuffer[i].y);
 }
 
@@ -1249,7 +1249,7 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && texture>=0 && texture < _textures.size())
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && texture>=0 && (unsigned int)texture < _textures.size())
 	{
 		DL32BUFFEROBJECT Object;
 		DL32VERTEXTEXTURED Verts[4];
@@ -1286,12 +1286,12 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 		int StripVertexCount;
 		int StripPrimitiveCount;
 
-		for(int i=0;i<Mesh.verts.size();++i)
+		for(unsigned int i=0;i<Mesh.verts.size();++i)
 			Mesh.verts[i].z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_D3DVERTEX_Z;
 
 		_vertexBuffer.insert(_vertexBuffer.end(),Mesh.verts.begin(),Mesh.verts.end());
 
-		for(int i=0;i<Mesh.patches.size();++i)
+		for(unsigned int i=0;i<Mesh.patches.size();++i)
 		{
 			//StripVertexCount=Mesh.verts.size();
 			StripVertexCount=Mesh.verts.size();
@@ -1322,7 +1322,7 @@ void dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32C
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && font>=0 && font < _fonts.size())
+	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL && font>=0 && (unsigned int)font < _fonts.size())
 	{
 		DL32BUFFEROBJECT Object;
 		RECT rect;
@@ -1510,7 +1510,7 @@ void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int Point
 		Object.PrimitiveCount=points.size()-1;
 		Object.VertexCount=points.size();
 
-		for(int i=0;i<points.size();++i)
+		for(unsigned int i=0;i<points.size();++i)
 			_vertexBuffer.push_back(DL32VERTEXTEXTURED(points[i],Z,color));
 
 		_renderBuffer[DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)].push_back(Object);

@@ -84,7 +84,7 @@ dl32Window::~dl32Window()
 
 void dl32Window::Cleanup()
 {
-	for(int i=0;i<dl32Window::WindowsList.size();++i)
+	for(unsigned int i=0;i<dl32Window::WindowsList.size();++i)
 		delete dl32Window::WindowsList[i];
 
 	dl32Window::WindowsList.clear();
@@ -273,12 +273,12 @@ void dl32Window::SetText(dl32String Text)
 
 void dl32Window::EraseWindow(dl32Window* window)
 {
-	if(window->Index>=0 && window->Index<dl32Window::WindowsList.size())
+	if(window->Index>=0 && (unsigned int)window->Index<dl32Window::WindowsList.size())
 	{
 		WindowsList.erase(WindowsList.begin()+window->Index);
 		delete window;	
 
-		for(int i=window->Index;i<WindowsList.size();++i)
+		for(unsigned int i=window->Index;i<WindowsList.size();++i)
 			WindowsList[i]->Index--;
 	}
 }
@@ -288,7 +288,7 @@ bool dl32Window::SearchWindow(HWND hwnd)
 	int i=0;
 	LastWindowMessaged=NULL;
 
-	while(LastWindowMessaged == NULL && i<WindowsList.size())
+	while(LastWindowMessaged == NULL && (unsigned int)i<WindowsList.size())
 	{
 		if(WindowsList[i]->hwnd==hwnd)
 			LastWindowMessaged=WindowsList[i];
@@ -324,7 +324,7 @@ void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 			}
 			else
 			{
-				for(int i=0;i<WindowsList.size();++i)
+				for(unsigned int i=0;i<WindowsList.size();++i)
 					WindowsList[i]->Idle.RaiseEvent();
 			}
 		}
