@@ -32,7 +32,7 @@ void dl32ParticleSystem::Init()
 	if(emmitters.size()>0)
 	{
 		int particlesperemmitter=particlecount/emmitters.size();
-		for(int i=0;i<emmitters.size();++i)
+		for(unsigned int i=0;i<emmitters.size();++i)
 			for(int j=0;j<particlesperemmitter;++j)
 				emmitters[i].Emmit(&data[j+i*particlesperemmitter],&particles[j+i*particlesperemmitter]);
 	}	
@@ -58,7 +58,7 @@ void dl32ParticleSystem::Frame()
 				force.x=0;
 				force.y=0;
 
-				while(!killed && j<holes.size())
+				while(!killed && (unsigned int)j<holes.size())
 				{
 					distance=dl32Vector2D(particles[i],holes[j].position);
 					length=distance.GetLength();
@@ -123,7 +123,7 @@ void dl32ParticleSystem::Frame()
 
 bool dl32ParticleSystem::MoveEmmitter(int Emitter,dl32Point2D position)
 {
-	if(Emitter>=0 && Emitter<emmitters.size())
+	if(Emitter>=0 && (unsigned int)Emitter<emmitters.size())
 	{
 		emmitters[Emitter].position=position;
 		return true;
@@ -134,7 +134,7 @@ bool dl32ParticleSystem::MoveEmmitter(int Emitter,dl32Point2D position)
 
 bool dl32ParticleSystem::MoveHole(int Hole,dl32Point2D position)
 {
-	if(Hole>=0 && Hole<holes.size())
+	if(Hole>=0 && (unsigned int)Hole<holes.size())
 	{
 		holes[Hole].position=position;
 		return true;

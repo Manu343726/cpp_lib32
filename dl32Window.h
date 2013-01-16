@@ -66,14 +66,14 @@ public:
 template <class PARAMTYPE>
 void dl32Event<PARAMTYPE>::RaiseEvent(void)
 {
-	for(int i=0;i<Handlers.size();++i)
+	for(unsigned int i=0;i<Handlers.size();++i)
 		Handlers[i]();
 }
 
 template <class PARAMTYPE>
 void dl32Event<PARAMTYPE>::RaiseEvent(PARAMTYPE *P)
 {
-	for(int i=0;i<Handlers.size();++i)
+	for(unsigned int i=0;i<Handlers.size();++i)
 		Handlers[i](*P);
 }
 

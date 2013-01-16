@@ -412,7 +412,7 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 		}
 		break;
 	case '+':
-		if(selectedNode<nodes.size()-1) selectedNode++;
+		if((unsigned int)selectedNode<nodes.size()-1) selectedNode++;
 		break;
 	case '-':
 		if(selectedNode>0) selectedNode--;
