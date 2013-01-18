@@ -94,9 +94,11 @@ struct dl32Matrix3x3
 
 	static dl32Matrix3x3& GetUnity()
 	{
-		return dl32Matrix3x3(1,0,0,
+		return dl32Matrix3x3(
+			1,0,0,
 			0,1,0,
-			0,0,1);
+			0,0,1
+		);
 	};
 
 	static dl32Matrix3x3 Add(const dl32Matrix3x3 &m1,const dl32Matrix3x3 &m2)
@@ -168,10 +170,12 @@ struct dl32Matrix4x4
 
 	static dl32Matrix4x4 GetUnity()
 	{
-		return dl32Matrix4x4(1,0,0,0,
+		return dl32Matrix4x4(
+			1,0,0,0,
 			0,1,0,0,
 			0,0,1,0,
-			0,0,0,1);
+			0,0,0,1
+			);
 	};
 
 	static dl32Matrix4x4 Add(dl32Matrix4x4 m1,dl32Matrix4x4 m2);
@@ -207,11 +211,6 @@ typedef float **dl32MatrixColumn;
 ////////////////////////////////////
 class dl32Matrix
 {
-	friend void CopyRef(dl32Matrix &matrix);
-	friend dl32Matrix Add(dl32Matrix m1,dl32Matrix m2);
-	friend dl32Matrix Sub(dl32Matrix m1,dl32Matrix m2);
-	friend dl32Matrix Mul(dl32Matrix matrix,float mul);
-	friend dl32Matrix Mul(dl32Matrix m1,dl32Matrix m2);
 protected:
 	int rows;
 	int columns;

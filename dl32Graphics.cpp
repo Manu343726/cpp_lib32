@@ -239,11 +239,6 @@ dl32Mesh::dl32Mesh(dl32Mesh &Mesh)
 	}
 }
 
-dl32Mesh::dl32Mesh(dl32VertexTrapezoid Verts,int width,int height,dl32MeshPatch *Sectors,int SectorsCount)
-{
-
-}
-
 dl32Mesh::dl32Mesh(dl32AABB2D Area,int width, int height,dl32MeshPatch *patches,int PatchesCount)
 {
 	int areawidth,areaheight,stepx,stepy;

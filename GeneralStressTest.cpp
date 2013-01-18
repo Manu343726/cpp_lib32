@@ -74,7 +74,7 @@ vector<dl32Point2D> nodes;
 dl32Spline spline;
 int selectedNode=0;
 
-INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
+INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 {
 	dl32MeshPatch TransformationPatch(-1,3,3,3,3);
 	Console.Open("dx_lib32 C++ (Debugging console)");
@@ -304,7 +304,7 @@ void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width,
 	//NOTA: El color difuso de los vertices del sprite es blanco, para que se vea la imagen original
 	Trapezoid[0]=dl32Vertex(x,y,COLOR_FromRGB(255,255,255));
 	Trapezoid[1]=dl32Vertex(x+width,y,COLOR_FromRGB(255,255,255));
-	Trapezoid[2]=dl32Vertex(x+width,y+width,COLOR_FromRGB(255,255,255));
+	Trapezoid[2]=dl32Vertex(x+width,y+height,COLOR_FromRGB(255,255,255));
 	Trapezoid[3]=dl32Vertex(x,y+width,COLOR_FromRGB(255,255,255));
 }
 

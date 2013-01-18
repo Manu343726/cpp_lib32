@@ -141,12 +141,12 @@ dl32String::dl32String(int Number,bool Hex)
 		LongCasting(long(Number));
 }
 
-dl32String::dl32String(float Number,int Decimals)
+dl32String::dl32String(float Number,int)
 {
 	LongCasting(long(Number));
 }
 
-dl32String::dl32String(double Number,int Decimals)
+dl32String::dl32String(double Number,int)
 {
 	LongCasting(long(Number));
 }

@@ -23,7 +23,7 @@ class dl32WindowException:dl32Exception
 private:
 	HWND _hwnd;
 public:
-	dl32WindowException(HWND hwnd = (HWND)NULL,char* message = DEFAULTEXCEPTIONMESSAGE(dl32WindowException)):dl32Exception(){_hwnd=hwnd;};
+	dl32WindowException(HWND hwnd = (HWND)NULL,char* message = DEFAULTEXCEPTIONMESSAGE(dl32WindowException)):dl32Exception(message){_hwnd=hwnd;};
 	HWND GethWnd(){return _hwnd;};
 };
 
@@ -192,10 +192,10 @@ protected:
 	void ProcessMessage(MSG &Message);
 	void ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
 
-	static dl32MouseData GetMouseData(MSG &Message);
-	static dl32KeyboardData GetKeyboardData(MSG &Message);
-	static dl32MouseData GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
-	static dl32KeyboardData GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam);
+	static dl32MouseData GetMouseData(const MSG &Message);
+	static dl32KeyboardData GetKeyboardData(const MSG &Message);
+	static dl32MouseData GetMouseData(const WPARAM &wParam,const LPARAM &lParam);
+	static dl32KeyboardData GetKeyboardData(const WPARAM &wParam,const LPARAM &lParam);
 public:
 	dl32Window();
 	dl32Window(string Title,int Left=DL32WINDOWSDEFAULTS_LEFT,int Top=DL32WINDOWSDEFAULTS_TOP,int Width=DL32WINDOWSDEFAULTS_WIDTH,int Height=DL32WINDOWSDEFAULTS_HEIGHT) throw(dl32WindowCreationFailedException);

@@ -115,17 +115,17 @@ void dl32Window::UpdateArea()
 	Area=dl32AABB2D(area.left,area.top,area.right-area.left,area.bottom-area.top);
 }
 
-inline dl32MouseData dl32Window::GetMouseData(MSG &Message)
+inline dl32MouseData dl32Window::GetMouseData(const MSG &Message)
 {
-	return GetMouseData(Message.hwnd,Message.message,Message.wParam,Message.lParam);
+	return GetMouseData(Message.wParam,Message.lParam);
 }
 
-inline dl32KeyboardData dl32Window::GetKeyboardData(MSG &Message)
+inline dl32KeyboardData dl32Window::GetKeyboardData(const MSG &Message)
 {
-	return GetKeyboardData(Message.hwnd,Message.message,Message.wParam,Message.lParam);
+	return GetKeyboardData(Message.wParam,Message.lParam);
 }
 
-dl32MouseData dl32Window::GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)
+dl32MouseData dl32Window::GetMouseData(const WPARAM &wParam,const LPARAM &lParam)
 {
 	dl32MouseData Data;
 
@@ -152,7 +152,7 @@ dl32MouseData dl32Window::GetMouseData(HWND &hWnd, UINT &msg, WPARAM &wParam, LP
 	return Data;
 }
 
-dl32KeyboardData dl32Window::GetKeyboardData(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)
+dl32KeyboardData dl32Window::GetKeyboardData(const WPARAM &wParam,const LPARAM &lParam)
 {
 	dl32KeyboardData Data;
 
@@ -354,7 +354,7 @@ LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 }
 
-void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)
+void dl32Window::ProcessMessage(HWND &hwnd, UINT &msg, WPARAM &wParam, LPARAM &lParam)
 {
 	bool cancel=false;
 	bool* cancelAdress = &cancel;
@@ -373,23 +373,23 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 	//	LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 	//	break;
 	case WM_MOUSEMOVE:
-		MouseMove.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
+		MouseMove.RaiseEvent(&GetMouseData(wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_RBUTTONUP:
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
-		MouseUp.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
+		MouseUp.RaiseEvent(&GetMouseData(wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
-		MouseDown.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
+		MouseDown.RaiseEvent(&GetMouseData(wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_MOUSEWHEEL:
-		MouseWheel.RaiseEvent(&GetMouseData(hWnd,msg,wParam,lParam));
+		MouseWheel.RaiseEvent(&GetMouseData(wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_KEYDOWN:
@@ -402,10 +402,10 @@ void dl32Window::ProcessMessage(HWND &hWnd, UINT &msg, WPARAM &wParam, LPARAM &l
 		switch(LastKeyCaptureState)
 		{
 		case KEYCAPTURESTATE_KEYDOWN:
-			KeyDown.RaiseEvent(&GetKeyboardData(hWnd,msg,wParam,lParam));
+			KeyDown.RaiseEvent(&GetKeyboardData(wParam,lParam));
 			break;
 		case KEYCAPTURESTATE_KEYUP:
-			KeyUp.RaiseEvent(&GetKeyboardData(hWnd,msg,wParam,lParam));
+			KeyUp.RaiseEvent(&GetKeyboardData(wParam,lParam));
 			break;
 		}
 
