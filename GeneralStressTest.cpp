@@ -166,7 +166,7 @@ void Render()
 			Rotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el sprite:
-			gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
+			//gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
 			gfx->DRAW_Trapezoid(Sprites[i],false,2);
 
 			//gfx->DRAW_Box(dl32AABB2D(100,100,300,300),DL32COLOR_DARKRED,true);

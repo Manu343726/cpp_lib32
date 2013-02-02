@@ -84,3 +84,7 @@
 #define DL32TEST_POLYLINE_SIMPLETEST 6
 
 #define DL32TESTS_CURRENTTEST DL32TEST_GENERAL_STRESS 
+
+//DESACTIVACIÓN DE WARNINGS:
+////////////////////////////
+#pragma warning(disable : 4290) //Visual Studio no implementa la especificación de excepciones. A cambio te lanza el 4290...
