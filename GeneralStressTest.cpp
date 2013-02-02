@@ -28,7 +28,7 @@ struct TEXTDATA
 };
 
 void Render();
-void DrawPolygon(PTDL32GRAPHICSCLASS gfx,POLYGONDATA PolygonData,float Angle); //Dibuja un poligono regular con las caracteristicas especificadas
+void DrawPolygon(dl32GraphicsClass* gfx,POLYGONDATA PolygonData,float Angle); //Dibuja un poligono regular con las caracteristicas especificadas
 POLYGONDATA GetRandomPolygon(int WindowWidth,int WindowHeight,int MinRadius,int MaxRadius,int MaxCount,int Z=0);//Obtiene un poligono regular aleatorio dentro de los rangos especificados
 void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width, float height);//Obtiene un sprite rectangular con las caracteristicas especificadas
 void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int WindowHeight,int MinSize,int MaxSize); //Obtiene un sprite aleatorio dentro de los rangos especificados
@@ -86,7 +86,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 		gfx = new dl32GraphicsClass(Window);
 
 		Console << "Loading texture: '" << dl32String(FILE1PATH) << "'" << dl32endl;
-		Texture1=gfx->MAP_Load(FILE1PATH,0,false,true);//Cargamos la imagen
+		Texture1=gfx->MAP_Load(FILE1PATH);//Cargamos la imagen
 		Console << "Loading texture: '" << dl32String(FILE2PATH) << "'" << dl32endl;
 		Texture2=gfx->MAP_Load(FILE2PATH);//Cargamos la imagen
 
@@ -167,6 +167,9 @@ void Render()
 
 			//Dibujamos el sprite:
 			gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
+			gfx->DRAW_Trapezoid(Sprites[i],false,2);
+
+			//gfx->DRAW_Box(dl32AABB2D(100,100,300,300),DL32COLOR_DARKRED,true);
 
 			//Devolvemos el sprite a su posición original: (Ver NOTA al principio si no se entiende la sintaxis)
 			InverseRotation.Apply(&Sprites[i][0]);
@@ -175,8 +178,8 @@ void Render()
 			InverseRotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el poligono actual:
-			DrawPolygon(gfx,PDATA[i],Alfa);
-			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			//DrawPolygon(gfx,PDATA[i],Alfa);
+			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 		}
 	}
 	else
@@ -186,15 +189,15 @@ void Render()
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
-			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
-			texts[i].color=RANDOM_COLOR;
-			texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
-			texts[i].text="dx_lib32 C++ !!!";
+			//PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
+			//texts[i].color=RANDOM_COLOR;
+			//texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
+			//texts[i].text="dx_lib32 C++ !!!";
 
 			//Por supuesto, dibujamos. Si no, hay un ciclo de renderizado sin dibujar, lo que provoca parpadeos en la imagen
-			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
-			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
-			DrawPolygon(gfx,PDATA[i],Alfa);
+			//gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
+			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			//DrawPolygon(gfx,PDATA[i],Alfa);
 		}
 
 		Console.WriteLine("OK");
@@ -205,51 +208,51 @@ void Render()
 	//gfx->DRAW_Mesh(Mesh,-5);
 
 
-	gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
-	gfx->DRAW_Box(98,98,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
+	//gfx->DRAW_Box(98,98,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,130,"dx_lib32" + dl32String(dl32endl) + "UPRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_UPRIGHT);
-	gfx->DRAW_Box(98,128,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,130,"dx_lib32" + dl32String(dl32endl) + "UPRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_UPRIGHT);
+	//gfx->DRAW_Box(98,128,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,160,"dx_lib32" + dl32String(dl32endl) + "DOWNRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNRIGHT);
-	gfx->DRAW_Box(98,158,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,160,"dx_lib32" + dl32String(dl32endl) + "DOWNRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNRIGHT);
+	//gfx->DRAW_Box(98,158,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,190,"dx_lib32" + dl32String(dl32endl) + "DOWNLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNLEFT);
-	gfx->DRAW_Box(98,188,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,190,"dx_lib32" + dl32String(dl32endl) + "DOWNLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNLEFT);
+	//gfx->DRAW_Box(98,188,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,220,"dx_lib32" + dl32String(dl32endl) + "UP",COLOR_FromARGB(128,255,255,255),DL32TA_UP);
-	gfx->DRAW_Box(98,218,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,220,"dx_lib32" + dl32String(dl32endl) + "UP",COLOR_FromARGB(128,255,255,255),DL32TA_UP);
+	//gfx->DRAW_Box(98,218,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,250,"dx_lib32" + dl32String(dl32endl) + "DOWN",COLOR_FromARGB(128,255,255,255),DL32TA_DOWN);
-	gfx->DRAW_Box(98,248,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,250,"dx_lib32" + dl32String(dl32endl) + "DOWN",COLOR_FromARGB(128,255,255,255),DL32TA_DOWN);
+	//gfx->DRAW_Box(98,248,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,280,"dx_lib32" + dl32String(dl32endl) + "RIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_RIGHT);
-	gfx->DRAW_Box(98,278,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,280,"dx_lib32" + dl32String(dl32endl) + "RIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_RIGHT);
+	//gfx->DRAW_Box(98,278,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,310,"dx_lib32" + dl32String(dl32endl) + "LEFT",COLOR_FromARGB(128,255,255,255),DL32TA_LEFT);
-	gfx->DRAW_Box(98,308,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,310,"dx_lib32" + dl32String(dl32endl) + "LEFT",COLOR_FromARGB(128,255,255,255),DL32TA_LEFT);
+	//gfx->DRAW_Box(98,308,4,4,DL32COLOR_RED,true);
 
-	gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
-	gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
+	//gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
+	//gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
 
-	if(!DrawingSpline && nodes.size()>0)
-		gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
-	else
-	{
-		if(nodes.size()>=2)
-		{
-			//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
-			gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
-			gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
-		}
-	}
+	//if(!DrawingSpline && nodes.size()>0)
+	//	gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
+	//else
+	//{
+	//	if(nodes.size()>=2)
+	//	{
+	//		//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
+	//		gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
+	//		gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
+	//	}
+	//}
 
 	Window->SetText("dx_lib32 C++ (" + dl32String(gfx->FPS()) + " FPS)");
 
 	gfx->Frame();
 }
 
-void DrawPolygon(PTDL32GRAPHICSCLASS gfx,POLYGONDATA PolygonData,float Angle)
+void DrawPolygon(dl32GraphicsClass* gfx,POLYGONDATA PolygonData,float Angle)
 {
 	if(PolygonData.Count>=3)
 	{
@@ -305,7 +308,7 @@ void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width,
 	Trapezoid[0]=dl32Vertex(x,y,COLOR_FromRGB(255,255,255));
 	Trapezoid[1]=dl32Vertex(x+width,y,COLOR_FromRGB(255,255,255));
 	Trapezoid[2]=dl32Vertex(x+width,y+height,COLOR_FromRGB(255,255,255));
-	Trapezoid[3]=dl32Vertex(x,y+width,COLOR_FromRGB(255,255,255));
+	Trapezoid[3]=dl32Vertex(x,y+height,COLOR_FromRGB(255,255,255));
 }
 
 void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int WindowHeight,int MinSize,int MaxSize)
@@ -420,6 +423,11 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 	case 'e':
 		Window->DeleteWindow();
 		break;
+	case 'E':
+		if(gfx->CAMERA_IsEnabled())
+			gfx->CAMERA_Disable();
+		else
+			gfx->CAMERA_Enable();
 	}
 }
 

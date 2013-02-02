@@ -4,13 +4,13 @@
 class Polyline
 {
 private:
-	vector<DL32VERTEXTEXTURED> _points;
+	vector<_d3dVertex> _points;
 	vector<int> _indices;
 public:
 	Polyline(){};
 	Polyline(dl32Point2D* vertices,int vertexCount);
 
-	DL32VERTEXTEXTURED* GetVertexBuffer(){return _points.data();};
+	_d3dVertex* GetVertexBuffer(){return _points.data();};
 	int* GetIndexBuffer(){return _indices.data();};
 };
 

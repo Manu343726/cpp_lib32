@@ -92,7 +92,7 @@ struct dl32Matrix3x3
 	float GetDeterminant() const {return GetDeterminant(*this);};
 	dl32Matrix3x3 GetInverse() const {return GetInverse(*this);};
 
-	static dl32Matrix3x3& GetUnity()
+	static dl32Matrix3x3 GetUnity()
 	{
 		return dl32Matrix3x3(
 			1,0,0,

@@ -27,8 +27,8 @@ using namespace std;
 #define DL32DEFAULTS_GRAPHICS_ZLEVEL (DL32DEFAULTS_GRAPHICS_ZLEVELSCOUNT - 1) / 2
 #define DL32MACROS_GRAPHICS_ZLEVELINDEX(zLevel) zLevel - DL32CONSTS_GRAPHICS_MINZLEVEL
 
-#define DL32CONSTS_D3DVERTEX_Z 0.5
-#define DL32CONSTS_D3DVERTEX_RHW 1
+#define DL32CONSTS_d3dVertex_Z 0.5
+#define DL32CONSTS_d3dVertex_RHW 1
 
 const dl32Range DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE = dl32Range(DL32CONSTS_GRAPHICS_MINZLEVEL,DL32CONSTS_GRAPHICS_MAXZLEVEL);
 
@@ -64,11 +64,6 @@ public:
 
 //CLASES DEL MÓDULO PROPIAMENTE DICHO:
 //////////////////////////////////////
-class dl32GraphicsClass;
-typedef dl32GraphicsClass *PTDL32GRAPHICSCLASS;
- 
-typedef LPDIRECT3DDEVICE9 PTD3DDEVICE;
-typedef void (*PTRENDERLOOPPROC)(PTDL32GRAPHICSCLASS);
 
 struct dl32Vertex:dl32Point2D
 {
@@ -82,8 +77,6 @@ struct dl32Vertex:dl32Point2D
 	static dl32Point2D Baricenter(dl32Vertex PointList[],int PointCount);
 };
 
-typedef dl32Vertex *PTDL32VERTEX;
-
 typedef dl32Vertex dl32Triangle[3];
 typedef dl32Vertex dl32VertexTrapezoid[4];
 typedef dl32Point2D dl322DPointTrapezoid[4];
@@ -92,23 +85,22 @@ typedef dl32Vertex dl32Pixel;
 
 #define GRAPHICS_GetTrapezoidCenter(x) dl32Point2D((x[0].x+x[1].x+x[2].x+x[3].x)/4,(x[0].y+x[1].y+x[2].y+x[3].y)/4)
 
-struct DL32VERTEXTEXTURED:public dl32Point3D
+struct _d3dVertex:public dl32Point3D
 {
 	float rhw;
 	dl32Color diffuse;
 	dl32Color specular;
 	float tx,ty;
 
-	DL32VERTEXTEXTURED();
-	DL32VERTEXTEXTURED(const dl32Vertex &vertex);
-	DL32VERTEXTEXTURED(const dl32Vertex &vertex,int Z,float tx = -1, float ty = -1);
-	DL32VERTEXTEXTURED(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
-	DL32VERTEXTEXTURED(float x,float y,int z,dl32Color diffuse,dl32Color specular = DL32COLOR_BLACK,float tx = -1,float ty = -1);
+	_d3dVertex();
+	_d3dVertex(const dl32Vertex &vertex);
+	_d3dVertex(const dl32Vertex &vertex,int Z,float tx = -1, float ty = -1);
+	_d3dVertex(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
+	_d3dVertex(float x,float y,int z,dl32Color diffuse,dl32Color specular = DL32COLOR_BLACK,float tx = -1,float ty = -1);
 };
 
-const DWORD DL32VERTEXTEXTURED_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1);
-typedef DL32VERTEXTEXTURED *PTDL32VERTEXTEXTURED_VERTEX;
-const int DL32VERTEXTEXTURED_SIZE=sizeof(DL32VERTEXTEXTURED);
+const DWORD _d3dVertex_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1);
+const int _d3dVertex_SIZE=sizeof(_d3dVertex);
 
 class dl322DCamera:public dl32Transformation2D
 {
@@ -129,7 +121,7 @@ public:
 	void Traslate(dl32Vector2D Translation);
 };
 
-struct DL32TEXTURE
+struct _d3dTexture
 {
 	LPDIRECT3DTEXTURE9 Texture;
 	LPDIRECT3DSURFACE9 Surface;
@@ -139,12 +131,10 @@ struct DL32TEXTURE
 	D3DFORMAT Format;
 	int Index;
 
-	DL32TEXTURE(){Texture=NULL;Surface=NULL;Index=-1;};
+	_d3dTexture(){Texture=NULL;Surface=NULL;Index=-1;};
 	bool LoadSurface();
 	bool ReleaseSurface();
 };
-
-typedef DL32TEXTURE *PTDL32TEXTURE;
 
 class dl32MeshPatch
 {
@@ -163,7 +153,7 @@ class dl32Mesh
 	friend class dl32Mesh;
 	friend class dl32GraphicsClass;
 private:
-	vector<DL32VERTEXTEXTURED> verts;
+	vector<_d3dVertex> verts;
 	vector<dl32MeshPatch> patches;
 	vector<vector<int>> indexes;
 	int width;
@@ -241,6 +231,8 @@ enum dl32TextAlign
 
 enum DL32RENDERBUFFERCALLTYPE
 {
+	RBCT_DRAWLINE,
+	RBCT_DRAWPIXEL,
 	RBCT_DRAWTRIANGLE,
 	RBCT_DRAWTRAPEZOID,
 	RBCT_DRAWPOLYGON,
@@ -310,9 +302,9 @@ protected:
 	void ResetBlendingStages();
 	void ResetTextureStages();
 
-	vector<DL32BUFFEROBJECT> _renderBuffer[DL32CONSTS_GRAPHICS_MAXZLEVEL-DL32CONSTS_GRAPHICS_MINZLEVEL+1];
+	vector<DL32BUFFEROBJECT> _renderBuffer;
 
-	vector<DL32VERTEXTEXTURED> _vertexBuffer;
+	vector<_d3dVertex> _vertexBuffer;
 	vector<int> _indexBuffer;
 	IDirect3DVertexBuffer9* _d3dVertexBuffer;
 	IDirect3DIndexBuffer9* _d3dIndexBuffer;
@@ -320,11 +312,11 @@ protected:
 	bool _d3dIndexBufferOK;
 	bool _usingVertexBuffer;
 	bool _FillD3DBuffers();
-	void _applyCameraTransform(DL32VERTEXTEXTURED* vertexBuffer);
+	void _applyCameraTransform(_d3dVertex* vertexBuffer);
 
 	bool _cameraEnabled;
 
-	vector<DL32TEXTURE> _textures;
+	vector<_d3dTexture> _textures;
 	vector<ID3DXFont*> _fonts;
 
 	int _renderTarget;
@@ -354,8 +346,8 @@ public:
 	//----------------------------------------
 	dl322DCamera Camera;
 	bool CAMERA_IsEnabled(){return _cameraEnabled;};
-	bool CAMERA_Enable(){_cameraEnabled = true;};
-	bool CAMERA_Disable(){_cameraEnabled = false;};
+	void CAMERA_Enable(){_cameraEnabled = true;};
+	void CAMERA_Disable(){_cameraEnabled = false;};
 
 	void Dispose();
 	bool Start();
