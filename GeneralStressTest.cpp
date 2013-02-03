@@ -5,6 +5,7 @@
 #include "dl32Window.h"
 #include "dl32Graphics.h"
 #include "dl32Console.h"
+#include "dl32Timing.h"
 
 #define RANDOM(min,max) (rand()%(max-min))+min
 #define RANDOM_COLOR COLOR_FromRGB(RANDOM(0,255),RANDOM(0,255),RANDOM(0,255))
@@ -36,7 +37,7 @@ void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int Win
 const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
-const int POLYCOUNT=10;//Total de poligonos/sprites
+const int POLYCOUNT=1000;//Total de poligonos/sprites
 const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
 const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
@@ -75,7 +76,8 @@ dl32Spline spline;
 int selectedNode=0;
 
 INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
-{
+{DL32TIMING_BEGIN
+
 	dl32MeshPatch TransformationPatch(-1,3,3,3,3);
 	Console.Open("dx_lib32 C++ (Debugging console)");
 	Console.WriteLine("dx_lib32 setting up window...");
@@ -143,17 +145,17 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 	DL32MEMORY_SAFEDELETE(gfx);
 
 	return 0;
-}
+DL32TIMING_END}
 
 //�sta funci�n se ejecuta autom�ticamente en cada ciclo de renderizado antes de dibujar la escena
 void Render()
-{
+{DL32TIMING_BEGIN
 	dl32Transformation2D Rotation;
 	dl32Transformation2D InverseRotation;
 
 	if(Alfa<=PI2) //Si no se ha completado la vuelta:
 	{
-		Alfa+=(PI/100);
+		Alfa+=(PI/(1*gfx->FPS()));
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			Rotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
@@ -166,8 +168,8 @@ void Render()
 			Rotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el sprite:
-			//gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
-			gfx->DRAW_Trapezoid(Sprites[i],false,2);
+			gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
+			//gfx->DRAW_Trapezoid(Sprites[i],false,2);
 
 			//gfx->DRAW_Box(dl32AABB2D(100,100,300,300),DL32COLOR_DARKRED,true);
 
@@ -185,7 +187,6 @@ void Render()
 	else
 	{//Cuando se acaba la vuelta, alfa vuelve a cero, y se vuelven a generar nuevos poligonos/sprites:
 		Alfa=0;
-		Console.Write("Recalculating sprites/polygons...");
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
@@ -199,58 +200,56 @@ void Render()
 			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 			//DrawPolygon(gfx,PDATA[i],Alfa);
 		}
-
-		Console.WriteLine("OK");
 	}
 
-	//Mesh.Transformation(dl322DTransformation::Rotation(Mesh.GetMeshCenter(),PI/1000));
+	Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetMeshCenter(),PI/1000));
 	//gfx->DRAW_Box(Window->GetClientArea(),COLOR_FromRGB(255,0,0),true,-4);
-	//gfx->DRAW_Mesh(Mesh,-5);
+	gfx->DRAW_Mesh(Mesh,-5);
 
 
-	//gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
-	//gfx->DRAW_Box(98,98,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
+	gfx->DRAW_Box(98,98,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,130,"dx_lib32" + dl32String(dl32endl) + "UPRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_UPRIGHT);
-	//gfx->DRAW_Box(98,128,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,130,"dx_lib32" + dl32String(dl32endl) + "UPRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_UPRIGHT);
+	gfx->DRAW_Box(98,128,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,160,"dx_lib32" + dl32String(dl32endl) + "DOWNRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNRIGHT);
-	//gfx->DRAW_Box(98,158,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,160,"dx_lib32" + dl32String(dl32endl) + "DOWNRIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNRIGHT);
+	gfx->DRAW_Box(98,158,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,190,"dx_lib32" + dl32String(dl32endl) + "DOWNLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNLEFT);
-	//gfx->DRAW_Box(98,188,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,190,"dx_lib32" + dl32String(dl32endl) + "DOWNLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_DOWNLEFT);
+	gfx->DRAW_Box(98,188,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,220,"dx_lib32" + dl32String(dl32endl) + "UP",COLOR_FromARGB(128,255,255,255),DL32TA_UP);
-	//gfx->DRAW_Box(98,218,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,220,"dx_lib32" + dl32String(dl32endl) + "UP",COLOR_FromARGB(128,255,255,255),DL32TA_UP);
+	gfx->DRAW_Box(98,218,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,250,"dx_lib32" + dl32String(dl32endl) + "DOWN",COLOR_FromARGB(128,255,255,255),DL32TA_DOWN);
-	//gfx->DRAW_Box(98,248,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,250,"dx_lib32" + dl32String(dl32endl) + "DOWN",COLOR_FromARGB(128,255,255,255),DL32TA_DOWN);
+	gfx->DRAW_Box(98,248,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,280,"dx_lib32" + dl32String(dl32endl) + "RIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_RIGHT);
-	//gfx->DRAW_Box(98,278,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,280,"dx_lib32" + dl32String(dl32endl) + "RIGHT",COLOR_FromARGB(128,255,255,255),DL32TA_RIGHT);
+	gfx->DRAW_Box(98,278,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,310,"dx_lib32" + dl32String(dl32endl) + "LEFT",COLOR_FromARGB(128,255,255,255),DL32TA_LEFT);
-	//gfx->DRAW_Box(98,308,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,310,"dx_lib32" + dl32String(dl32endl) + "LEFT",COLOR_FromARGB(128,255,255,255),DL32TA_LEFT);
+	gfx->DRAW_Box(98,308,4,4,DL32COLOR_RED,true);
 
-	//gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
-	//gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
+	gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
+	gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
 
-	//if(!DrawingSpline && nodes.size()>0)
-	//	gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
-	//else
-	//{
-	//	if(nodes.size()>=2)
-	//	{
-	//		//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
-	//		gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
-	//		gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
-	//	}
-	//}
+	if(!DrawingSpline && nodes.size()>0)
+		gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
+	else
+	{
+		if(nodes.size()>=2)
+		{
+			//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
+			gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
+			gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
+		}
+	}
 
 	Window->SetText("dx_lib32 C++ (" + dl32String(gfx->FPS()) + " FPS)");
 
 	gfx->Frame();
-}
+DL32TIMING_END}
 
 void DrawPolygon(dl32GraphicsClass* gfx,POLYGONDATA PolygonData,float Angle)
 {
@@ -305,10 +304,10 @@ POLYGONDATA GetRandomPolygon(int WindowWidth,int WindowHeight,int MinRadius,int 
 void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width, float height)
 {
 	//NOTA: El color difuso de los vertices del sprite es blanco, para que se vea la imagen original
-	Trapezoid[0]=dl32Vertex(x,y,COLOR_FromRGB(255,255,255));
-	Trapezoid[1]=dl32Vertex(x+width,y,COLOR_FromRGB(255,255,255));
-	Trapezoid[2]=dl32Vertex(x+width,y+height,COLOR_FromRGB(255,255,255));
-	Trapezoid[3]=dl32Vertex(x,y+height,COLOR_FromRGB(255,255,255));
+	Trapezoid[0]=dl32Vertex(x,y,RANDOM_COLOR);
+	Trapezoid[1]=dl32Vertex(x+width,y,RANDOM_COLOR);
+	Trapezoid[2]=dl32Vertex(x+width,y+height,RANDOM_COLOR);
+	Trapezoid[3]=dl32Vertex(x,y+height,RANDOM_COLOR);
 }
 
 void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int WindowHeight,int MinSize,int MaxSize)
@@ -433,6 +432,6 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 
 void OnClose(bool *cancel)
 {
-	*cancel=true;
+	*cancel=false;
 }
 #endif

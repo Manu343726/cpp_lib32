@@ -12,6 +12,7 @@
 #include "dl32Color.h"
 #include "dl32String.h"
 #include "dl32Window.h"
+#include "dl32Timing.h"
 
 using namespace std;
 

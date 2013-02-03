@@ -149,7 +149,7 @@ INT WINAPI wWinMain(HINSTANCE,HINSTANCE,LPWSTR,INT)
 }
 
 void InicializarJuego()
-{
+{DL32TIMING_BEGIN
 	//Establecemos las dimensiones de la bola, de manera que es un cuadrado con lado el ancho de las paletas:
 	bola.AABB.SetWidth(ANCHOPALETA);
 	bola.AABB.SetHeight(ANCHOPALETA);
@@ -157,10 +157,10 @@ void InicializarJuego()
 	//Establecemos los identificadores de los jugadores:
 	Jugador1.ID=1;
 	Jugador2.ID=2;
-}
+DL32TIMING_END}
 
 void OnDraw()
-{
+{DL32TIMING_BEGIN
 	if(!TestColisionJugadores())
 	{
 		//dl322DOrientation representa la posición relativa entre dos AABBs 2D. Se supone que uno se usa como "origen", de manera que es como si tuvieramos una brújula.
@@ -220,13 +220,15 @@ void OnDraw()
 		Window->SetText("PONG! (" + dl32String(gfx->FPS()) + " FPS)");
 
 		gfx->Frame();
+
+		DL32TIMING_END
 	}
 	else
-		dl32Window::Exit();//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
+		dl32Window::Exit();DL32TIMING_END//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
 };
 
 bool TestColisionJugadores()
-{
+{DL32TIMING_BEGIN
 	if(dl32AABB2D::Collide(bola.AABB,Jugador1.AABB))//Si la bola ha chocado con la paleta del jugador 1...
 	{
 		Console.Write("COLISION (JUGADOR 1): Vin " + ToString(bola.velocidad),DL32CP_PURPLE);
@@ -247,12 +249,12 @@ bool TestColisionJugadores()
 		return false;//Si no, pues nada, devolvemos falso para calcular la posición relativa (Ver "OnDraw()")
 
 	return true;
-}
+DL32TIMING_END}
 
 //Calcula la velocidad de salida de la bola cuando rebota con una paleta:
 //Para poder controlar la bola, dependiendo de con que zona de la paleta le demos, sale con un ángulo diferente (Máximo 45º)
 dl32Vector2D CalcularRebote(Bola bola,Jugador jugador)
-{
+{DL32TIMING_BEGIN
 	dl32Vector2D retorno;
 
 	//Ésto es pura trigonometría. Imagina el caso del jugador1: Hacemos un triángulo rectángulo, un cateto horizontal positivo (retorno.x), otro vertical (retorno.y)
@@ -271,10 +273,10 @@ dl32Vector2D CalcularRebote(Bola bola,Jugador jugador)
 
 	retorno.Normalize();//Normalizamos el vector...
 	return retorno*velocidadJuego;//... y devolvemos un vector cuyo módulo es la velocidad actual de juego
-}
+DL32TIMING_END}
 
 void Puntuar(int Ganador)
-{
+{DL32TIMING_BEGIN
 	if(Ganador==1)
 	{
 		Jugador2.vidas--;
@@ -295,10 +297,10 @@ void Puntuar(int Ganador)
 		else
 			Reestablecer();
 	}
-}
+DL32TIMING_END}
 
 void Reestablecer()
-{
+{DL32TIMING_BEGIN
 	//Movemos la bola al centro de la ventana, y las paletas a sus bordes y a media altura:
 	bola.AABB.SetCenter(Window->GetClientArea().GetCenter());
 	bola.velocidad.x=-velocidadJuego;
@@ -306,17 +308,17 @@ void Reestablecer()
 
 	Jugador1.AABB=dl32AABB2D(3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
 	Jugador2.AABB=dl32AABB2D(Window->GetClientArea().GetWidth()-ANCHOPALETA-3,(Window->GetClientArea().GetHeight()-ALTOPALETA)/2,ANCHOPALETA,ALTOPALETA);
-}
+DL32TIMING_END}
 
 void IA()
-{
+{DL32TIMING_BEGIN
 	if(bola.AABB.GetCenter().y>ALTOPALETA/2 && bola.AABB.GetCenter().y<Window->GetClientArea().GetHeight()-ALTOPALETA/2) //Si la paleta no se sale de la pantalla al moverla...
 	{
 		Jugador2.AABB.SetCenter(Jugador2.AABB.GetCenter().x,bola.AABB.GetCenter().y+RANDOM_FLOAT(-ANCHOPALETA,ANCHOPALETA));//...entonces la movemos de manera que su centro quede a la altura del cursor
 		if(DOBLEIA) Jugador1.AABB.SetCenter(Jugador1.AABB.GetCenter().x,bola.AABB.GetCenter().y+RANDOM_FLOAT(-ANCHOPALETA,ANCHOPALETA));//Si DOBLEIA está a true,
 		//juega ordenador vs ordenador, y por tanto hacemos lo mismo con la paleta del jugador 1.
 	}
-}
+DL32TIMING_END}
 
 void OnMouseMove(dl32MouseData data)
 {

@@ -531,7 +531,8 @@ void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 		_frameRate=_frameCount;
 		_frameCount=0;
 	}
-	_frameCount++;
+	else
+		_frameCount++;
 }
 
 bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed, bool tripleBuffer, bool vSync, int refreshRate)
@@ -808,73 +809,74 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
-	{
 		DL32BUFFEROBJECT object;
 
-		object.StartIndex = _vertexBuffer.size();
+		if(_renderBuffer.back().PrimitiveType == RBCT_DRAWLINE)
+		{
+			_renderBuffer.back().VertexCount += 2;
+			_renderBuffer.back().PrimitiveCount += 1;
+		}
+		else
+		{
+			object.StartIndex = _vertexBuffer.size();
+
+			object.VertexCount = 2;
+			object.PrimitiveType = D3DPT_LINELIST;
+			object.PrimitiveCount = 1;
+
+			_renderBuffer.push_back(object);
+		}
 
 		_vertexBuffer.push_back(_d3dVertex(P1,Z,color));
 		_vertexBuffer.push_back(_d3dVertex(P2,Z,color));
-
-		object.VertexCount = 2;
-		object.PrimitiveType = D3DPT_LINESTRIP;
-		object.PrimitiveCount = 1;
-
-		_renderBuffer.push_back(object);
-	}
-	else
-		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
-	{
-		DL32BUFFEROBJECT object;
+	DL32BUFFEROBJECT object;
 
+	if(_renderBuffer.back().PrimitiveType == RBCT_DRAWLINE)
+	{
+		_renderBuffer.back().VertexCount += 2;
+		_renderBuffer.back().PrimitiveCount += 1;
+	}
+	else
+	{
 		object.StartIndex = _vertexBuffer.size();
 
-		_vertexBuffer.push_back(_d3dVertex(V1,Z));
-		_vertexBuffer.push_back(_d3dVertex(V2,Z));
-
 		object.VertexCount = 2;
-		object.PrimitiveType = D3DPT_LINESTRIP;
+		object.PrimitiveType = D3DPT_LINELIST;
 		object.PrimitiveCount = 1;
 
 		_renderBuffer.push_back(object);
 	}
-	else
-		throw  dl32ZLevelOutOfRangeException(Z);
+
+	_vertexBuffer.push_back(_d3dVertex(V1,Z));
+	_vertexBuffer.push_back(_d3dVertex(V2,Z));
 }
 
 void dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
+	if(Count >= 2)
 	{
-		if(Count >= 2)
-		{
-			DL32BUFFEROBJECT object;
+		DL32BUFFEROBJECT object;
 
-			object.StartIndex = _vertexBuffer.size();
-			_vertexBuffer.reserve(_vertexBuffer.size() + Count);
+		object.StartIndex = _vertexBuffer.size();
+		_vertexBuffer.reserve(_vertexBuffer.size() + Count);
 
-			for(int i=0;i<Count;++i)
-				_vertexBuffer.push_back(_d3dVertex(points[i],Z));
+		for(int i=0;i<Count;++i)
+			_vertexBuffer.push_back(_d3dVertex(points[i],Z));
 
-			object.VertexCount = Count;
-			object.PrimitiveType = D3DPT_LINESTRIP;
-			object.PrimitiveCount = Count-1;
+		object.VertexCount = Count;
+		object.PrimitiveType = D3DPT_LINESTRIP;
+		object.PrimitiveCount = Count-1;
 
-			_renderBuffer.push_back(object);
-		}
+		_renderBuffer.push_back(object);
 	}
-	else
-		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color color,int Z)
@@ -1284,7 +1286,7 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
-	{
+	{DL32TIMING_BEGIN
 		DL32BUFFEROBJECT Object;
 		int BaseIndex=_vertexBuffer.size();
 		int StripVertexCount;
@@ -1317,7 +1319,7 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 
 			_indexBuffer.insert(_indexBuffer.end(),Mesh.indexes[i].begin(),Mesh.indexes[i].end());
 		}
-	}
+	DL32TIMING_END}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);
 }

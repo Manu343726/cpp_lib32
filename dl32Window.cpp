@@ -160,8 +160,6 @@ dl32KeyboardData dl32Window::GetKeyboardData(const WPARAM &wParam,const LPARAM &
 	Data.PreviousPressed=((lParam >> 30)%2)!=0;//Miguel y Laura, mi cerebro se licua con las operaciones a bits
 	Data.RepeatCount=lParam & 0x0000FFFF;//GRACIAS!!!!
 
-	//NOTA (05/09/12): Que aquí conste que si en algún momento gano dinero con ésto, no os pienso dar un duro. Estáis avisados.
-
 	return Data;
 }
 
