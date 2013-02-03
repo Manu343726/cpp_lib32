@@ -37,7 +37,7 @@ void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int Win
 const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
-const int POLYCOUNT=1000;//Total de poligonos/sprites
+const int POLYCOUNT=100;//Total de poligonos/sprites
 const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
 const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
@@ -180,8 +180,8 @@ void Render()
 			InverseRotation.Apply(&Sprites[i][3]);
 
 			//Dibujamos el poligono actual:
-			//DrawPolygon(gfx,PDATA[i],Alfa);
-			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			DrawPolygon(gfx,PDATA[i],Alfa);
+			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
 		}
 	}
 	else
@@ -190,21 +190,21 @@ void Render()
 		for(int i=0;i<POLYCOUNT;++i)
 		{
 			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
-			//PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
-			//texts[i].color=RANDOM_COLOR;
-			//texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
-			//texts[i].text="dx_lib32 C++ !!!";
+			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
+			texts[i].color=RANDOM_COLOR;
+			texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
+			texts[i].text="dx_lib32 C++ !!!";
 
 			//Por supuesto, dibujamos. Si no, hay un ciclo de renderizado sin dibujar, lo que provoca parpadeos en la imagen
-			//gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aqu�, el valor Z es uno, para que los sprites salgan delante de los poligonos
-			//gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
-			//DrawPolygon(gfx,PDATA[i],Alfa);
+			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aqu�, el valor Z es uno, para que los sprites salgan delante de los poligonos
+			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+			DrawPolygon(gfx,PDATA[i],Alfa);
 		}
 	}
 
-	Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetMeshCenter(),PI/1000));
+	//Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetMeshCenter(),PI/1000));
 	//gfx->DRAW_Box(Window->GetClientArea(),COLOR_FromRGB(255,0,0),true,-4);
-	gfx->DRAW_Mesh(Mesh,-5);
+	//gfx->DRAW_Mesh(Mesh,-5);
 
 
 	gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
@@ -240,7 +240,7 @@ void Render()
 	{
 		if(nodes.size()>=2)
 		{
-			//gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_CYAN,10,false);
+			gfx->DRAW_Polyline(nodes.data(),nodes.size(),DL32COLOR_RED,10,false);
 			gfx->DRAW_Spline(&spline,DL32COLOR_LIGHTGREEN);
 			gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
 		}
