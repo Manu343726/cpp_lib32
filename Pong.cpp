@@ -114,11 +114,16 @@ void OnDraw();
 //HERRAMIENTAS VARIAS:
 dl32String ToString(dl32Point2D point);//Devuelve la representación en cadena de caracteres de un punto 2D
 
+int AllocHook(int allocType, void* userData, size_t size, int blockType, long RequestNumber, const unsigned char* fileName, int lineNumber);
+
 //Éste es el punto de entrada de una aplicación gráfica en Windows:
 INT WINAPI wWinMain(HINSTANCE,HINSTANCE,LPWSTR,INT)
 {
 	Console.Open("PONG! (Debug)");
 	Console << "Inicializando...";
+
+	dl32LeakDebugger::Start();
+	dl32LeakDebugger::SetHook(AllocHook);
 
 	try
 	{
@@ -146,6 +151,12 @@ INT WINAPI wWinMain(HINSTANCE,HINSTANCE,LPWSTR,INT)
 	}
 
 	DL32MEMORY_SAFEDELETE(gfx);
+
+	if(dl32LeakDebugger::Check())
+	{
+		Console.WriteLine("MEMORY LEAK!!!");
+		_CrtDumpMemoryLeaks();
+	}
 }
 
 void InicializarJuego()
@@ -331,5 +342,20 @@ void OnMouseMove(dl32MouseData data)
 dl32String ToString(dl32Point2D point)
 {
 	return "{X=" + dl32String(point.x) + ",Y=" + dl32String(point.y) + "}";//Uso un casting de float a dl32String (Ya te explicaré como se hace)
+}
+
+int AllocHook(int allocType, void* userData, size_t size, int blockType, long RequestNumber, const unsigned char* fileName, int lineNumber)
+{
+	switch(allocType)
+	{
+	case _HOOK_ALLOC:
+		Console.WriteLine("Memory allocation. File '" + dl32String(fileName) + "' line " + dl32String(lineNumber) + " (" + dl32String(userData) + ")");
+	case _HOOK_REALLOC:
+		Console.WriteLine("Memory reallocation. File '" + dl32String(fileName) + "' line " + dl32String(lineNumber) + " (" + dl32String(userData) + ")");
+	case _HOOK_FREE:
+		Console.WriteLine("Memory free. File '" + dl32String(fileName) + "' line " + dl32String(lineNumber) + " (" + dl32String(userData) + ")");
+	}
+
+	return TRUE;
 }
 #endif

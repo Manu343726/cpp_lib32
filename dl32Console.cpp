@@ -10,6 +10,7 @@ dl32Console::dl32Console()throw(dl32ConsoleSingletonException)
 		ready=false;
 		colorsettings=0;
 		instance=this;
+		_processing = false;
 	}
 	else
 		throw dl32ConsoleSingletonException("dl32Console::dl32Console(): Can only create one instance of dl32Console");
@@ -63,54 +64,64 @@ void dl32Console::Close()
 
 void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ClosedConsoleException)
 {
-	if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
-	{
-		//Si AutoOpen (Solo para debugging) está activado, abrimos la consola:
-		if(!ready) Open(DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE);
-
-		if(foregroundcolor!=DL32CP_EMPTYVALUE)
+	if(!_processing)
+		if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
 		{
-			SetConsoleTextAttribute(handle,(colorsettings & DL32CONSOLESETTINGS_COLORMASK_NOCOLOR) | (foregroundcolor | backgroundcolor<<4));
-			WriteConsole(handle,str.c_str(),str.GetLength(),NULL,NULL);
-			SetConsoleTextAttribute(handle,colorsettings);
+			_processing = true;
+
+			//Si AutoOpen (Solo para debugging) está activado, abrimos la consola:
+			if(!ready) Open(DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE);
+
+			if(foregroundcolor!=DL32CP_EMPTYVALUE)
+			{
+				SetConsoleTextAttribute(handle,(colorsettings & DL32CONSOLESETTINGS_COLORMASK_NOCOLOR) | (foregroundcolor | backgroundcolor<<4));
+				WriteConsole(handle,str.c_str(),str.GetLength(),NULL,NULL);
+				SetConsoleTextAttribute(handle,colorsettings);
+			}
+			else
+				WriteConsole(handle,str.c_str(),str.GetLength(),NULL,NULL);
+
+			_processing = false;
 		}
 		else
-			WriteConsole(handle,str.c_str(),str.GetLength(),NULL,NULL);
-	}
-	else
-		throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
+			throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
 }
 
 void dl32Console::WriteLine(dl32String str,dl32ConsolePalette foregroundcolor,dl32ConsolePalette backgroundcolor)throw(dl32ClosedConsoleException)
 {
-	if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
-	{
-		//Si AutoOpen (Solo para debugging) está activado, abrimos la consola:
-		if(!ready) Open(DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE);
-
-		char* strArray;
-		int length=str.GetLength();
-		
-		strArray=new char[length+2];
-		for(int i=0;i<length;++i)
-			strArray[i]=str[i];
-
-		strArray[length]=DL32TRING_ENDLINE;
-		strArray[length+1]=DL32STRING_FINALSYMBOL;
-
-		if(foregroundcolor!=DL32CP_EMPTYVALUE)
+	if(!_processing)
+		if(DL32DEBUG_DL32CONSOLE_AUTOOPEN || ready)
 		{
-			SetConsoleTextAttribute(handle,(colorsettings & DL32CONSOLESETTINGS_COLORMASK_NOCOLOR) | (foregroundcolor | backgroundcolor<<4));
-			WriteConsole(handle,strArray,length+1,NULL,NULL);
-			SetConsoleTextAttribute(handle,colorsettings);
+			_processing = true;
+
+			//Si AutoOpen (Solo para debugging) está activado, abrimos la consola:
+			if(!ready) Open(DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE);
+
+			char* strArray;
+			int length=str.GetLength();
+		
+			strArray=new char[length+2];
+			for(int i=0;i<length;++i)
+				strArray[i]=str[i];
+
+			strArray[length]=DL32TRING_ENDLINE;
+			strArray[length+1]=DL32STRING_FINALSYMBOL;
+
+			if(foregroundcolor!=DL32CP_EMPTYVALUE)
+			{
+				SetConsoleTextAttribute(handle,(colorsettings & DL32CONSOLESETTINGS_COLORMASK_NOCOLOR) | (foregroundcolor | backgroundcolor<<4));
+				WriteConsole(handle,strArray,length+1,NULL,NULL);
+				SetConsoleTextAttribute(handle,colorsettings);
+			}
+			else
+				WriteConsole(handle,strArray,length+1,NULL,NULL);
+
+			delete strArray;
+
+			_processing = false;
 		}
 		else
-			WriteConsole(handle,strArray,length+1,NULL,NULL);
-
-		delete strArray;
-	}
-	else
-		throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
+			throw dl32ClosedConsoleException("dl32Console::Write(dl32String str): Console is not ready");
 }
 
 dl32Console& dl32Console::operator<<(dl32String str)throw(dl32ClosedConsoleException)

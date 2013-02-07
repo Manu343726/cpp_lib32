@@ -90,6 +90,8 @@ private:
 	DWORD colorsettings;
 	dl32ConsoleType type;
 	bool ready;
+
+	bool _processing;//Para prevenir recursiones infinitas
 	
 	dl32Console() throw (dl32ConsoleSingletonException);
 	~dl32Console();
@@ -119,6 +121,8 @@ public:
 	int GetScroll()throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 
 	static dl32Console console;
+
+	bool Processing(){return _processing;};
 };
 
 #define Console dl32Console::console

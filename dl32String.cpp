@@ -86,7 +86,25 @@ void dl32String::LongCasting(long Number)
 
 dl32String::dl32String(const char Str[])
 {
-	size=strlen(Str);
+	if(Str != NULL) 
+		size=strlen(Str);
+	else
+		size = 0;
+
+	Array=new char[size+1];
+
+	for(int i=0;i<size;++i)
+		Array[i]=Str[i];
+	
+	Array[size]=DL32STRING_FINALSYMBOL;
+}
+
+dl32String::dl32String(const unsigned char Str[])
+{
+	if(Str != NULL) 
+		size=strlen((char*)Str);
+	else
+		size = 0;
 
 	Array=new char[size+1];
 

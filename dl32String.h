@@ -26,6 +26,7 @@ protected:
 public:
 	dl32String();
 	dl32String(const char Str);
+	dl32String(const unsigned char str[]);
 	dl32String(const char Str[]);
 	dl32String(char Str[],int Size);
 	dl32String(const string &Str);
