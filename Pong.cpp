@@ -36,7 +36,7 @@ Métodos principales:
 - void SetCenter(dl322DPoint Center): Establece el centro del AABB
 
 - bool BelongTo(dl322DPoint point): Devuelve verdadero si el punto especificado pertenece al AABB. Devuelve falso en caso contrario.
-- bool Collide(dl322DAABB A1,dl322DAABB A2): Devuelve verdadero si los dos AABBs especificados colisionan. Devuelve falso en caso contrario. (Es una función static, échale un ojo a tu libro)
+- bool Collide(dl322DAABB A1,dl322DAABB A2): Devuelve verdadero si los dos AABBs especificados colisionan. Devuelve falso en caso contrario. 
 */
 
 //Definimos una bola como su area y su velocidad
@@ -53,8 +53,8 @@ struct Jugador
 	int puntuacion;
 	int vidas;
 	int ID;
-	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;};//Constructor predeterminado (o por defecto, como lo llame tu libro)
-	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;};//Constructor
+	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;};
+	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;};
 };
 
 /*
@@ -205,7 +205,7 @@ void OnDraw()
 			Puntuar(1); Console.WriteLine("FALLO DE JUGADOR 2",DL32CP_LIGHTYELLOW);
 			break;
 		case dl32Orientation2D::OUTSIDE:
-			Console.WriteLine("PERDIDA DE BOLA (Pero que cojones a pasado???",DL32CP_LIGHTRED);
+			Console.WriteLine("PERDIDA DE BOLA (Pero que cojones ha pasado???",DL32CP_LIGHTRED);
 			velocidadJuego=VELOCIDADINICIAL;
 			Reestablecer();
 		}
@@ -341,7 +341,7 @@ void OnMouseMove(dl32MouseData data)
 
 dl32String ToString(dl32Point2D point)
 {
-	return "{X=" + dl32String(point.x) + ",Y=" + dl32String(point.y) + "}";//Uso un casting de float a dl32String (Ya te explicaré como se hace)
+	return "{X=" + dl32String(point.x) + ",Y=" + dl32String(point.y) + "}";
 }
 
 int AllocHook(int allocType, void* userData, size_t size, int blockType, long RequestNumber, const unsigned char* fileName, int lineNumber)

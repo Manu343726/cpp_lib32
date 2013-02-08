@@ -11,6 +11,14 @@
 #define RANDOM_COLOR COLOR_FromRGB(RANDOM(0,255),RANDOM(0,255),RANDOM(0,255))
 #define RANDOM_POINT(minX,minY,maxX,maxY) dl32Point2D(RANDOM(minX,maxX),RANDOM(minY,maxY))
 
+#define STRESSTEST_SPRITES ENABLED
+#define STRESSTEST_SPRITES_ROTATION ENABLED
+#define STRESSTEST_SPRITES_BORDERTRAPEZOID DISABLED
+#define STRESSTEST_POLYGONS DISABLED
+#define STRESSTEST_TEXTS DISABLED
+#define STRESSTEST_SPLINE DISABLED
+#define STRESSTEST_MESH DISABLED
+
 //Estructura que contiene las caracteristicas de un poligono regular:
 typedef struct _POLYGONDATA
 {
@@ -37,7 +45,7 @@ void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int Win
 const int WINDOWWIDTH=1440;//Ancho de la ventana
 const int WINDOWHEIGHT=900;//Alto de la ventana
 
-const int POLYCOUNT=100;//Total de poligonos/sprites
+const int POLYCOUNT=500;//Total de poligonos/sprites
 const char* FILE1PATH="Texture.png";//Direccion de la imagen que usan los sprites
 const char* FILE2PATH="MeshTexture.bmp";//Direccion de la imagen que usa la malla
 
@@ -155,9 +163,10 @@ void Render()
 
 	if(Alfa<=PI2) //Si no se ha completado la vuelta:
 	{
-		Alfa+=(PI/(1*gfx->FPS()));
+		Alfa+=(PI/100);
 		for(int i=0;i<POLYCOUNT;++i)
 		{
+#if STRESSTEST_SPRITES_ROTATION
 			Rotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),Alfa); //Rotacion de alfa grados alrededor del centro de la textura
 			InverseRotation=dl32Transformation2D::Rotation(dl32Vertex::Baricenter(Sprites[i],4),-Alfa); //Rotacion de -alfa grados alrededor del centro de la textura
 
@@ -166,22 +175,32 @@ void Render()
 			Rotation.Apply(&Sprites[i][1]);
 			Rotation.Apply(&Sprites[i][2]);
 			Rotation.Apply(&Sprites[i][3]);
-
+#endif
+#if STRESSTEST_SPRITES
 			//Dibujamos el sprite:
-			gfx->DRAW_VertexMap(Texture1,Sprites[i],1);
-			//gfx->DRAW_Trapezoid(Sprites[i],false,2);
-
-			//gfx->DRAW_Box(dl32AABB2D(100,100,300,300),DL32COLOR_DARKRED,true);
-
+			if(i<POLYCOUNT/2)
+				//gfx = gfx;
+				gfx->DRAW_VertexMap(Texture2,Sprites[i],i);
+			else
+				gfx->DRAW_VertexMap(Texture1,Sprites[i],i);
+#endif
+#if STRESSTEST_SPRITES_BORDERTRAPEZOID
+			gfx->DRAW_Trapezoid(Sprites[i],false);
+#endif
+#if STRESSTEST_SPRITES_ROTATION
 			//Devolvemos el sprite a su posición original: (Ver NOTA al principio si no se entiende la sintaxis)
 			InverseRotation.Apply(&Sprites[i][0]);
 			InverseRotation.Apply(&Sprites[i][1]);
 			InverseRotation.Apply(&Sprites[i][2]);
 			InverseRotation.Apply(&Sprites[i][3]);
-
+#endif
+#if STRESSTEST_POLYGONS
 			//Dibujamos el poligono actual:
 			DrawPolygon(gfx,PDATA[i],Alfa);
+#endif
+#if STRESSTEST_TEXTS
 			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
+#endif
 		}
 	}
 	else
@@ -189,24 +208,29 @@ void Render()
 		Alfa=0;
 		for(int i=0;i<POLYCOUNT;++i)
 		{
+#if STRESSTEST_SPRITES
 			GetRandomBoxTrapezoid(Sprites[i],WINDOWWIDTH,WINDOWHEIGHT,50,200);
+			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
+#endif
+#if STRESSTEST_POLYGONS
 			PDATA[i]=GetRandomPolygon(WINDOWWIDTH,WINDOWHEIGHT,100,100,10);
+			DrawPolygon(gfx,PDATA[i],Alfa);
+#endif
+#if STRESSTEST_TEXTS
 			texts[i].color=RANDOM_COLOR;
 			texts[i].position=RANDOM_POINT(0,0,WINDOWWIDTH,WINDOWHEIGHT);
 			texts[i].text="dx_lib32 C++ !!!";
 
-			//Por supuesto, dibujamos. Si no, hay un ciclo de renderizado sin dibujar, lo que provoca parpadeos en la imagen
-			gfx->DRAW_VertexMap(Texture1,Sprites[i]);//Aquï¿½, el valor Z es uno, para que los sprites salgan delante de los poligonos
 			gfx->DRAW_Text(Font,texts[i].position,texts[i].text,texts[i].color);
-			DrawPolygon(gfx,PDATA[i],Alfa);
+#endif		
 		}
 	}
 
-	//Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetMeshCenter(),PI/1000));
-	//gfx->DRAW_Box(Window->GetClientArea(),COLOR_FromRGB(255,0,0),true,-4);
-	//gfx->DRAW_Mesh(Mesh,-5);
-
-
+#if STRESSTEST_MESH
+	Mesh.Transformation(dl32Transformation2D::Rotation(Mesh.GetMeshCenter(),PI/1000));
+	gfx->DRAW_Mesh(Mesh,-5);
+#endif
+#if STRESSTEST_TEXTS
 	gfx->DRAW_Text(Font,100,100,"dx_lib32" + dl32String(dl32endl) + "UPLEFT",COLOR_FromARGB(128,255,255,255),DL32TA_UPLEFT);
 	gfx->DRAW_Box(98,98,4,4,DL32COLOR_RED,true);
 
@@ -233,7 +257,8 @@ void Render()
 
 	gfx->DRAW_Text(Font,100,340,"dx_lib32" + dl32String(dl32endl) + "CENTER",COLOR_FromARGB(128,255,255,255),DL32TA_CENTER);
 	gfx->DRAW_Box(98,338,4,4,DL32COLOR_RED,true);
-
+#endif
+#if STRESSTEST_SPLINE
 	if(!DrawingSpline && nodes.size()>0)
 		gfx->DRAW_Pixels(nodes.data(),DL32COLOR_GREEN,nodes.size());
 	else
@@ -245,6 +270,7 @@ void Render()
 			gfx->DRAW_Text(Font,10,10,"Selected node = " + dl32String(selectedNode),DL32COLOR_WHITE,DL32TA_UPLEFT);
 		}
 	}
+#endif
 
 	Window->SetText("dx_lib32 C++ (" + dl32String(gfx->FPS()) + " FPS)");
 
@@ -304,15 +330,16 @@ POLYGONDATA GetRandomPolygon(int WindowWidth,int WindowHeight,int MinRadius,int 
 void GetBoxTrapezoid(dl32VertexTrapezoid Trapezoid,float x, float y,float width, float height)
 {
 	//NOTA: El color difuso de los vertices del sprite es blanco, para que se vea la imagen original
-	Trapezoid[0]=dl32Vertex(x,y,RANDOM_COLOR);
-	Trapezoid[1]=dl32Vertex(x+width,y,RANDOM_COLOR);
-	Trapezoid[2]=dl32Vertex(x+width,y+height,RANDOM_COLOR);
-	Trapezoid[3]=dl32Vertex(x,y+height,RANDOM_COLOR);
+	Trapezoid[0]=dl32Vertex(x,y,DL32COLOR_WHITE);
+	Trapezoid[1]=dl32Vertex(x+width,y,DL32COLOR_WHITE);
+	Trapezoid[2]=dl32Vertex(x+width,y+height,DL32COLOR_WHITE);
+	Trapezoid[3]=dl32Vertex(x,y+height,DL32COLOR_WHITE);
 }
 
 void GetRandomBoxTrapezoid(dl32VertexTrapezoid Trapezoid,int WindowWidth,int WindowHeight,int MinSize,int MaxSize)
 {
-	GetBoxTrapezoid(Trapezoid,RANDOM(0,WindowWidth),RANDOM(0,WindowHeight),RANDOM(MinSize,MaxSize),RANDOM(MinSize,MaxSize));
+	int size = RANDOM(MinSize,MaxSize);
+	GetBoxTrapezoid(Trapezoid,RANDOM(0,WindowWidth),RANDOM(0,WindowHeight),size,size);
 }
 
 void OnMouseMove(dl32MouseData MouseData)

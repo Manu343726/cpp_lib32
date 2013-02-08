@@ -1245,7 +1245,7 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 	{
 		DL32BUFFEROBJECT Object;
 
-		if(_renderBuffer.size() > 0 && _renderBuffer.back().CallType == RBCT_DRAWVERTEXMAP && _renderBuffer.back().Texture == texture)
+		if(DL32DEBUG_GRAPHICS_DRAWCALLSMERGE && _renderBuffer.size() > 0 && _renderBuffer.back().CallType == RBCT_DRAWVERTEXMAP && _renderBuffer.back().Texture == texture)
 		{
 			_renderBuffer.back().PrimitiveCount += 2;
 			_renderBuffer.back().VertexCount += 6;
@@ -1254,9 +1254,9 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 		{
 			Object.PrimitiveType=D3DPT_TRIANGLELIST;
 			Object.PrimitiveCount=2;
-			Object.StartIndex=_vertexBuffer.size();
+			Object.StartIndex=_indexBuffer.size();
 			Object.VertexCount=6;
-			Object.BaseIndex = _indexBuffer.size();
+			Object.BaseIndex = 0;
 			Object.Texture=texture;
 			Object.CallType=RBCT_DRAWVERTEXMAP;
 
@@ -1277,8 +1277,6 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 		_indexBuffer.push_back(_vertexBuffer.size() - 2);//Abajo izquierda (Segundo triangulo)
 		_indexBuffer.push_back(_vertexBuffer.size() - 1);//Abajo derecha (Segundo triangulo)
 	}
-	else
-		throw  dl32ZLevelOutOfRangeException(Z);
 }
 
 void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
