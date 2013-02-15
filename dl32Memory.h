@@ -8,8 +8,8 @@
 #define NULL 0 
 #endif
 
-#define DL32MEMORY_SAFEDELETE(x) if(x!=NULL){delete x; x=NULL;}
-#define DL32MEMORY_SAFEDELETE_ARRAY(x) if(x!=NULL){delete[] x; x=NULL;}
+#define DL32MEMORY_SAFEDELETE(x) {delete x; x=NULL;}
+#define DL32MEMORY_SAFEDELETE_ARRAY(x) {delete[] x; x=NULL;}
 
 template <class T>
 class dl32SmartPointer

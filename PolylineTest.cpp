@@ -251,7 +251,7 @@ void OnKeyDown(dl32KeyboardData KeyboardData)
 		gfx->Camera.Traslate(0,10);
 		break;
 	case ' ':
-		gfx->Camera=dl322DCamera();
+		gfx->Camera=dl32Camera2D();
 		break;
 	case 'e':
 		window->DeleteWindow();

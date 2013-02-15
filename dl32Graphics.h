@@ -70,10 +70,11 @@ struct dl32Vertex:dl32Point2D
 {
 	dl32Color color;
 	int Z;
+	float tx,ty;
 
 	dl32Vertex();
-	dl32Vertex(float x, float y, dl32Color color,int Z=0);
-	dl32Vertex(dl32Point2D point, dl32Color color, int Z=0){x=point.x;y=point.y;this->color=color;this->Z=Z;};
+	dl32Vertex(float x, float y, dl32Color color,int Z=0,float tx = -1, float ty = -1);
+	dl32Vertex(dl32Point2D point, dl32Color color, int Z=0,float tx = -1, float ty = -1){x=point.x;y=point.y;this->color=color;this->Z=Z;this->tx=tx;this->ty=ty;};
 
 	static dl32Point2D Baricenter(dl32Vertex PointList[],int PointCount);
 };
@@ -95,7 +96,7 @@ struct _d3dVertex:public dl32Point3D
 
 	_d3dVertex();
 	_d3dVertex(const dl32Vertex &vertex);
-	_d3dVertex(const dl32Vertex &vertex,int Z,float tx = -1, float ty = -1);
+	_d3dVertex(const dl32Vertex &vertex,int Z,float tx = -1, float ty = -1,bool useVertexTextureCoordinates = false);
 	_d3dVertex(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular=0,float tx=-1,float ty=-1);
 	_d3dVertex(float x,float y,int z,dl32Color diffuse,dl32Color specular = DL32COLOR_BLACK,float tx = -1,float ty = -1);
 };
@@ -103,11 +104,11 @@ struct _d3dVertex:public dl32Point3D
 const DWORD _d3dVertex_FVF = (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | D3DFVF_TEX1);
 const int _d3dVertex_SIZE=sizeof(_d3dVertex);
 
-class dl322DCamera:public dl32Transformation2D
+class dl32Camera2D:public dl32Transformation2D
 {
 public:
-	dl322DCamera(){};
-	dl322DCamera(dl32Matrix3x3 &Transformation):dl32Transformation2D(Transformation){};
+	dl32Camera2D(){};
+	dl32Camera2D(dl32Matrix3x3 &Transformation):dl32Transformation2D(Transformation){};
 
 	void SetPosition(float x=0,float y=0);
 	void SetPosition(dl32Point2D &Position);
@@ -292,7 +293,10 @@ protected:
 	LPDIRECT3D9 _d3d;	
 	LPDIRECT3DDEVICE9 _d3dDevice;
 	D3DPRESENT_PARAMETERS _d3dPresentParameters;
+	DWORD _bufferUsage;
 	bool InitializeDirect3D(HWND hwnd,int Width,int Height,bool Windowed, bool tripleBuffer, bool vSync, int refreshRate);
+
+	int _width,_height;
 
 	bool _clearScene;
 	bool _textDraw;
@@ -345,7 +349,7 @@ public:
 
 	//Cámara:
 	//----------------------------------------
-	dl322DCamera Camera;
+	dl32Camera2D Camera;
 	bool CAMERA_IsEnabled(){return _cameraEnabled;};
 	void CAMERA_Enable(){_cameraEnabled = true;};
 	void CAMERA_Disable(){_cameraEnabled = false;};
@@ -398,7 +402,7 @@ public:
 	void DRAW_Map(int texture,dl32Point2D position,dl32Vector2D dimensions,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Map(int texture,dl32AABB2D Box,int Z=0)throw(dl32NotInitializedGraphicsException);
 
-	void DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z=0)throw(dl32NotInitializedGraphicsException);
+	void DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z=0,bool useCustomTextureCoordinates = false)throw(dl32NotInitializedGraphicsException);
 
 	void DRAW_Mesh(dl32Mesh Mesh,int Z=0);
 

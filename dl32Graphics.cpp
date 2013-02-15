@@ -71,13 +71,22 @@ _d3dVertex::_d3dVertex(const dl32Vertex &vertex)
 	tx=-1;ty=-1;
 }
 
-_d3dVertex::_d3dVertex(const dl32Vertex &vertex,int Z,float tx,float ty)
+_d3dVertex::_d3dVertex(const dl32Vertex &vertex,int Z,float tx,float ty,bool useVertexTextureCoordinates)
 {
 	x=vertex.x;y=vertex.y;z=(DL32MACROS_GRAPHICS_ZLEVELINDEX(Z)+1)*DL32CONSTS_d3dVertex_Z;
 	rhw=DL32CONSTS_d3dVertex_RHW;
 	diffuse=vertex.color;specular=DL32COLOR_BLACK;
-	this->tx = tx;
-	this->ty = ty;
+
+	if(useVertexTextureCoordinates)
+	{
+		this->tx = vertex.tx;
+		this->ty = vertex.ty;
+	}
+	else
+	{
+		this->tx = tx;
+		this->ty = ty;
+	}
 }
 
 _d3dVertex::_d3dVertex(const dl32Point2D &point,int Z,dl32Color diffuse,dl32Color specular,float tx,float ty)
@@ -122,14 +131,18 @@ dl32Vertex::dl32Vertex()
 	y=0;
 	Z=0;
 	color=0;
+	tx=-1;
+	ty=-1;
 }
 
-dl32Vertex::dl32Vertex(float x, float y, dl32Color color,int Z)
+dl32Vertex::dl32Vertex(float x, float y, dl32Color color,int Z,float tx, float ty)
 {
 	this->x=x;
 	this->y=y;
 	this->Z=Z;
 	this->color=color;
+	this->tx=tx;
+	this->ty=ty;
 }
 
 dl32Point2D dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
@@ -147,39 +160,39 @@ dl32Point2D dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
 	return dl32Point2D(Return.x/PointCount,Return.y/PointCount);
 }
 
-void dl322DCamera::Rotate(float Rotation)
+void dl32Camera2D::Rotate(float Rotation)
 {
 	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Rotation),*this);
 }
 
-void dl322DCamera::Rotate(dl32Point2D Center,float Rotation)
+void dl32Camera2D::Rotate(dl32Point2D Center,float Rotation)
 {
 	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
 }
 
-void dl322DCamera::Traslate(float x,float y)
+void dl32Camera2D::Traslate(float x,float y)
 {
 	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-x,-y),*this);
 }
 
-void dl322DCamera::Traslate(dl32Vector2D Translation)
+void dl32Camera2D::Traslate(dl32Vector2D Translation)
 {
 	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
 }
 
-void dl322DCamera::SetPosition(float x, float y)
+void dl32Camera2D::SetPosition(float x, float y)
 {
 	m13=-x;
 	m23=-y;
 }
 
-void dl322DCamera::SetPosition(dl32Point2D &Position)
+void dl32Camera2D::SetPosition(dl32Point2D &Position)
 {
 	m13=-Position.x;
 	m23=-Position.y;
 }
 
-dl32Point2D dl322DCamera::GetPosition()
+dl32Point2D dl32Camera2D::GetPosition()
 {
 	return dl32Point2D(-m13,-m23);
 }
@@ -562,9 +575,15 @@ bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool W
 	if(!Windowed)
 		_d3dPresentParameters.BackBufferCount=2+abs(tripleBuffer);
 
-	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)) || 
-		!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
+	if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_HARDWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
 	{
+		_bufferUsage = D3DUSAGE_DONOTCLIP | D3DUSAGE_WRITEONLY;
+		ResetRenderStates();
+		return true;
+	}
+	else if(!FAILED(_d3d->CreateDevice(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,hwnd,D3DCREATE_SOFTWARE_VERTEXPROCESSING,&_d3dPresentParameters, &_d3dDevice)))
+	{
+		_bufferUsage = D3DUSAGE_DONOTCLIP | D3DUSAGE_WRITEONLY | D3DUSAGE_SOFTWAREPROCESSING;
 		ResetRenderStates();
 		return true;
 	}
@@ -598,6 +617,9 @@ void dl32GraphicsClass::_setup(HWND hwnd,int Width,int Height, bool Windowed, bo
 		_frameRate=0;
 
 		_cameraEnabled = false;
+
+		_width = Width;
+		_height = Height;
 
 		this->Start();
 
@@ -671,7 +693,7 @@ bool dl32GraphicsClass::_FillD3DBuffers()
 	_d3dVertexBufferOK=false;
 	_d3dIndexBufferOK=false;
 
-	VertexBufferFailed=FAILED(_d3dDevice->CreateVertexBuffer(_d3dVertex_SIZE*_vertexBuffer.size(),D3DUSAGE_DYNAMIC,_d3dVertex_FVF,D3DPOOL_SYSTEMMEM,&_d3dVertexBuffer,NULL));
+	VertexBufferFailed=FAILED(_d3dDevice->CreateVertexBuffer(_d3dVertex_SIZE*_vertexBuffer.size(),_bufferUsage,_d3dVertex_FVF,D3DPOOL_DEFAULT,&_d3dVertexBuffer,NULL));
 
 	if(VertexBufferFailed)
 		return false;
@@ -695,7 +717,7 @@ bool dl32GraphicsClass::_FillD3DBuffers()
 
 	if(_indexBuffer.size()>0)
 	{
-		if(FAILED(_d3dDevice->CreateIndexBuffer(sizeof(int)*_indexBuffer.size(),D3DUSAGE_DYNAMIC,D3DFMT_INDEX32,D3DPOOL_SYSTEMMEM,&_d3dIndexBuffer,NULL)))
+		if(FAILED(_d3dDevice->CreateIndexBuffer(sizeof(int)*_indexBuffer.size(),_bufferUsage ,D3DFMT_INDEX32,D3DPOOL_DEFAULT,&_d3dIndexBuffer,NULL)))
 			return false;
 		else
 		{
@@ -1237,7 +1259,7 @@ void dl32GraphicsClass::DRAW_Box(float x,float y,float width, float height,dl32C
 	return DRAW_Trapezoid(Verts,color,fill,Z);
 }
 
-void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z)
+void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid verts,int Z,bool useCustomTextureCoordinates)
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
@@ -1264,10 +1286,10 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 		}
 
 		_vertexBuffer.reserve(_vertexBuffer.size() + 4);
-		_vertexBuffer.push_back(_d3dVertex(verts[0],Z,0,0));//Arriba izquierda (Primer triangulo)
-		_vertexBuffer.push_back(_d3dVertex(verts[1],Z,1,0));//Arriba derecha (Primer triangulo)
-		_vertexBuffer.push_back(_d3dVertex(verts[3],Z,0,1));//Abajo izquierda (Primer triangulo)
-		_vertexBuffer.push_back(_d3dVertex(verts[2],Z,1,1));//Abajo derecha (Segundo triangulo)
+		_vertexBuffer.push_back(_d3dVertex(verts[0],Z,0,0,useCustomTextureCoordinates));//Arriba izquierda (Primer triangulo)
+		_vertexBuffer.push_back(_d3dVertex(verts[1],Z,1,0,useCustomTextureCoordinates));//Arriba derecha (Primer triangulo)
+		_vertexBuffer.push_back(_d3dVertex(verts[3],Z,0,1,useCustomTextureCoordinates));//Abajo izquierda (Primer triangulo)
+		_vertexBuffer.push_back(_d3dVertex(verts[2],Z,1,1,useCustomTextureCoordinates));//Abajo derecha (Segundo triangulo)
 
 		_indexBuffer.reserve(_indexBuffer.size() + 6);
 		_indexBuffer.push_back(_vertexBuffer.size() - 4);//Arriba izquierda (Primer triangulo)
