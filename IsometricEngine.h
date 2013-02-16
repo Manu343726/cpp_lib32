@@ -17,8 +17,16 @@ struct _tile
 
 	int object;
 
-	_tile(){color=DL32COLOR_DARKGREEN;visible=true;tx1=-1;ty1=-1;tx2=-1;ty2=-1;};
-	_tile(int Texture,dl32Color Color, bool Visible = true, float Tx1 = -1, float Ty1 = -1,float Tx2=-1,float Ty2=-1){color=Color;visible=Visible;tx1=Tx1;ty1=Ty1;tx2=Tx2;ty2=Ty2;};
+	_tile(){color=DL32COLOR_DARKGREEN;visible=true;tx1=-1;ty1=-1;tx2=-1;ty2=-1;object=-1;};
+	_tile(int Texture,dl32Color Color, bool Visible = true, float Tx1 = -1, float Ty1 = -1,float Tx2=-1,float Ty2=-1){color=Color;visible=Visible;tx1=Tx1;ty1=Ty1;tx2=Tx2;ty2=Ty2;object=-1;};
+};
+
+struct _sprite
+{
+	float x,y,width,height;
+	float tx1,ty1,tx2,ty2;
+
+	_sprite(int px, int py, int Width, int Height){x=px-(Width/2);y=py-Height;};
 };
 
 class IsometricTilemap
@@ -36,7 +44,7 @@ class IsometricTilemap
 #define TWO__SQRT6         0.81649658092772603273242802490196
 
 private:
-	bool _culling(dl32Vertex verts[4]);
+	bool _culling(dl32Point2D v1,dl32Point2D v2,dl32Point2D v3,dl32Point2D v4);
 	int _width,_height;
 	int _screenWidth,_screenHeight;
 	int _camerax,_cameray;
@@ -48,6 +56,7 @@ private:
 
 	_tile** _tiles;
 	int _tileset;
+
 
 	float** _z; //Altura de los vertices del terreno
 	dl32Point2D** _vertex; //Coordenadas de los vertices del tilemap (Ya proyectados)
@@ -89,6 +98,11 @@ public:
 	void smooth(int x1, int y1,int x2, int y2);
 
 	void draw(dl32GraphicsClass* gfx);
+
+	dl32Point2D pick(float x, float y);
+	dl32Point2D pick(dl32Point2D coords)                    {return pick(coords.x,coords.y);};
+
+	dl32Point3D baricentricCoordinates(dl32Point2D v1, dl32Point2D v2, dl32Point2D v3, float x, float y);
 
 	static dl32Point2D project(float x, float y)            {return dl32Point2D(-(SQRT2__2*(x-y)),-(SQRT2__3-__SQRT6*(x+y)));};
 	static dl32Point2D project(float x, float y, float z)   {return dl32Point2D(-(SQRT2__2*(x-y)),-(SQRT2__3+z-__SQRT6*(x+y)));};

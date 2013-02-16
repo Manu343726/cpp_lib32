@@ -16,7 +16,7 @@ IsometricTilemap::IsometricTilemap(int width,int height,int screenWidth,int scre
 	_viewport_top=0;
 	_viewport_right=_screenWidth;
 	_viewport_bottom=_screenHeight;
-	_cameraModified=false;
+	_cameraModified=true;
 
 	_tiles=new _tile*[_width*_height];
 	_z=new float*[(_width+1)*(_height+1)];
@@ -128,12 +128,12 @@ void IsometricTilemap::smooth(int x1,int y1, int x2,int y2)
 			levelTile(i,j);
 }
 
-inline bool IsometricTilemap::_culling(dl32Vertex verts[4])
+inline bool IsometricTilemap::_culling(dl32Point2D v1,dl32Point2D v2,dl32Point2D v3,dl32Point2D v4)
 {
-	return (verts[0].x >= 0 && verts[0].x < _screenWidth && verts[0].y >= 0 && verts[0].y < _screenHeight) ||
-		   (verts[1].x >= 0 && verts[1].x < _screenWidth && verts[1].y >= 0 && verts[1].y < _screenHeight) ||
-		   (verts[2].x >= 0 && verts[2].x < _screenWidth && verts[2].y >= 0 && verts[2].y < _screenHeight) ||
-		   (verts[3].x >= 0 && verts[3].x < _screenWidth && verts[3].y >= 0 && verts[3].y < _screenHeight);
+	return (v1.x >= 0 && v1.x < _screenWidth && v1.y >= 0 && v1.y < _screenHeight) ||
+		   (v2.x >= 0 && v2.x < _screenWidth && v2.y >= 0 && v2.y < _screenHeight) ||
+		   (v3.x >= 0 && v3.x < _screenWidth && v3.y >= 0 && v3.y < _screenHeight) ||
+		   (v4.x >= 0 && v4.x < _screenWidth && v4.y >= 0 && v4.y < _screenHeight);
 }
 
 //AQUI ESTA EL MEOLLO DE LA CUESTION
@@ -151,13 +151,13 @@ void IsometricTilemap::draw(dl32GraphicsClass* gfx)
 		{
 			tile = _tiles[i][j];
 
-			verts[0]=dl32Vertex(_vertex[i][j],tile.color,0,tile.tx1,tile.ty1);
-			verts[1]=dl32Vertex(_vertex[i+1][j],tile.color,0,tile.tx2,tile.ty1);
-			verts[2]=dl32Vertex(_vertex[i+1][j+1],tile.color,0,tile.tx2,tile.ty2);
-			verts[3]=dl32Vertex(_vertex[i][j+1],tile.color,0,tile.tx1,tile.ty2);
-
-			if(false || _culling(verts))
+			if(tile.object<0 && tile.visible)
 			{
+				verts[0]=dl32Vertex(_vertex[i][j],tile.color,0,tile.tx1,tile.ty1);
+				verts[1]=dl32Vertex(_vertex[i+1][j],tile.color,0,tile.tx2,tile.ty1);
+				verts[2]=dl32Vertex(_vertex[i+1][j+1],tile.color,0,tile.tx2,tile.ty2);
+				verts[3]=dl32Vertex(_vertex[i][j+1],tile.color,0,tile.tx1,tile.ty2);
+
 				gfx->DRAW_VertexMap(_tileset,verts,0,true);
 			}
 		}
@@ -170,9 +170,48 @@ void IsometricTilemap::_updateVertex()
 		{
 			_vertex[i][j].x+=_camerax; 
 			_vertex[i][j].y+= _cameray;
+
+			if(i<_width && j<_height)
+				_tiles[i][j].visible = _culling(_vertex[i][j],_vertex[i+1][j],_vertex[i+1][j+1],_vertex[i][j+1]);
 		}
 
 	_camerax=0;
 	_cameray=0;
 	_cameraModified=false;
+}
+
+dl32Point2D IsometricTilemap::pick(float x, float y)
+{
+	dl32Point3D coords;
+
+	for(int i=0;i<_width;++i)
+		for(int j=0;j<_height;++j)
+			if(_tiles[i][j].visible && _tiles[i][j].object<0)
+			{
+				coords = baricentricCoordinates(_vertex[i][j], _vertex[i+1][j], _vertex[i][j+1],x,y);//Primer triángulo
+
+				if(coords.x >= 0 && coords.x <= 1 && coords.y>=0 && coords.y<=1 && coords.z>=0 && coords.z<=1)
+					return dl32Point2D(i,j);
+				else
+				{
+					coords = baricentricCoordinates(_vertex[i+1][j], _vertex[i+1][j+1], _vertex[i][j+1],x,y);//Segundo triángulo
+
+					if(coords.x >= 0 && coords.x <= 1 && coords.y>=0 && coords.y<=1 && coords.z>=0 && coords.z<=1)
+						return dl32Point2D(i,j);
+				}
+			}
+
+	return dl32Point2D(-1,-1);
+}
+
+dl32Point3D IsometricTilemap::baricentricCoordinates(dl32Point2D v1, dl32Point2D v2, dl32Point2D v3, float x, float y)
+{
+	dl32Point3D coords;
+	float det = ((v2.y-v3.y)*(v1.x-v3.x) + (v3.x-v2.x)*(v1.y-v3.y));
+
+	coords.x = ((v2.y-v3.y)*(x-v3.x) + (v3.x-v2.x)*(y-v3.y)) / det;
+	coords.y = ((v3.y-v1.y)*(x-v3.x) + (v1.x-v3.x)*(y-v3.y)) / det;
+	coords.z = 1-coords.x-coords.y;
+
+	return coords;
 }

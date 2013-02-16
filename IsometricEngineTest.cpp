@@ -11,9 +11,10 @@ void OnIdle();
 void OnKeyDown(dl32KeyboardData keydata);
 void OnMouseWheel(dl32MouseData data);
 void OnMouseDown(dl32MouseData data);
+void OnMouseMove(dl32MouseData data);
 
-const int TILEMAP_WIDTH = 65;                              //Ancho del tilemap (tiles)
-const int TILEMAP_HEIGHT = 65 ;                             //Alto del tilemap (tiles)
+const int TILEMAP_WIDTH = 129;                              //Ancho del tilemap (tiles)
+const int TILEMAP_HEIGHT = 129 ;                             //Alto del tilemap (tiles)
 const int TILEMAP_TILE_WIDTH = 64;	                        //Ancho de un tile 
 const int TILEMAP_TILE_HEIGHT = 64;                        //Alto de un tile
 const int TILEMAP_TILECOUNT = TILEMAP_WIDTH*TILEMAP_HEIGHT; //Total de tiles en el tilemap
@@ -35,6 +36,7 @@ const int WINDOW_WIDTH = 1440;
 const int WINDOW_HEIGHT = 900;
 
 int selectedTile=0;
+dl32Point2D pickedTile = dl32Point2D(-1,-1);
 
 INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 {
@@ -50,6 +52,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 		window->KeyDown.AddHandler(OnKeyDown);
 		window->MouseWheel.AddHandler(OnMouseWheel);
 		window->MouseDown.AddHandler(OnMouseDown);
+		window->MouseMove.AddHandler(OnMouseMove);
 
 		tilemap = new IsometricTilemap(TILEMAP_WIDTH,TILEMAP_HEIGHT,WINDOW_WIDTH,WINDOW_HEIGHT,TILEMAP_TILE_WIDTH,TILEMAP_TILE_HEIGHT);
 		tilemap->setTileset(gfx->MAP_Load("tileset.png"));
@@ -108,36 +111,50 @@ void OnKeyDown(dl32KeyboardData keydata)
 	switch(keydata.Key)
 	{
 	case 'a':
-		tilemap->moveCamera(-10,0);break;
+		tilemap->moveCamera(10,0);break;
 		//gfx->Camera.Traslate(-10,0);break;
 	case 'd':
-		tilemap->moveCamera(10,0);break;
+		tilemap->moveCamera(-10,0);break;
 		//gfx->Camera.Traslate(10,0);break;
 	case 'w':
-		tilemap->moveCamera(0,-10);break;
+		tilemap->moveCamera(0,10);break;
 		//gfx->Camera.Traslate(0,-10);break;
 	case 's':
-		tilemap->moveCamera(0,10);break;
+		tilemap->moveCamera(0,-10);break;
 		//gfx->Camera.Traslate(0,10);break;
 	}
 }
 
+void OnMouseMove(dl32MouseData data)
+{
+	dl32Point2D newPick = tilemap->pick(data.Location);
+
+	if(pickedTile != newPick)
+	{
+		if(pickedTile.x != -1 && pickedTile.y != -1)
+			tilemap->setTileColor(pickedTile.x,pickedTile.y,DL32COLOR_WHITE);
+		
+		if(newPick.x != -1 && newPick.y != -1)
+			tilemap->setTileColor(newPick.x,newPick.y,DL32COLOR_AQUA);
+
+		pickedTile = newPick;
+	}
+
+	if(pickedTile.x != -1 && pickedTile.y != -1)
+		if(data.Button == DL32MOUSEBUTTON_RIGHT)
+			tilemap->upTile(pickedTile.x,pickedTile.y,-1);
+		else if(data.Button == DL32MOUSEBUTTON_LEFT)
+			tilemap->upTile(pickedTile.x,pickedTile.y,1);
+}
+
 void OnMouseWheel(dl32MouseData data)
 {
-	tilemap->upTile(selectedTile % TILEMAP_WIDTH, selectedTile/TILEMAP_WIDTH,data.Delta/10);
+	if(pickedTile.x != -1 && pickedTile.y != -1)
+		tilemap->upTile(pickedTile.x,pickedTile.y,data.Delta/10);
 }
 
 void OnMouseDown(dl32MouseData data)
 {
-	if(data.Button == DL32MOUSEBUTTON_RIGHT)
-		if(selectedTile < TILEMAP_TILECOUNT-1)
-			selectedTile++;
-		else
-			selectedTile=0;
-	else if(data.Button == DL32MOUSEBUTTON_LEFT)
-		if(selectedTile > 0)
-			selectedTile--;
-		else
-			selectedTile=TILEMAP_TILECOUNT-1;
+
 }
 #endif
