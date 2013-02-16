@@ -9,8 +9,10 @@ IsometricTilemap* tilemap;
 
 void OnIdle();
 void OnKeyDown(dl32KeyboardData keydata);
+void OnKeyUp(dl32KeyboardData data);
 void OnMouseWheel(dl32MouseData data);
 void OnMouseDown(dl32MouseData data);
+void OnMouseUp(dl32MouseData data);
 void OnMouseMove(dl32MouseData data);
 
 const int TILEMAP_WIDTH = 129;                              //Ancho del tilemap (tiles)
@@ -37,6 +39,9 @@ const int WINDOW_HEIGHT = 900;
 
 int selectedTile=0;
 dl32Point2D pickedTile = dl32Point2D(-1,-1);
+bool keyPressed = false;
+dl32Point2D beginTile,endTile;
+dl32Point2D origin(-1,-1),v;
 
 INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 {
@@ -50,8 +55,10 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 
 		window->Idle.AddHandler(OnIdle);
 		window->KeyDown.AddHandler(OnKeyDown);
+		window->KeyUp.AddHandler(OnKeyUp);
 		window->MouseWheel.AddHandler(OnMouseWheel);
 		window->MouseDown.AddHandler(OnMouseDown);
+		window->MouseUp.AddHandler(OnMouseUp);
 		window->MouseMove.AddHandler(OnMouseMove);
 
 		tilemap = new IsometricTilemap(TILEMAP_WIDTH,TILEMAP_HEIGHT,WINDOW_WIDTH,WINDOW_HEIGHT,TILEMAP_TILE_WIDTH,TILEMAP_TILE_HEIGHT);
@@ -60,13 +67,12 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 		gfx->FONT_LoadSystemFont("Lucilda Console",10,false,true);
 		gfx->FONT_LoadSystemFont("Lucilda Console",3,false,true);
 
+		//Sencillo mapa procedural:
 		for(int i=0;i<TILEMAP_WIDTH;++i)
 			for(int j=0;j<TILEMAP_HEIGHT;++j)
 			{
-				//tilemap->setTileColor(i,j,COLOR_RainbowGradient(i*TILEMAP_WIDTH+j,0,TILEMAP_WIDTH*TILEMAP_HEIGHT));
 				tilemap->setTileColor(i,j,DL32COLOR_WHITE);
 				tilemap->setTileTexture(i,j,TILESET_TILE_COORDX(0),TILESET_TILE_COORDY(0),TILESET_TILE_COORDX(1),TILESET_TILE_COORDY(1));//hierba
-
 
 				if(j==(TILEMAP_HEIGHT/2))
 				{
@@ -100,6 +106,12 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 
 void OnIdle()
 {
+	if(origin.x>=0)
+	{
+		tilemap->moveCamera(v.x/50,v.y/50);
+		Console.WriteLine("VX=" + (dl32String)v.x + " VY=" +(dl32String)v.y,DL32CP_BLACK,DL32CP_GRAY); 
+	}
+
 	tilemap->draw(gfx);
 	gfx->Frame();
 
@@ -122,6 +134,35 @@ void OnKeyDown(dl32KeyboardData keydata)
 	case 's':
 		tilemap->moveCamera(0,-10);break;
 		//gfx->Camera.Traslate(0,10);break;
+	case 't':
+		if(!keyPressed)
+		{
+			keyPressed = true;
+			beginTile = pickedTile;
+		}
+		break;
+	case 'l':
+		if(pickedTile.x>=0)
+			tilemap->levelTile(pickedTile.x,pickedTile.y);
+		break;
+	case '+':
+		if(pickedTile.x>=0)
+			tilemap->upTile(pickedTile.x,pickedTile.y,10);
+		break;
+	case '-':
+		if(pickedTile.x>=0)
+			tilemap->upTile(pickedTile.x,pickedTile.y,-10);
+		break;
+	}
+}
+
+void OnKeyUp(dl32KeyboardData data)
+{
+	if(data.Key == 'T' && keyPressed)
+	{
+		endTile = pickedTile;
+		keyPressed = false;
+		tilemap->smooth(beginTile,endTile);
 	}
 }
 
@@ -140,11 +181,13 @@ void OnMouseMove(dl32MouseData data)
 		pickedTile = newPick;
 	}
 
-	if(pickedTile.x != -1 && pickedTile.y != -1)
-		if(data.Button == DL32MOUSEBUTTON_RIGHT)
-			tilemap->upTile(pickedTile.x,pickedTile.y,-1);
-		else if(data.Button == DL32MOUSEBUTTON_LEFT)
-			tilemap->upTile(pickedTile.x,pickedTile.y,1);
+	if(data.Button == DL32MOUSEBUTTON_LEFT)
+	{
+		if(origin.x<0)
+			origin=window->GetClientArea().GetCenter();
+
+		v=origin-data.Location;Console.WriteLine("VX=" + (dl32String)v.x + " VY=" +(dl32String)v.y); 
+	}
 }
 
 void OnMouseWheel(dl32MouseData data)
@@ -156,5 +199,11 @@ void OnMouseWheel(dl32MouseData data)
 void OnMouseDown(dl32MouseData data)
 {
 
+}
+
+void OnMouseUp(dl32MouseData data)
+{
+	origin.x=-1;
+	v.x=0;v.y=0;
 }
 #endif

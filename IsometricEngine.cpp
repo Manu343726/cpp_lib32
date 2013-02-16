@@ -97,10 +97,10 @@ void IsometricTilemap::setTileZ(int x,int y, float z)
 
 void IsometricTilemap::upTile(int x,int y,float dz)
 {
-	_vertex[x][y].y -= dz;     _z[x][y] = dz;
-	_vertex[x+1][y].y -= dz;   _z[x+1][y] = dz;
-	_vertex[x+1][y+1].y -= dz; _z[x+1][y+1] = dz;
-	_vertex[x][y+1].y -= dz;   _z[x][y+1] = dz; 
+	_vertex[x][y].y -= dz;     _z[x][y] += dz;
+	_vertex[x+1][y].y -= dz;   _z[x+1][y] += dz;
+	_vertex[x+1][y+1].y -= dz; _z[x+1][y+1] += dz;
+	_vertex[x][y+1].y -= dz;   _z[x][y+1] += dz; 
 }
 
 void IsometricTilemap::levelTile(int x,int y)
@@ -184,8 +184,8 @@ dl32Point2D IsometricTilemap::pick(float x, float y)
 {
 	dl32Point3D coords;
 
-	for(int i=0;i<_width;++i)
-		for(int j=0;j<_height;++j)
+	for(int i=_width-1;i>=0;--i)
+		for(int j=_height-1;j>=0;--j)
 			if(_tiles[i][j].visible && _tiles[i][j].object<0)
 			{
 				coords = baricentricCoordinates(_vertex[i][j], _vertex[i+1][j], _vertex[i][j+1],x,y);//Primer triángulo

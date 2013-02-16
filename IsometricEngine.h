@@ -96,6 +96,7 @@ public:
 
 	void levelTile(int x, int y);
 	void smooth(int x1, int y1,int x2, int y2);
+	void smooth(dl32Point2D begin, dl32Point2D end)         {smooth(begin.x,begin.y,end.x,end.y);};
 
 	void draw(dl32GraphicsClass* gfx);
 

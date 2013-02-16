@@ -395,6 +395,7 @@ void dl32Window::ProcessMessage(HWND &hwnd, UINT &msg, WPARAM &wParam, LPARAM &l
 		break;
 	case WM_KEYUP:
 		LastKeyCaptureState=KEYCAPTURESTATE_KEYUP;
+		KeyUp.RaiseEvent(&GetKeyboardData(wParam,lParam));
 		break;
 	case WM_CHAR:
 		switch(LastKeyCaptureState)
