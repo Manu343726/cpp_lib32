@@ -44,11 +44,11 @@ public:
 	char* c_str(); 
 	char* Copy() const;
 	char At(int pos)throw(dl32OutOfRangeException);
-	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);};
+	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);}
 
 	dl32String& operator=(const dl32String &Str);
 
-	int GetLength()const{return size;};
+	int GetLength()const{return size;}
 
 	static dl32String Concat(const dl32String &str1,const dl32String &str2);
 

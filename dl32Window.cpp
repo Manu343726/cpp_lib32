@@ -300,7 +300,6 @@ bool dl32Window::SearchWindow(HWND hwnd)
 void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 {
 	MSG message;
-	bool PreMessaging = true;
 
 	try
 	{
@@ -384,6 +383,16 @@ void dl32Window::ProcessMessage(HWND &hwnd, UINT &msg, WPARAM &wParam, LPARAM &l
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 		MouseDown.RaiseEvent(&GetMouseData(wParam,lParam));
+		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+		break;
+	case WM_MOUSELEAVE:
+		MouseLeave.RaiseEvent(&GetMouseData(wParam,lParam));
+		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
+		break;
+	case WM_RBUTTONDBLCLK:
+	case WM_LBUTTONDBLCLK:
+	case WM_MBUTTONDBLCLK:
+		MouseDoubleClick.RaiseEvent(&GetMouseData(wParam,lParam));
 		LastKeyCaptureState=KEYCAPTURESTATE_NOCAPTURE;
 		break;
 	case WM_MOUSEWHEEL:

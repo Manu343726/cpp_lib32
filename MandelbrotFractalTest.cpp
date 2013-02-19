@@ -9,7 +9,7 @@ enum GUIMode
 	GUIMODE_IDLE,
 	GUIMODE_COMPUTING,
 	GUIMODE_SELECTING
-};
+}
 
 dl32Window* Window; 
 dl32GraphicsClass* gfx;

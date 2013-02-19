@@ -28,7 +28,7 @@ struct dl32ParticleData
 	long totallife;
 	long life;
 
-	dl32ParticleData(){totallife=PARTICLELIFE;life=0;};
+	dl32ParticleData(){totallife=PARTICLELIFE;life=0;}
 };
 
 enum EngineBorderMode
@@ -43,7 +43,7 @@ struct dl32ParticleEmmitter
 	dl32Point2D position;
 	dl32Transformation2D rotation;
 
-	dl32ParticleEmmitter(float startspeed,dl32Point2D position){this->rotation=dl32Transformation2D::Rotation(PI/10000);this->startspeed=startspeed;this->position=position;};
+	dl32ParticleEmmitter(float startspeed,dl32Point2D position){this->rotation=dl32Transformation2D::Rotation(PI/10000);this->startspeed=startspeed;this->position=position;}
 	void Emmit(dl32ParticleData *data,dl32Particle *particle);
 };
 
@@ -53,7 +53,7 @@ struct dl32ParticleHole
 	float deadzone;
 	float mass;
 
-	dl32ParticleHole(dl32Point2D position,float deadzone,float mass){this->position=position;this->deadzone=deadzone;this->mass=mass;};
+	dl32ParticleHole(dl32Point2D position,float deadzone,float mass){this->position=position;this->deadzone=deadzone;this->mass=mass;}
 };
 
 class dl32ParticleSystem
@@ -71,8 +71,8 @@ public:
 	dl32ParticleSystem(dl32GraphicsClass *gfx,int particlecount,dl32AABB2D space);
 	~dl32ParticleSystem();
 
-	void AddEmmitter(dl32ParticleEmmitter emmitter){emmitters.push_back(emmitter);};
-	void AddHole(dl32ParticleHole hole){holes.push_back(hole);};
+	void AddEmmitter(dl32ParticleEmmitter emmitter){emmitters.push_back(emmitter);}
+	void AddHole(dl32ParticleHole hole){holes.push_back(hole);}
 
 	bool MoveEmmitter(int Emmitter,dl32Point2D position);
 	bool MoveHole(int Hole,dl32Point2D position);
@@ -80,11 +80,11 @@ public:
 	void Init();
 	void Frame();
 
-	int GetTotalEmmitters(){return emmitters.size();};
-	int GetTotalHoles(){return holes.size();};
+	int GetTotalEmmitters(){return emmitters.size();}
+	int GetTotalHoles(){return holes.size();}
 
-	void SetBorderMode(EngineBorderMode mode){this->mode=mode;};
-	EngineBorderMode GetNorderMode(){return mode;};
+	void SetBorderMode(EngineBorderMode mode){this->mode=mode;}
+	EngineBorderMode GetNorderMode(){return mode;}
 };
 
 #endif

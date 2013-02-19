@@ -16,18 +16,18 @@ private:
 public:
 	dl323DCamera();
 	dl323DCamera(dl32Point3D position,dl32Vector3D direction);
-	dl323DCamera(dl32Point3D position,dl32Point3D LookAt){dl323DCamera(position,dl32Vector3D(position,LookAt));};
+	dl323DCamera(dl32Point3D position,dl32Point3D LookAt){dl323DCamera(position,dl32Vector3D(position,LookAt));}
 
-	dl32Point3D GetPosition(){return position;};
-	dl32Vector3D GetDirection(){return direction;};
+	dl32Point3D GetPosition(){return position;}
+	dl32Vector3D GetDirection(){return direction;}
 	void SetPosition(dl32Point3D position);
 	void SetDirection(dl32Vector3D direction);
-	void SetLookAt(dl32Point3D LookAt){SetDirection(dl32Vector3D(position,LookAt));};
+	void SetLookAt(dl32Point3D LookAt){SetDirection(dl32Vector3D(position,LookAt));}
 
-	void ApplySURtoSRC(dl32Point3D* point){SURtoSRC.Apply(point);};
-	dl32Point3D ApplySURtoSRC(dl32Point3D &point){return SURtoSRC.Apply(point);};
-	void ApplySRCtoSUR(dl32Point3D* point){SRCtoSUR.Apply(point);};
-	dl32Point3D ApplySRCtoSUR(dl32Point3D &point){return SRCtoSUR.Apply(point);};
+	void ApplySURtoSRC(dl32Point3D* point){SURtoSRC.Apply(point);}
+	dl32Point3D ApplySURtoSRC(dl32Point3D &point){return SURtoSRC.Apply(point);}
+	void ApplySRCtoSUR(dl32Point3D* point){SRCtoSUR.Apply(point);}
+	dl32Point3D ApplySRCtoSUR(dl32Point3D &point){return SRCtoSUR.Apply(point);}
 
 	void ApplySURTransformation(dl32Transformation3D Transformation);
 	void ApplySRCTrnasform(dl32Transformation3D Transformation);

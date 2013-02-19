@@ -23,8 +23,8 @@ class dl32WindowException:dl32Exception
 private:
 	HWND _hwnd;
 public:
-	dl32WindowException(HWND hwnd = (HWND)NULL,char* message = DEFAULTEXCEPTIONMESSAGE(dl32WindowException)):dl32Exception(message){_hwnd=hwnd;};
-	HWND GethWnd(){return _hwnd;};
+	dl32WindowException(HWND hwnd = (HWND)NULL,char* message = DEFAULTEXCEPTIONMESSAGE(dl32WindowException)):dl32Exception(message){_hwnd=hwnd;}
+	HWND GethWnd(){return _hwnd;}
 };
 
 class dl32UnhandledWindowMessage: public dl32WindowException
@@ -32,20 +32,20 @@ class dl32UnhandledWindowMessage: public dl32WindowException
 private:
 	UINT _msg;
 public:
-	dl32UnhandledWindowMessage(UINT msg,HWND hwnd, char* message):dl32WindowException(hwnd,message){_msg=msg;};
-	UINT GetMessage(){return _msg;};
+	dl32UnhandledWindowMessage(UINT msg,HWND hwnd, char* message):dl32WindowException(hwnd,message){_msg=msg;}
+	UINT GetMessage(){return _msg;}
 };
 
 class dl32WindowCreationFailedException: public dl32WindowException
 {
 public:
-	dl32WindowCreationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){};
+	dl32WindowCreationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){}
 };
 
 class dl32WindowClassRegistrationFailedException: public dl32WindowException
 {
 public:
-	dl32WindowClassRegistrationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){};
+	dl32WindowClassRegistrationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){}
 };
 
 //CLASES DEL MÓDULO PROPIAMENTE DICHO:
@@ -121,10 +121,14 @@ enum KEYCAPTURESTATE
 };
 
 typedef dl32Event<dl32MouseData> dl32MouseEvent;
+typedef dl32MouseEvent dl32MouseClickEvent;
+typedef dl32MouseEvent dl32MouseDoubleClickEvent;
 typedef dl32MouseEvent dl32MouseMoveEvent;
 typedef dl32MouseEvent dl32MouseUpEvent;
 typedef dl32MouseEvent dl32MouseDownEvent;
 typedef dl32MouseEvent dl32MouseWheelEvent;
+typedef dl32MouseEvent dl32MouseEnterEvent;
+typedef dl32MouseEvent dl32MouseLeaveEvent;
 
 typedef dl32Event<dl32KeyboardData> dl32KeyboardEvent;
 typedef dl32KeyboardEvent dl32KeyPressEvent;
@@ -154,7 +158,7 @@ public:
 	DEBUG_MessageLoopRunning(){_running=true;_stoppedCount=0;}
 	void StopLoop(){_running=false;_stoppedCount++;}
 	bool Running(){return _running;}
-	int GetStoppedCount(){return _stoppedCount;};
+	int GetStoppedCount(){return _stoppedCount;}
 };
 
 class dl32Window
@@ -241,6 +245,10 @@ public:
 	dl32PaintEvent Paint;
 	dl32MoveEvent Move;
 	dl32ResizeEvent Resize;
+	dl32MouseClickEvent MouseClick;
+	dl32MouseDoubleClickEvent MouseDoubleClick;
+	dl32MouseEnterEvent MouseEnter;
+	dl32MouseLeaveEvent MouseLeave;
 	dl32MouseMoveEvent MouseMove;
 	dl32MouseDownEvent MouseDown;
 	dl32MouseWheelEvent MouseWheel;
@@ -250,8 +258,8 @@ public:
 	dl32VoidEvent Idle;
 	dl32WindowCloseEvent Close;
 
-	void DeleteWindow(){_mustBeDeleted=true;};
+	void DeleteWindow(){_mustBeDeleted=true;}
 
-	static int DEBUG_GetMessageLoopStoppedCount(){return Messagging.GetStoppedCount();};
+	static int DEBUG_GetMessageLoopStoppedCount(){return Messagging.GetStoppedCount();}
 };
 #endif

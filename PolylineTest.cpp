@@ -34,14 +34,14 @@ struct PolylineJoint
 	dl32Point2D Up;
 	dl32Point2D Down;
 
-	PolylineJoint(){};
+	PolylineJoint(){}
 
 	PolylineJoint(dl32Point2D up, dl32Point2D down)
 	{
 		Up=up;
 		Down=down;
-	};
-};
+	}
+}
 
 void CoputePolylineSegment(dl32Point2D P1, dl32Point2D P2,float width,dl322DPointTrapezoid out);
 void DrawPolylineSegments(dl32Point2D points[],int pointCount,float width,dl32Color color);

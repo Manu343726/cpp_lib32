@@ -16,7 +16,7 @@ double dl32TimingFrame::getLapse()
 
 dl32TimingTreeNode::~dl32TimingTreeNode()
 {
-	for(int i = 0; i<_subnodes.size(); ++i)
+	for(unsigned int i = 0; i<_subnodes.size(); ++i)
 		delete _subnodes[i];
 
 	_frame = -1;

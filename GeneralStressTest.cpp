@@ -34,7 +34,7 @@ struct TEXTDATA
 	char* text;
 	dl32Point2D position;
 	dl32Color color;
-};
+}
 
 void Render();
 void DrawPolygon(dl32GraphicsClass* gfx,POLYGONDATA PolygonData,float Angle); //Dibuja un poligono regular con las caracteristicas especificadas

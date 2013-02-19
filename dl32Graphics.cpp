@@ -10,13 +10,13 @@ struct PolylineJoint
 	dl32Point2D Up;
 	dl32Point2D Down;
 
-	PolylineJoint(){};
+	PolylineJoint(){}
 
 	PolylineJoint(dl32Point2D up, dl32Point2D down)
 	{
 		Up=up;
 		Down=down;
-	};
+	}
 };
 
 void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoint* &out);
@@ -243,7 +243,6 @@ dl32Mesh::dl32Mesh(dl32Mesh &Mesh)
 {
 	if(this!=&Mesh)
 	{
-		int VertexCount=Mesh.width*Mesh.height;
 		width=Mesh.width;
 		height=Mesh.height;
 		verts=Mesh.verts;
@@ -288,7 +287,6 @@ dl32Mesh& dl32Mesh::operator=(dl32Mesh &Mesh)
 {
 	if(this!=&Mesh)
 	{
-		int VertexCount=Mesh.width*Mesh.height;
 		width=Mesh.width;
 		height=Mesh.height;
 		verts=Mesh.verts;
@@ -478,8 +476,6 @@ void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 
 	DL32BUFFEROBJECT Object;
 	DWORD Ticks;
-	int RenderBufferLevelSize,ActiveLevelsSize=0;
-	int Index;
 
 	_d3dDevice->Clear(0,NULL,D3DCLEAR_TARGET,_backColor,0,0);
 	_d3dDevice->BeginScene();
@@ -489,7 +485,7 @@ void dl32GraphicsClass::Frame() throw(dl32NotInitializedGraphicsException)
 		ResetTextureStages();
 		ResetBlendingStages();
 
-		for(int j=0;j<_renderBuffer.size();++j)
+		for(unsigned int j=0;j<_renderBuffer.size();++j)
 		{
 			Object=_renderBuffer.at(j);
 
@@ -1545,7 +1541,6 @@ void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int Point
 	if(Z>=DL32CONSTS_GRAPHICS_MINZLEVEL && Z<=DL32CONSTS_GRAPHICS_MAXZLEVEL)
 	{
 		DL32BUFFEROBJECT Object;
-		int vertexcount=0;
 		vector<dl32Point2D> points(spline->Interpolate(PointsPerInterval));
 
 		_vertexBuffer.reserve(_vertexBuffer.size()+points.size());

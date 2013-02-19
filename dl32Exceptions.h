@@ -12,9 +12,9 @@
 class dl32Exception:public std::exception
 {
 public:
-	dl32Exception(char* message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)):exception(message){};
+	dl32Exception(char* message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)):exception(message){}
 
-	const char* GetMessage(){return this->what();};
+	const char* GetMessage(){return this->what();}
 };
 
 ///////////////////////////////////
@@ -25,9 +25,9 @@ class dl32MemoryException:public dl32Exception
 protected:
 	void* pointer;
 public:
-	dl32MemoryException(char* message=DEFAULTEXCEPTIONMESSAGE(dl32MemoryException),void* pointer=NULL):dl32Exception(message){this->pointer=pointer;};
+	dl32MemoryException(char* message=DEFAULTEXCEPTIONMESSAGE(dl32MemoryException),void* pointer=NULL):dl32Exception(message){this->pointer=pointer;}
 
-	void* GetPointer(){return pointer;};
+	void* GetPointer(){return pointer;}
 };
 
 struct dl32Range
@@ -35,9 +35,9 @@ struct dl32Range
 	int max;
 	int min;
 
-	dl32Range(){max=0;min=0;};
-	dl32Range(int max,int min){this->max=max;this->min=min;};
-	dl32Range(int size){max=size-1;min=0;};
+	dl32Range(){max=0;min=0;}
+	dl32Range(int max,int min){this->max=max;this->min=min;}
+	dl32Range(int size){max=size-1;min=0;}
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -49,6 +49,6 @@ protected:
 	dl32Range range;
 	int index;
 public:
-	dl32OutOfRangeException(dl32Range range, int index, char* message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message){this->range=range;this->index=index;};
+	dl32OutOfRangeException(dl32Range range, int index, char* message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message){this->range=range;this->index=index;}
 };
 #endif

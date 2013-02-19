@@ -63,28 +63,30 @@ IsometricTilemap::~IsometricTilemap()
 	}
 }
 
-void IsometricTilemap::setCamera(float x, float y)
-{
-	_camerax+=_viewport_left-x;
-	_cameray+=_viewport_top-y;
-	_viewport_left=x;
-	_viewport_top=y;
-	_viewport_right=x+_screenWidth;
-	_viewport_bottom=y+_screenHeight;
-
-	_cameraModified=true;
-}
-
 void IsometricTilemap::moveCamera(float dx, float dy)
 {
-	_camerax=dx;
-	_cameray=dy;
+	_camerax+=dx;
+	_cameray+=dy;
 	_viewport_left+=dx;
 	_viewport_top+=dy;
 	_viewport_right+=dx;
 	_viewport_bottom+=dy;
 
 	_cameraModified=true;
+}
+
+void IsometricTilemap::zoom(float scale)
+{
+	dl32Point2D center((_viewport_left+(_screenWidth/2))*scale,(_viewport_top+(_screenHeight/2))*scale);
+
+	for(int i=0;i<=_width;++i)
+		for(int j=0;j<=_height;++j)
+		{
+			_vertex[i][j].x*=scale;
+			_vertex[i][j].y*=scale;
+		}
+
+	setCamera(center);
 }
 
 void IsometricTilemap::setTileZ(int x,int y, float z)
@@ -121,6 +123,11 @@ void IsometricTilemap::setTileTexture(int x,int y, float tx1, float ty1, float t
 	_tiles[x][y].ty2=ty2;
 }
 
+dl32Point2D IsometricTilemap::getTileCenter(int x, int y) const
+{
+	return dl32Point2D((_vertex[x][y].x + _vertex[x+1][y].x + _vertex[x+1][y+1].x + _vertex[x][y+1].x)/4,(_vertex[x][y].y + _vertex[x+1][y].y + _vertex[x+1][y+1].y + _vertex[x][y+1].y)/4);
+}
+
 void IsometricTilemap::smooth(int x1,int y1, int x2,int y2)
 {
 	for(int i=x1;i<=x2;++i)
@@ -130,10 +137,10 @@ void IsometricTilemap::smooth(int x1,int y1, int x2,int y2)
 
 inline bool IsometricTilemap::_culling(dl32Point2D v1,dl32Point2D v2,dl32Point2D v3,dl32Point2D v4)
 {
-	return (v1.x >= 0 && v1.x < _screenWidth && v1.y >= 0 && v1.y < _screenHeight) ||
-		   (v2.x >= 0 && v2.x < _screenWidth && v2.y >= 0 && v2.y < _screenHeight) ||
-		   (v3.x >= 0 && v3.x < _screenWidth && v3.y >= 0 && v3.y < _screenHeight) ||
-		   (v4.x >= 0 && v4.x < _screenWidth && v4.y >= 0 && v4.y < _screenHeight);
+	return (v1.x >= -1 && v1.x < _screenWidth && v1.y >= -1 && v1.y < _screenHeight) ||
+		   (v2.x >= -1 && v2.x < _screenWidth && v2.y >= -1 && v2.y < _screenHeight) ||
+		   (v3.x >= -1 && v3.x < _screenWidth && v3.y >= -1 && v3.y < _screenHeight) ||
+		   (v4.x >= -1 && v4.x < _screenWidth && v4.y >= -1 && v4.y < _screenHeight);
 }
 
 //AQUI ESTA EL MEOLLO DE LA CUESTION
@@ -141,10 +148,28 @@ void IsometricTilemap::draw(dl32GraphicsClass* gfx)
 {
 	_tile tile;
 	dl32Vertex verts[4];
-	int size=(_width)*(_height);
+
+	//dl32Point2D* bottomRightBorder,*bottomLeftBorder;
+
+	//bottomLeftBorder=new dl32Point2D[_width+3];
+	//bottomRightBorder=new dl32Point2D[_height+3];
 
 	if(_cameraModified)
 		_updateVertex();
+
+	//bottomLeftBorder[0]=_vertex[0][_height];
+	//bottomLeftBorder[0].y+=_tileWidth*10;
+	//bottomLeftBorder[_width+2]=_vertex[_width][_height];
+	//bottomLeftBorder[_width+2].y+=_tileWidth*10;
+
+	//bottomRightBorder[0]=_vertex[_width][0];
+	//bottomRightBorder[0].y+=_tileWidth*10;
+	//bottomRightBorder[_height+2]=bottomLeftBorder[_width+2];
+
+	//for(int i=0;i<=_width;++i)
+	//	bottomLeftBorder[i+1] = _vertex[i][_height];
+	//for(int i=0;i<=_height;++i)
+	//	bottomRightBorder[i+1] = _vertex[_width][i];
 
 	for(int i=0;i<_width;++i)
 		for(int j=0;j<_height;++j)
@@ -161,23 +186,43 @@ void IsometricTilemap::draw(dl32GraphicsClass* gfx)
 				gfx->DRAW_VertexMap(_tileset,verts,0,true);
 			}
 		}
+
+	//gfx->DRAW_Polygon(bottomLeftBorder,_width+3,COLOR_FromRGB(55,55,55));
+	//gfx->DRAW_Polygon(bottomRightBorder,_height+3,COLOR_FromRGB(30,30,30));
+
+	//DL32MEMORY_SAFEDELETE_ARRAY(bottomLeftBorder);
+	//DL32MEMORY_SAFEDELETE_ARRAY(bottomRightBorder);
 }
 
 void IsometricTilemap::_updateVertex()
 {
+	bool *lastRowVisible = new bool[_height+1];
+	bool lastVisible,visible;
+
+	_visibleCount = 0;
+
 	for(int i=0;i<=_width;++i)
 		for(int j=0;j<=_height;++j)
 		{
 			_vertex[i][j].x+=_camerax; 
-			_vertex[i][j].y+= _cameray;
+			_vertex[i][j].y+=_cameray;
 
-			if(i<_width && j<_height)
-				_tiles[i][j].visible = _culling(_vertex[i][j],_vertex[i+1][j],_vertex[i+1][j+1],_vertex[i][j+1]);
+			visible = _vertex[i][j].x >= 0 && _vertex[i][j].x < _screenWidth && _vertex[i][j].y >= 0 && _vertex[i][j].y < _screenHeight;
+
+			if(i>0 && j>0)
+				_tiles[i-1][j-1].visible = lastRowVisible[j-1] || lastRowVisible[j] || lastVisible || visible;
+			
+			lastRowVisible[j] = visible;
+			lastVisible = visible;
+
+			_visibleCount+=(int)visible;
 		}
 
 	_camerax=0;
 	_cameray=0;
 	_cameraModified=false;
+
+	delete lastRowVisible;
 }
 
 dl32Point2D IsometricTilemap::pick(float x, float y)

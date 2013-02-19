@@ -17,10 +17,10 @@ class dl32SmartPointer
 private:
 	T* _ptr;
 public:
-	dl32SmartPointer(T* ptr){_ptr=ptr;};
-	~dl32SmartPointer(){DL32MEMORY_SAFEDELETE(_ptr);};
+	dl32SmartPointer(T* ptr){_ptr=ptr;}
+	~dl32SmartPointer(){DL32MEMORY_SAFEDELETE(_ptr);}
 	
-	T* operator ->(){return _ptr;};
+	T* operator ->(){return _ptr;}
 };
 
 typedef _CRT_ALLOC_HOOK dl32AllocHook;
@@ -37,7 +37,7 @@ private:
 	static int _allocHook(int allocType, void* userData, size_t size, int blockType, long RequestNumber, const unsigned char* fileName, int lineNumber);
 	static bool _hooking;
 public:
-	static void Start(){_CrtMemCheckpoint(&_initState);};
+	static void Start(){_CrtMemCheckpoint(&_initState);}
 	static bool Check();
 	static void SetHook(dl32AllocHook hookFunction);
 };

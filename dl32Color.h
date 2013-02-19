@@ -162,30 +162,30 @@ const dl32Color ARGBMASK_BLUEONLY=0x000000FF;
 
 //NOTA: Visual Studio no pone implicitamenteen funciones globales. Gracias Puri. Maldito Visual Studio...
 
-inline dl32Color COLOR_FromARGB(byte A,byte R, byte G, byte B){return (A<<24) | (R<<16) | (G<<8) | B;};
-inline dl32Color COLOR_FromRGB(byte R, byte G, byte B){return 0xFF000000 | (R<<16) | (G<<8) | B;};
+inline dl32Color COLOR_FromARGB(byte A,byte R, byte G, byte B){return (A<<24) | (R<<16) | (G<<8) | B;}
+inline dl32Color COLOR_FromRGB(byte R, byte G, byte B){return 0xFF000000 | (R<<16) | (G<<8) | B;}
 
-inline dl32Color COLOR_FromKnownColor(dl32Color color, DWORD alfa){return (color & ARGBMASK_NOALFA) | (alfa << 24);};
+inline dl32Color COLOR_FromKnownColor(dl32Color color, DWORD alfa){return (color & ARGBMASK_NOALFA) | (alfa << 24);}
 
-inline dl32Color COLOR_GetAlfaColor(dl32Color color){return color & ARGBMASK_ALFAONLY;};
-inline dl32Color COLOR_GetRedColor(dl32Color color){return color & ARGBMASK_REDONLY;};
-inline dl32Color COLOR_GetGreenColor(dl32Color color){return color & ARGBMASK_GREENONLY;};
-inline dl32Color COLOR_GetBlueColor(dl32Color color){return color & ARGBMASK_BLUEONLY;};
+inline dl32Color COLOR_GetAlfaColor(dl32Color color){return color & ARGBMASK_ALFAONLY;}
+inline dl32Color COLOR_GetRedColor(dl32Color color){return color & ARGBMASK_REDONLY;}
+inline dl32Color COLOR_GetGreenColor(dl32Color color){return color & ARGBMASK_GREENONLY;}
+inline dl32Color COLOR_GetBlueColor(dl32Color color){return color & ARGBMASK_BLUEONLY;}
 
-inline byte COLOR_GetAlfa(dl32Color color){return (byte)((color & ARGBMASK_ALFAONLY) >> 24);};
-inline byte COLOR_GetRed(dl32Color color){return (byte)((color & ARGBMASK_REDONLY) >> 16);};
-inline byte COLOR_GetGreen(dl32Color color){return (byte)((color & ARGBMASK_GREENONLY) >> 8);};
-inline byte COLOR_GetBlue(dl32Color color){return (byte)(color & ARGBMASK_BLUEONLY);};
+inline byte COLOR_GetAlfa(dl32Color color){return (byte)((color & ARGBMASK_ALFAONLY) >> 24);}
+inline byte COLOR_GetRed(dl32Color color){return (byte)((color & ARGBMASK_REDONLY) >> 16);}
+inline byte COLOR_GetGreen(dl32Color color){return (byte)((color & ARGBMASK_GREENONLY) >> 8);}
+inline byte COLOR_GetBlue(dl32Color color){return (byte)(color & ARGBMASK_BLUEONLY);}
 
-inline void COLOR_SetAlfa(dl32Color &color,byte A){color = (color & ARGBMASK_NOALFA) | (A << 24);};
-inline void COLOR_SetRed(dl32Color &color,byte R){color = (color & ARGBMASK_NORED) | (R << 16);};
-inline void COLOR_SetGreen(dl32Color &color,byte G){color = (color & ARGBMASK_NOGREEN) | (G << 8);};
-inline void COLOR_SetBlue(dl32Color &color,byte B){color = (color & ARGBMASK_NOBLUE) | B;};
+inline void COLOR_SetAlfa(dl32Color &color,byte A){color = (color & ARGBMASK_NOALFA) | (A << 24);}
+inline void COLOR_SetRed(dl32Color &color,byte R){color = (color & ARGBMASK_NORED) | (R << 16);}
+inline void COLOR_SetGreen(dl32Color &color,byte G){color = (color & ARGBMASK_NOGREEN) | (G << 8);}
+inline void COLOR_SetBlue(dl32Color &color,byte B){color = (color & ARGBMASK_NOBLUE) | B;}
 
 dl32Color COLOR_Add(dl32Color C1,dl32Color C2);
 dl32Color COLOR_Sub(dl32Color C1,dl32Color C2);
 dl32Color COLOR_Blend(dl32Color C1,dl32Color C2);
 
 dl32Color COLOR_RainbowGradient(DWORD value);
-inline dl32Color COLOR_RainbowGradient(DWORD value, DWORD minValue, DWORD maxValue){return COLOR_RainbowGradient(DL32COLOR_RAINBOW_CUSTOMINTERVAL(value,minValue,maxValue));};
+inline dl32Color COLOR_RainbowGradient(DWORD value, DWORD minValue, DWORD maxValue){return COLOR_RainbowGradient(DL32COLOR_RAINBOW_CUSTOMINTERVAL(value,minValue,maxValue));}
 #endif

@@ -38,7 +38,7 @@ const dl32Range DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE = dl32Range(DL32CONSTS_GRA
 class dl32GraphicsException:public dl32Exception
 {
 public:
-	dl32GraphicsException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32GraphicsException)):dl32Exception(message){};
+	dl32GraphicsException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32GraphicsException)):dl32Exception(message){}
 };
 
 class dl32Direct3DInitFailedException:public dl32Exception
@@ -46,21 +46,21 @@ class dl32Direct3DInitFailedException:public dl32Exception
 private:
 	D3DPRESENT_PARAMETERS _presentParameters;
 public:
-	dl32Direct3DInitFailedException(D3DPRESENT_PARAMETERS presentParameters,char* message = DEFAULTEXCEPTIONMESSAGE(dl32Direct3DInitFailedException)):dl32Exception(message){};
-	D3DPRESENT_PARAMETERS GetPresentParameters(){return _presentParameters;};
+	dl32Direct3DInitFailedException(D3DPRESENT_PARAMETERS presentParameters,char* message = DEFAULTEXCEPTIONMESSAGE(dl32Direct3DInitFailedException)):dl32Exception(message){}
+	D3DPRESENT_PARAMETERS GetPresentParameters(){return _presentParameters;}
 };
 
 class dl32NotInitializedGraphicsException:public dl32GraphicsException
 {
 public:
-	dl32NotInitializedGraphicsException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32NotInitializedGraphicsException)):dl32GraphicsException(message){};
+	dl32NotInitializedGraphicsException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32NotInitializedGraphicsException)):dl32GraphicsException(message){}
 };
 
 class dl32ZLevelOutOfRangeException:public dl32OutOfRangeException
 {
 public:
-	dl32ZLevelOutOfRangeException(dl32Range range, int index, char* message = DEFAULTEXCEPTIONMESSAGE(dl32ZLevelOutOfRangeException)):dl32OutOfRangeException(range,index,message){};
-	dl32ZLevelOutOfRangeException(int index, char* message = DEFAULTEXCEPTIONMESSAGE(dl32ZLevelOutOfRangeException)):dl32OutOfRangeException(DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE,index,message){};
+	dl32ZLevelOutOfRangeException(dl32Range range, int index, char* message = DEFAULTEXCEPTIONMESSAGE(dl32ZLevelOutOfRangeException)):dl32OutOfRangeException(range,index,message){}
+	dl32ZLevelOutOfRangeException(int index, char* message = DEFAULTEXCEPTIONMESSAGE(dl32ZLevelOutOfRangeException)):dl32OutOfRangeException(DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE,index,message){}
 };
 
 //CLASES DEL MÓDULO PROPIAMENTE DICHO:
@@ -74,7 +74,7 @@ struct dl32Vertex:dl32Point2D
 
 	dl32Vertex();
 	dl32Vertex(float x, float y, dl32Color color,int Z=0,float tx = -1, float ty = -1);
-	dl32Vertex(dl32Point2D point, dl32Color color, int Z=0,float tx = -1, float ty = -1){x=point.x;y=point.y;this->color=color;this->Z=Z;this->tx=tx;this->ty=ty;};
+	dl32Vertex(dl32Point2D point, dl32Color color, int Z=0,float tx = -1, float ty = -1){x=point.x;y=point.y;this->color=color;this->Z=Z;this->tx=tx;this->ty=ty;}
 
 	static dl32Point2D Baricenter(dl32Vertex PointList[],int PointCount);
 };
@@ -107,8 +107,8 @@ const int _d3dVertex_SIZE=sizeof(_d3dVertex);
 class dl32Camera2D:public dl32Transformation2D
 {
 public:
-	dl32Camera2D(){};
-	dl32Camera2D(dl32Matrix3x3 &Transformation):dl32Transformation2D(Transformation){};
+	dl32Camera2D(){}
+	dl32Camera2D(dl32Matrix3x3 &Transformation):dl32Transformation2D(Transformation){}
 
 	void SetPosition(float x=0,float y=0);
 	void SetPosition(dl32Point2D &Position);
@@ -133,7 +133,7 @@ struct _d3dTexture
 	D3DFORMAT Format;
 	int Index;
 
-	_d3dTexture(){Texture=NULL;Surface=NULL;Index=-1;};
+	_d3dTexture(){Texture=NULL;Surface=NULL;Index=-1;}
 	bool LoadSurface();
 	bool ReleaseSurface();
 };
@@ -209,7 +209,7 @@ struct DL32TEXTDATA
 	DWORD format;
 	dl32Color color;
 
-	DL32TEXTDATA(){font=NULL;text=NULL;};
+	DL32TEXTDATA(){font=NULL;text=NULL;}
 };
 
 struct dl32Pen
@@ -255,7 +255,7 @@ struct DL32BUFFEROBJECT
 	D3DPRIMITIVETYPE PrimitiveType;
 	DL32RENDERBUFFERCALLTYPE CallType;
 
-	DL32BUFFEROBJECT() {BaseIndex=-1;textdata=NULL;};
+	DL32BUFFEROBJECT() {BaseIndex=-1;textdata=NULL;}
 	DL32BUFFEROBJECT(int StartIndex,int VertexCount,int PrimitiveCount,D3DPRIMITIVETYPE);
 	DL32BUFFEROBJECT(int StartIndex,int VertexCount,int BaseIndex,int IndexCount,int PrimitiveCount,D3DPRIMITIVETYPE);
 };
@@ -338,21 +338,21 @@ public:
 	dl32GraphicsClass(HWND hwnd,int Width,int Height,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-	throw(dl32Direct3DInitFailedException){_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);}; //ERROR: NO DEBERÍA SER INLINE 
+	throw(dl32Direct3DInitFailedException){_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
 
 	dl32GraphicsClass(dl32Window* window ,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-					  throw(dl32Direct3DInitFailedException){_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);}; //ERROR: NO DEBERÍA SER INLINE 
+					  throw(dl32Direct3DInitFailedException){_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
 	
 	~dl32GraphicsClass();
 
 	//Cámara:
 	//----------------------------------------
 	dl32Camera2D Camera;
-	bool CAMERA_IsEnabled(){return _cameraEnabled;};
-	void CAMERA_Enable(){_cameraEnabled = true;};
-	void CAMERA_Disable(){_cameraEnabled = false;};
+	bool CAMERA_IsEnabled(){return _cameraEnabled;}
+	void CAMERA_Enable(){_cameraEnabled = true;}
+	void CAMERA_Disable(){_cameraEnabled = false;}
 
 	void Dispose();
 	bool Start();
@@ -360,7 +360,7 @@ public:
 	//RenderTargets:
 	//----------------------------------------
 	bool DEVICE_SetCanvas(int Texture=-1);
-	bool DEVICE_SetDefaultCanvas(){return DEVICE_SetCanvas();};
+	bool DEVICE_SetDefaultCanvas(){return DEVICE_SetCanvas();}
 	//Dibujo:
 	// ----------------------------------------
 	void Frame()throw(dl32NotInitializedGraphicsException);
@@ -379,23 +379,23 @@ public:
 	void DRAW_Triangle(float x0, float y0, float x1,float y1, float x2, float y2,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V2,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Triangle(dl32Point2D V0, dl32Point2D V1, dl32Point2D V2,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Triangle(const dl32Triangle Triangle,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Triangle(Triangle[0],Triangle[1],Triangle[2],fill,Z);};
+	void DRAW_Triangle(const dl32Triangle Triangle,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Triangle(Triangle[0],Triangle[1],Triangle[2],fill,Z);}
 
 	void DRAW_TriangleStrip(dl32Point2D points[], int pointsCount, dl32Color color, bool fill = true, int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_TriangleStrip(dl32Vertex points[], int pointsCount, bool fill = true, int Z=0)throw(dl32NotInitializedGraphicsException);
 
-	void DRAW_Trapezoid(const dl322DPointTrapezoid Trapezoid,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Trapezoid,4,color,fill,Z);};
-	void DRAW_Trapezoid(const dl32VertexTrapezoid Trapezoid,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Trapezoid,4,fill,Z);};
+	void DRAW_Trapezoid(const dl322DPointTrapezoid Trapezoid,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Trapezoid,4,color,fill,Z);}
+	void DRAW_Trapezoid(const dl32VertexTrapezoid Trapezoid,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Trapezoid,4,fill,Z);}
 
 	void DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Polygon(vector<dl32Vertex> &Verts,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Verts.data(),Verts.size(),fill,Z);};
+	void DRAW_Polygon(vector<dl32Vertex> &Verts,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Verts.data(),Verts.size(),fill,Z);}
 	void DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Polygon(vector<dl32Point2D> &Verts,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Verts.data(),Verts.size(),color,fill,Z);};
+	void DRAW_Polygon(vector<dl32Point2D> &Verts,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Polygon(Verts.data(),Verts.size(),color,fill,Z);}
 
 	void DRAW_Box(float x,float y,float width, float height,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Box(dl32Point2D position,float width,float height,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(position.x,position.y,width,height,color,fill,Z);};
-	void DRAW_Box(dl32Point2D position,dl32Vector2D dimensions,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);};
-	void DRAW_Box(dl32AABB2D box,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);};
+	void DRAW_Box(dl32Point2D position,float width,float height,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(position.x,position.y,width,height,color,fill,Z);}
+	void DRAW_Box(dl32Point2D position,dl32Vector2D dimensions,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(position.x,position.y,dimensions.x,dimensions.y,color,fill,Z);}
+	void DRAW_Box(dl32AABB2D box,dl32Color color,bool fill=true,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Box(box.Position.x,box.Position.y,box.GetWidth(),box.GetHeight(),color,fill,Z);}
 
 	void DRAW_Map(int texture,float x,float y,float width, float height,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Map(int texture,dl32Point2D position,float width,float height,int Z=0)throw(dl32NotInitializedGraphicsException);
@@ -407,10 +407,10 @@ public:
 	void DRAW_Mesh(dl32Mesh Mesh,int Z=0);
 
 	void DRAW_Text(int font,float x,float y,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Text(int font,dl32Point2D position,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Text(font,position.x,position.y,text,color,align,Z);};
+	void DRAW_Text(int font,dl32Point2D position,dl32String text,dl32Color color,dl32TextAlign align=DL32TA_UPLEFT,int Z=0)throw(dl32NotInitializedGraphicsException) {DRAW_Text(font,position.x,position.y,text,color,align,Z);}
 
 	void DRAW_Pixel(float x, float y,dl32Color color,int Z=0)throw(dl32NotInitializedGraphicsException);
-	void DRAW_Pixel(dl32Pixel pixel,int Z=0)throw(dl32NotInitializedGraphicsException){DRAW_Pixel(pixel.x,pixel.y,pixel.color,Z);};
+	void DRAW_Pixel(dl32Pixel pixel,int Z=0)throw(dl32NotInitializedGraphicsException){DRAW_Pixel(pixel.x,pixel.y,pixel.color,Z);}
 	void DRAW_Pixels(dl32Pixel pixels[],int count,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int count,int Z=0)throw(dl32NotInitializedGraphicsException);
 	void DRAW_Pixels(dl32Color **pixels,float x,float y,int width,int height,int Z=0)throw(dl32NotInitializedGraphicsException);
@@ -428,7 +428,7 @@ public:
 	int FONT_LoadSystemFont(dl32String FontName,int size,bool bold,bool italic);
 	//Información:
 	//-----------------------------------------
-	int FPS(){return _frameRate;};
+	int FPS(){return _frameRate;}
 };
 #endif
 

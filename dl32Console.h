@@ -46,37 +46,37 @@ const dl32String dl32endl=dl32String(DL32TRING_ENDLINE);
 class dl32ConsoleException:public dl32Exception
 {
 public:
-	dl32ConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleException)):dl32Exception(message){};
+	dl32ConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleException)):dl32Exception(message){}
 };
 
 class dl32ClosedConsoleException:public dl32ConsoleException
 {
 public:
-	dl32ClosedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ClosedConsoleException)):dl32ConsoleException(message){};
+	dl32ClosedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ClosedConsoleException)):dl32ConsoleException(message){}
 };
 
 class dl32OpenedConsoleException:public dl32ConsoleException
 {
 public:
-	dl32OpenedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OpenedConsoleException)):dl32ConsoleException(message){};
+	dl32OpenedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OpenedConsoleException)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleOpenFailed:public dl32ConsoleException
 {
 public:
-	dl32ConsoleOpenFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleOpenFailed)):dl32ConsoleException(message){};
+	dl32ConsoleOpenFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleOpenFailed)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleSettingsFailed:public dl32ConsoleException
 {
 public:
-	dl32ConsoleSettingsFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSettingsFailed)):dl32ConsoleException(message){};
+	dl32ConsoleSettingsFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSettingsFailed)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleSingletonException:public dl32ConsoleException
 {
 public:
-	dl32ConsoleSingletonException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){};
+	dl32ConsoleSingletonException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){}
 };
 
 //CLASES DEL MÓDULO PROPIAMENTE DICHO:
@@ -99,7 +99,7 @@ public:
 	void Open(dl32String Title,dl32ConsoleType Type=DL32CT_STDOUT)throw(dl32OpenedConsoleException,dl32ConsoleOpenFailed);
 	void Close();
 	
-	bool Ready(){return ready;};
+	bool Ready(){return ready;}
 
 	void Write(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ClosedConsoleException);
 	void WriteLine(dl32String str,dl32ConsolePalette foregroundcolor=DL32CP_EMPTYVALUE,dl32ConsolePalette backgroundcolor=DL32CP_BLACK)throw(dl32ClosedConsoleException);
@@ -122,7 +122,7 @@ public:
 
 	static dl32Console console;
 
-	bool Processing(){return _processing;};
+	bool Processing(){return _processing;}
 };
 
 #define Console dl32Console::console

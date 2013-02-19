@@ -44,7 +44,7 @@ struct Bola
 {
 	dl32AABB2D AABB;//El área de la bola.
 	dl32Vector2D velocidad;
-};
+}
 
 //Definimos a un jugador como el área de su paleta, su puntuación, sus vidas, y un identificador
 struct Jugador
@@ -53,9 +53,9 @@ struct Jugador
 	int puntuacion;
 	int vidas;
 	int ID;
-	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;};
-	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;};
-};
+	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;}
+	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;}
+}
 
 /*
 "Breve" introducción a la programación dirigida por eventos!
@@ -236,7 +236,7 @@ void OnDraw()
 	}
 	else
 		dl32Window::Exit();DL32TIMING_END//Finalizamos la captura de mensajes ("eventos") para finalizar la aplicación
-};
+}
 
 bool TestColisionJugadores()
 {DL32TIMING_BEGIN

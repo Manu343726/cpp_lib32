@@ -507,12 +507,12 @@ void dl32Transformation2D::Apply(dl32Point2D pointList[], int pointCount) const
 dl32Transformation2D dl32Transformation2D::Rotation(float center_x,float center_y,float angle)
 {
 		return dl32Transformation2D(dl32Matrix3x3::Mul(dl32Matrix3x3::Mul(dl32Transformation2D::Translation(center_x,center_y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center_x,-center_y)));
-};
+}
 
 dl32Transformation2D dl32Transformation2D::Rotation(dl32Point2D center,float angle)
 {
 		return dl32Transformation2D(dl32Matrix3x3::Mul(dl32Matrix3x3::Mul(dl32Transformation2D::Translation(center.x,center.y),dl32Transformation2D::Rotation(angle)),dl32Transformation2D::Translation(-center.x,-center.y)));
-};
+}
 
 dl32Point3D dl32Point3D::Div(dl32Point3D Point,float divisor)throw(dl32DividedByCeroException)
 {

@@ -7,18 +7,21 @@ dl32Window* window;
 
 IsometricTilemap* tilemap;
 
+dl32String ToString(dl32Point2D point);
+
 void OnIdle();
 void OnKeyDown(dl32KeyboardData keydata);
 void OnKeyUp(dl32KeyboardData data);
 void OnMouseWheel(dl32MouseData data);
 void OnMouseDown(dl32MouseData data);
+void OnMouseDoubleClick(dl32MouseData data);
 void OnMouseUp(dl32MouseData data);
 void OnMouseMove(dl32MouseData data);
 
-const int TILEMAP_WIDTH = 129;                              //Ancho del tilemap (tiles)
-const int TILEMAP_HEIGHT = 129 ;                             //Alto del tilemap (tiles)
-const int TILEMAP_TILE_WIDTH = 64;	                        //Ancho de un tile 
-const int TILEMAP_TILE_HEIGHT = 64;                        //Alto de un tile
+const int TILEMAP_WIDTH = 128;                              //Ancho del tilemap (tiles)
+const int TILEMAP_HEIGHT = 128 ;                             //Alto del tilemap (tiles)
+const int TILEMAP_TILE_WIDTH = 32;	                        //Ancho de un tile 
+const int TILEMAP_TILE_HEIGHT = 32;                        //Alto de un tile
 const int TILEMAP_TILECOUNT = TILEMAP_WIDTH*TILEMAP_HEIGHT; //Total de tiles en el tilemap
 
 const int TILESET_TILE_WIDTH = 64;                                    //Ancho de un tile en el tileset (pixels)
@@ -34,14 +37,14 @@ const float TILESET_TILE_UNIT_HEIGHT = TILESET_TILE_HEIGHT/(float)TILESET_HEIGHT
 
 const int WINDOW_POSITION_X = 0;
 const int WINDOW_POSITION_Y = 0;
-const int WINDOW_WIDTH = 1440;
-const int WINDOW_HEIGHT = 900;
+const int WINDOW_WIDTH = 1024;
+const int WINDOW_HEIGHT = 768;
 
 int selectedTile=0;
 dl32Point2D pickedTile = dl32Point2D(-1,-1);
 bool keyPressed = false;
 dl32Point2D beginTile,endTile;
-dl32Point2D origin(-1,-1),v;
+dl32Point2D origin(-1,-1),v,inertia;
 
 INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 {
@@ -49,7 +52,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 
 	try{
 		window = new dl32Window("dx_lib32 C++ - Isometric tile engine",WINDOW_POSITION_X,WINDOW_POSITION_Y,WINDOW_WIDTH,WINDOW_HEIGHT);
-		gfx = new dl32GraphicsClass(window);
+		gfx = new dl32GraphicsClass(window,true);
 
 		gfx->CAMERA_Enable();
 
@@ -58,6 +61,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 		window->KeyUp.AddHandler(OnKeyUp);
 		window->MouseWheel.AddHandler(OnMouseWheel);
 		window->MouseDown.AddHandler(OnMouseDown);
+		window->MouseDoubleClick.AddHandler(OnMouseDoubleClick);
 		window->MouseUp.AddHandler(OnMouseUp);
 		window->MouseMove.AddHandler(OnMouseMove);
 
@@ -74,20 +78,20 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 				tilemap->setTileColor(i,j,DL32COLOR_WHITE);
 				tilemap->setTileTexture(i,j,TILESET_TILE_COORDX(0),TILESET_TILE_COORDY(0),TILESET_TILE_COORDX(1),TILESET_TILE_COORDY(1));//hierba
 
-				if(j==(TILEMAP_HEIGHT/2))
+				if(j % 8 == 0)
 				{
 					tilemap->setTileTexture(i,j,TILESET_TILE_COORDX(1),TILESET_TILE_COORDY(11),TILESET_TILE_COORDX(2),TILESET_TILE_COORDY(12));//Vía de tren (horizontal)
-					tilemap->setTileZ(i,j,36);
+					tilemap->setTileZ(i,j,TILEMAP_TILE_WIDTH/2);
 				}
-				if(i==(TILEMAP_WIDTH/2))
+				if(i % 8 == 0)
 				{
 					tilemap->setTileTexture(i,j,TILESET_TILE_COORDX(2),TILESET_TILE_COORDY(11),TILESET_TILE_COORDX(3),TILESET_TILE_COORDY(12));//Vía de tren (horizontal)
-					tilemap->setTileZ(i,j,36);
+					tilemap->setTileZ(i,j,TILEMAP_TILE_WIDTH/2);
 				}
-				if(i==(TILEMAP_WIDTH/2) && j==(TILEMAP_HEIGHT/2))
+				if(j % 8 == 0 && i % 8 == 0)
 				{
 					tilemap->setTileTexture(i,j,TILESET_TILE_COORDX(3),TILESET_TILE_COORDY(11),TILESET_TILE_COORDX(4),TILESET_TILE_COORDY(12));//Vía de tren (cruce)
-					tilemap->setTileZ(i,j,36);
+					tilemap->setTileZ(i,j,TILEMAP_TILE_WIDTH/2);
 				}
 			}
 
@@ -107,15 +111,20 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 void OnIdle()
 {
 	if(origin.x>=0)
-	{
 		tilemap->moveCamera(v.x/50,v.y/50);
-		Console.WriteLine("VX=" + (dl32String)v.x + " VY=" +(dl32String)v.y,DL32CP_BLACK,DL32CP_GRAY); 
+	else if(abs(v.x)>DL32FLOAT_EPSILON && abs(v.y)>DL32FLOAT_EPSILON)
+	{
+		v.x*=0.96 + 0.0001 * gfx->FPS();
+		v.y*=0.96 + 0.0001 * gfx->FPS();
+
+		tilemap->moveCamera(v.x/50,v.y/50);//Un poco de inercia para darle gracia
 	}
+
 
 	tilemap->draw(gfx);
 	gfx->Frame();
 
-	window->SetText("dx_lib32 C++ - Isometric tile engine (" + dl32String(gfx->FPS()) + " FPS)");
+	window->SetText("dx_lib32 C++ - Isometric tile engine (" + dl32String(gfx->FPS()) + " FPS " + (dl32String)tilemap->visibleTilesCount() + " tiles) - (Picked tile: " + ToString(pickedTile) + ")");
 }
 
 void OnKeyDown(dl32KeyboardData keydata)
@@ -153,6 +162,15 @@ void OnKeyDown(dl32KeyboardData keydata)
 		if(pickedTile.x>=0)
 			tilemap->upTile(pickedTile.x,pickedTile.y,-10);
 		break;
+	case '1':
+		tilemap->zoom(0.5);
+		break;
+	case '2':
+		tilemap->zoom(2);
+		break;
+	case 'q':
+		dl32Window::Exit();
+		break;
 	}
 }
 
@@ -186,7 +204,7 @@ void OnMouseMove(dl32MouseData data)
 		if(origin.x<0)
 			origin=window->GetClientArea().GetCenter();
 
-		v=origin-data.Location;Console.WriteLine("VX=" + (dl32String)v.x + " VY=" +(dl32String)v.y); 
+		v=origin-data.Location;
 	}
 }
 
@@ -201,9 +219,23 @@ void OnMouseDown(dl32MouseData data)
 
 }
 
+void OnMouseDoubleClick(dl32MouseData data)
+{
+	dl32Point2D distance;
+
+	if(pickedTile.x>=0)
+	{
+		tilemap->setCamera(tilemap->getTileCenter(pickedTile));
+	}
+}
+
 void OnMouseUp(dl32MouseData data)
 {
 	origin.x=-1;
-	v.x=0;v.y=0;
+}
+
+dl32String ToString(dl32Point2D point)
+{
+	return "{X=" + dl32String(point.x) + ",Y=" + dl32String(point.y) + "}";
 }
 #endif
