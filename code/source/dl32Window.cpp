@@ -325,12 +325,12 @@ void dl32Window::MessageLoop()throw(dl32UnhandledWindowMessage)
 					WindowsList[i]->Idle.RaiseEvent();
 			}
 		}
-
-		Cleanup();
 	}catch(dl32Exception e)
 	{
-		MessageBox(GetDesktopWindow(),strcat("UNHANDLED DL32EXCEPTION: ",e.what()),"dx_lib32 - Unhandled Exception (Debug)",MB_ICONERROR);
+		MessageBox(GetDesktopWindow(),e.what(),"dx_lib32 - Unhandled Exception (Debug)",MB_ICONERROR);
 	}
+
+	Cleanup();
 }
 
 LRESULT WINAPI MessageProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

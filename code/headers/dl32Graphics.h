@@ -308,6 +308,8 @@ protected:
 	void ResetTextureStages();
 
 	vector<DL32BUFFEROBJECT> _renderBuffer;
+	DL32BUFFEROBJECT &_lastObject;
+	static DL32BUFFEROBJECT _mockObject;
 
 	vector<_d3dVertex> _vertexBuffer;
 	vector<int> _indexBuffer;
@@ -337,13 +339,13 @@ public:
 	dl32GraphicsClass();
 	dl32GraphicsClass(HWND hwnd,int Width,int Height,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
-					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-	throw(dl32Direct3DInitFailedException){_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
+					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE) 
+					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
 
 	dl32GraphicsClass(dl32Window* window ,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-					  throw(dl32Direct3DInitFailedException){_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
+					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_lastObject = DL32BUFFEROBJECT();_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
 	
 	~dl32GraphicsClass();
 

@@ -111,7 +111,7 @@ INT WINAPI wWinMain( HINSTANCE, HINSTANCE, LPWSTR, INT )
 void OnIdle()
 {
 	if(origin.x>=0)
-		tilemap->moveCamera(v.x/50,v.y/50);
+		tilemap->moveCamera(v*0.02);
 	else if(abs(v.x)>DL32FLOAT_EPSILON && abs(v.y)>DL32FLOAT_EPSILON)
 	{
 		v.x*=0.96 + 0.0001 * gfx->FPS();
@@ -204,7 +204,7 @@ void OnMouseMove(dl32MouseData data)
 		if(origin.x<0)
 			origin=window->GetClientArea().GetCenter();
 
-		v=origin-data.Location;
+		v=(origin-data.Location);
 	}
 }
 

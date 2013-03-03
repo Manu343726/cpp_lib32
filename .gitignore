@@ -42,8 +42,8 @@ local.properties
 *.sln.docstates
 ###############################
 #FILTROS EXTRA (17/09/12 13:27)
-*.vcxproj
-*.vcxproj.filters
+#*.vcxproj
+#*.vcxproj.filters
 ###############################
 
 # Build results

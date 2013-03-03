@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Tests">
+      <UniqueIdentifier>{a972fc2e-905a-4bbb-bb19-b0de7cac1ebd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Mandelbrot">
+      <UniqueIdentifier>{18dc3d13-97c4-4a07-9cca-bcb7c70f5662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Polyline">
+      <UniqueIdentifier>{3e2b048e-e85e-4c9b-abc9-a79da6048d85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Pong">
+      <UniqueIdentifier>{efd93586-f198-4a87-b7ba-1bc971cffd9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{05b0d4ff-b9bb-456c-8658-efa94d70e82a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{d67b08a0-369d-4f4f-b781-09d1193c2f27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\General">
+      <UniqueIdentifier>{d5aba8d9-5e96-4220-ba6b-09ca49608d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Isometric tilemap">
+      <UniqueIdentifier>{c5925493-4544-4075-80f2-ddf8de1ba459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{b1009488-823e-424e-abbe-cf77fba29a38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Utils">
+      <UniqueIdentifier>{efa9da67-08e6-47fa-b824-99d66a0a52a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\ParticleEngine">
+      <UniqueIdentifier>{ce245262-6693-42bf-b5a9-01ffec8c884d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\headers\utils\dl32Config.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\utils\dl32Memory.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\utils\dl32Timing.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\utils\dl32Utils3D.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Color.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Console.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Exceptions.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Graphics.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Math.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32String.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\headers\dl32Window.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\tests\mandlebrot\MandelbrotEngine.h">
+      <Filter>Tests\Mandelbrot</Filter>
+    </ClInclude>
+    <ClInclude Include="code\tests\isometric tilemap\IsometricEngine.h">
+      <Filter>Tests\Isometric tilemap</Filter>
+    </ClInclude>
+    <ClInclude Include="code\tests\particle engine\Particle engine.h">
+      <Filter>Tests\ParticleEngine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\source\utils\dl32Memory.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\utils\dl32Timing.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\utils\dl32Utils3D.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32Color.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32Console.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32Graphics.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32Math.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32String.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\source\dl32Window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\mandlebrot\MandelbrotEngine.cpp">
+      <Filter>Tests\Mandelbrot</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\mandlebrot\MandelbrotFractalTest.cpp">
+      <Filter>Tests\Mandelbrot</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\general tests\EcuationSolverTest.cpp">
+      <Filter>Tests\General</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\general tests\GeneralStressTest.cpp">
+      <Filter>Tests\General</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\general tests\MatrixTest.cpp">
+      <Filter>Tests\General</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\isometric tilemap\IsometricEngine.cpp">
+      <Filter>Tests\Isometric tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\isometric tilemap\IsometricEngineTest.cpp">
+      <Filter>Tests\Isometric tilemap</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\pong\Pong.cpp">
+      <Filter>Tests\Pong</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\polyline\PolylineTest.cpp">
+      <Filter>Tests\Polyline</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\particle engine\Particle engine.cpp">
+      <Filter>Tests\ParticleEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="code\tests\particle engine\ParticleEngineTest.cpp">
+      <Filter>Tests\ParticleEngine</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

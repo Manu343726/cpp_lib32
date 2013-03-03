@@ -2,6 +2,9 @@
 
 using namespace std;
 
+DL32BUFFEROBJECT dl32GraphicsClass::_mockObject;
+
+
 wstring STRING_WSTRING(const string& s);
 LPCWSTR STRING_LPCWSTR(const string& s);
 
@@ -587,7 +590,7 @@ bool dl32GraphicsClass::InitializeDirect3D(HWND hwnd,int Width,int Height,bool W
 		return false;
 }
 
-dl32GraphicsClass::dl32GraphicsClass()
+dl32GraphicsClass::dl32GraphicsClass() : _lastObject(_mockObject)
 {
 	_working=false;
 	_usingVertexBuffer=false;
@@ -823,6 +826,8 @@ dl32Point2D* vertexArrayToPoint2D(dl32Vertex vertexArray[],int Count)
 	return points;
 }
 
+#define RENDERBUFFER_PUSH(object) _renderBuffer.push_back((object)); _lastObject = (object);
+
 void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color color, int Z)
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
@@ -842,7 +847,7 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 			object.PrimitiveType = D3DPT_LINELIST;
 			object.PrimitiveCount = 1;
 
-			_renderBuffer.push_back(object);
+			RENDERBUFFER_PUSH(object);
 		}
 
 		_vertexBuffer.push_back(_d3dVertex(P1,Z,color));
@@ -868,7 +873,7 @@ void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 		object.PrimitiveType = D3DPT_LINELIST;
 		object.PrimitiveCount = 1;
 
-		_renderBuffer.push_back(object);
+		RENDERBUFFER_PUSH(object);
 	}
 
 	_vertexBuffer.push_back(_d3dVertex(V1,Z));
@@ -893,7 +898,7 @@ void dl32GraphicsClass::DRAW_Lines(dl32Vertex points[],int Count,int Z)
 		object.PrimitiveType = D3DPT_LINESTRIP;
 		object.PrimitiveCount = Count-1;
 
-		_renderBuffer.push_back(object);
+		RENDERBUFFER_PUSH(object);
 	}
 }
 
@@ -917,7 +922,7 @@ void dl32GraphicsClass::DRAW_Lines(dl32Point2D points[],int Count,dl32Color colo
 			object.PrimitiveType = D3DPT_LINESTRIP;
 			object.PrimitiveCount = Count-1;
 
-			_renderBuffer.push_back(object);
+			RENDERBUFFER_PUSH(object);
 		}
 	}
 	else
@@ -1007,7 +1012,7 @@ void dl32GraphicsClass::DRAW_Triangle(float x0, float y0, float x1,float y1, flo
 			_vertexBuffer.push_back(_vertexBuffer[Object.StartIndex]);
 		}
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 	}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);
@@ -1044,7 +1049,7 @@ void dl32GraphicsClass::DRAW_Triangle(dl32Vertex V0, dl32Vertex V1, dl32Vertex V
 			_vertexBuffer.push_back(_vertexBuffer[Object.StartIndex]);
 		}
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 	}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);
@@ -1077,7 +1082,7 @@ void dl32GraphicsClass::DRAW_TriangleStrip(dl32Point2D points[], int pointsCount
 				object.VertexCount = pointsCount;
 				object.PrimitiveType = D3DPT_TRIANGLESTRIP;
 
-				_renderBuffer.push_back(object);
+				RENDERBUFFER_PUSH(object);
 			}
 			else
 			{
@@ -1118,7 +1123,7 @@ void dl32GraphicsClass::DRAW_TriangleStrip(dl32Vertex points[], int pointsCount,
 				object.VertexCount = pointsCount;
 				object.PrimitiveType = D3DPT_TRIANGLESTRIP;
 
-				_renderBuffer.push_back(object);
+				RENDERBUFFER_PUSH(object);
 			}
 			else
 			{
@@ -1185,7 +1190,7 @@ void dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 				_vertexBuffer.push_back(_d3dVertex(Verts[0],Z));
 			}
 
-			_renderBuffer.push_back(Object);
+			RENDERBUFFER_PUSH(Object);
 		}
 	}
 	else
@@ -1241,7 +1246,7 @@ void dl32GraphicsClass::DRAW_Polygon(const dl32Point2D Verts[],int Count,dl32Col
 				_vertexBuffer.push_back(_d3dVertex(Verts[0],Z,color,0,-1,-1));
 			}
 
-			_renderBuffer.push_back(Object);
+			RENDERBUFFER_PUSH(Object);
 		}
 	}
 	else
@@ -1263,10 +1268,11 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 	{
 		DL32BUFFEROBJECT Object;
 
-		if(DL32DEBUG_GRAPHICS_DRAWCALLSMERGE && _renderBuffer.size() > 0 && _renderBuffer.back().CallType == RBCT_DRAWVERTEXMAP && _renderBuffer.back().Texture == texture)
+		if(DL32DEBUG_GRAPHICS_DRAWCALLSMERGE && _renderBuffer.size() > 0 && _lastObject.CallType == RBCT_DRAWVERTEXMAP && _lastObject.Texture == texture)
 		{
 			_renderBuffer.back().PrimitiveCount += 2;
 			_renderBuffer.back().VertexCount += 6;
+			_lastObject = _renderBuffer.back();
 		}
 		else
 		{
@@ -1278,7 +1284,7 @@ void dl32GraphicsClass::DRAW_VertexMap(int texture,const dl32VertexTrapezoid ver
 			Object.Texture=texture;
 			Object.CallType=RBCT_DRAWVERTEXMAP;
 
-			_renderBuffer.push_back(Object);
+			RENDERBUFFER_PUSH(Object);
 		}
 
 		_vertexBuffer.reserve(_vertexBuffer.size() + 4);
@@ -1330,7 +1336,7 @@ void dl32GraphicsClass::DRAW_Mesh(dl32Mesh Mesh,int Z)
 
 				Object.CallType=RBCT_MESH;
 
-				_renderBuffer.push_back(Object);
+				RENDERBUFFER_PUSH(Object);
 			}
 
 			_indexBuffer.insert(_indexBuffer.end(),Mesh.indexes[i].begin(),Mesh.indexes[i].end());
@@ -1413,7 +1419,7 @@ void dl32GraphicsClass::DRAW_Text(int font,float x,float y,dl32String text,dl32C
 			break;
 		}
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 
 		_textDraw=true;
 	}
@@ -1436,7 +1442,7 @@ void dl32GraphicsClass::DRAW_Pixel(float x, float y, dl32Color color, int Z)
 
 		_vertexBuffer.push_back(_d3dVertex(x,y,Z,color,0,-1,-1));
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 	}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);
@@ -1459,7 +1465,7 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Pixel pixels[],int count,int Z)
 
 		_vertexBuffer.insert(_vertexBuffer.end(),pixels,pixels+count);
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 	}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);
@@ -1491,7 +1497,7 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Point2D pixels[],dl32Color color,int cou
 			Object.VertexCount=count;
 			Object.CallType = RBCT_DRAWPIXEL;
 
-			_renderBuffer.push_back(Object);
+			RENDERBUFFER_PUSH(Object);
 		}
 	}
 	else
@@ -1527,7 +1533,7 @@ void dl32GraphicsClass::DRAW_Pixels(dl32Color **pixels,float x,float y,int width
 			Object.VertexCount=width*height;
 			Object.CallType = RBCT_DRAWPIXEL;
 
-			_renderBuffer.push_back(Object);
+			RENDERBUFFER_PUSH(Object);
 		}
 	}
 	else
@@ -1553,7 +1559,7 @@ void dl32GraphicsClass::DRAW_Spline(dl32Spline* spline,dl32Color color,int Point
 		for(unsigned int i=0;i<points.size();++i)
 			_vertexBuffer.push_back(_d3dVertex(points[i],Z,color));
 
-		_renderBuffer.push_back(Object);
+		RENDERBUFFER_PUSH(Object);
 	}
 	else
 		throw  dl32ZLevelOutOfRangeException(Z);

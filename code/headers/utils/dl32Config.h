@@ -91,18 +91,8 @@
 
 #define DL32TEST_ISOMETRICENGINE_ENGINETEST 7
 
-#define DL32TESTS_CURRENTTEST DL32TEST_PARTICLEENGINE_SIMPLETEST 
+#define DL32TESTS_CURRENTTEST DL32TEST_ISOMETRICENGINE_ENGINETEST 
 
 //DESACTIVACIÓN DE WARNINGS:
 ////////////////////////////
 #pragma warning(disable : 4290) //Visual Studio no implementa la especificación de excepciones. A cambio te lanza el 4290...
-
-#define INTERFAZ_QUE_DEBERIA_SER_CLASE_BASE \
-	RobotEngine _engine; 					\
-	NavigationModule _navigation;		    \
-											\
-public void configureContext(RobotEngine engine, NavigationModule navigation,ItemContainer robotContainer) \
-{							  \
-	_engine = engine;		  \
-	_navigation = navigation; \
-}
