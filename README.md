@@ -31,20 +31,20 @@ Código fuente:
 --------------
 
 El código fuente está organizado en diferentes subcarpetas:
- - code/headers : Cabeceras del proyecto. 
- - code/headers/utils : Utilidades (Mayormente herramientas para depuración) que forman parte de la API. Incluye el archivo de configuración de la API (dl32Config.h)
- - code/source : Implementación de las cabeceras del proyecto.
- - code/source/utils : Implementacion de las utilidades.
+ - **code/headers**: Cabeceras del proyecto. 
+ - **code/headers/utils**: Utilidades (Mayormente herramientas para depuración) que forman parte de la API. Incluye el archivo de configuración de la API (dl32Config.h)
+ - **code/source**: Implementación de las cabeceras del proyecto.
+ - **code/source/utils**: Implementacion de las utilidades.
  
 Además, el proyecto incluye una serie de test utilizados para depurar la API:
- - code/tests/general tests : Test generales del proyecto. Incluye un test de stress de la API gráfica (General stress test.cpp)
- - code/tests/particle engine : Un sencillo motor de partículas para probar las capacidades de la API gráfica (En concreto de la función dl32GraphicsClass::DRAW_Pixels())
- - code/tests/pong : Una sencilla implementación del clásico Pong
- - code/tests/polyline : Test de implementación de polyline. El algoritmo utilizado por dl32GraphicsClass::DRAW_Polyline() fue implementado y probado  en éste test,
+ - **code/tests/general tests**: Test generales del proyecto. Incluye un test de stress de la API gráfica (General stress test.cpp)
+ - **code/tests/particle engine**: Un sencillo motor de partículas para probar las capacidades de la API gráfica (En concreto de la función dl32GraphicsClass::DRAW_Pixels())
+ - **code/tests/pong**: Una sencilla implementación del clásico Pong
+ - **code/tests/polyline**: Test de implementación de polyline. El algoritmo utilizado           por dl32GraphicsClass::DRAW_Polyline() fue implementado y probado  en éste test,
    y posteriormente fue incluido en la API gráfica.
- - code/tests/isometric tilemap: Implementación de un engine para renderizar tilemaps isometricos al estilo de Sim City 3000
+ - **code/tests/isometric tilemap**: Implementación de un engine para renderizar tilemaps isometricos al estilo de Sim City 3000
 
-El test a ejecutar se selecciona mediante la macro "DL32DEBUG_DEBUGTEST" que se incluye en dl32Config.h
+*El test a ejecutar se selecciona mediante la macro "DL32DEBUG_DEBUGTEST" que se incluye en dl32Config.h*
  
 Por último, se incluye un proyecto de Visual Studio ya configurado, compatible tanto con la versión 2010 como con la versión 2012.
  
