@@ -16,7 +16,6 @@ const int DL32CONSTS_0CHARCODE = int('0');
 
 class dl32String
 {
-	friend class dl32String;
 private: 
 	char *Array;
 	int size;

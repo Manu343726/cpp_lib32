@@ -1,10 +1,10 @@
 /******************************************
-* dx_lib32 - Configuración de compilación *
-******************************************/
+ * dx_lib32 - ConfiguraciÃ³n de compilaciÃ³n *
+ ******************************************/
 
 #ifndef TRUE
-	#define TRUE 1
-	#define FALSE 0
+#define TRUE 1
+#define FALSE 0
 #endif
 
 #define ANDOP(a,b) ((a == TRUE && b == TRUE) ? TRUE : FALSE) 
@@ -12,15 +12,15 @@
 #define NOTOP(a) ((a == TRUE) ? FALSE : TRUE)
 
 #ifndef YES
-	#define YES TRUE
-	#define NO FALSE
+#define YES TRUE
+#define NO FALSE
 #endif
 #ifndef ENABLED
-	#define ENABLED TRUE
-	#define DISABLED FALSE
+#define ENABLED TRUE
+#define DISABLED FALSE
 #endif
 
-//CONFIGURACIÓN DE RENDIMIENTO Y SEGURIDAD:
+//CONFIGURACIï¿½N DE RENDIMIENTO Y SEGURIDAD:
 ///////////////////////////////////////////
 #define DL32COMPILEMODE_PERFORMANCE 0
 #define DL32COMPILEMODE_SECURE 1
@@ -29,24 +29,24 @@
 #define DL32COMPILEMODE DL32COMPILEMODE_USERDEFINED
 
 #if DL32COMPILEMODE == DL32COMPILEMODE_PERFORMANCE
-	#define DL32FLAGS_CHECKOVERFLOW DISABLED
-	#define DL32FLAGS_CHECKARRAYINDEXES DISABLED
-	#define DL32FLAGS_CHECKMATRIXOPERATIONS DISABLED
-	#define DL32FLAGS_MATRIXASIGNCOPYREF ENABLED
+#define DL32FLAGS_CHECKOVERFLOW DISABLED
+#define DL32FLAGS_CHECKARRAYINDEXES DISABLED
+#define DL32FLAGS_CHECKMATRIXOPERATIONS DISABLED
+#define DL32FLAGS_MATRIXASIGNCOPYREF ENABLED
 #elif DL32COMPILEMODE == DL32COMPILEMODE_SECURE
-	#define DL32FLAGS_CHECKOVERFLOW ENABLED
-	#define DL32FLAGS_CHECKARRAYINDEXES ENABLED
-	#define DL32FLAGS_CHECKMATRIXOPERATIONS ENABLED
-	#define DL32FLAGS_MATRIXASIGNCOPYREF DISABLED
+#define DL32FLAGS_CHECKOVERFLOW ENABLED
+#define DL32FLAGS_CHECKARRAYINDEXES ENABLED
+#define DL32FLAGS_CHECKMATRIXOPERATIONS ENABLED
+#define DL32FLAGS_MATRIXASIGNCOPYREF DISABLED
 #else
-	//#error DL32COMPILEMODE == DL32COMPILEMODE_USERDEFINED: No DL32FLAGS defined !!!
-	#define DL32FLAGS_CHECKOVERFLOW ENABLED
-	#define DL32FLAGS_CHECKARRAYINDEXES ENABLED
-	#define DL32FLAGS_CHECKMATRIXOPERATIONS ENABLED
-	#define DL32FLAGS_MATRIXASIGNCOPYREF ENABLED
+//#error DL32COMPILEMODE == DL32COMPILEMODE_USERDEFINED: No DL32FLAGS defined !!!
+#define DL32FLAGS_CHECKOVERFLOW ENABLED
+#define DL32FLAGS_CHECKARRAYINDEXES ENABLED
+#define DL32FLAGS_CHECKMATRIXOPERATIONS ENABLED
+#define DL32FLAGS_MATRIXASIGNCOPYREF ENABLED
 #endif
 
-//CONFIGURACIÓN DE PRECISIÓN NUMÉRICA:
+//CONFIGURACIï¿½N DE PRECISIï¿½N NUMï¿½RICA:
 //////////////////////////////////////
 #define DL32FLOAT_EPSILON 0.0001
 
@@ -58,11 +58,11 @@
 #define DL32FLOAT_GE(x,y) (DL32FLOAT_EQ(x,y) || (x > y))
 #define DL32FLOAT_LE(x,y) (DL32FLOAT_EQ(x,y) || (x < y))
 
-//CONFIGURACIÓN DE DEPURACIÓN:
+//CONFIGURACIï¿½N DE DEPURACIï¿½N:
 //////////////////////////////
 #define DL32DEBUG_DL32WINDOW_PROMPTUNHANDLEDWMSGS NO
 #define DL32DEBUG_DL32WINDOW_PROMPTPREPROCESSEDWMSGS NO
-#define DL32DEBUG_DL32CONSOLE_AUTOOPEN ENABLED //Abre la consola automáticamente si se hace una escritura con la consola cerrada (Solo para depuración)
+#define DL32DEBUG_DL32CONSOLE_AUTOOPEN ENABLED //Abre la consola automï¿½ticamente si se hace una escritura con la consola cerrada (Solo para depuraciï¿½n)
 
 #define DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE "dx_lib32 (Debug) [AutoOpen]"
 
@@ -75,7 +75,7 @@
 
 #define DL32DEBUG_GRAPHICS_DRAWCALLSMERGE ENABLED
 
-//CONFIGURACIÓN DE TESTS:
+//CONFIGURACIï¿½N DE TESTS:
 /////////////////////////
 #define DL32TEST_GENERAL_STRESS 0
 #define DL32TEST_GENERAL_MATRIX 1
@@ -93,6 +93,6 @@
 
 #define DL32TESTS_CURRENTTEST DL32TEST_ISOMETRICENGINE_ENGINETEST 
 
-//DESACTIVACIÓN DE WARNINGS:
+//DESACTIVACIï¿½N DE WARNINGS:
 ////////////////////////////
-#pragma warning(disable : 4290) //Visual Studio no implementa la especificación de excepciones. A cambio te lanza el 4290...
+#pragma warning(disable : 4290) //Visual Studio no implementa la especificaciï¿½n de excepciones. A cambio te lanza el 4290...

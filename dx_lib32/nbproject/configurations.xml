@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="88">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="code" displayName="code" projectFiles="true">
+      <logicalFolder name="headers" displayName="headers" projectFiles="true">
+        <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <itemPath>../code/headers/utils/dl32Config.h</itemPath>
+          <itemPath>../code/headers/utils/dl32Memory.h</itemPath>
+          <itemPath>../code/headers/utils/dl32Timing.h</itemPath>
+          <itemPath>../code/headers/utils/dl32Utils3D.h</itemPath>
+        </logicalFolder>
+        <itemPath>../code/headers/dl32Color.h</itemPath>
+        <itemPath>../code/headers/dl32Console.h</itemPath>
+        <itemPath>../code/headers/dl32Exceptions.h</itemPath>
+        <itemPath>../code/headers/dl32Graphics.h</itemPath>
+        <itemPath>../code/headers/dl32Math.h</itemPath>
+        <itemPath>../code/headers/dl32String.h</itemPath>
+        <itemPath>../code/headers/dl32Window.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="source" displayName="source" projectFiles="true">
+        <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <itemPath>../code/source/utils/dl32Memory.cpp</itemPath>
+          <itemPath>../code/source/utils/dl32Timing.cpp</itemPath>
+          <itemPath>../code/source/utils/dl32Utils3D.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>../code/source/dl32Color.cpp</itemPath>
+        <itemPath>../code/source/dl32Console.cpp</itemPath>
+        <itemPath>../code/source/dl32Graphics.cpp</itemPath>
+        <itemPath>../code/source/dl32Math.cpp</itemPath>
+        <itemPath>../code/source/dl32String.cpp</itemPath>
+        <itemPath>../code/source/dl32Window.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="tests" displayName="tests" projectFiles="true">
+        <logicalFolder name="general tests"
+                       displayName="general tests"
+                       projectFiles="true">
+          <itemPath>../code/tests/general tests/EcuationSolverTest.cpp</itemPath>
+          <itemPath>../code/tests/general tests/GeneralStressTest.cpp</itemPath>
+          <itemPath>../code/tests/general tests/MatrixTest.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="isometric tilemap"
+                       displayName="isometric tilemap"
+                       projectFiles="true">
+          <itemPath>../code/tests/isometric tilemap/IsometricEngine.cpp</itemPath>
+          <itemPath>../code/tests/isometric tilemap/IsometricEngine.h</itemPath>
+          <itemPath>../code/tests/isometric tilemap/IsometricEngineTest.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="mandlebrot" displayName="mandlebrot" projectFiles="true">
+          <itemPath>../code/tests/mandlebrot/MandelbrotEngine.cpp</itemPath>
+          <itemPath>../code/tests/mandlebrot/MandelbrotEngine.h</itemPath>
+          <itemPath>../code/tests/mandlebrot/MandelbrotFractalTest.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="particle engine"
+                       displayName="particle engine"
+                       projectFiles="true">
+          <itemPath>../code/tests/particle engine/Particle engine.cpp</itemPath>
+          <itemPath>../code/tests/particle engine/Particle engine.h</itemPath>
+          <itemPath>../code/tests/particle engine/ParticleEngineTest.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="polyline" displayName="polyline" projectFiles="true">
+          <itemPath>../code/tests/polyline/PolylineTest.cpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="pong" displayName="pong" projectFiles="true">
+          <itemPath>../code/tests/pong/Pong.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>dl32Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../code</Elem>
+  </sourceRootList>
+  <projectmakefile>dl32Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <standard>8</standard>
+          <incDir>
+            <pElem>../../../../../../../PROGRAMAS/PROGRAMACION/DirectX SDK Junio 2010/Include</pElem>
+            <pElem>../code/headers</pElem>
+            <pElem>../code/headers/utils</pElem>
+            <pElem>../code/source</pElem>
+            <pElem>../code/source/utils</pElem>
+            <pElem>../code/tests</pElem>
+            <pElem>../code/tests/general tests</pElem>
+            <pElem>../code/tests/isometric tilemap</pElem>
+            <pElem>../code/tests/mandlebrot</pElem>
+            <pElem>../code/tests/particle engine</pElem>
+            <pElem>../code/tests/polyline</pElem>
+            <pElem>../code/tests/pong</pElem>
+          </incDir>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="../code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Console.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Graphics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32String.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Utils3D.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Console.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Graphics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32String.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Timing.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Utils3D.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/EcuationSolverTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/GeneralStressTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/MatrixTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotEngine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotEngine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotFractalTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/Particle engine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/Particle engine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/ParticleEngineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/polyline/PolylineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/pong/Pong.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+      <item path="../code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Console.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Graphics.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32String.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="../code/headers/utils/dl32Utils3D.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Console.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Graphics.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32String.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Memory.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Timing.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/source/utils/dl32Utils3D.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/EcuationSolverTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/GeneralStressTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/general tests/MatrixTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/isometric tilemap/IsometricEngineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotEngine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotEngine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/mandlebrot/MandelbrotFractalTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/Particle engine.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/Particle engine.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/particle engine/ParticleEngineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/polyline/PolylineTest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../code/tests/pong/Pong.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

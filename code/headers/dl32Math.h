@@ -5,6 +5,7 @@
 #include "dl32Config.h"
 #include "dl32Exceptions.h"
 #include "dl32String.h"
+#include <cmath>
 
 using namespace std;
 
@@ -25,7 +26,7 @@ float MATH_Min(float a,float b);
 
 float DL32FLOAT_INVSQRT(float x);
 
-//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+//DECLARACIï¿½N E IMPLEMENTACIï¿½N (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////
 
 //////////////////////////////////////
@@ -64,7 +65,7 @@ public:
 	dl32InfiniteIntersectionException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32InfiniteIntersectionException)):dl32MathException(message){}
 };
 
-//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//CLASES DEL Mï¿½DULO PROPIAMENTE DICHO:
 //////////////////////////////////////
 
 ////////////////////////////////
@@ -228,12 +229,12 @@ protected:
 	void ColumnSwap(int column1,int column2);
 public:
 	dl32Matrix();
-	dl32Matrix(dl32Matrix &matrix);
+	dl32Matrix(const dl32Matrix &matrix);
 	dl32Matrix(int rows, int columns);
-	dl32Matrix(dl32Matrix3x3 &matrix);
-	dl32Matrix(dl32Matrix4x4 &matrix);
+	dl32Matrix(const dl32Matrix3x3 &matrix);
+	dl32Matrix(const dl32Matrix4x4 &matrix);
 
-	dl32Matrix& operator=(dl32Matrix &matrix);
+	dl32Matrix& operator=(const dl32Matrix &matrix);
 
 	void CopyRef(dl32Matrix &matrix);
 	void Dispose();
@@ -434,7 +435,7 @@ struct dl32Vector2D:public dl32Point2D
 	dl32Vector2D& operator-=(dl32Vector2D vector){*this=Sub(*this,vector);return *this;}
 
 	static float Mul(const dl32Vector2D &V1,const dl32Vector2D &V2){return V1.x*V2.x+V1.y*V2.y;}
-	static float Angle(const dl32Vector2D &V1, const dl32Vector2D &V2){return acos(Mul(V1,V2)*DL32FLOAT_INVSQRT(V1.x*V1.x+V1.y*V1.y)*DL32FLOAT_INVSQRT(V2.x*V2.x+V2.y*V2.y));}//Una pequeña optimización...
+	static float Angle(const dl32Vector2D &V1, const dl32Vector2D &V2){return acos(Mul(V1,V2)*DL32FLOAT_INVSQRT(V1.x*V1.x+V1.y*V1.y)*DL32FLOAT_INVSQRT(V2.x*V2.x+V2.y*V2.y));}//Una pequeï¿½a optimizaciï¿½n...
 
 	float operator*(const dl32Vector2D &vector){return Mul(*this,vector);}
 	float operator^(const dl32Vector2D &vector){return Angle(*this,vector);}
@@ -448,7 +449,7 @@ class dl32Line2D
 protected:
 	dl32Point2D position;
 	dl32Vector2D direction;
-	float a,b,c;//Ax + By + C = 0 (Ecuación general)
+	float a,b,c;//Ax + By + C = 0 (Ecuaciï¿½n general)
 public:
 	dl32Line2D();
 	dl32Line2D(float A,float B,float C);
@@ -850,8 +851,8 @@ public:
 class dl32Transformation3D:public dl32Matrix4x4
 {
 public:
-	dl32Transformation3D();
-	dl32Transformation3D(dl32Matrix4x4 &matrix);
+	dl32Transformation3D(void);
+	dl32Transformation3D(const dl32Matrix4x4 &matrix);
 	dl32Transformation3D(float m11,float m12,float m13,float m14,
 		float m21,float m22,float m23,float m24,
 		float m31,float m32,float m33,float m34,
@@ -862,11 +863,11 @@ public:
 	dl32Point3D Apply(float x,float y,float z) {return dl32Point3D(m11*x+m12*y+m13*z+m14,m21*x+m22*y+m23*z+m24,m31*x+m32*y+m33*z+m34);}
 	dl32Point3D Apply(dl32Point3D point) {return dl32Point3D(m11*point.x+m12*point.y+m13*point.z+m14,m21*point.x+m22*point.y+m23*point.z+m24,m31*point.x+m32*point.y+m33*point.z+m34);}
 
-	void Concat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(Transformation,*this));}
-	void ReverseConcat(dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(*this,Transformation));}
+	void Concat(const dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(Transformation,*this));}
+	void ReverseConcat(const dl32Transformation3D Transformation){*this=dl32Transformation3D(dl32Matrix4x4::Mul(*this,Transformation));}
 
-	static dl32Transformation3D Concat(dl32Transformation3D T1,dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T2,T1));}
-	static dl32Transformation3D ReverseConcat(dl32Transformation3D T1, dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T1,T2));}
+	static dl32Transformation3D Concat(const dl32Transformation3D T1,const dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T2,T1));}
+	static dl32Transformation3D ReverseConcat(const dl32Transformation3D T1, const dl32Transformation3D T2){return dl32Transformation3D(dl32Matrix4x4::Mul(T1,T2));}
 
 	static dl32Transformation3D Translation(float tx,float ty,float tz)
 	{
@@ -908,12 +909,12 @@ public:
 			0,0,0,1);
 	}
 
-	static dl32Transformation3D Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl32Transformation3D(rotation);}
-	static dl32Transformation3D Rotation(dl32Point3D center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl32Transformation3D(dl32Matrix4x4::Mul(dl32Transformation3D::Translation(center.x,center.y,center.z),dl32Matrix4x4::Mul(dl32Transformation3D(quaternion),dl32Transformation3D::Translation(-center.x,-center.y,-center.z))));}
-	static dl32Transformation3D Rotation(dl32Vector3D origin,dl32Vector3D destiny){return Rotation(dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
-	static dl32Transformation3D Rotation(dl32Point3D center,dl32Vector3D origin,dl32Vector3D destiny){return Rotation(center,dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
-	static dl32Transformation3D Rotation(dl32Vector3D axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
-	static dl32Transformation3D Rotation(dl32CoordinateAxis axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
+	static dl32Transformation3D Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl32Transformation3D((dl32Matrix4x4)rotation);}
+	static dl32Transformation3D Rotation(const dl32Point3D& center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl32Transformation3D(dl32Matrix4x4::Mul(dl32Transformation3D::Translation(center.x,center.y,center.z),dl32Matrix4x4::Mul(dl32Transformation3D(quaternion),dl32Transformation3D::Translation(-center.x,-center.y,-center.z))));}
+	static dl32Transformation3D Rotation(const dl32Vector3D& origin,const dl32Vector3D& destiny){return Rotation(dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
+	static dl32Transformation3D Rotation(const dl32Point3D& center,const dl32Vector3D& origin,dl32Vector3D destiny){return Rotation(center,dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
+	static dl32Transformation3D Rotation(const dl32Vector3D& axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
+	static dl32Transformation3D Rotation(const dl32CoordinateAxis axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
 
 };
 
@@ -925,7 +926,6 @@ struct dl32SplineInterval
 
 class dl32Spline //http://t.co/CrHFdGmB
 {
-	friend class dl32Spline;
 private:
 	vector<dl32Point2D> nodes;
 	int nodecount;

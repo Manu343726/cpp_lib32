@@ -10,7 +10,7 @@ struct sprite
 
 struct _tile
 {
-	dl32Color color;
+        dl32Color color;
 	float tx1,ty1;
 	float tx2,ty2;
 	bool visible;

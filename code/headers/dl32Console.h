@@ -41,7 +41,7 @@ enum dl32ConsolePalette
 
 const dl32String dl32endl=dl32String(DL32TRING_ENDLINE);
 
-//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+//DECLARACIï¿½N E IMPLEMENTACIï¿½N (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////
 class dl32ConsoleException:public dl32Exception
 {
@@ -79,7 +79,7 @@ public:
 	dl32ConsoleSingletonException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){}
 };
 
-//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//CLASES DEL Mï¿½DULO PROPIAMENTE DICHO:
 //////////////////////////////////////
 
 class dl32Console
@@ -107,8 +107,8 @@ public:
 
 	dl32Console& operator<<(dl32String str)throw(dl32ClosedConsoleException,dl32ClosedConsoleException);
 
-	void SetTitle(dl32String Title)throw(dl32ConsoleSettingsFailed);
-	dl32String GetTitle()throw(dl32ConsoleSettingsFailed);
+	void SetTitle(dl32String Title)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
+	dl32String GetTitle()throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 
 	void SetForegroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);
 	void SetBackgroundColor(dl32ConsolePalette color)throw(dl32ClosedConsoleException,dl32ConsoleSettingsFailed);

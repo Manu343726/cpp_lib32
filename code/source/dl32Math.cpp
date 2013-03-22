@@ -11,7 +11,7 @@ inline float Min(float a,float b)
 
 float DL32FLOAT_INVSQRT(float number)
 {
-	//La gran mayoría lo entiendo, pero me gustaría saber de donde se sacó el número mágico.....
+	//La gran mayorï¿½a lo entiendo, pero me gustarï¿½a saber de donde se sacï¿½ el nï¿½mero mï¿½gico.....
 	long i;
 	float x2, y;
 	const float threehalfs = 1.5F;
@@ -155,7 +155,7 @@ dl32Point2D dl32Line2D::Intersection(dl32Line2D L1, dl32Line2D L2,bool externalP
 {
 	if(externalParallelCheck || !dl32Line2D::AreParallel(L1,L2))
 	{
-		//Resolución del sistema de ecuaciones formado por las ecuaciones parametricas de las rectas:
+		//Resoluciï¿½n del sistema de ecuaciones formado por las ecuaciones parametricas de las rectas:
 
 		dl32Point2D P1,P2;
 		dl32Vector2D V1,V2;
@@ -332,16 +332,16 @@ dl32OBB2D::dl32OBB2D(dl32Vector2D area, dl32Transformation2D WorldToLocal)
 dl32OBB2D::dl32OBB2D(dl32Point2D pointCloud[],int pointCount)
 {
 	dl32Point2D cloudCenter = dl32Point2D::Baricenter(pointCloud,pointCount);//Centro de la nube en coordenadas de mundo
-	dl32Vector2D aux;//Vector auxiliar para la búsqueda del eje x local (En coordenadas de mundo)
+	dl32Vector2D aux;//Vector auxiliar para la bï¿½squeda del eje x local (En coordenadas de mundo)
 	dl32Vector2D xAxis;//El eje x local en coordenadas de mundo
 
-	//FASE 1: Encontrar el eje x óptimo, en coordenadas de mundo, para el OBB que envuelve la nube:
+	//FASE 1: Encontrar el eje x ï¿½ptimo, en coordenadas de mundo, para el OBB que envuelve la nube:
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	/******************************************************************************************************************************************
-	* Éste método consiste en obtener el eje x como el sumatorio de los radiovectores de todos los vértices respecto al baricentro de la nube.*
-	* El problema es que si se suman los radiovectores, seguramente se anulen unos con otros, ya que muchos tendrán sentidos opuestos.		  *
-	* Como lo que nos interesa es la dirección, no el sentido, sumamos los vectores siempre en la misma dirección, es decir, si el sumatorio  *
+	* ï¿½ste mï¿½todo consiste en obtener el eje x como el sumatorio de los radiovectores de todos los vï¿½rtices respecto al baricentro de la nube.*
+	* El problema es que si se suman los radiovectores, seguramente se anulen unos con otros, ya que muchos tendrï¿½n sentidos opuestos.		  *
+	* Como lo que nos interesa es la direcciï¿½n, no el sentido, sumamos los vectores siempre en la misma direcciï¿½n, es decir, si el sumatorio  *
 	* actual y el radiovector son opuestos, se suma el opuesto del radiovector																  *
 	******************************************************************************************************************************************/
 
@@ -361,12 +361,12 @@ dl32OBB2D::dl32OBB2D(dl32Point2D pointCloud[],int pointCount)
 	//////////////////////////////////////////
 
 	/***************************************************************************************************************************************
-	* La transformación de local a mundo (_toWorld) es la concatenación de la rotación que lleva el eje x del mundo al eje x local (xAxis) *
-	* más una traslación que lleve el origen de coordenadas al centro de la nube (cloudCenter). 										   *
-	* Por supuesto, la transformación de mundo a local (_toLocal) es la transformación inversa.											   *
+	* La transformaciï¿½n de local a mundo (_toWorld) es la concatenaciï¿½n de la rotaciï¿½n que lleva el eje x del mundo al eje x local (xAxis) *
+	* mï¿½s una traslaciï¿½n que lleve el origen de coordenadas al centro de la nube (cloudCenter). 										   *
+	* Por supuesto, la transformaciï¿½n de mundo a local (_toLocal) es la transformaciï¿½n inversa.											   *
 	***************************************************************************************************************************************/
 
-	//NOTA: Como el eje x es unitario, el seno del ángulo de rotación es la coordenada y del eje, y el coseno la coordenada x:
+	//NOTA: Como el eje x es unitario, el seno del ï¿½ngulo de rotaciï¿½n es la coordenada y del eje, y el coseno la coordenada x:
 	_toWorld=dl32Transformation2D::Rotation(xAxis.y,xAxis.x)+dl32Transformation2D::Translation(cloudCenter.x,cloudCenter.y);
 	_toLocal=dl32Transformation2D::Translation(-cloudCenter.x,-cloudCenter.y)+dl32Transformation2D::Rotation(-xAxis.y,xAxis.x);
 
@@ -402,8 +402,8 @@ dl32OBB2D::dl32OBB2D(dl32Point2D pointCloud[],int pointCount)
 
 void dl32OBB2D::ApplyTransformation(dl32Transformation2D transformation)
 {
-	_toLocal=_toLocal+transformation;//Se encadenan las dos transformaciones (Premultiplica la actual por la transformación)
-	_toWorld=_toWorld*transformation;//Multiplicar la actual por la transformación es equivalente a premultiplicar por la inversa de la transformación
+	_toLocal=_toLocal+transformation;//Se encadenan las dos transformaciones (Premultiplica la actual por la transformaciï¿½n)
+	_toWorld=_toWorld*transformation;//Multiplicar la actual por la transformaciï¿½n es equivalente a premultiplicar por la inversa de la transformaciï¿½n
 }
 
 bool dl32OBB2D::Collide(dl32OBB2D O1, dl32OBB2D O2)
@@ -412,9 +412,9 @@ bool dl32OBB2D::Collide(dl32OBB2D O1, dl32OBB2D O2)
 	dl32Point2D O1corners[4], O2corners[4];
 
 	/*********************************************************************************************************************************************************
-	* El método consiste en testear la colisión a través de los AABBs correspondientes a los dos OBBs en sus coordenadas locales.                            *
-	* Para ello, se hacen dos test de colisión, uno en las coordenadas locales de un OBB, y otro en las coordenadas locales del otro OBB.                    *
-	* Si ambos test detectan colisión, los OBBs colisionan.																									 *                                                                                                                               *
+	* El mï¿½todo consiste en testear la colisiï¿½n a travï¿½s de los AABBs correspondientes a los dos OBBs en sus coordenadas locales.                            *
+	* Para ello, se hacen dos test de colisiï¿½n, uno en las coordenadas locales de un OBB, y otro en las coordenadas locales del otro OBB.                    *
+	* Si ambos test detectan colisiï¿½n, los OBBs colisionan.																									 *                                                                                                                               *
 	* Es necesario calcular dos AABBs extra: Un AABB correspondiente al AABB del OBB1 en el espacio local del OBB2 (A1), y otro correspondiente al AABB del  *
 	* OBB2 en coordenadas locales de OBB1 (A2).                                                                                                              *
 	*********************************************************************************************************************************************************/
@@ -754,7 +754,7 @@ dl32Matrix::dl32Matrix(int rows,int columns)
 	}
 }
 
-dl32Matrix::dl32Matrix(dl32Matrix &matrix)
+dl32Matrix::dl32Matrix(const dl32Matrix &matrix)
 {
 	Dispose();
 
@@ -772,7 +772,7 @@ dl32Matrix::dl32Matrix(dl32Matrix &matrix)
 	}
 }
 
-dl32Matrix& dl32Matrix::operator=(dl32Matrix &matrix)
+dl32Matrix& dl32Matrix::operator=(const dl32Matrix &matrix)
 {
 	if(this != &matrix && matrix.Ready())
 	{
@@ -795,7 +795,7 @@ dl32Matrix& dl32Matrix::operator=(dl32Matrix &matrix)
 	return *this;
 }
 
-dl32Matrix::dl32Matrix(dl32Matrix3x3 &Matrix)
+dl32Matrix::dl32Matrix(const dl32Matrix3x3 &Matrix)
 {
 	rows=3;
 	columns=3;
@@ -820,7 +820,7 @@ dl32Matrix::dl32Matrix(dl32Matrix3x3 &Matrix)
 	Array[2][2]=Matrix.m[2][2];
 }
 
-dl32Matrix::dl32Matrix(dl32Matrix4x4 &Matrix)
+dl32Matrix::dl32Matrix(const dl32Matrix4x4 &Matrix)
 {
 	rows=3;
 	columns=3;
@@ -901,7 +901,7 @@ dl32MatrixRow dl32Matrix::operator[](int row)throw(dl32OutOfRangeException)
 		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::operator[](int row): 'row' is out of range");
 }
 
-//NOTA: Ésta función devuelve un puntero a la fila, de manera que tenemos acceso directo a los elementos de ésta
+//NOTA: ï¿½sta funciï¿½n devuelve un puntero a la fila, de manera que tenemos acceso directo a los elementos de ï¿½sta
 dl32MatrixRow dl32Matrix::GetRow(int row)throw(dl32OutOfRangeException)
 {
 	if(row>=0 && row<rows)
@@ -910,8 +910,8 @@ dl32MatrixRow dl32Matrix::GetRow(int row)throw(dl32OutOfRangeException)
 		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::GetRow(int row): 'row' is out of ramge");
 }
 
-//NOTA: Ésta función devuelve un array de punteros a los elementos de la columna, para tener acceso directo a éstos
-//El array es creado dinámicamente, así que no hay que olvidar eliminarlo al terminar de utilizarlo, para no provocar rmemory-leaks
+//NOTA: ï¿½sta funciï¿½n devuelve un array de punteros a los elementos de la columna, para tener acceso directo a ï¿½stos
+//El array es creado dinï¿½micamente, asï¿½ que no hay que olvidar eliminarlo al terminar de utilizarlo, para no provocar rmemory-leaks
 dl32MatrixColumn dl32Matrix::GetColumn(int column)throw(dl32OutOfRangeException)
 {
 	if(column>=0 && column<columns)
@@ -1103,7 +1103,7 @@ int dl32Matrix::GetRange(dl32Matrix &FinalMatrix)
 		{
 			Range++;
 
-			//FASE 2: Reducción de columna:
+			//FASE 2: Reducciï¿½n de columna:
 			for(j=i+1;j<Min;++j)
 				if(FinalMatrix[i][j]!=0) FinalMatrix.RowAdd(j,i,-FinalMatrix[j][i]); //FILA j = FILA j + (-m[j][i])*FILA i
 		}
@@ -1472,7 +1472,7 @@ vector<dl32Point2D> dl32Spline::Interpolate(int PointsPerInterval)
 		LongitudX=abs(nodes[i+1].x-nodes[i].x);
 		LongitudY=abs(nodes[i+1].y-nodes[i].y);
 
-		if(PointsPerInterval<=0)//Si el parámetro es menor o igual que cero, el spline se genera pixel a pixel
+		if(PointsPerInterval<=0)//Si el parï¿½metro es menor o igual que cero, el spline se genera pixel a pixel
 			Step=1.0/(LongitudX+LongitudY);//El paso utilizado es la media entre las dos (Elegir uno de ellos como referencia puede provocar problemas con curvas con mucha/poca pendiente) 
 		else
 			Step=1.0/PointsPerInterval;

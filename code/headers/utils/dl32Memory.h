@@ -2,7 +2,6 @@
 #define DL32MEMORY
 
 #include "dl32Config.h"
-#include <crtdbg.h>
 
 #ifndef NULL 
 #define NULL 0 
@@ -23,6 +22,10 @@ public:
 	T* operator ->(){return _ptr;}
 };
 
+#ifdef _MSC_VER
+#include <crtdbg.h>
+#define DL32UTILS_LEAKDEBUGGER
+
 typedef _CRT_ALLOC_HOOK dl32AllocHook;
 
 class dl32LeakDebugger
@@ -41,4 +44,5 @@ public:
 	static bool Check();
 	static void SetHook(dl32AllocHook hookFunction);
 };
-#endif
+#endif //End of _MSC_VER
+#endif //End of DL32MEMORY
