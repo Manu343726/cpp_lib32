@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="dx_lib32" displayName="dx_lib32" projectFiles="true">
+      <logicalFolder name="code" displayName="code" projectFiles="true">
+        <logicalFolder name="headers" displayName="headers" projectFiles="true">
+          <logicalFolder name="utils" displayName="utils" projectFiles="true">
+            <itemPath>code/headers/utils/dl32Config.h</itemPath>
+            <itemPath>code/headers/utils/dl32Memory.h</itemPath>
+            <itemPath>code/headers/utils/dl32Timing.h</itemPath>
+            <itemPath>code/headers/utils/dl32Utils3D.h</itemPath>
+          </logicalFolder>
+          <itemPath>code/headers/dl32Color.h</itemPath>
+          <itemPath>code/headers/dl32Console.h</itemPath>
+          <itemPath>code/headers/dl32Exceptions.h</itemPath>
+          <itemPath>code/headers/dl32Graphics.h</itemPath>
+          <itemPath>code/headers/dl32Math.h</itemPath>
+          <itemPath>code/headers/dl32String.h</itemPath>
+          <itemPath>code/headers/dl32Window.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="source" displayName="source" projectFiles="true">
+          <logicalFolder name="utils" displayName="utils" projectFiles="true">
+            <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
+            <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
+            <itemPath>code/source/utils/dl32Utils3D.cpp</itemPath>
+          </logicalFolder>
+          <itemPath>code/source/dl32Color.cpp</itemPath>
+          <itemPath>code/source/dl32Console.cpp</itemPath>
+          <itemPath>code/source/dl32Graphics.cpp</itemPath>
+          <itemPath>code/source/dl32Math.cpp</itemPath>
+          <itemPath>code/source/dl32String.cpp</itemPath>
+          <itemPath>code/source/dl32Window.cpp</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <itemPath>MeshTexture.bmp</itemPath>
+      <itemPath>README.md</itemPath>
+      <itemPath>Texture.png</itemPath>
+      <itemPath>dl32Makefile</itemPath>
+      <itemPath>dx_lib32.cbp</itemPath>
+      <itemPath>dx_lib32.layout</itemPath>
+      <itemPath>dx_lib32.sln</itemPath>
+      <itemPath>dx_lib32.vcxproj</itemPath>
+      <itemPath>dx_lib32.vcxproj.filters</itemPath>
+      <itemPath>tileset.png</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>dl32Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>dl32Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
