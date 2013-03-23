@@ -737,7 +737,7 @@ bool dl32GraphicsClass::_FillD3DBuffers()
 void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoint* &out)
 {
 	dl32Line2D supi,supi_1,infi,infi_1;//Recta del borde superior i, recta del borde superior i-1, recta del borde inferior i, recta del borde inferior i-1
-	dl32Line2D jointLine;//Recta de la articulación
+	dl32Line2D jointLine;//Recta de la articulaciï¿½n
 	dl32Vector2D direction;//Direccion del segmento
 	dl32Point2D upcenter,downcenter;//Centro del borde superior, centro del borde inferior
 	dl32Line2D centerLine;//Linea perpendicular al segmento por su centro
@@ -753,7 +753,7 @@ void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoi
 			joints[i] = PolylineJoint(jointLine.GetPointByParameter(width),
 				jointLine.GetPointByParameter(-width));
 
-			centerLine = dl32Line2D((points[i]+points[i+1])/2,direction.GetNormal()); //Recta perpendicular al segmento (centrada en él)
+			centerLine = dl32Line2D((points[i]+points[i+1])/2,direction.GetNormal()); //Recta perpendicular al segmento (centrada en ï¿½l)
 
 			supi = dl32Line2D(centerLine.GetPointByParameter(width),direction);//Borde superior
 			infi = dl32Line2D(centerLine.GetPointByParameter(-width),direction);//Borde inferior
@@ -761,7 +761,7 @@ void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoi
 		else if(i<pointCount-1)//Caso 2: Caso general
 		{
 			direction = dl32Vector2D(points[i],points[i+1]);
-			centerLine = dl32Line2D((points[i]+points[i+1])/2,direction.GetNormal()); //Recta perpendicular al segmento (centrada en él)
+			centerLine = dl32Line2D((points[i]+points[i+1])/2,direction.GetNormal()); //Recta perpendicular al segmento (centrada en ï¿½l)
 
 			supi = dl32Line2D(centerLine.GetPointByParameter(width),direction);//Borde superior
 			infi = dl32Line2D(centerLine.GetPointByParameter(-width),direction);//Borde inferior
@@ -772,7 +772,7 @@ void ComputePolyline(dl32Point2D points[],int pointCount,float width,PolylineJoi
 				joints[i] = PolylineJoint(jointLine.GetPointByParameter(width),
 					jointLine.GetPointByParameter(-width));
 			}
-			else//Si no, los extremos del joint son las intersecciones entre los bordes de los segmentos contíguos:
+			else//Si no, los extremos del joint son las intersecciones entre los bordes de los segmentos contï¿½guos:
 			{
 				joints[i] = PolylineJoint(dl32Line2D::Intersection(supi,supi_1,true),//Ya hemos chequeado antes el paralelismo
 					dl32Line2D::Intersection(infi,infi_1,true));//Ya hemos chequeado antes el paralelismo
@@ -832,12 +832,13 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 {
 	if(!_working) throw  dl32NotInitializedGraphicsException();
 
-		DL32BUFFEROBJECT object;
+		DL32BUFFEROBJECT object = _renderBuffer.back();
 
-		if(_renderBuffer.back().PrimitiveType == RBCT_DRAWLINE)
+		if(object.PrimitiveType == RBCT_DRAWLINE)
 		{
-			_renderBuffer.back().VertexCount += 2;
-			_renderBuffer.back().PrimitiveCount += 1;
+                    
+			object.VertexCount += 2;
+			object.PrimitiveCount += 1;
 		}
 		else
 		{
@@ -1155,7 +1156,7 @@ void dl32GraphicsClass::DRAW_Polygon(const dl32Vertex Verts[],int Count,bool fil
 			dl32Color CenterColor=0;
 
 			Object.StartIndex=_vertexBuffer.size();
-			_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);//En el peor de los casos (fill = false) sobra un hueco reservado. Se usará posteriormente en otras llamadas
+			_vertexBuffer.reserve(_vertexBuffer.size()+Count+2);//En el peor de los casos (fill = false) sobra un hueco reservado. Se usarï¿½ posteriormente en otras llamadas
 
 			for(int i=0;i<Count;++i)
 			{

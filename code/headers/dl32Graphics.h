@@ -4,7 +4,6 @@
 
 #include <d3d9.h>
 #pragma warning( disable : 4996 ) // disable deprecated warning 
-#include <strsafe.h>
 #pragma warning( default : 4996 )
 #include <d3dx9.h>
 
@@ -33,7 +32,7 @@ using namespace std;
 
 const dl32Range DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE = dl32Range(DL32CONSTS_GRAPHICS_MINZLEVEL,DL32CONSTS_GRAPHICS_MAXZLEVEL);
 
-//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+//DECLARACIï¿½N E IMPLEMENTACIï¿½N (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////
 class dl32GraphicsException:public dl32Exception
 {
@@ -63,7 +62,7 @@ public:
 	dl32ZLevelOutOfRangeException(int index, char* message = DEFAULTEXCEPTIONMESSAGE(dl32ZLevelOutOfRangeException)):dl32OutOfRangeException(DL32CONSTS_GRAPHICS_RENDERBUFFERRANGE,index,message){}
 };
 
-//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//CLASES DEL Mï¿½DULO PROPIAMENTE DICHO:
 //////////////////////////////////////
 
 struct dl32Vertex:dl32Point2D
@@ -287,8 +286,8 @@ class dl32GraphicsClass
 private:
 	bool _working;
 
-	dl32GraphicsClass(const dl32GraphicsClass&); //Así evitamos que se realicen copias
-	dl32GraphicsClass& operator=(const dl32GraphicsClass&);//Así evitamos que se hagan asignaciones
+	dl32GraphicsClass(const dl32GraphicsClass&); //Asï¿½ evitamos que se realicen copias
+	dl32GraphicsClass& operator=(const dl32GraphicsClass&);//Asï¿½ evitamos que se hagan asignaciones
 protected:
 	LPDIRECT3D9 _d3d;	
 	LPDIRECT3DDEVICE9 _d3dDevice;
@@ -340,16 +339,16 @@ public:
 	dl32GraphicsClass(HWND hwnd,int Width,int Height,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE) 
-					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
+					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_setup(hwnd,Width,Height,Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERï¿½A SER INLINE 
 
 	dl32GraphicsClass(dl32Window* window ,
 					  bool Windowed=DL32DEFAULTS_GRAPHICS_WINDOWED, bool tripleBuffer = DL32DEFAULTS_GRAPHCS_TRIPLEBUFFER,
 					  bool vSync = DL32DEFAULTS_GRAPHICS_VSYNC, int refreshRate = DL32DEFAULTS_GRAPHICS_REFRESHRATE)
-					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_lastObject = DL32BUFFEROBJECT();_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERÍA SER INLINE 
+					  throw(dl32Direct3DInitFailedException) : _lastObject(_mockObject) {_lastObject = DL32BUFFEROBJECT();_setup(window->GetHwnd(),window->GetWidth(),window->GetHeight(),Windowed,tripleBuffer,vSync,refreshRate);} //ERROR: NO DEBERï¿½A SER INLINE 
 	
 	~dl32GraphicsClass();
 
-	//Cámara:
+	//Cï¿½mara:
 	//----------------------------------------
 	dl32Camera2D Camera;
 	bool CAMERA_IsEnabled(){return _cameraEnabled;}
@@ -428,7 +427,7 @@ public:
 	//Fuentes:
 	//-----------------------------------------
 	int FONT_LoadSystemFont(dl32String FontName,int size,bool bold,bool italic);
-	//Información:
+	//Informaciï¿½n:
 	//-----------------------------------------
 	int FPS(){return _frameRate;}
 };

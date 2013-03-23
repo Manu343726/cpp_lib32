@@ -11,10 +11,13 @@
 //////////////////////////////////////////////
 class dl32Exception:public std::exception
 {
+private:
+    const char* _message;
 public:
-	dl32Exception(char* message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)):exception(message){}
+	dl32Exception(const char* message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)):_message(message){}
 
-	const char* GetMessage(){return this->what();}
+        const char* what() const noexcept {return _message;}
+	const char* GetMessage() const {return what();}
 };
 
 ///////////////////////////////////
@@ -25,7 +28,7 @@ class dl32MemoryException:public dl32Exception
 protected:
 	void* pointer;
 public:
-	dl32MemoryException(char* message=DEFAULTEXCEPTIONMESSAGE(dl32MemoryException),void* pointer=NULL):dl32Exception(message){this->pointer=pointer;}
+	dl32MemoryException(const char* message=DEFAULTEXCEPTIONMESSAGE(dl32MemoryException),void* pointer=NULL):dl32Exception(message){this->pointer=pointer;}
 
 	void* GetPointer(){return pointer;}
 };
@@ -49,6 +52,6 @@ protected:
 	dl32Range range;
 	int index;
 public:
-	dl32OutOfRangeException(dl32Range range, int index, char* message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message){this->range=range;this->index=index;}
+	dl32OutOfRangeException(dl32Range range, int index, const char* message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message){this->range=range;this->index=index;}
 };
 #endif

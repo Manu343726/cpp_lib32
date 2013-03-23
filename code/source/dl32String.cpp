@@ -177,7 +177,7 @@ dl32String::dl32String(void* memoryaddress)
 void dl32String::HexLongCasting(long Number)
 {
 	size=10;//"0x" + ocho digitos hexadecimales (32 bits)
-	Array=new char[11];//Lo anterior más el caracter final (Cadena C-style)
+	Array=new char[11];//Lo anterior mï¿½s el caracter final (Cadena C-style)
 	int delta,realdelta;
 
 	Array[0]='0';
@@ -186,17 +186,17 @@ void dl32String::HexLongCasting(long Number)
 
 	for(int i=0;i<8;++i)//8 posiciones (cifras) hexadecimales (32 bits)
 	{
-		delta=int(Number)>>(i*4) & 0x0000000F;//delta es el numero (en decimal) de ésta posición
+		delta=int(Number)>>(i*4) & 0x0000000F;//delta es el numero (en decimal) de ï¿½sta posiciï¿½n
 		if(delta<=9)
 			realdelta=delta;
 		else
-			realdelta=delta+7;// El caracter 'A' no está después del '9' (Ver tabla ASCII)
+			realdelta=delta+7;// El caracter 'A' no estï¿½ despuï¿½s del '9' (Ver tabla ASCII)
 
 		Array[size-i-1]=char(int('0')+realdelta);
 	}
 }
 
-char* dl32String::c_str()
+const char* dl32String::c_str()
 {
 	return Array;
 }

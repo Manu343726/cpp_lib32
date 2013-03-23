@@ -46,37 +46,37 @@ const dl32String dl32endl=dl32String(DL32TRING_ENDLINE);
 class dl32ConsoleException:public dl32Exception
 {
 public:
-	dl32ConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleException)):dl32Exception(message){}
+	dl32ConsoleException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleException)):dl32Exception(message){}
 };
 
 class dl32ClosedConsoleException:public dl32ConsoleException
 {
 public:
-	dl32ClosedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ClosedConsoleException)):dl32ConsoleException(message){}
+	dl32ClosedConsoleException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32ClosedConsoleException)):dl32ConsoleException(message){}
 };
 
 class dl32OpenedConsoleException:public dl32ConsoleException
 {
 public:
-	dl32OpenedConsoleException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OpenedConsoleException)):dl32ConsoleException(message){}
+	dl32OpenedConsoleException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32OpenedConsoleException)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleOpenFailed:public dl32ConsoleException
 {
 public:
-	dl32ConsoleOpenFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleOpenFailed)):dl32ConsoleException(message){}
+	dl32ConsoleOpenFailed(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleOpenFailed)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleSettingsFailed:public dl32ConsoleException
 {
 public:
-	dl32ConsoleSettingsFailed(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSettingsFailed)):dl32ConsoleException(message){}
+	dl32ConsoleSettingsFailed(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSettingsFailed)):dl32ConsoleException(message){}
 };
 
 class dl32ConsoleSingletonException:public dl32ConsoleException
 {
 public:
-	dl32ConsoleSingletonException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){}
+	dl32ConsoleSingletonException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32ConsoleSingletonException)):dl32ConsoleException(message){}
 };
 
 //CLASES DEL M�DULO PROPIAMENTE DICHO:

@@ -35,7 +35,7 @@ float DL32FLOAT_INVSQRT(float x);
 class dl32MathException:public dl32Exception
 {
 public:
-	dl32MathException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32MathException)):dl32Exception(message){}
+	dl32MathException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32MathException)):dl32Exception(message){}
 };
 
 ///////////////////////////////////////
@@ -44,25 +44,25 @@ public:
 class dl32OverflowException:public dl32MathException
 {
 public:
-	dl32OverflowException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32OverflowException)):dl32MathException(message){}
+	dl32OverflowException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32OverflowException)):dl32MathException(message){}
 };
 
 class dl32DividedByCeroException:public dl32OverflowException
 {
 public:
-	dl32DividedByCeroException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32DividedByCeroException)):dl32OverflowException(message){}
+	dl32DividedByCeroException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32DividedByCeroException)):dl32OverflowException(message){}
 };
 
 class dl32InvalidMatrixOperationException:dl32MathException
 {
 public:
-	dl32InvalidMatrixOperationException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32InvalidMatrixOperationException)):dl32MathException(message){}
+	dl32InvalidMatrixOperationException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32InvalidMatrixOperationException)):dl32MathException(message){}
 };
 
 class dl32InfiniteIntersectionException : dl32MathException
 {
 public:
-	dl32InfiniteIntersectionException(char* message = DEFAULTEXCEPTIONMESSAGE(dl32InfiniteIntersectionException)):dl32MathException(message){}
+	dl32InfiniteIntersectionException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32InfiniteIntersectionException)):dl32MathException(message){}
 };
 
 //CLASES DEL M�DULO PROPIAMENTE DICHO:
@@ -323,7 +323,6 @@ typedef vector<dl32LinearEcuation> dl32LinearEcuationList;
 ///////////////////////////////////////
 class dl32EcuationsSystem
 {
-	friend class dl32EcuationsSystem;
 private: 
 	dl32Matrix mainmatrix;
 	dl32Matrix auxmatrix;
@@ -514,7 +513,6 @@ enum dl32Orientation2D
 /////////////////////////////////////////////////////
 class dl32AABB2D
 {
-	friend class dl32AABB2D;//Algo guarro, lo se, pero es para no pasar por tanto getter (Aunque igual con las inline no es necesario...)
 private:
 	float _width;
 	float _height;
@@ -909,13 +907,14 @@ public:
 			0,0,0,1);
 	}
 
+        /*
 	static dl32Transformation3D Rotation(dl32Quaternion &rotation){if(!rotation.MatrixReady()) rotation.SetupMatrix();return dl32Transformation3D((dl32Matrix4x4)rotation);}
 	static dl32Transformation3D Rotation(const dl32Point3D& center,dl32Quaternion &quaternion){if(!quaternion.MatrixReady()) quaternion.SetupMatrix(); return dl32Transformation3D(dl32Matrix4x4::Mul(dl32Transformation3D::Translation(center.x,center.y,center.z),dl32Matrix4x4::Mul(dl32Transformation3D(quaternion),dl32Transformation3D::Translation(-center.x,-center.y,-center.z))));}
 	static dl32Transformation3D Rotation(const dl32Vector3D& origin,const dl32Vector3D& destiny){return Rotation(dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
-	static dl32Transformation3D Rotation(const dl32Point3D& center,const dl32Vector3D& origin,dl32Vector3D destiny){return Rotation(center,dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
+	static dl32Transformation3D Rotation(const dl32Point3D& center,const dl32Vector3D& origin,const dl32Vector3D& destiny){return Rotation(center,dl32Quaternion(dl32Vector3D::VectorialMul(origin,destiny),dl32Vector3D::Angle(origin,destiny)));}
 	static dl32Transformation3D Rotation(const dl32Vector3D& axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
 	static dl32Transformation3D Rotation(const dl32CoordinateAxis axis,float angle){return dl32Transformation3D(dl32Quaternion(axis,angle));}
-
+        */
 };
 
 struct dl32SplineInterval

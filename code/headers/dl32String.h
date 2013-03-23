@@ -10,7 +10,7 @@ using namespace std;
 #define DL32STRINGDEFAULTS_MAXSIZE 100
 #define DL32STRINGDEFAULTS_DECIMALS 3
 #define DL32TRING_ENDLINE '\n'
-#define DL32STRING_FINALSYMBOL NULL
+#define DL32STRING_FINALSYMBOL '\0'
 
 const int DL32CONSTS_0CHARCODE = int('0');
 
@@ -40,7 +40,7 @@ public:
 
 	bool Ready() const;
 
-	char* c_str(); 
+	const char* c_str(); 
 	char* Copy() const;
 	char At(int pos)throw(dl32OutOfRangeException);
 	char operator[](int pos)throw(dl32OutOfRangeException){return At(pos);}

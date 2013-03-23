@@ -16,7 +16,7 @@
 
 const LPCSTR DL32WINDOWCLASS = "DXLIB32WINDOWCLASS";
 
-//DECLARACIÓN E IMPLEMENTACIÓN (INLINE) DE EXCEPCIONES:
+//DECLARACIï¿½N E IMPLEMENTACIï¿½N (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////
 class dl32WindowException:dl32Exception
 {
@@ -48,7 +48,7 @@ public:
 	dl32WindowClassRegistrationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){}
 };
 
-//CLASES DEL MÓDULO PROPIAMENTE DICHO:
+//CLASES DEL Mï¿½DULO PROPIAMENTE DICHO:
 //////////////////////////////////////
 
 template <class PARAMTYPE>
@@ -58,7 +58,7 @@ private:
 	vector<void (*)(PARAMTYPE)> Handlers;
 public:
 	void RaiseEvent(PARAMTYPE *P);
-	void RaiseEvent(void);//NOTA: Necesario para eventos sin parámetros
+	void RaiseEvent(void);//NOTA: Necesario para eventos sin parï¿½metros
 	void AddHandler(void (*Handler)(PARAMTYPE));
 	void RemoveHandler(void (*Handler)(PARAMTYPE));
 };
