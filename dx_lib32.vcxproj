@@ -87,8 +87,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;&amp;(ProjectDir)code\headers;&amp;(ProjectDir)code\headers\utils;&amp;(ProjectDir)code\source;&amp;(ProjectDir)code\source\utils;&amp;(ProjectDir)code\tests;&amp;(ProjectDir)code\tests\general tests;&amp;(ProjectDir)code\tests\pong;&amp;(ProjectDir)code\tests\polyline;&amp;(ProjectDir)code\tests\mandelbrot;&amp;(ProjectDir)code\tests\particle engine;&amp;(ProjectDir)code\tests\isometric tilemap;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;</ExecutablePath>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath);&amp;(ProjectDir)code\headers;&amp;(ProjectDir)code\headers\utils;&amp;(ProjectDir)code\source;&amp;(ProjectDir)code\source\utils;&amp;(ProjectDir)code\tests;&amp;(ProjectDir)code\tests\general tests;&amp;(ProjectDir)code\tests\pong;&amp;(ProjectDir)code\tests\polyline;&amp;(ProjectDir)code\tests\mandelbrot;&amp;(ProjectDir)code\tests\particle engine;&amp;(ProjectDir)code\tests\isometric tilemap;$(ExecutablePath);</IncludePath>
     <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">
