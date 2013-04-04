@@ -143,5 +143,8 @@
     <ClCompile Include="code\tests\particle engine\ParticleEngineTest.cpp">
       <Filter>Tests\ParticleEngine</Filter>
     </ClCompile>
+    <ClCompile Include="code\source\utils\dl32Config.cpp">
+      <Filter>Source\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

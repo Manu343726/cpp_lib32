@@ -3,6 +3,7 @@
 #if DL32TESTS_CURRENTTEST == DL32TEST_GENERAL_ECUATIONSYSTEM
 
 #include <iostream>
+#include "dl32Math.h"
 
 using namespace std;
 

@@ -34,6 +34,7 @@
     <ClCompile Include="code\source\dl32Math.cpp" />
     <ClCompile Include="code\source\dl32String.cpp" />
     <ClCompile Include="code\source\dl32Window.cpp" />
+    <ClCompile Include="code\source\utils\dl32Config.cpp" />
     <ClCompile Include="code\source\utils\dl32Memory.cpp" />
     <ClCompile Include="code\source\utils\dl32Timing.cpp" />
     <ClCompile Include="code\source\utils\dl32Utils3D.cpp" />
@@ -66,7 +67,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -87,7 +88,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
-    <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;</ExecutablePath>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath);$(ProjectDir)code\headers;$(ProjectDir)code\headers\utils;$(ProjectDir)code\source;$(ProjectDir)code\source\utils;$(ProjectDir)code\tests;$(ProjectDir)code\tests\general tests;$(ProjectDir)code\tests\pong;$(ProjectDir)code\tests\polyline;$(ProjectDir)code\tests\mandelbrot;$(ProjectDir)code\tests\particle engine;$(ProjectDir)code\tests\isometric tilemap;$(ExecutablePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -131,8 +131,10 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\code\source\utils\;$(SolutionDir)\code\source\;$(SolutionDir)\code\tests\;$(SolutionDir)\code\headers\utils\;$(SolutionDir)\code\headers\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalUsingDirectories>$(SolutionDir)\code\source\utils\;$(SolutionDir)\code\source\;$(SolutionDir)\code\headers\utils\;$(SolutionDir)\code\headers\;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <CompileAsManaged>false</CompileAsManaged>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

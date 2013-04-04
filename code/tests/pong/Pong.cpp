@@ -1,4 +1,4 @@
-#include "dl32Config.h"
+#include "dl32TestConfig.h"
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_LAURA_PONG_PSEUDOPLAYABLE
 #include "dl32Window.h"
@@ -44,7 +44,7 @@ struct Bola
 {
 	dl32AABB2D AABB;//El área de la bola.
 	dl32Vector2D velocidad;
-}
+};
 
 //Definimos a un jugador como el área de su paleta, su puntuación, sus vidas, y un identificador
 struct Jugador
@@ -55,7 +55,7 @@ struct Jugador
 	int ID;
 	Jugador(){puntuacion=0;vidas=VIDASINICIALES;ID=0;}
 	Jugador(dl32AABB2D AABB){this->AABB=AABB;puntuacion=0;vidas=VIDASINICIALES;}
-}
+};
 
 /*
 "Breve" introducción a la programación dirigida por eventos!

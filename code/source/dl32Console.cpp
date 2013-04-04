@@ -70,7 +70,7 @@ void dl32Console::Write(dl32String str,dl32ConsolePalette foregroundcolor,dl32Co
 			_processing = true;
 
 			//Si AutoOpen (Solo para debugging) est� activado, abrimos la consola:
-			if(!ready) Open(DL32DEBUG_DL32CONSOLE_AUTOOPEN_TITLE);
+			if(!ready) Open(dl32GlobalConfig::dl32Console_AutoOpen_Title);
 
 			if(foregroundcolor!=DL32CP_EMPTYVALUE)
 			{
