@@ -1,4 +1,4 @@
-#include "dl32Math.h"
+#include "dl32TestConfig.h"
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_GENERAL_ECUATIONSYSTEM
 
