@@ -78,6 +78,9 @@
     <ClInclude Include="code\tests\particle engine\Particle engine.h">
       <Filter>Tests\ParticleEngine</Filter>
     </ClInclude>
+    <ClInclude Include="code\tests\dl32TestConfig.h">
+      <Filter>Tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="code\source\utils\dl32Memory.cpp">

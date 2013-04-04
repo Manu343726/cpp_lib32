@@ -16,7 +16,7 @@ private:
 public:
 	dl32Exception(const char* message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)):_message(message){}
 
-        const char* what() const noexcept {return _message;}
+    const char* what()       const {return _message;}
 	const char* GetMessage() const {return what();}
 };
 

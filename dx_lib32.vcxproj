@@ -22,6 +22,7 @@
     <ClInclude Include="code\headers\utils\dl32Memory.h" />
     <ClInclude Include="code\headers\utils\dl32Timing.h" />
     <ClInclude Include="code\headers\utils\dl32Utils3D.h" />
+    <ClInclude Include="code\tests\dl32TestConfig.h" />
     <ClInclude Include="code\tests\isometric tilemap\IsometricEngine.h" />
     <ClInclude Include="code\tests\mandlebrot\MandelbrotEngine.h" />
     <ClInclude Include="code\tests\particle engine\Particle engine.h" />

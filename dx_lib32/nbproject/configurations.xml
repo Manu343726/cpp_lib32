@@ -65,18 +65,6 @@
         </logicalFolder>
       </logicalFolder>
     </logicalFolder>
-    <logicalFolder name="HeaderFiles"
-                   displayName="Header Files"
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="ResourceFiles"
-                   displayName="Resource Files"
-                   projectFiles="true">
-    </logicalFolder>
-    <logicalFolder name="SourceFiles"
-                   displayName="Source Files"
-                   projectFiles="true">
-    </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
                    projectFiles="false"
@@ -90,20 +78,19 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../code</Elem>
+    <Elem>D:\Dropbox\PROYECTOS\C_C++\dx_lib32\dx_lib32\code</Elem>
   </sourceRootList>
   <projectmakefile>dl32Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="3">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
+        <compilerSet>MinGW|MinGW</compilerSet>
       </toolsSet>
       <compileType>
         <ccTool>
           <standard>8</standard>
           <incDir>
-            <pElem>../../../../../../../PROGRAMAS/PROGRAMACION/DirectX SDK Junio 2010/Include</pElem>
             <pElem>../code/headers</pElem>
             <pElem>../code/headers/utils</pElem>
             <pElem>../code/source</pElem>
@@ -115,9 +102,12 @@
             <pElem>../code/tests/particle engine</pElem>
             <pElem>../code/tests/polyline</pElem>
             <pElem>../code/tests/pong</pElem>
+            <pElem>${DXSDK_DIR}/</pElem>
+            <pElem>E:/PROGRAMASXP/PROGRAMACION/DirectXSDKJunio2010/Include</pElem>
           </incDir>
         </ccTool>
         <archiverTool>
+          <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libdx_lib32.a</output>
         </archiverTool>
       </compileType>
       <item path="../code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">

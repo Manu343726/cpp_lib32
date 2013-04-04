@@ -165,22 +165,22 @@ dl32Point2D dl32Vertex::Baricenter(dl32Vertex PointList[],int PointCount)
 
 void dl32Camera2D::Rotate(float Rotation)
 {
-	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Rotation),*this);
+	*this=(dl32Camera2D)dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Rotation),*this);
 }
 
 void dl32Camera2D::Rotate(dl32Point2D Center,float Rotation)
 {
-	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
+	*this=(dl32Camera2D)dl32Matrix3x3::Mul(dl32Transformation2D::Rotation(Center,Rotation),*this);
 }
 
 void dl32Camera2D::Traslate(float x,float y)
 {
-	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-x,-y),*this);
+	*this=(dl32Camera2D)dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-x,-y),*this);
 }
 
 void dl32Camera2D::Traslate(dl32Vector2D Translation)
 {
-	*this=dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
+	*this=(dl32Camera2D)dl32Matrix3x3::Mul(dl32Transformation2D::Translation(-Translation.x,-Translation.y),*this);
 }
 
 void dl32Camera2D::SetPosition(float x, float y)
@@ -834,7 +834,7 @@ void dl32GraphicsClass::DRAW_Line(dl32Point2D P1, dl32Point2D P2, dl32Color colo
 
 		DL32BUFFEROBJECT object = _renderBuffer.back();
 
-		if(object.PrimitiveType == RBCT_DRAWLINE)
+		if(object.CallType == RBCT_DRAWLINE)
 		{
                     
 			object.VertexCount += 2;
@@ -861,7 +861,7 @@ void dl32GraphicsClass::DRAW_Line(dl32Vertex V1, dl32Vertex V2,int Z)
 
 	DL32BUFFEROBJECT object;
 
-	if(_renderBuffer.back().PrimitiveType == RBCT_DRAWLINE)
+	if(_renderBuffer.back().CallType == RBCT_DRAWLINE)
 	{
 		_renderBuffer.back().VertexCount += 2;
 		_renderBuffer.back().PrimitiveCount += 1;

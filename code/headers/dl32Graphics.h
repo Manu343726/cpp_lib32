@@ -151,7 +151,6 @@ public:
 
 class dl32Mesh
 {
-	friend class dl32Mesh;
 	friend class dl32GraphicsClass;
 private:
 	vector<_d3dVertex> verts;
