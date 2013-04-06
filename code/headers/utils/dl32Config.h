@@ -18,8 +18,8 @@ class dl32GlobalConfig
 {
 private: //Non-instanciable class:
 	dl32GlobalConfig() {}
-	dl32GlobalConfig(const dl32GlobalConfig& other) {}
-	dl32GlobalConfig& operator=(const dl32GlobalConfig& other) {}
+	dl32GlobalConfig(const dl32GlobalConfig&) {}
+	dl32GlobalConfig& operator=(const dl32GlobalConfig&) {}
 public:
 //Global debugging settings:
 //--------------------------
@@ -43,7 +43,7 @@ public:
 
 //dl32Math configuration:
 //-----------------------
-	static const bool float_epsilon;                ///< cpp_lib32 flotating-point comparations epsilon.
+	static const float float_epsilon;               ///< cpp_lib32 flotating-point comparations epsilon.
 
 //dl32Graphics configuration:
 //---------------------------

@@ -22,7 +22,7 @@
 
 //dl32Math configuration:
 //-----------------------
-	const bool dl32GlobalConfig::float_epsilon = 0.0001f;                     ///< cpp_lib32 flotating-point comparations epsilon.
+	const float dl32GlobalConfig::float_epsilon = 0.0001f;                    ///< cpp_lib32 flotating-point comparations epsilon.
 
 //dl32Graphics configuration:
 //---------------------------
