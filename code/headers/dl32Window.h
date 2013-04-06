@@ -16,8 +16,7 @@
 
 const LPCSTR DL32WINDOWCLASS = "DXLIB32WINDOWCLASS";
 
-//DECLARACI�N E IMPLEMENTACI�N (INLINE) DE EXCEPCIONES:
-///////////////////////////////////////////////////////
+
 class dl32WindowException:dl32Exception
 {
 private:
@@ -48,24 +47,24 @@ public:
 	dl32WindowClassRegistrationFailedException(HWND hwnd,char* message):dl32WindowException(hwnd,message){}
 };
 
-//CLASES DEL M�DULO PROPIAMENTE DICHO:
-//////////////////////////////////////
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	Represents an event
-/// @details 
-///
-/// @author	Manu 343726
-/// @date	06/04/2013
-///
-/// @tparam	PARAMTYPE	Event parameter type.
+/// @brief	cpp_lib32 event type
+/// @details Events are represented as a list of handlers, where handlers are pointers to functions 
+/// 		 that handle the event. This functions always be a void function with cero or one
+/// 		 parameters (The argumments of the event).
+/// 		 Template parameter "ARGTYPE" is the type of these event args. For non-args event, use
+/// 		 void.
+/// 		 
+/// 		 The type of the function-pointers that can be handlers are defined in the HandlerType
+/// 		 typedef.
+/// @tparam	ARGTYPE	Event argumments type. For non-args events, use void.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <class ARGTYPE>
 class dl32Event
 {
 public:
-	/// @brief	Defines an alias representing the function-pointer type of a event handler 
+	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)(ARGTYPE);
 	
 	/// @brief	Defines an alias representing type of event argumments.
@@ -73,17 +72,6 @@ public:
 private:
 	vector<HandlerType> _handlers;
 public:
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Raises the event (For non-argumments events only).
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	void RaiseEvent()
-	{
-		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
-			*it();
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Raises the event.
 	/// @param [in,out]	args Argumments of the event.
@@ -109,6 +97,17 @@ public:
 
 	void RemoveHandler(HandlerType handler) {_handlers.erase(handler);}
 };
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Raises the event. Template speciallitation for non-args events.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	template<void>
+	void dl32Event<void>::RaiseEvent()
+	{
+		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
+			*it();
+	}
 
 /// @brief	Mouse buttons enumeration
 enum class dl32MouseButton
