@@ -51,57 +51,83 @@ public:
 //CLASES DEL M�DULO PROPIAMENTE DICHO:
 //////////////////////////////////////
 
-template <class PARAMTYPE>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	Represents an event
+/// @details 
+///
+/// @author	Manu 343726
+/// @date	06/04/2013
+///
+/// @tparam	PARAMTYPE	Event parameter type.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+template <class ARGTYPE>
 class dl32Event
 {
-private:
-	vector<void (*)(PARAMTYPE)> Handlers;
 public:
-	void RaiseEvent(PARAMTYPE *P);
-	void RaiseEvent(void);//NOTA: Necesario para eventos sin par�metros
-	void AddHandler(void (*Handler)(PARAMTYPE));
-	void RemoveHandler(void (*Handler)(PARAMTYPE));
+	/// @brief	Defines an alias representing the function-pointer type of a event handler 
+	typedef void (*HandlerType)(ARGTYPE);
+	
+	/// @brief	Defines an alias representing type of event argumments.
+	typedef ARGTYPE ArgummentsType;
+private:
+	vector<HandlerType> _handlers;
+public:
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Raises the event (For non-argumments events only).
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void RaiseEvent()
+	{
+		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
+			*it();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Raises the event.
+	/// @param [in,out]	args Argumments of the event.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void RaiseEvent(ARGTYPE& args)
+	{
+		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
+			*it(parameter);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Adds a function as a handler for this event.
+	/// @param	handler	Pointer to the function that will be a handler.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void AddHandler(HandlerType handler) {_handlers.push_back(handler);}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Removes the handler described by handler.
+	/// @param	handler	The handler.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	void RemoveHandler(HandlerType handler) {_handlers.erase(handler);}
 };
 
-template <class PARAMTYPE>
-void dl32Event<PARAMTYPE>::RaiseEvent(void)
+/// @brief	Mouse buttons enumeration
+enum class dl32MouseButton
 {
-	for(unsigned int i=0;i<Handlers.size();++i)
-		Handlers[i]();
-}
-
-template <class PARAMTYPE>
-void dl32Event<PARAMTYPE>::RaiseEvent(PARAMTYPE *P)
-{
-	for(unsigned int i=0;i<Handlers.size();++i)
-		Handlers[i](*P);
-}
-
-template <class PARAMTYPE>
-void dl32Event<PARAMTYPE>::AddHandler(void (*Handler)(PARAMTYPE))
-{
-	Handlers.push_back(Handler);
-}
-
-template <class PARAMTYPE>
-void dl32Event<PARAMTYPE>::RemoveHandler(void (*Handler)(PARAMTYPE))
-{
-	Handlers.erase(Handler);
-}
-
-enum dl32MouseButton
-{
-	DL32MOUSEBUTTON_NONE,
-	DL32MOUSEBUTTON_RIGHT,
-	DL32MOUSEBUTTON_CENTER,
-	DL32MOUSEBUTTON_LEFT
+	NONE,   ///< No button
+	RIGHT,  ///< Right button
+	CENTER, ///< Center button (Mouse wheel button, normally)
+	LEFT    ///< Left button
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	Basic mouse data
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 struct dl32MouseData
 {
-	dl32Point2D Location;
-	dl32MouseButton Button;
-	int Delta;
+	dl32Point2D Location;   ///< Mouse-pointer coordinates
+	dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton)
+	int Delta;              ///< Mouse wheel delta11
 };
 
 typedef char dl32KeyCode;
@@ -120,14 +146,31 @@ enum KEYCAPTURESTATE
 	KEYCAPTURESTATE_NOCAPTURE
 };
 
+/// @brief	Defines an alias representing the cpp_lib32 mouse event type.
 typedef dl32Event<dl32MouseData> dl32MouseEvent;
+
+/// @brief	Defines the MouseClickEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseClickEvent;
+
+/// @brief	Defines the MouseDoubleClickEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseDoubleClickEvent;
+
+/// @brief	Defines the MouseMoveEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseMoveEvent;
+
+/// @brief	Defines the MouseUpEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseUpEvent;
+
+/// @brief	Defines the MouseDownEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseDownEvent;
+
+/// @brief	Defines the MouseWheelEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseWheelEvent;
+
+/// @brief	Defines the MouseEnterEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseEnterEvent;
+
+/// @brief	Defines the MouseLeaveEvent as an alias of the MouseEvent type.
 typedef dl32MouseEvent dl32MouseLeaveEvent;
 
 typedef dl32Event<dl32KeyboardData> dl32KeyboardEvent;
