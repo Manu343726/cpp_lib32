@@ -85,7 +85,7 @@ public:
 	void RaiseEvent(ArgummentsType args)
 	{
 		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
-			(*it)(parameter);
+			(*it)(args);
 	}
 
 
@@ -111,9 +111,8 @@ public:
 /// 		 
 /// 		 The type of the function-pointers that can be handlers are defined in the HandlerType
 /// 		 typedef.
-/// @tparam	ARGTYPE	Event argumments type. For non-args events, use void.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-template <>
+template<>
 class dl32Event<void>
 {
 public:

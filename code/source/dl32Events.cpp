@@ -120,7 +120,7 @@ void dl32EventsManager::setUpDefaultEvents()
 	messages.clear();
 	messages.push_back(WM_LBUTTONDOWN); messages.push_back(WM_MBUTTONDOWN); messages.push_back(WM_RBUTTONDOWN);
 
-	setUpEvent( new MouseMoveEventDispatcher() , messages );
+	setUpEvent( new MouseDownEventDispatcher() , messages );
 
 
 	/* Mouse up event: */
@@ -140,5 +140,5 @@ void dl32EventsManager::setUpDefaultEvents()
 	messages.clear();
 	messages.push_back(WM_LBUTTONUP); messages.push_back(WM_MBUTTONUP); messages.push_back(WM_RBUTTONUP);
 
-	setUpEvent( new MouseMoveEventDispatcher() , messages );
+	setUpEvent( new MouseUpEventDispatcher() , messages );
 }
