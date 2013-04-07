@@ -80,10 +80,10 @@ Además, los objetos de ésta clase contienen varios campos, que se corresponden c
 - MouseMove: Se lanza al mover el ratón por la ventana. Tiene como parámetro una estructura del tipo dl32MouseData que contiene los datos del ratón (Coordenadas, boton pulsado, y rotación de la rueda)
 - MouseDown: Se lanza al pulsar un botón del ratón. Tambien tiene un parámetro dl32MouseData
 - MouseUp: Se lanza al soltar un botón del ratón. Tambien tiene un parámetro dl32MouseData
-- KeyDown: Se lanza al pulsar una tecla. Contiene un parámetro del tipo dl32KeyboardData con los datos del teclado (Tecla pulsada, número de pulsaciones anteriores, y si la tecla ya estaba pulsada antes)
+- KeyDown: Se lanza al pulsar una tecla. Contiene un parámetro del tipo dl32KeyStrokeData con los datos del teclado (Tecla pulsada, número de pulsaciones anteriores, y si la tecla ya estaba pulsada antes)
 NOTA: Cuando mantienes pulsada una tecla, el sistema avisa de que se ha pulsado la tecla una y otra vez, hasta que se deje de presionar. Ésto provoca que el evento KeyDown se ejecute todo el
-rato mientras tengas pulsada la tecla. Por ello, dl32KeyboardData contiene dos campos, "PreviousPressed" y "RepeatCount", que indican si la tecla ya estaba pulsada antes, y en ese caso el número de pulsaciones capturadas.
-- KeyUp: Se lanza al dejar de presionar una tecla. Aunque tenga un parametro dl32KeyboardData, los campos "PreviousPressed" y "RepeatCount" no guardan información util (No tienen sentido)
+rato mientras tengas pulsada la tecla. Por ello, dl32KeyStrokeData contiene dos campos, "PreviousPressed" y "RepeatCount", que indican si la tecla ya estaba pulsada antes, y en ese caso el número de pulsaciones capturadas.
+- KeyUp: Se lanza al dejar de presionar una tecla. Aunque tenga un parametro dl32KeyStrokeData, los campos "PreviousPressed" y "RepeatCount" no guardan información util (No tienen sentido)
 
 Como decía antes, para capturar un evento, es necesario indicar una función (o más) que lo manejen. Para ello se llama a la función "AddHandler()" del evento.
 Por ejemplo: Window->MouseMove.AddHandler(OnMouseMove) Añadimos la función "OnmouseMove()" a la lista de manejadores del evento "MouseMove" de la ventana.

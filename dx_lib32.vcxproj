@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="code\headers\dl32Color.h" />
     <ClInclude Include="code\headers\dl32Console.h" />
+    <ClInclude Include="code\headers\dl32Events.h" />
     <ClInclude Include="code\headers\dl32Exceptions.h" />
     <ClInclude Include="code\headers\dl32Graphics.h" />
     <ClInclude Include="code\headers\dl32Math.h" />
@@ -30,6 +31,7 @@
   <ItemGroup>
     <ClCompile Include="code\source\dl32Color.cpp" />
     <ClCompile Include="code\source\dl32Console.cpp" />
+    <ClCompile Include="code\source\dl32Events.cpp" />
     <ClCompile Include="code\source\dl32Graphics.cpp" />
     <ClCompile Include="code\source\dl32Math.cpp" />
     <ClCompile Include="code\source\dl32String.cpp" />

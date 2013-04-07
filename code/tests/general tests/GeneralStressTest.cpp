@@ -72,7 +72,7 @@ void OnMouseUp(dl32MouseData MouseData);//Captura del evento "MouseUp" de la ven
 void OnMouseDown(dl32MouseData MouseData);//Captura del evento "MouseDown" de la ventana
 void OnMouseWheel(dl32MouseData MouseData);//Captura del evento "MouseWheel" de la ventana
 void OnMove(dl32AABB2D WindowArea);//Captura del evento "Move" de la ventana
-void OnKeyDown(dl32KeyboardData KeyboardData);//Captura del evento "KeyDown" de la ventana
+void OnKeyDown(dl32KeyStrokeData KeyboardData);//Captura del evento "KeyDown" de la ventana
 
 void OnClose(bool *cancel);
 
@@ -394,7 +394,7 @@ void OnMouseDown(dl32MouseData MouseData)
 	}
 }
 
-void OnKeyDown(dl32KeyboardData KeyboardData)
+void OnKeyDown(dl32KeyStrokeData KeyboardData)
 {
 	if(!KeyboardData.PreviousPressed)
 		Window->SetText("dx_lib32 C++ (KeyDown!!! [NO PREV PRESSED]) {'" + dl32String(KeyboardData.Key) + "'}");

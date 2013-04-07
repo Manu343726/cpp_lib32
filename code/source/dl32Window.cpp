@@ -120,7 +120,7 @@ inline dl32MouseData dl32Window::GetMouseData(const MSG &Message)
 	return GetMouseData(Message.wParam,Message.lParam);
 }
 
-inline dl32KeyboardData dl32Window::GetKeyboardData(const MSG &Message)
+inline dl32KeyStrokeData dl32Window::GetKeyboardData(const MSG &Message)
 {
 	return GetKeyboardData(Message.wParam,Message.lParam);
 }
@@ -152,9 +152,9 @@ dl32MouseData dl32Window::GetMouseData(const WPARAM &wParam,const LPARAM &lParam
 	return Data;
 }
 
-dl32KeyboardData dl32Window::GetKeyboardData(const WPARAM &wParam,const LPARAM &lParam)
+dl32KeyStrokeData dl32Window::GetKeyboardData(const WPARAM &wParam,const LPARAM &lParam)
 {
-	dl32KeyboardData Data;
+	dl32KeyStrokeData Data;
 
 	Data.Key=char(wParam);
 	Data.PreviousPressed=((lParam >> 30)%2)!=0;//Miguel y Laura, mi cerebro se licua con las operaciones a bits

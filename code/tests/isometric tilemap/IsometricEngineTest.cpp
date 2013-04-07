@@ -10,8 +10,8 @@ IsometricTilemap* tilemap;
 dl32String ToString(dl32Point2D point);
 
 void OnIdle();
-void OnKeyDown(dl32KeyboardData keydata);
-void OnKeyUp(dl32KeyboardData data);
+void OnKeyDown(dl32KeyStrokeData keydata);
+void OnKeyUp(dl32KeyStrokeData data);
 void OnMouseWheel(dl32MouseData data);
 void OnMouseDown(dl32MouseData data);
 void OnMouseDoubleClick(dl32MouseData data);
@@ -127,7 +127,7 @@ void OnIdle()
 	window->SetText("dx_lib32 C++ - Isometric tile engine (" + dl32String(gfx->FPS()) + " FPS " + (dl32String)tilemap->visibleTilesCount() + " tiles) - (Picked tile: " + ToString(pickedTile) + ")");
 }
 
-void OnKeyDown(dl32KeyboardData keydata)
+void OnKeyDown(dl32KeyStrokeData keydata)
 {
 	switch(keydata.Key)
 	{
@@ -174,7 +174,7 @@ void OnKeyDown(dl32KeyboardData keydata)
 	}
 }
 
-void OnKeyUp(dl32KeyboardData data)
+void OnKeyUp(dl32KeyStrokeData data)
 {
 	if(data.Key == 'T' && keyPressed)
 	{

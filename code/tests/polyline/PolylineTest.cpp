@@ -25,7 +25,7 @@ float polylineWidth = MINPOLYLINEWIDTH;
 int colorCounter = 0;
 
 void OnIdle();
-void OnKeyDown(dl32KeyboardData keyboardData);
+void OnKeyDown(dl32KeyStrokeData keyboardData);
 void OnMouseMove(dl32MouseData mouseData);
 void OnMouseWheel(dl32MouseData mouseData);
 
@@ -224,7 +224,7 @@ void _ParseJointsToVertexBuffer(PolylineJoint joints[],dl32Vertex colors[],int J
 	}
 }
 
-void OnKeyDown(dl32KeyboardData KeyboardData)
+void OnKeyDown(dl32KeyStrokeData KeyboardData)
 {
 	switch(KeyboardData.Key)
 	{

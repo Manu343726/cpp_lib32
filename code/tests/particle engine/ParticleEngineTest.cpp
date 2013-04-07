@@ -13,7 +13,7 @@ void PreDrawProc();
 
 void OnMouseMove(dl32MouseData MouseData);
 void OnMouseWheel(dl32MouseData MouseData);
-void OnKeyDown(dl32KeyboardData KeyboardData);
+void OnKeyDown(dl32KeyStrokeData KeyboardData);
 
 dl32GraphicsClass* gfx;
 
@@ -89,7 +89,7 @@ void OnMouseWheel(dl32MouseData MouseData)
 		selected--;
 }
 
-void OnKeyDown(dl32KeyboardData KeyboardData)
+void OnKeyDown(dl32KeyStrokeData KeyboardData)
 {
 	switch(KeyboardData.Key)
 	{
