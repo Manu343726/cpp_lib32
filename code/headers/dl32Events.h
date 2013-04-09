@@ -199,6 +199,11 @@ typedef dl32Event<bool> dl32WindowCloseEvent; ///< Window close event. Booleam a
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	A macro that defines windows procedures arguments.
+/// 		
+/// @param	window 	Handle of the window.
+/// @param	message	System message code.
+/// @param	wParam 	The wParam field of the message.
+/// @param	lParam 	The lParam field of the message.
 ///
 /// @author	Manu343726
 /// @date	07/04/2013
@@ -207,6 +212,11 @@ typedef dl32Event<bool> dl32WindowCloseEvent; ///< Window close event. Booleam a
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	A macro that defines windows procedure argumments bypass.
+///
+/// @param	window 	Handle of the window.
+/// @param	message	System message code.
+/// @param	wParam 	The wParam field of the message.
+/// @param	lParam 	The lParam field of the message.
 ///
 /// @author	Manu343726
 /// @date	07/04/2013
@@ -335,7 +345,7 @@ public:
 	///
 	/// @return	.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32SystemEventsManager& instance()
+	static dl32SystemEventsManager& instance()
 	{ 
 		//http://stackoverflow.com/questions/1008019/c-singleton-design-pattern
 		static dl32SystemEventsManager instance;
