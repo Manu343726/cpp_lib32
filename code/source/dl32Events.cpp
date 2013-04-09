@@ -7,7 +7,7 @@ using namespace std;
 /***************************************************************************
 * Deletes event dispatchers pointed by every pointer stored in the hashmap *
 ***************************************************************************/
-dl32EventsManager::~dl32EventsManager()
+dl32SystemEventsManager::~dl32SystemEventsManager()
 {
 	/*****************************************************************************
 	* Hay que recordar que un evento puede envolver ("wrappear") a varios system *
@@ -39,7 +39,7 @@ dl32EventsManager::~dl32EventsManager()
 * contiene una entrada por cada mensaje, todas ellas asociadas al mismo dispatcher (Diferentes       *
 * claves, mismo valor).                                                                              *
 *****************************************************************************************************/
-bool dl32EventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const vector<UINT>& systemMessages)
+bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const vector<UINT>& systemMessages)
 {
 	if(systemMessages.empty()) return false;
 
@@ -55,7 +55,7 @@ bool dl32EventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const vector
 /****************************************************************************
 * Sobrecarga de la función anterior, para un solo system message por evento *
 ****************************************************************************/
-bool dl32EventsManager::setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage)
+bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage)
 {
 	if( _dispatchers.find(systemMessage) == _dispatchers.end() )
 	{
@@ -70,7 +70,7 @@ bool dl32EventsManager::setUpEvent(dl32EventDispatcher* dispatcher , UINT system
 /**************************************************************************************************************
 * Busca en la lista de event dispatchers el evento correspondiente al system message, y llama a su dispatcher *
 **************************************************************************************************************/
-void dl32EventsManager::dispatch(HWND window , UINT message , WPARAM wParam , LPARAM lParam)
+void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wParam , LPARAM lParam)
 {
 	auto it = _dispatchers.find(message);
 
@@ -81,7 +81,7 @@ void dl32EventsManager::dispatch(HWND window , UINT message , WPARAM wParam , LP
 /**********************************************************
 * Configura el conjunto de eventos predefinidos en la API *
 **********************************************************/
-void dl32EventsManager::setUpDefaultEvents()
+void dl32SystemEventsManager::setUpDefaultEvents()
 {
 	vector<UINT> messages;
 

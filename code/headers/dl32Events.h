@@ -212,6 +212,7 @@ typedef dl32Event<bool> dl32WindowCloseEvent; ///< Window close event. Booleam a
 /// @date	07/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #define WINDOWS_PROCEDURE_BYPASS window , message , wParam , lParam
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 Translates system messages to cpp_lib32 events.
 /// @details This interface provides a method for create user-defined events. User can use this 
@@ -234,7 +235,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the high-level event.
 	/// @details This function performs any data-translation operations and raises the high-level event 
-	/// 		 with the translated data as the event args.
+	/// 		 with the translated data as event args.
 	/// 		
 	/// @param	window 	Handle of the window.
 	/// @param	message	System message code.
@@ -296,7 +297,7 @@ public:
 /// @author	Manu343726
 /// @date	07/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32EventsManager
+class dl32SystemEventsManager
 {
 private:
 	unordered_map<UINT,dl32EventDispatcher*> _dispatchers;  ///< Hashmap of event dispatchers. System messages are used as keys.
@@ -311,12 +312,12 @@ private:
 	void setUpDefaultEvents();
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Default constructor. Private, dl32EventsManager implements singleton design pattern.
+	/// @brief	Default constructor. Private, dl32SystemEventsManager implements singleton design pattern.
 	///
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32EventsManager() {}
+	dl32SystemEventsManager() {}
 public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Destructor.
@@ -324,31 +325,31 @@ public:
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	~dl32EventsManager();
+	~dl32SystemEventsManager();
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets the singleton instance of dl32EventsManager class
+	/// @brief	Gets the singleton instance of dl32SystemEventsManager class
 	///
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	///
 	/// @return	.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32EventsManager& instance()
+	dl32SystemEventsManager& instance()
 	{ 
 		//http://stackoverflow.com/questions/1008019/c-singleton-design-pattern
-		static dl32EventsManager instance;
+		static dl32SystemEventsManager instance;
 
 		return instance;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	A shortcut to the dl32EventsManager instance
+	/// @brief	A shortcut to the dl32SystemEventsManager instance
 	///
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	#define EventsManager dl32EventsManager::instance()
+	#define EventsManager dl32SystemEventsManager::instance()
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Sets up a new high-level event through its dispatcher.
@@ -368,7 +369,7 @@ public:
 	/// 
 	/// @remarks A dl32Event can wrap more than one system message, that is the reason that the parameter
 	///			 "systemMessages" is a std::vector<UINT>, not only one UINT.
-	/// @remarks For example, system has three different messages (WM_LBUTTONDOWN , WM_RBUTTONDOWN , 
+	/// @remarks For example: System has three different messages (WM_LBUTTONDOWN , WM_RBUTTONDOWN , 
 	/// 		 WM_MBUTTONDOWN) for mouse down events, one per button. User can define a general 
 	/// 		 MouseDown event that catches this three messages.
 	/// 		 
