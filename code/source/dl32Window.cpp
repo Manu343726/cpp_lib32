@@ -12,7 +12,11 @@ void dl32Window::_setup(bool isNewWindow)
 {
 	if(isNewWindow)
 	{
-		//TODO: Window creation process (Win32API::CreateWindow() etc...)
+		if(!_windowClassRegistered)
+		{
+			if(RegisterClass( &WINDOWCLASS ) == NULL)
+
+		}
 	}
 	else
 		SetWindowLongPtr( _handle , GWL_WNDPROC , dl32WindowsManager::getWindowProcedure()); //Reestablece el procedimiento de ventana (Puede que la ventana no la hayamos creado nosotros y por tanto no use nuestro procedimiento de ventana).

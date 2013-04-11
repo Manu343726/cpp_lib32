@@ -25,15 +25,15 @@ private:
 	int _frame;
 	dl32TimingTreeNode* _parent;
 public: 
-	dl32TimingTreeNode(){_parent = NULL; _frame = -1;}
-	dl32TimingTreeNode(dl32TimingTreeNode* parent, int frame){_parent = parent, _frame = frame;}
+	dl32TimingTreeNode() : _parent(NULL) , _frame(-1) {}
+	dl32TimingTreeNode(dl32TimingTreeNode* parent, int frame) : _parente(parent) , _frame(frame) {}
 	~dl32TimingTreeNode();
 	
-	bool isRoot(){return _parent == NULL;}
-	bool isLeaf(){return _subnodes.size() == 0;}
-	int frame(){return _frame;}
+	bool isRoot() const {return _parent == NULL;}
+	bool isLeaf() const {return _subnodes.size() == 0;}
+	int frame()   const {return _frame;}
 
-	dl32TimingTreeNode* parent(){return _parent;}
+	dl32TimingTreeNode* parent() const {return _parent;}
 
 	bool isValid(){return _frame >= 0;}
 	void clear(){_subnodes.clear(); _frame = 0; _parent = NULL;}
@@ -41,6 +41,7 @@ public:
 	void add(dl32TimingTreeNode* node){_subnodes.push_back(node);}
 };
 
+//NOTA: Ahora que lo veo igual debería haber hecho un singleton en vez de tanta mierda estática...
 class dl32Timing
 {
 private:

@@ -1,7 +1,3 @@
-/*****************************************************
- * dx_lib32 - Configuración general de la biblioteca *
- *****************************************************/
-
 #ifndef DL32CONFIG_H
 #define DL32CONGIG_H
 
@@ -27,16 +23,17 @@ public:
 //--------------------------
 	static const bool debugging; ///< cpp_lib32 is in debug-mode.
 
-//dl32Console for debugging settings:
-//-----------------------------------
+//cpp_lib32 debugging console settings:
+//-------------------------------------
 	static const bool  dl32Console_AutoOpen;       ///< If its closed, opens debug console if this recieves a debug write instruction.
 	static const char* dl32Console_AutoOpen_Title; ///< Console title for autoOpen.
 
 //dl32Window debugging settings:
 //------------------------------
 	static const bool dl32Window_PromptUnhandledMessages;  ///< Prints unhandled window messages (Messages that are not part of the dl32Window events set) in debug console.
-	static const bool dl32Window_PromptCallbackedMessages; ///< Prints windows messages that are processed by "WindowProcedure()" callback instead of "dl32Window::ProcessMessage()" (Standard messaging loop) in debug console.
-
+	static const bool dl32Window_PromptCallbackedMessages; ///< Prints windows messages that are processed by "WindowProcedure()" callback instead of "dl32Window::ProcessMessage()" (Standard messaging loop) in debug console. (DEPRECATED)
+	
+	
 //dl32Timing configuration:
 //-------------------------
 	static const bool dl32Timing_APITiming_Enabled; ///< Internal timing (Few API functions that have timing instructions) enabled.
@@ -92,10 +89,8 @@ public:
 #define DL32FLOAT_GE(x,y) (DL32FLOAT_EQ(x,y) || (x > y))
 #define DL32FLOAT_LE(x,y) (DL32FLOAT_EQ(x,y) || (x < y))
 
-#define DL32DEBUG_GRAPHICS_DRAWCALLSMERGE ENABLED
-
-//DESACTIVACI�N DE WARNINGS:
+//WARNINGS:
 ////////////////////////////
-#pragma warning(disable : 4290) //Visual Studio no implementa la especificaci�n de excepciones. A cambio te lanza el 4290...
+#pragma warning(disable : 4290) //Visual Studio no implementa la especificación de excepciones. A cambio te lanza el 4290...
 
 #endif

@@ -70,6 +70,11 @@ public:
 	static dl32Window& getWindow(dl32WindowHandle handle) { return *( (dl32Window*)GetWindowLongPtr( handle , GWLP_USERDATA ) ); }
 };
 
+class dl32WindowsRegistrationFailException : public dl32Exception
+{
+
+};
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	cpp_lib32 window class.
 /// @details This class is just a Win32 HWND wrapper, thats simplifies windows operations. 
