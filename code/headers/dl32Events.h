@@ -287,6 +287,15 @@ public:
 	virtual void dispatch(WINDOWS_PROCEDURE_ARGS) = 0;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	Defines a generic dl32Event dispatcher.
+///
+/// @author	Manu 343726
+/// @date	13/04/2013
+///
+/// @tparam	EVENTTYPE			Type of the event to be dispatched.
+/// @tparam	DISPATCHFUNCTION	The dispatch function provided by the user.
+////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename EVENTTYPE , EVENTTYPE::DispatcherType DISPATCHFUNCTION>
 class dl32GenericEventDispatcher : public dl32EventDispatcher
 {
