@@ -4,6 +4,20 @@
 #include <string>
 using namespace std;
 
+#ifdef _WIN32
+#define DL32COMPILETIME_OS_WINDOWS
+#else
+#define DL32COMPILETIME_OS_LINUX
+#endif //Nota: En teoría solo será compilada en windows o en linux (Incluso por ahora solo en windows).
+
+#ifdef DL32COMPILETIME_OS_WINDOWS
+#define PATHSEPARATOR '\\'
+#else
+#define PATHSEPARATOR '/'
+#endif
+
+#define FILENAME ( strrchr( __FILE__ , PATHSEPARATOR ) ? strrchr( __FILE__ , PATHSEPARATOR ) + 1 : __FILE__ )
+
 /// @brief	unsigned int "shortcut"
 typedef unsigned int uint;
 
