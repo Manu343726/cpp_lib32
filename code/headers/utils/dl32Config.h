@@ -11,12 +11,23 @@ using namespace std;
 #endif //Nota: En teoría solo será compilada en windows o en linux (Incluso por ahora solo en windows).
 
 #ifdef DL32COMPILETIME_OS_WINDOWS
-#define PATHSEPARATOR '\\'
+#define PATHSEPARATOR \\
 #else
-#define PATHSEPARATOR '/'
+#define PATHSEPARATOR /
 #endif
 
-#define FILENAME ( strrchr( __FILE__ , PATHSEPARATOR ) ? strrchr( __FILE__ , PATHSEPARATOR ) + 1 : __FILE__ )
+const char PATHSEPARATOR_CHAR     = 'PATHSEPARATOR';
+const char* PATHSEPARATOR_CSTRING = "PATHSEPARATOR";
+const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING;
+
+#define FILENAME ( strrchr( __FILE__ , PATHSEPARATOR_CHAR ) ? strrchr( __FILE__ , PATHSEPARATOR_CHAR ) + 1 : __FILE__ )
+
+#define DL32PATHS_ROOT          "code" PATHSEPARATOR_CSTRING
+#define DL32PATHS_HEADERS       DL32PATHS_ROOT "headers" PATHSEPARATOR_CSTRING
+#define DL32PATHS_UTILS_HEADERS DL32PATHS_HEADERS "utils" PATHSEPARATOR_CSTRING
+#define DL32PATHS_SOURCE        DL32PATHS_ROOT "source" PATHSEPARATOR_CSTRING
+#define DL32PATHS_UTILS_SOURCE  DL32PATHS_SOURCE "utils" PATHSEPARATOR_CSTRING
+#define DL32PATHS_TESTS         DL32PATHS_ROOT "tests" PATHSEPARATOR_CSTRING
 
 /// @brief	unsigned int "shortcut"
 typedef unsigned int uint;
