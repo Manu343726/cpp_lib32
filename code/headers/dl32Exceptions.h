@@ -3,7 +3,7 @@
 
 #include <exception>
 
-#define DEFAULTEXCEPTIONMESSAGE(exception) "Unexpected " #exception
+#define DEFAULTEXCEPTIONMESSAGE(exception) "Unexpected " TOCSTRING(exception)
 
 #define DL32EXCEPTION_SUBCLASS_DEFAULTDOC(exceptionClass) /##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/ \
 	                                                      /##/##/ @brief	cpp_lib32 exceptionClass exception.                                                                                                                                                                                                                                                      \
@@ -12,12 +12,14 @@
 														  /##/##/ @date	11/04/2013                                                                                                                                                                                                                                                                                   \
 														  /##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/
 
+#define DL32EXCEPTION_SUBCLASS_NODOC(exception) class exception : public dl32Exception       \
+										        {                                            \
+										        public:                                      \
+											       exception( const MessageType& message = DEFAULTEXCEPTIONMESSAGE(exception) ) : dl32Exception(message) {} \
+										        }; 
+
 #define DL32EXCEPTION_SUBCLASS(exception) DL32EXCEPTION_SUBCLASS_DEFAULTDOC(exception) \
-										  class exception : public dl32Exception       \
-										  {                                            \
-										  public:                                      \
-											  exception( const MessageType& message = DEFAULTEXCEPTIONMESSAGE(exception) ) : dl32Exception(message) {} \
-										  }; 
+										  DL32EXCEPTION_SUBCLASS_NODOC(exception);
 
                                        
 

@@ -1,8 +1,12 @@
 #ifndef DL32CONFIG_H
 #define DL32CONGIG_H
 
+#pragma once
+
 #include <string>
 using namespace std;
+
+#define TOCSTRING(x) #x
 
 #ifdef _WIN32
 #define DL32COMPILETIME_OS_WINDOWS
@@ -11,23 +15,23 @@ using namespace std;
 #endif //Nota: En teoría solo será compilada en windows o en linux (Incluso por ahora solo en windows).
 
 #ifdef DL32COMPILETIME_OS_WINDOWS
-#define PATHSEPARATOR \\
+#define PATHSEPARATOR_CHAR    '\\'
+#define PATHSEPARATOR_CSTRING "\\"
+const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING; 
 #else
-#define PATHSEPARATOR /
-#endif
-
-const char PATHSEPARATOR_CHAR     = 'PATHSEPARATOR';
-const char* PATHSEPARATOR_CSTRING = "PATHSEPARATOR";
+#define PATHSEPARATOR_CHAR    '/'
+#define PATHSEPARATOR_CSTRING "/"
 const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING;
+#endif
 
 #define FILENAME ( strrchr( __FILE__ , PATHSEPARATOR_CHAR ) ? strrchr( __FILE__ , PATHSEPARATOR_CHAR ) + 1 : __FILE__ )
 
 #define DL32PATHS_ROOT          "code" PATHSEPARATOR_CSTRING
-#define DL32PATHS_HEADERS       DL32PATHS_ROOT "headers" PATHSEPARATOR_CSTRING
+#define DL32PATHS_HEADERS       DL32PATHS_ROOT "headers"  PATHSEPARATOR_CSTRING
 #define DL32PATHS_UTILS_HEADERS DL32PATHS_HEADERS "utils" PATHSEPARATOR_CSTRING
-#define DL32PATHS_SOURCE        DL32PATHS_ROOT "source" PATHSEPARATOR_CSTRING
-#define DL32PATHS_UTILS_SOURCE  DL32PATHS_SOURCE "utils" PATHSEPARATOR_CSTRING
-#define DL32PATHS_TESTS         DL32PATHS_ROOT "tests" PATHSEPARATOR_CSTRING
+#define DL32PATHS_SOURCE        DL32PATHS_ROOT "source"   PATHSEPARATOR_CSTRING
+#define DL32PATHS_UTILS_SOURCE  DL32PATHS_SOURCE "utils"  PATHSEPARATOR_CSTRING
+#define DL32PATHS_TESTS         DL32PATHS_ROOT "tests"    PATHSEPARATOR_CSTRING
 
 /// @brief	unsigned int "shortcut"
 typedef unsigned int uint;
@@ -82,8 +86,8 @@ public:
 	static const float dl32Graphics_d3dVertex_RHW; ///< RHW value of _d3dVertex instances
 };
 
-//OPERADORES LÓGICOS PARA CONFIGURACIÓN:
-////////////////////////////////////////
+//LOGIC OPERATORS (FOR EASY BY PREPROCESSOR CONFIG):
+////////////////////////////////////////////////////
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
@@ -102,7 +106,7 @@ public:
 #define DISABLED FALSE
 #endif
 
-//CONFIGURACIÓN DE PRECISIÓN NUMÉRICA:
+//FLOTATING-POINT COMPARING OPS:
 //////////////////////////////////////
 #define DL32FLOAT_EPSILON dl32GlobalConfig::float_epsilon
 

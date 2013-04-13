@@ -8,6 +8,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <functional>
 
 using namespace std;
 
@@ -51,6 +52,40 @@ struct dl32KeyStrokeData
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	A macro that defines windows procedure arguments types.
+///
+/// @author	Manu 343726
+/// @date	13/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#define WINDOWS_PROCEDURE_ARGS_TYPES HWND , UINT , WPARAM , LPARAM
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	A macro that defines windows procedures arguments.
+/// 		
+/// @param	window 	Handle of the window.
+/// @param	message	System message code.
+/// @param	wParam 	The wParam field of the message.
+/// @param	lParam 	The lParam field of the message.
+///
+/// @author	Manu343726
+/// @date	07/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#define WINDOWS_PROCEDURE_ARGS HWND window , UINT message , WPARAM wParam , LPARAM lParam
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	A macro that defines windows procedure argumments bypass.
+///
+/// @param	window 	Handle of the window.
+/// @param	message	System message code.
+/// @param	wParam 	The wParam field of the message.
+/// @param	lParam 	The lParam field of the message.
+///
+/// @author	Manu343726
+/// @date	07/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#define WINDOWS_PROCEDURE_BYPASS window , message , wParam , lParam
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 cpp_lib32 event type
 /// @details Events are represented as a list of handlers, where handlers are pointers to functions 
 /// 		 that handle the event. This functions always be a void function with cero or one
@@ -73,6 +108,18 @@ public:
 
 	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)(ArgummentsType);
+
+#ifdef __GCC__ //MSVC no implementa todavía template varargs...
+
+	/// @brief	Defines an alias representing type of the dispatcher.
+	typedef std::function<ARGSTYPE , WINDOWS_PROCEDURE_ARGS_TYPES> DispatcherType;
+
+#else          // ... así que me veo obligado a usar feos funteros
+
+	/// @brief	Defines an alias representing type of the dispatcher.
+	typedef ARGSTYPE ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
+
+#endif
 private:
 	vector<HandlerType> _handlers;
 public:
@@ -144,7 +191,13 @@ public:
 	/// @brief	The function passed stops being a handler of the event.
 	/// @param	handler	Function-pointer to the handler.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RemoveHandler(HandlerType handler) {_handlers.erase(handler);}
+	void RemoveHandler(HandlerType handler) 
+	{
+		auto it = std::begin( _handlers );
+
+		if(it = std::find( it , std::end( _handlers ) , handler ) != std::end( _handlers ) )
+			_handlers.erase( it );
+	}
 };
 
 
@@ -197,31 +250,7 @@ typedef dl32NonArgsEvent dl32PaintEvent;      ///< Defines the paint event as a 
 typedef dl32Event<bool> dl32WindowCloseEvent; ///< Window close event. Booleam argumment allows the user to cancel the window close process (Set to true to cancel). 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	A macro that defines windows procedures arguments.
-/// 		
-/// @param	window 	Handle of the window.
-/// @param	message	System message code.
-/// @param	wParam 	The wParam field of the message.
-/// @param	lParam 	The lParam field of the message.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-#define WINDOWS_PROCEDURE_ARGS HWND window , UINT message , WPARAM wParam , LPARAM lParam
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	A macro that defines windows procedure argumments bypass.
-///
-/// @param	window 	Handle of the window.
-/// @param	message	System message code.
-/// @param	wParam 	The wParam field of the message.
-/// @param	lParam 	The lParam field of the message.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-#define WINDOWS_PROCEDURE_BYPASS window , message , wParam , lParam
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 Translates system messages to cpp_lib32 events.
@@ -256,6 +285,20 @@ public:
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	virtual void dispatch(WINDOWS_PROCEDURE_ARGS) = 0;
+};
+
+template<typename EVENTTYPE , EVENTTYPE::DispatcherType DISPATCHFUNCTION>
+class dl32GenericEventDispatcher : public dl32EventDispatcher
+{
+private:
+	EVENTTYPE _event;
+public:
+	dl32GenericEventDispatcher() {}
+
+	void dispatch( WINDOWS_PROCEDURE_ARGS )
+	{
+		_event.RaiseEvent( DISPATCHFUNCTION( WINDOWS_PROCEDURE_BYPASS ) );
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
