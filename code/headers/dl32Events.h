@@ -168,6 +168,18 @@ public:
 
 	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)();
+
+#ifdef __GCC__ //MSVC no implementa todavía template varargs...
+
+	/// @brief	Defines an alias representing type of the dispatcher.
+	typedef std::function<void , WINDOWS_PROCEDURE_ARGS_TYPES> DispatcherType;
+
+#else          // ... así que me veo obligado a usar feos funteros
+
+	/// @brief	Defines an alias representing type of the dispatcher.
+	typedef void ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
+
+#endif
 private:
 	vector<HandlerType> _handlers;
 public:
@@ -195,7 +207,7 @@ public:
 	{
 		auto it = std::begin( _handlers );
 
-		if(it = std::find( it , std::end( _handlers ) , handler ) != std::end( _handlers ) )
+		if( ( it = std::find( it , std::end( _handlers ) , handler ) ) != std::end( _handlers ) )
 			_handlers.erase( it );
 	}
 };
@@ -296,17 +308,18 @@ public:
 /// @tparam	EVENTTYPE			Type of the event to be dispatched.
 /// @tparam	DISPATCHFUNCTION	The dispatch function provided by the user.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename EVENTTYPE , EVENTTYPE::DispatcherType DISPATCHFUNCTION>
+template<typename EVENTARGSTYPE>
 class dl32GenericEventDispatcher : public dl32EventDispatcher
 {
 private:
-	EVENTTYPE _event;
+	dl32Event<EVENTARGSTYPE> _event;
+	typename dl32Event<EVENTARGSTYPE>::DispatcherType _dispatchFunction;
 public:
-	dl32GenericEventDispatcher() {}
+	dl32GenericEventDispatcher(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction) : _dispatchFunction( dispatchFunction ) {}
 
 	void dispatch( WINDOWS_PROCEDURE_ARGS )
 	{
-		_event.RaiseEvent( DISPATCHFUNCTION( WINDOWS_PROCEDURE_BYPASS ) );
+		_event.RaiseEvent( dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
 	}
 };
 
@@ -434,7 +447,8 @@ public:
 	/// @remarks For example: System has three different messages (WM_LBUTTONDOWN , WM_RBUTTONDOWN , 
 	/// 		 WM_MBUTTONDOWN) for mouse down events, one per button. User can define a general 
 	/// 		 MouseDown event that catches this three messages.
-	/// 		 
+	/// 	
+	/// @return	true if all of the system messages provided are not in use. False in other case.	 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool setUpEvent(dl32EventDispatcher* dispatcher,const vector<UINT>& systemMessages);
 
@@ -455,6 +469,40 @@ public:
 	/// @return	true if system message provided is not in use. False in other case.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage);
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Sets up a new high-level event through its dispatcher.
+	/// @details This overloaded version of setUptEvent() sets up a new event dispatcher by a dispatch
+	/// 		 function provided by the user.
+	///
+	/// @author	Manu 343726
+	/// @date	14/04/2013
+	///
+	/// @tparam	typename EVENTARGSTYPE	Type of the event argumments.
+	/// @param	dispatchFunction	The dispatch function.
+	/// @param	systemMessages  	List of system messages codes that raises the new event.
+	///
+	/// @return	true if all of the system messages provided are not in use. False in other case.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	template<typename EVENTARGSTYPE>
+	bool setUpEvent(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction,const vector<UINT>& systemMessages) { setUpEvent( new dl32GenericEventDispatcher<EVENTARGSTYPE>( dispatchFunction ) , systemMessages ); }
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Sets up a new high-level event through its dispatcher.
+	/// @details This overloaded version of setUptEvent() sets up a new event dispatcher by a dispatch
+	/// 		 function provided by the user.
+	///
+	/// @author	Manu 343726
+	/// @date	14/04/2013
+	///
+	/// @tparam	typename EVENTARGSTYPE	Type of the event argumments.
+	/// @param	dispatchFunction	The dispatch function.
+	/// @param	systemMessages  	System message code that raises the new event.
+	///
+	/// @return	true if system message provided is not in use. False in other case.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	template<typename EVENTARGSTYPE>
+	bool setUpEvent(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction , UINT systemMessage) { setUpEvent( new dl32GenericEventDispatcher<EVENTARGSTYPE>( dispatchFunction ) , systemMessage ); }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the specific high-level event.

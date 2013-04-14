@@ -1,9 +1,12 @@
 #ifndef DL32CONSOLE_H
 #define DL32CONSOLE_H
-#include "dl32String.h"
 #include "dl32Math.h"
 #include "dl32Memory.h"
+
 #include <Windows.h>
+#include <string>
+
+using namespace std;
 
 enum dl32ConsoleType
 {
@@ -38,8 +41,6 @@ enum dl32ConsolePalette
 #define DL32CONSOLESETTINGS_COLORMASK_FOREGROUNDONLY 0x00000001
 #define DL32CONSOLESETTINGS_COLORMASK_NOBACKGROUND 0x11111101
 #define DL32CONSOLESETTINGS_COLORMASK_BACKGROUNDONLY 0x00000010
-
-const dl32String dl32endl=dl32String(DL32TRING_ENDLINE);
 
 //DECLARACI�N E IMPLEMENTACI�N (INLINE) DE EXCEPCIONES:
 ///////////////////////////////////////////////////////

@@ -1,5 +1,7 @@
 #include "IsometricEngine.h"
 
+#if DL32TESTS_CURRENTTEST == DL32TEST_ISOMETRICENGINE_ENGINETEST
+
 IsometricTilemap::IsometricTilemap(int width,int height,int screenWidth,int screenHeight,int tileWidth,int tileHeight)
 {
 	_width=width;
@@ -260,3 +262,5 @@ dl32Point3D IsometricTilemap::baricentricCoordinates(dl32Point2D v1, dl32Point2D
 
 	return coords;
 }
+
+#endif

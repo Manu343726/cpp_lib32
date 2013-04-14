@@ -1,6 +1,10 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
+#include "dl32TestConfig.h"
+
+#if DL32TESTS_CURRENTTEST == DL32TEST_MANDELBROTFRACTAL_SIMPLETEST
+
 #include "dl32Graphics.h"
 
 #define MANDELBROT_DEFAULTSTEP 0.003
@@ -66,4 +70,5 @@ public:
 	ComplexNumber GetNumber(dl32Point2D pixel){return ComplexNumber(origin.a+pixel.x*stepx,origin.b+pixel.y*stepy);}
 };
 
+#endif
 #endif

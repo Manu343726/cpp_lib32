@@ -6,9 +6,11 @@ using namespace std;
 LRESULT CALLBACK dl32WindowsManager::_WindowProcedure( WINDOWS_PROCEDURE_ARGS )
 {
 	EventsManager.dispatch( WINDOWS_PROCEDURE_BYPASS );
+
+	return DefWindowProc( WINDOWS_PROCEDURE_BYPASS );
 }
 
-void dl32Window::_setup(const string& title , uint width , uint height , uint left , uint top , bool isNewWindow = true)
+void dl32Window::_setup(const string& title , uint width , uint height , uint left , uint top , bool isNewWindow)
 {
 	if(isNewWindow)
 	{

@@ -1,6 +1,10 @@
 #ifndef PARTICLEENGINE_H
 #define PARTICLEENGINE_H
 
+#include "dl32TestConfig.h"
+
+#if DL32TESTS_CURRENTTEST == DL32TEST_PARTICLEENGINE_SIMPLETEST
+
 #include "dl32Math.h"
 #include "dl32Graphics.h"
 
@@ -87,4 +91,5 @@ public:
 	EngineBorderMode GetNorderMode(){return mode;}
 };
 
+#endif
 #endif

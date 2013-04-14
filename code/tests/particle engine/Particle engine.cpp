@@ -1,5 +1,7 @@
 #include "Particle engine.h"
 
+#if DL32TESTS_CURRENTTEST == DL32TEST_PARTICLEENGINE_SIMPLETEST
+
 void dl32ParticleEmmitter::Emmit(dl32ParticleData *data,dl32Particle *particle)
 {
 	float angle=RANDOMFLOAT(0,PI2);
@@ -142,3 +144,5 @@ bool dl32ParticleSystem::MoveHole(int Hole,dl32Point2D position)
 	else
 		return false;
 }
+
+#endif

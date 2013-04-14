@@ -1,4 +1,4 @@
-#include "dl32Config.h"
+#include "dl32TestConfig.h"
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_MANDELBROTFRACTAL_SIMPLETEST
 #include "MandelbrotEngine.h"

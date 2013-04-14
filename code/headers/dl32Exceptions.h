@@ -12,11 +12,13 @@
 														  /##/##/ @date	11/04/2013                                                                                                                                                                                                                                                                                   \
 														  /##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/##/
 
-#define DL32EXCEPTION_SUBCLASS_NODOC(exception) class exception : public dl32Exception       \
-										        {                                            \
-										        public:                                      \
-											       exception( const MessageType& message = DEFAULTEXCEPTIONMESSAGE(exception) ) : dl32Exception(message) {} \
-										        }; 
+#define DL32EXCEPTION_SUBCLASS_GENERIC_NODOC(exception , base) class exception : public base                \
+										                       {                                            \
+										                       public:                                      \
+											                      exception( const MessageType& message = DEFAULTEXCEPTIONMESSAGE(exception) ) : base(message) {} \
+										                       }; 
+
+#define DL32EXCEPTION_SUBCLASS_NODOC(exception) DL32EXCEPTION_SUBCLASS_GENERIC_NODOC(exception , dl32Exception);
 
 #define DL32EXCEPTION_SUBCLASS(exception) DL32EXCEPTION_SUBCLASS_DEFAULTDOC(exception) \
 										  DL32EXCEPTION_SUBCLASS_NODOC(exception);

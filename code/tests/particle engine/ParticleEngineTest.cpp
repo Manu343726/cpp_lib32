@@ -1,9 +1,10 @@
+#include "dl32TestConfig.h"
+
+#if DL32TESTS_CURRENTTEST == DL32TEST_ISOMETRICENGINE_ENGINETEST
+
 #include "Particle engine.h"
-#include "dl32Config.h"
 #include "dl32Window.h"
 #include "dl32Console.h"
-
-#if DL32TESTS_CURRENTTEST == 4
 
 dl32ParticleSystem *engine;
 dl32Window *Window;

@@ -4,7 +4,6 @@
 #include <Windows.h>
 #include <string>
 #include "dl32Events.h"
-#include "dl32String.h"
 #include "dl32Math.h"
 #include "dl32Exceptions.h"
 

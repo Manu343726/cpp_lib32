@@ -34,6 +34,9 @@
     <Filter Include="Tests\ParticleEngine">
       <UniqueIdentifier>{ce245262-6693-42bf-b5a9-01ffec8c884d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tests\Refactoring">
+      <UniqueIdentifier>{e15f7bff-95c2-4b4f-896f-341cdfa79bf6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\headers\utils\dl32Config.h">
@@ -45,25 +48,13 @@
     <ClInclude Include="code\headers\utils\dl32Timing.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="code\headers\utils\dl32Utils3D.h">
-      <Filter>Headers\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="code\headers\dl32Color.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="code\headers\dl32Console.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="code\headers\dl32Exceptions.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="code\headers\dl32Graphics.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="code\headers\dl32Math.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="code\headers\dl32String.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="code\headers\dl32Window.h">
@@ -75,14 +66,14 @@
     <ClInclude Include="code\tests\isometric tilemap\IsometricEngine.h">
       <Filter>Tests\Isometric tilemap</Filter>
     </ClInclude>
-    <ClInclude Include="code\tests\particle engine\Particle engine.h">
-      <Filter>Tests\ParticleEngine</Filter>
-    </ClInclude>
     <ClInclude Include="code\tests\dl32TestConfig.h">
       <Filter>Tests</Filter>
     </ClInclude>
     <ClInclude Include="code\headers\dl32Events.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="code\tests\particle engine\Particle engine.h">
+      <Filter>Tests\ParticleEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,22 +83,10 @@
     <ClCompile Include="code\source\utils\dl32Timing.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="code\source\utils\dl32Utils3D.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="code\source\dl32Color.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="code\source\dl32Console.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="code\source\dl32Graphics.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="code\source\dl32Math.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="code\source\dl32String.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="code\source\dl32Window.cpp">
@@ -152,8 +131,5 @@
     <ClCompile Include="code\source\dl32Events.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

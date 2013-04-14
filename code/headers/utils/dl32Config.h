@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 using namespace std;
 
 #define TOCSTRING(x) #x
@@ -35,6 +36,14 @@ const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING;
 
 /// @brief	unsigned int "shortcut"
 typedef unsigned int uint;
+
+template<typename T>
+std::string& to_string(const T& value)
+{
+	stringstream stream;
+	stream << value;
+	return stream.str();
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	cpp_lib32 global configuration.

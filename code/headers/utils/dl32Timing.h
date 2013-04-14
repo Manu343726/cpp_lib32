@@ -1,7 +1,15 @@
-#include "dl32Console.h"
+//#include "dl32Console.h"
 
 #ifndef DL32TIMING_H
 #define DL32TIMING_H
+
+#include "dl32Config.h"
+
+#include <Windows.h>
+#include <string>
+#include <vector>
+
+using namespace std;
 
 struct dl32TimingFrame
 {
@@ -26,7 +34,7 @@ private:
 	dl32TimingTreeNode* _parent;
 public: 
 	dl32TimingTreeNode() : _parent(NULL) , _frame(-1) {}
-	dl32TimingTreeNode(dl32TimingTreeNode* parent, int frame) : _parente(parent) , _frame(frame) {}
+	dl32TimingTreeNode(dl32TimingTreeNode* parent, int frame) : _parent(parent) , _frame(frame) {}
 	~dl32TimingTreeNode();
 	
 	bool isRoot() const {return _parent == NULL;}

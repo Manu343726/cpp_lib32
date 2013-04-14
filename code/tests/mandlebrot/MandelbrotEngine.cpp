@@ -1,5 +1,7 @@
 #include "MandelbrotEngine.h"
 
+#if DL32TESTS_CURRENTTEST == DL32TEST_MANDELBROTFRACTAL_SIMPLETEST
+
 MandelbrotEngine::MandelbrotEngine(dl32AABB2D screenarea,float step, int iterations, float limit)
 {
 	width=screenarea.GetWidth();
@@ -61,3 +63,5 @@ void MandelbrotEngine::Refresh(dl32GraphicsClass* gfx)
 	gfx->DRAW_Pixels(screen,0,0,width,height);
 	gfx->Frame();
 }
+
+#endif

@@ -35,10 +35,6 @@ void dl32Timing::push(char* function)
 		_actual = &_root;
 	}
 
-	#if DL32DEBUG_TIMING_PROMPTPUSH
-	Console.WriteLine("Starting '" + dl32String(function) + "' ... (stackDepth: " + dl32String((int)_timingStack.size()) + ")",DL32CP_GRAY);
-	#endif
-
 	dl32TimingTreeNode* newActual = new dl32TimingTreeNode(_actual,_frames.size());
 	_actual->add(newActual);
 	_actual = newActual;
@@ -56,11 +52,6 @@ void dl32Timing::pop()
 
 		_frames[_timingStack.back()].Finalize(end);
 
-		#if DL32DEBUG_TIMING_PROMPTPOP
-			Console.WriteLine("Exiting '" + dl32String(_frames[_timingStack.back()].function) + "' (" + dl32String(_frames[_timingStack.back()].lapse) + " ms)",DL32CP_GRAY);
-		#endif
-
-		
 		_timingStack.pop_back();
 
 		if(!_actual->isRoot())

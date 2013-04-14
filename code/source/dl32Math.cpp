@@ -1,6 +1,5 @@
 #include "dl32Math.h"
-#include "dl32String.h"
-#include "dl32Console.h"
+//#include "dl32Console.h"
 #include <cmath>
 #include <cfloat>
 
@@ -691,7 +690,7 @@ dl32Transformation3D::dl32Transformation3D(float m11,float m12,float m13,float m
 	this->m41=m41;this->m42=m42;this->m43=m43;this->m44=m44;
 }
 
-dl32Transformation3D::dl32Transformation3D(dl32Matrix4x4 &matrix)
+dl32Transformation3D::dl32Transformation3D(const dl32Matrix4x4 &matrix)
 {
 	this->m11=matrix.m11;this->m12=matrix.m12;this->m13=matrix.m13;this->m14=matrix.m14;
 	this->m21=matrix.m21;this->m22=matrix.m22;this->m23=matrix.m23;this->m24=matrix.m24;
@@ -893,7 +892,7 @@ float dl32Matrix::At(int row,int column)throw(dl32OutOfRangeException)
 		throw dl32OutOfRangeException(dl32Range(rows),row,"dl32Matrix::At(int row,int column): 'row' is out of range");
 }
 
-dl32MatrixRow dl32Matrix::operator[](int row)throw(dl32OutOfRangeException)
+dl32MatrixRow dl32Matrix::operator[](int row) const throw(dl32OutOfRangeException)
 {
 	if(row>=0 && row<rows)
 		return Array[row];
@@ -1341,17 +1340,6 @@ void dl32EcuationsSystem::Dispose()
 dl32EcuationsSystem::~dl32EcuationsSystem()
 {
 	Dispose();
-}
-
-void PrintMatrix(dl32Matrix &matrix)
-{
-	for(int i=0;i<matrix.GetRowsCount();++i)
-	{
-		for(int j=0;j<matrix.GetColumnsCount();++j)
-			Console << " " << dl32String(matrix[i][j],2) << " ";
-
-		Console << dl32endl;
-	}
 }
 
 dl32Spline::dl32Spline(dl32Point2D* Nodes,int Count)

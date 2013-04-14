@@ -1,7 +1,8 @@
-#include "IsometricEngine.h"
+#include "dl32TestConfig.h"
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_ISOMETRICENGINE_ENGINETEST
-	
+#include "IsometricEngine.h"
+
 dl32GraphicsClass* gfx;
 dl32Window* window;
 

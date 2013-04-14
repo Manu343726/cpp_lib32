@@ -1,3 +1,9 @@
+#pragma once
+
+#include "dl32TestConfig.h"
+
+#if DL32TESTS_CURRENTTEST == DL32TEST_ISOMETRICENGINE_ENGINETEST
+
 #include "dl32Graphics.h"
 #include "dl32Math.h"
 #include "dl32Console.h"
@@ -116,3 +122,5 @@ public:
 
 	int visibleTilesCount()                           const {return _visibleCount;}
 };
+
+#endif

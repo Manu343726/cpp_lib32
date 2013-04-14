@@ -4,8 +4,8 @@
 #include <vector>
 #include "dl32Config.h"
 #include "dl32Exceptions.h"
-#include "dl32String.h"
 #include <cmath>
+#include <string>
 
 using namespace std;
 
@@ -32,11 +32,7 @@ float DL32FLOAT_INVSQRT(float x);
 //////////////////////////////////////
 ///A base for dx_lib32 math exceptions
 //////////////////////////////////////
-class dl32MathException:public dl32Exception
-{
-public:
-	dl32MathException(const char* message = DEFAULTEXCEPTIONMESSAGE(dl32MathException)):dl32Exception(message){}
-};
+DL32EXCEPTION_SUBCLASS_NODOC(dl32MathException);
 
 ///////////////////////////////////////
 ///Represents a math overflow exception
@@ -240,14 +236,14 @@ public:
 	void Dispose();
 	~dl32Matrix();
 
-	bool Ready(){return Array!=NULL;}
+	bool Ready() const {return Array!=NULL;}
 
 	float At(int row,int column)throw(dl32OutOfRangeException);
-	dl32MatrixRow operator[](int row)throw(dl32OutOfRangeException);
+	dl32MatrixRow operator[](int row) const throw(dl32OutOfRangeException);
 
-	int GetColumnsCount(){return columns;}
-	int GetRowsCount(){return rows;}
-	bool IsSquare(){return rows==columns;}
+	int GetColumnsCount() const {return columns;}
+	int GetRowsCount() const {return rows;}
+	bool IsSquare() const {return rows==columns;}
 
 	dl32MatrixColumn GetColumn(int column)throw(dl32OutOfRangeException);
 	dl32MatrixRow GetRow(int row)throw(dl32OutOfRangeException);
@@ -396,7 +392,7 @@ struct dl32Point2D
 
 	static float GetSignedArea(dl32Point2D P1, dl32Point2D P2, dl32Point2D P3)        {return (P2.x-P1.x)*(P3.y-P1.y) - (P3.x-P1.x)*(P2.y-P1.y);}
 
-	dl32String toString()                                 const                       {return "{" + (dl32String)x + "," + (dl32String)y + "}";}
+	std::string toString()                                 const                      {return "{" + to_string(x) + "," + to_string(y) + ")";}
 };
 
 //////////////////////////////////
