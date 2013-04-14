@@ -3,6 +3,26 @@
 
 using namespace std;
 
+/*********************************
+* dl32Window static fields setup *
+*********************************/
+bool dl32Window::_windowClassRegistered = false;
+const dl32WindowHandle dl32Window::INVALID_WINDOW_HANDLE = (dl32WindowHandle)NULL;
+const WNDCLASS dl32Window::WINDOWCLASS = 
+{
+	CS_DBLCLKS ,                                        //(Style) Window captures double-click messages
+	(WNDPROC)dl32WindowsManager::getWindowProcedure() , //(Window proc)
+	0,                                                  //(cbClsExtra) No extra information
+	0,                                                  //(cbWndExtra) No extra information
+	(HINSTANCE)NULL,                                    //(hInstance)
+	LoadIcon (NULL, IDI_APPLICATION),                   //(hIcon)
+	LoadCursor (NULL, IDC_ARROW),                       //(hCursor)
+	(HBRUSH)NULL,                                       //(hBrush)
+	(LPCTSTR)NULL,                                      //(MenuName)
+	(LPCTSTR)"cpp_lib32"                                //(WindowClassName)
+};
+
+
 LRESULT CALLBACK dl32WindowsManager::_WindowProcedure( WINDOWS_PROCEDURE_ARGS )
 {
 	EventsManager.dispatch( WINDOWS_PROCEDURE_BYPASS );

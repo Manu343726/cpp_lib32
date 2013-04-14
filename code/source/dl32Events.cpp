@@ -1,6 +1,7 @@
 #include "dl32Events.h"
 
 #include <unordered_set>
+#include <WindowsX.h>
 
 using namespace std;
 
@@ -83,62 +84,32 @@ void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wPara
 **********************************************************/
 void dl32SystemEventsManager::setUpDefaultEvents()
 {
-	vector<UINT> messages;
 
-	//NOTA: Por ahora solo son estos tres, son solo de ejemplo.
+}
 
-	/* Mouse move event: */
+dl32MouseData dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_ARGS )
+{
+	dl32MouseData Data;
 
-	class MouseMoveEventDispatcher :  public dl32EventDispatcher
+	switch(wParam)
 	{
-	private:
-		dl32MouseMoveEvent _event;
-	public:
-		void dispatch(WINDOWS_PROCEDURE_ARGS)
-		{
-			_event.RaiseEvent( dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_BYPASS ) );
-		}
-	};
+	case MK_RBUTTON:
+		Data.Button = dl32MouseButton::RIGHT;
+		break;
+	case MK_MBUTTON:
+		Data.Button = dl32MouseButton::CENTER;
+		break;
+	case MK_LBUTTON:
+		Data.Button = dl32MouseButton::LEFT;
+		break;
+	default:
+		Data.Button = dl32MouseButton::NONE;
+		break;
+	}
 
-	setUpEvent( new MouseMoveEventDispatcher() , WM_MOUSEMOVE );
+	Data.Location.x = GET_X_LPARAM(lParam);
+	Data.Location.y = GET_Y_LPARAM(lParam);
+	Data.Delta      = GET_WHEEL_DELTA_WPARAM(wParam);
 
-
-	/* Mouse down event: */
-
-	class MouseDownEventDispatcher :  public dl32EventDispatcher
-	{
-	private:
-		dl32MouseDownEvent _event;
-	public:
-		void dispatch(WINDOWS_PROCEDURE_ARGS)
-		{
-			_event.RaiseEvent( dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_BYPASS ) );
-		}
-	};
-
-	//Si pudiera usar std::initializer_list sería perfecto...
-	messages.clear();
-	messages.push_back(WM_LBUTTONDOWN); messages.push_back(WM_MBUTTONDOWN); messages.push_back(WM_RBUTTONDOWN);
-
-	setUpEvent( new MouseDownEventDispatcher() , messages );
-
-
-	/* Mouse up event: */
-
-	class MouseUpEventDispatcher :  public dl32EventDispatcher
-	{
-	private:
-		dl32MouseUpEvent _event;
-	public:
-		void dispatch(WINDOWS_PROCEDURE_ARGS)
-		{
-			_event.RaiseEvent( dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_BYPASS ) );
-		}
-	};
-
-	//Si pudiera usar std::initializer_list sería perfecto...
-	messages.clear();
-	messages.push_back(WM_LBUTTONUP); messages.push_back(WM_MBUTTONUP); messages.push_back(WM_RBUTTONUP);
-
-	setUpEvent( new MouseUpEventDispatcher() , messages );
+	return Data;
 }

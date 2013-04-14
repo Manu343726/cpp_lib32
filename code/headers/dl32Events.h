@@ -106,6 +106,9 @@ public:
 	/// @brief	Defines an alias representing type of event argumments.
 	typedef ARGSTYPE& ArgummentsType;
 
+	/// @brief	Defines an alias representing the argumments type without reference.
+	typedef ARGSTYPE ArgummentsType_NoRef;
+
 	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)(ArgummentsType);
 
@@ -281,7 +284,7 @@ public:
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual ~dl32EventDispatcher() = 0;
+	virtual ~dl32EventDispatcher() {};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the high-level event.
@@ -311,15 +314,46 @@ public:
 template<typename EVENTARGSTYPE>
 class dl32GenericEventDispatcher : public dl32EventDispatcher
 {
+	friend class dl32SystemEventsManager;
 private:
 	dl32Event<EVENTARGSTYPE> _event;
 	typename dl32Event<EVENTARGSTYPE>::DispatcherType _dispatchFunction;
 public:
-	dl32GenericEventDispatcher(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction) : _dispatchFunction( dispatchFunction ) {}
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Constructor.
+	///
+	/// @author	Manu 343726
+	/// @date	14/04/2013
+	///
+	/// @param	dispatchFunction	The dispatch function.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	dl32GenericEventDispatcher(typename dl32Event<EVENTARGSTYPE>::DispatcherType dispatchFunction) : _dispatchFunction( dispatchFunction ) {}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Destructor.
+	///
+	/// @author	Manu 343726
+	/// @date	14/04/2013
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	~dl32GenericEventDispatcher() {}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Gets a windows message data and raises the high-level event.
+	/// @details This function performs any data-translation operations and raises the high-level event 
+	/// 		 with the translated data as event args.
+	/// 		
+	/// @param	window 	Handle of the window.
+	/// @param	message	System message code.
+	/// @param	wParam 	The wParam field of the message.
+	/// @param	lParam 	The lParam field of the message.
+	/// 				
+	/// @author	Manu343726
+	/// @date	07/04/2013
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void dispatch( WINDOWS_PROCEDURE_ARGS )
 	{
-		_event.RaiseEvent( dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
+		_event.RaiseEvent( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
 	}
 };
 
@@ -484,8 +518,8 @@ public:
 	///
 	/// @return	true if all of the system messages provided are not in use. False in other case.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename EVENTARGSTYPE>
-	bool setUpEvent(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction,const vector<UINT>& systemMessages) { setUpEvent( new dl32GenericEventDispatcher<EVENTARGSTYPE>( dispatchFunction ) , systemMessages ); }
+	template<typename EVENTTYPE>
+	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , const vector<UINT>& systemMessages) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType>( dispatchFunction ) , systemMessages ); }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Sets up a new high-level event through its dispatcher.
@@ -495,14 +529,14 @@ public:
 	/// @author	Manu 343726
 	/// @date	14/04/2013
 	///
-	/// @tparam	typename EVENTARGSTYPE	Type of the event argumments.
+	/// @tparam	typename EVENTARGSTYPE	Type of the event.
 	/// @param	dispatchFunction	The dispatch function.
 	/// @param	systemMessages  	System message code that raises the new event.
 	///
 	/// @return	true if system message provided is not in use. False in other case.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename EVENTARGSTYPE>
-	bool setUpEvent(const typename dl32Event<EVENTARGSTYPE>::DispatcherType& dispatchFunction , UINT systemMessage) { setUpEvent( new dl32GenericEventDispatcher<EVENTARGSTYPE>( dispatchFunction ) , systemMessage ); }
+	template<typename EVENTTYPE>
+	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , UINT systemMessage) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>( dispatchFunction ) , systemMessage ); }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the specific high-level event.
