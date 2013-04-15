@@ -82,20 +82,6 @@ void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wPara
 		it->second->dispatch( window , message , wParam , lParam );
 }
 
-/**********************************************************************************************************
-* Busca el dispatcher correspondiente al system message especificado y devuelve el evento correspondiente *
-**********************************************************************************************************/
-template<class EVENTTYPE>
-EVENTTYPE& dl32SystemEventsManager::getEvent(UINT systemMessage) throw ( dl32NoSuchEventException )
-{
-	auto it = _dispatchers.find( systemMessage );
-
-	if( it != std::end( _dispatchers ) )
-		return reinterpret_cast<typename dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>*>(it->second)->_event;
-	else
-		throw dl32NoSuchEventException();
-}
-
 /**********************************************************
 * Configura el conjunto de eventos predefinidos en la API *
 **********************************************************/

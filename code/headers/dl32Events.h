@@ -571,7 +571,15 @@ public:
 	/// @return	A reference to the event.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<class EVENTTYPE>
-	EVENTTYPE& getEvent(UINT systemMessage) throw ( dl32NoSuchEventException );
+	EVENTTYPE& getEvent(UINT systemMessage) throw ( dl32NoSuchEventException )
+	{
+		auto it = _dispatchers.find( systemMessage );
+
+		if( it != std::end( _dispatchers ) )
+			return reinterpret_cast<typename dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>*>(it->second)->_event;
+		else
+			throw dl32NoSuchEventException();
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the specific high-level event.
