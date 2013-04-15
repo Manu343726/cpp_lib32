@@ -5,6 +5,9 @@
 
 using namespace std;
 
+//Singleton instance:
+dl32SystemEventsManager* dl32SystemEventsManager::_instance = nullptr;
+
 /***************************************************************************
 * Deletes event dispatchers pointed by every pointer stored in the hashmap *
 ***************************************************************************/
@@ -77,6 +80,20 @@ void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wPara
 
 	if( it != _dispatchers.end() )
 		it->second->dispatch( window , message , wParam , lParam );
+}
+
+/**********************************************************************************************************
+* Busca el dispatcher correspondiente al system message especificado y devuelve el evento correspondiente *
+**********************************************************************************************************/
+template<class EVENTTYPE>
+EVENTTYPE& dl32SystemEventsManager::getEvent(UINT systemMessage) throw ( dl32NoSuchEventException )
+{
+	auto it = _dispatchers.find( systemMessage );
+
+	if( it != std::end( _dispatchers ) )
+		return reinterpret_cast<typename dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>*>(it->second)->_event;
+	else
+		throw dl32NoSuchEventException();
 }
 
 /**********************************************************

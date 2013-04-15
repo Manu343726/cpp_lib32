@@ -398,6 +398,8 @@ public:
 	static dl32KeyStrokeData getKeyStrokeData(WINDOWS_PROCEDURE_ARGS);
 };
 
+DL32EXCEPTION_SUBCLASS_NODOC(dl32NoSuchEventException);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 cpp_lib32 high-level events manager.
 /// @details Any cpp_lib32 event that acts as a wrapper of a system message (Or messages), are managed
@@ -421,12 +423,24 @@ private:
 	void setUpDefaultEvents();
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Copy constructor. Private, dl32SystemEventsManager implements singleton design pattern.
+	///
+	/// @author	Manu
+	/// @date	15/04/2013
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	dl32SystemEventsManager( const dl32SystemEventsManager& ) {};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Default constructor. Private, dl32SystemEventsManager implements singleton design pattern.
 	///
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	dl32SystemEventsManager() {}
+
+	static dl32SystemEventsManager* _instance;
+
+	static void destroyInstance() { delete _instance; _instance = nullptr; }
 public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Destructor.
@@ -445,11 +459,15 @@ public:
 	/// @return	.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	static dl32SystemEventsManager& instance()
-	{ 
-		//http://stackoverflow.com/questions/1008019/c-singleton-design-pattern
-		static dl32SystemEventsManager instance;
+	{
+		if( _instance == nullptr )
+		{
+			_instance = new dl32SystemEventsManager();
 
-		return instance;
+			atexit( destroyInstance );
+		}
+
+		return *_instance;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -537,6 +555,23 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename EVENTTYPE>
 	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , UINT systemMessage) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>( dispatchFunction ) , systemMessage ); }
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Gets a reference to the event that wraps a specific system message.
+	///
+	/// @author	Manu
+	/// @date	15/04/2013
+	///
+	/// @exception	dl32NoSuchEventException	Thrown when there is not any event that wraps the provided
+	/// 										system message at the manager.
+	///
+	/// @tparam	EVENTTYPE	Type of the event.
+	/// @param	systemMessage	System message code.
+	///
+	/// @return	A reference to the event.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	template<class EVENTTYPE>
+	EVENTTYPE& getEvent(UINT systemMessage) throw ( dl32NoSuchEventException );
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets a windows message data and raises the specific high-level event.
