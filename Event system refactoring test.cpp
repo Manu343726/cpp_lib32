@@ -19,10 +19,9 @@ int main()
 	
 	dl32SystemEventsManager::instance().setUpEvent<dl32MouseMoveEvent>( dispatchFunction , WM_MOUSEMOVE );
 
-	auto manager = dl32SystemEventsManager::instance();
 	
-	manager.setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_RBUTTONDOWN );
-	manager.setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_LBUTTONDOWN );
+	dl32SystemEventsManager::instance().setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_RBUTTONDOWN );
+	dl32SystemEventsManager::instance().setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_LBUTTONDOWN );
 }
 
 #endif

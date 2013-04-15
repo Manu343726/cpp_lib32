@@ -5,6 +5,9 @@
 
 using namespace std;
 
+//Singleton instance:
+dl32SystemEventsManager* dl32SystemEventsManager::_instance = nullptr;
+
 /***************************************************************************
 * Deletes event dispatchers pointed by every pointer stored in the hashmap *
 ***************************************************************************/
