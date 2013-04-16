@@ -47,7 +47,7 @@ bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const 
 {
 	if(systemMessages.empty()) return false;
 
-	for(auto it = systemMessages.begin() ; it != systemMessages.end() ; it++)
+	for(auto it = std::begin( systemMessages ) ; it != std::end( systemMessages ) ; it++)
 		if( _dispatchers.find(*it) != _dispatchers.end() )
 			return false;
 		else
@@ -61,7 +61,7 @@ bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const 
 ****************************************************************************/
 bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage)
 {
-	if( _dispatchers.find(systemMessage) == _dispatchers.end() )
+	if( _dispatchers.find(systemMessage) == std::end( _dispatchers ) )
 	{
 		_dispatchers.insert( unordered_map<UINT , dl32EventDispatcher*>::value_type(systemMessage , dispatcher) );
 
@@ -78,7 +78,7 @@ void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wPara
 {
 	auto it = _dispatchers.find(message);
 
-	if( it != _dispatchers.end() )
+	if( it != std::end( _dispatchers ) )
 		it->second->dispatch( window , message , wParam , lParam );
 }
 
