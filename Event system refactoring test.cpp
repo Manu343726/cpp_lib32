@@ -3,6 +3,7 @@
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_EVENTSSYSTEM
 
+#include "dl32Window.h"
 #include "dl32Events.h"
 #include "dl32Config.h"
 
@@ -13,6 +14,11 @@
 
 using namespace std;
 
+void OnMouseMove(dl32MouseMoveEvent::ArgummentsType)
+{
+	cout << "MouseDown!" << endl;
+}
+
 int main()
 {
 	auto dispatchFunction = [] ( WINDOWS_PROCEDURE_ARGS ) { return dl32SystemMessagesDataTranslator::getMouseData ( WINDOWS_PROCEDURE_BYPASS ); };
@@ -22,9 +28,13 @@ int main()
 	dl32SystemEventsManager::instance().setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_RBUTTONDOWN );
 	dl32SystemEventsManager::instance().setUpEvent<dl32MouseDownEvent>( dl32SystemMessagesDataTranslator::getMouseData , WM_LBUTTONDOWN );
 
-	auto MouseDownEvent = dl32SystemEventsManager::instance().getEvent<dl32MouseDownEvent>( WM_RBUTTONDOWN );
+	auto MouseDownEvent = dl32SystemEventsManager::instance().getEvent<dl32MouseMoveEvent>( WM_MOUSEMOVE );
 
-	MouseDownEvent.AddHandler( [](dl32MouseDownEvent::ArgummentsType) { /* MouseDown!!! */ } );
+	MouseDownEvent.AddHandler( OnMouseMove );
+
+	dl32Window* window = new dl32Window("cpp_lib32");
+
+	dl32WindowsManager::instance().start();
 }
 
 #endif

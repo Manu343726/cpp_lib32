@@ -3,6 +3,9 @@
 
 using namespace std;
 
+/// @brief	The cpp_lib32 windows manager singleton instance.
+dl32WindowsManager* dl32WindowsManager::_instance = nullptr;
+
 /*********************************
 * dl32Window static fields setup *
 *********************************/
@@ -48,6 +51,22 @@ void dl32Window::_setup(const string& title , uint width , uint height , uint le
 	else
 		SetWindowLongPtr( _handle , GWL_WNDPROC , dl32WindowsManager::getWindowProcedure()); //Reestablece el procedimiento de ventana (Puede que la ventana no la hayamos creado nosotros y por tanto no use nuestro procedimiento de ventana).
 
-	SetWindowLongPtr( _handle , GWLP_USERDATA , (LONG_PTR)this ); //Guardamos en el user data de la ventana la instancia de su wrapper.
-                                                                  //Así podemos obtener facilmente la instancia de dl32Window asociada a una ventana ( Ver implementación de dl32WindowsManager::getWindow() )
+	SetWindowLongPtr( _handle , GWLP_USERDATA , reinterpret_cast<LONG_PTR>(this) ); //Guardamos en el user data de la ventana la instancia de su wrapper.
+                                                                                    //Así podemos obtener facilmente la instancia de dl32Window asociada a una ventana ( Ver implementación de dl32WindowsManager::getWindow() )
+
+	ShowWindow( _handle , SW_SHOW );
+}
+
+void dl32WindowsManager::_messageLoop()
+{
+	while( _processingMessages )
+	{
+		MSG message;
+
+		if( PeekMessage( &message , NULL , 0 , 0 , PM_REMOVE ) == TRUE )
+		{
+			TranslateMessage(&message);
+			DispatchMessage(&message);
+		}
+	}
 }
