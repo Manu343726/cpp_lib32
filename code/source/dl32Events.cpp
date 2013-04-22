@@ -16,9 +16,9 @@ dl32SystemEventsManager::~dl32SystemEventsManager()
 	/*****************************************************************************
 	* Hay que recordar que un evento puede envolver ("wrappear") a varios system *
 	* messages, lo que implica que diferentes system messages (Diferentes claves *
-	* del hashmap) guardarán el mismo puntero.                                   *
+	* del hashmap) guardarï¿½n el mismo puntero.                                   *
 	*                                                                            *
-	* Por esta razón, hay que tener cuidado de no eliminar dos veces el mismo    *
+	* Por esta razï¿½n, hay que tener cuidado de no eliminar dos veces el mismo    *
 	* puntero. Para ello, se provee de otra hashmap con clave/valor el puntero   *
 	* (Si la clave/puntero esta en el hashmap, este ya ha sido eliminado)        *
 	*****************************************************************************/
@@ -37,8 +37,8 @@ dl32SystemEventsManager::~dl32SystemEventsManager()
 }
 
 /*****************************************************************************************************
-* Básicamente comprueba que no existe  ningún evento en el manager asociado a los mensajes, y de ser *
-* así, inserta un par (systemMessage , eventDispatcher) en la tabla para cada mensaje. Recordemos    *
+* Bï¿½sicamente comprueba que no existe  ningï¿½n evento en el manager asociado a los mensajes, y de ser *
+* asï¿½, inserta un par (systemMessage , eventDispatcher) en la tabla para cada mensaje. Recordemos    *
 * que un evento puede ser lanzado por varios system messages diferentes. Para ello el hashmap        *
 * contiene una entrada por cada mensaje, todas ellas asociadas al mismo dispatcher (Diferentes       *
 * claves, mismo valor).                                                                              *
@@ -57,7 +57,7 @@ bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher, const 
 }
 
 /****************************************************************************
-* Sobrecarga de la función anterior, para un solo system message por evento *
+* Sobrecarga de la funciï¿½n anterior, para un solo system message por evento *
 ****************************************************************************/
 bool dl32SystemEventsManager::setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage)
 {
@@ -87,7 +87,18 @@ void dl32SystemEventsManager::dispatch(HWND window , UINT message , WPARAM wPara
 **********************************************************/
 void dl32SystemEventsManager::setUpDefaultEvents()
 {
+	/* TODO */
+}
 
+dl32KeyStrokeData dl32SystemMessagesDataTranslator::getKeyStrokeData( WINDOWS_PROCEDURE_ARGS )
+{
+	dl32KeyStrokeData Data;
+
+	Data.Key=char(wParam);
+	Data.PreviousPressed=((lParam >> 30)%2)!=0;//Miguel y Laura, mi cerebro se licua con las operaciones a bits
+	Data.RepeatCount=lParam & 0x00007FFF; //00000000000000000111111111111111
+
+	return Data;
 }
 
 dl32MouseData dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_ARGS )
@@ -114,5 +125,5 @@ dl32MouseData dl32SystemMessagesDataTranslator::getMouseData( WINDOWS_PROCEDURE_
 	Data.Location.y = GET_Y_LPARAM(lParam);
 	Data.Delta      = GET_WHEEL_DELTA_WPARAM(wParam);
 
-	return Data;
+	return dl32MouseData( Data.Location , Data.Button , Data.Delta );
 }

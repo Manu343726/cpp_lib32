@@ -219,7 +219,7 @@ protected:
 
 	void RowMul(int row, float mul);
 	void RowAdd(int source_row,int aux_row,float aux_mul=1);
-	void RowSwap(int row1,int row2);
+	void RowSwap(int row1,int row2) ;
 	void ColumnMul(int column,float mul);
 	void ColumnAdd(int source_column,int aux_column,float aux_mul=1);
 	void ColumnSwap(int column1,int column2);
@@ -732,7 +732,7 @@ struct dl32Point3D
 	static dl32Point3D Add(dl32Point3D P1,dl32Point3D P2){return dl32Point3D(P1.x+P2.x,P1.y+P2.y,P1.z+P2.z);}
 	static dl32Point3D Sub(dl32Point3D P1,dl32Point3D P2){return dl32Point3D(P1.x+P2.x,P1.y+P2.y,P1.z+P2.z);}
 	static dl32Point3D Mul(dl32Point3D Point,float Factor){return dl32Point3D(Point.x*Factor,Point.y*Factor,Point.z*Factor);}
-	static dl32Point3D Div(dl32Point3D Point,float Divisor);
+	static dl32Point3D Div(dl32Point3D Point,float Divisor) throw (dl32DividedByCeroException);
 
 	dl32Point3D operator+(dl32Point3D point){return Add(*this,point);}
 	dl32Point3D operator-(){return dl32Point3D(-x,-y,-z);}

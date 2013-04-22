@@ -1,3 +1,5 @@
+#ifdef _MSC_VER
+
 #include "dl32Memory.h"
 
 _CrtMemState dl32LeakDebugger::_initState;
@@ -34,3 +36,5 @@ int dl32LeakDebugger::_allocHook(int allocType, void* userData, size_t size, int
 
 	return TRUE;
 }
+
+#endif

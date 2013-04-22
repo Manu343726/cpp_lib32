@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <functional>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,9 +31,30 @@ enum class dl32MouseButton
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 struct dl32MouseData
 {
-	dl32Point2D Location;   ///< Mouse-pointer in local coordinates. 
-	dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton).
-	int Delta;              ///< Mouse wheel delta.
+    dl32Point2D Location;   ///< Mouse-pointer in local coordinates. 
+    dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton).
+    int Delta;              ///< Mouse wheel delta.
+        
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief dl32MouseData ctor
+    ///
+    /// @param location Mouse coordinates
+    /// @param button Pressed button
+    /// @param delta MouseWheel delta 
+    ///
+    /// @author	Manu343726
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32MouseData( dl32Point2D location , dl32MouseButton button , int delta) : Location( location ) , Button( button ) , Delta (delta ) {}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief dl32MouseData default ctor.
+    ///
+    /// @author	Manu343726
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32MouseData() {}
+    
+    //ApaÃ±o:
+    operator dl32MouseData&() { return *this; }
 };
 
 /// @brief	cpp_lib32 keyboard codes
@@ -73,7 +95,7 @@ struct dl32KeyStrokeData
 #define WINDOWS_PROCEDURE_ARGS HWND window , UINT message , WPARAM wParam , LPARAM lParam
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	A macro that defines windows procedure argumments bypass.
+/// @brief	A macro that defines windows procedures argumments bypass.
 ///
 /// @param	window 	Handle of the window.
 /// @param	message	System message code.
@@ -87,7 +109,7 @@ struct dl32KeyStrokeData
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 cpp_lib32 event type
-/// @details Events are represented as a list of handlers, where handlers are pointers to functions 
+/// @details     Events are represented as a list of handlers, where handlers are pointers to functions 
 /// 		 that handle the event. This functions always be a void function with cero or one
 /// 		 parameter (The argumments of the event) passed by reference, in other words, functions 
 /// 		 with prototype "void EventHandler(ARGSTYPE &args)".
@@ -112,12 +134,12 @@ public:
 	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)(ArgummentsType);
 
-#ifdef __GCC__ //MSVC no implementa todavía template varargs...
+#if !defined( _MSC_VER ) //MSVC no implementa todavÃ­a template varargs...
 
 	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef std::function<ARGSTYPE , WINDOWS_PROCEDURE_ARGS_TYPES> DispatcherType;
-
-#else          // ... así que me veo obligado a usar feos funteros
+	typedef std::function<ARGSTYPE ( WINDOWS_PROCEDURE_ARGS_TYPES )> DispatcherType;
+        
+#else          // ... asï¿½ que me veo obligado a usar feos funteros
 
 	/// @brief	Defines an alias representing type of the dispatcher.
 	typedef ARGSTYPE ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
@@ -138,7 +160,15 @@ public:
 			(*it)(args);
 	}
 
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Raises the event.
+	/// @param	args Argumments of the event.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	void RaiseEvent_NoRef(ArgummentsType_NoRef args)
+	{
+            RaiseEvent( reinterpret_cast<ArgummentsType>( args ) );
+	}
+        
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Adds a function as a handler for this event.
 	/// @param	handler	Pointer to the function that will be a handler.
@@ -154,8 +184,8 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	cpp_lib32 event type (Template specialitation for non-args events)
-/// @details Specialitation of dl32Event for non-args events. Non-args events handlers are functions
+/// @brief	 cpp_lib32 event type (Template specialitation for non-args events)
+/// @details     Specialitation of dl32Event for non-args events. Non-args events handlers are functions
 /// 		 with protoptype "void EventHandler()". 
 /// 		 
 /// 		 
@@ -172,12 +202,12 @@ public:
 	/// @brief	Defines an alias representing function-pointer type of a event handler.
 	typedef void (*HandlerType)();
 
-#ifdef __GCC__ //MSVC no implementa todavía template varargs...
+#if !defined( _MSC_VER ) //MSVC no implementa todavï¿½a template varargs...
 
 	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef std::function<void , WINDOWS_PROCEDURE_ARGS_TYPES> DispatcherType;
+	typedef std::function<void ( WINDOWS_PROCEDURE_ARGS_TYPES )> DispatcherType;
 
-#else          // ... así que me veo obligado a usar feos funteros
+#else          // ... asï¿½ que me veo obligado a usar feos funteros
 
 	/// @brief	Defines an alias representing type of the dispatcher.
 	typedef void ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
@@ -210,7 +240,7 @@ public:
 	{
 		auto it = std::begin( _handlers );
 
-		if( ( it = std::find( it , std::end( _handlers ) , handler ) ) != std::end( _handlers ) )
+		if( ( it = std::find( std::begin( _handlers ) , std::end( _handlers ) , handler ) ) != std::end( _handlers ) )
 			_handlers.erase( it );
 	}
 };
@@ -353,7 +383,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void dispatch( WINDOWS_PROCEDURE_ARGS )
 	{
-		_event.RaiseEvent( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
+            _event.RaiseEvent_NoRef( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
 	}
 };
 
@@ -537,7 +567,7 @@ public:
 	/// @return	true if all of the system messages provided are not in use. False in other case.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename EVENTTYPE>
-	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , const vector<UINT>& systemMessages) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType>( dispatchFunction ) , systemMessages ); }
+	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , const vector<UINT>& systemMessages) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>( dispatchFunction ) , systemMessages ); }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Sets up a new high-level event through its dispatcher.
@@ -576,7 +606,7 @@ public:
 		auto it = _dispatchers.find( systemMessage );
 
 		if( it != std::end( _dispatchers ) )
-			return reinterpret_cast<typename dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>*>(it->second)->_event;
+			return ( reinterpret_cast< dl32GenericEventDispatcher< typename EVENTTYPE::ArgummentsType_NoRef >* >(it->second) )->_event;
 		else
 			throw dl32NoSuchEventException();
 	}

@@ -38,11 +38,11 @@ const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING;
 typedef unsigned int uint;
 
 template<typename T>
-std::string& to_string(const T& value)
+std::string&& to_string(const T& value)
 {
 	stringstream stream;
 	stream << value;
-	return stream.str();
+	return std::move( stream.str() );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

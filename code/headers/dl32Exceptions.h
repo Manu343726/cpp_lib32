@@ -2,6 +2,9 @@
 #define DL32EXCEPTIONS_H
 
 #include <exception>
+#include <string>
+
+using namespace std;
 
 #define DEFAULTEXCEPTIONMESSAGE(exception) "Unexpected " TOCSTRING(exception)
 
@@ -46,7 +49,7 @@ public:
     ///
     /// @return	C-style string containing the exception message.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    const char* what() const {return _message.c_str();}
+    const char* what() const noexcept {return _message.c_str();} 
 #else
 public:
 	dl32Exception(const MessageType& message=DEFAULTEXCEPTIONMESSAGE(dl32Exception)) : exception(message.c_str()) {}

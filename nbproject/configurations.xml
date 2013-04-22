@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="88">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="code" displayName="code" projectFiles="true">
+      <logicalFolder name="headers" displayName="headers" projectFiles="true">
+        <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <itemPath>code/headers/utils/dl32Config.h</itemPath>
+          <itemPath>code/headers/utils/dl32Memory.h</itemPath>
+          <itemPath>code/headers/utils/dl32Timing.h</itemPath>
+        </logicalFolder>
+        <itemPath>code/headers/dl32Color.h</itemPath>
+        <itemPath>code/headers/dl32Events.h</itemPath>
+        <itemPath>code/headers/dl32Exceptions.h</itemPath>
+        <itemPath>code/headers/dl32Math.h</itemPath>
+        <itemPath>code/headers/dl32Window.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="source" displayName="source" projectFiles="true">
+        <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <itemPath>code/source/utils/dl32Config.cpp</itemPath>
+          <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
+          <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
+        </logicalFolder>
+        <itemPath>code/source/dl32Color.cpp</itemPath>
+        <itemPath>code/source/dl32Events.cpp</itemPath>
+        <itemPath>code/source/dl32Math.cpp</itemPath>
+        <itemPath>code/source/dl32Window.cpp</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="tests" displayName="tests" projectFiles="true">
+      <logicalFolder name="refactoring" displayName="refactoring" projectFiles="true">
+        <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
+      </logicalFolder>
+      <itemPath>code/tests/dl32TestConfig.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>dx_lib32_makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>code</Elem>
+  </sourceRootList>
+  <projectmakefile>dx_lib32_makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <developmentMode>2</developmentMode>
+          <standard>8</standard>
+          <incDir>
+            <pElem>code/headers</pElem>
+            <pElem>code/headers/utils</pElem>
+            <pElem>code/source</pElem>
+            <pElem>code/source/utils</pElem>
+            <pElem>code/tests</pElem>
+            <pElem>code/tests/refactoring</pElem>
+            <pElem>code/tests/general tests</pElem>
+            <pElem>../../../../../../PROGRAMAS/PROGRAMACION/DirectX SDK Junio 2010/Include</pElem>
+          </incDir>
+        </ccTool>
+      </compileType>
+      <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Events.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/tests/dl32TestConfig.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/Redesigned_event_system_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <incDir>
+            <pElem>code/headers</pElem>
+            <pElem>code/headers/utils</pElem>
+            <pElem>code/source</pElem>
+            <pElem>code/source/utils</pElem>
+            <pElem>code/tests</pElem>
+            <pElem>code/tests/general tests</pElem>
+            <pElem>code/tests/isometric tilemap</pElem>
+            <pElem>code/tests/mandlebrot</pElem>
+            <pElem>code/tests/particle engine</pElem>
+            <pElem>code/tests/polyline</pElem>
+            <pElem>code/tests/pong</pElem>
+          </incDir>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Events.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/tests/dl32TestConfig.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/Redesigned_event_system_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

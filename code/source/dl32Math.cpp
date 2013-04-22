@@ -932,14 +932,14 @@ void dl32Matrix::RowMul(int row,float mul)
 		Array[row][i]*=mul;
 }
 
-void dl32Matrix::RowAdd(int source_row,int aux_row,float aux_mul)throw(dl32OutOfRangeException)
+void dl32Matrix::RowAdd(int source_row,int aux_row,float aux_mul)
 {
 	if(source_row!=aux_row)
 		for(int i=0;i<columns;++i)
 			Array[source_row][i]+=Array[aux_row][i]*aux_mul;
 }
 
-void dl32Matrix::RowSwap(int row1,int row2)throw(dl32OutOfRangeException)
+void dl32Matrix::RowSwap(int row1,int row2)
 {
 	dl32MatrixRow aux;
 
@@ -951,20 +951,20 @@ void dl32Matrix::RowSwap(int row1,int row2)throw(dl32OutOfRangeException)
 	}
 }
 
-void dl32Matrix::ColumnMul(int column,float mul)throw(dl32OutOfRangeException)
+void dl32Matrix::ColumnMul(int column,float mul)
 {
 	for(int i=0;i<columns;++i)
 		Array[i][column]*=mul;
 }
 
-void dl32Matrix::ColumnAdd(int source_column,int aux_column,float aux_mul)throw(dl32OutOfRangeException)
+void dl32Matrix::ColumnAdd(int source_column,int aux_column,float aux_mul)
 {
 	if(source_column!=aux_column)
 		for(int i=0;i<columns;++i)
 			Array[i][source_column]+=Array[i][aux_column]*aux_mul;
 }
 
-void dl32Matrix::ColumnSwap(int column1,int column2)throw(dl32OutOfRangeException)
+void dl32Matrix::ColumnSwap(int column1,int column2)
 {
 	float aux;
 
@@ -1152,7 +1152,7 @@ float dl32Matrix::GetDeterminant()
 		return 0;
 }
 
-dl32Matrix dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2)
+dl32Matrix dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2) throw (dl32InvalidMatrixOperationException)
 {
 	if(m1.rows == m2.rows && m1.columns == m2.columns)
 	{
@@ -1166,7 +1166,7 @@ dl32Matrix dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2)
 		throw dl32InvalidMatrixOperationException("dl32Matrix::Add(dl32Matrix m1,dl32Matrix m2): 'm1' and 'm2' have not same dimensions");
 }
 
-dl32Matrix dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2)
+dl32Matrix dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2) throw (dl32InvalidMatrixOperationException)
 {
 	if(m1.rows == m2.rows && m1.columns == m2.columns)
 	{
@@ -1180,7 +1180,7 @@ dl32Matrix dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2)
 		throw dl32InvalidMatrixOperationException("dl32Matrix::Sub(dl32Matrix m1,dl32Matrix m2): 'm1' and 'm2' have not same dimensions");
 }
 
-dl32Matrix dl32Matrix::Mul(dl32Matrix matrix,float mul)
+dl32Matrix dl32Matrix::Mul(dl32Matrix matrix,float mul) throw (dl32InvalidMatrixOperationException)
 {
 	for(int i=0;i<matrix.rows;++i)
 		for(int j=0;j<matrix.columns;++j)
@@ -1189,7 +1189,7 @@ dl32Matrix dl32Matrix::Mul(dl32Matrix matrix,float mul)
 	return matrix;
 }
 
-dl32Matrix dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2)
+dl32Matrix dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2) throw (dl32InvalidMatrixOperationException)
 {
 	if(m1.columns==m2.rows)
 	{
