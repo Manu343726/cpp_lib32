@@ -45,7 +45,7 @@ void dl32Window::_setup(const string& title , uint width , uint height , uint le
 				_windowClassRegistered = true;
 		}
 
-		if( ( _handle = CreateWindow( WINDOWCLASS.lpszClassName , (LPCSTR)title.c_str() , WINDOWCLASS.style , left , top , width , height , NULL , NULL, WINDOWCLASS.hInstance , NULL) ) == dl32Window::INVALID_WINDOW_HANDLE )
+		if( ( _handle = CreateWindow( WINDOWCLASS.lpszClassName , (LPCWSTR)title.c_str() , WINDOWCLASS.style , left , top , width , height , NULL , NULL, WINDOWCLASS.hInstance , NULL) ) == dl32Window::INVALID_WINDOW_HANDLE )
 			throw dl32WindowCreationFailedException();
 	}
 	else
@@ -54,7 +54,7 @@ void dl32Window::_setup(const string& title , uint width , uint height , uint le
 	SetWindowLongPtr( _handle , GWLP_USERDATA , reinterpret_cast<LONG_PTR>(this) ); //Guardamos en el user data de la ventana la instancia de su wrapper.
                                                                                     //As� podemos obtener facilmente la instancia de dl32Window asociada a una ventana ( Ver implementaci�n de dl32WindowsManager::getWindow() )
 
-	//ShowWindow( _handle , SW_SHOW );
+	ShowWindow( _handle , SW_SHOW );
 }
 
 void dl32WindowsManager::_messageLoop()
