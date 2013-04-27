@@ -1,6 +1,8 @@
 #ifndef DL32COLOR_H
 #define DL32COLOR_H
 
+#include "dl32Config.h"
+
 #include <Windows.h>
 
 typedef DWORD dl32Color;

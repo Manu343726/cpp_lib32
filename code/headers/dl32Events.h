@@ -486,7 +486,7 @@ public:
 	/// @author	Manu343726
 	/// @date	07/04/2013
 	///
-	/// @return	.
+	/// @return     Reference to the class instance.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	static dl32SystemEventsManager& instance()
 	{

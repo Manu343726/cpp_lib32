@@ -1,6 +1,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "dl32Config.h"
+
 #include <Windows.h>
 #include <string>
 #include "dl32Events.h"
@@ -12,7 +14,7 @@ using namespace std;
 /// @brief	Defines an alias representing handle of a dl32Window.
 typedef HWND dl32WindowHandle;
 
-//Declaración adelantada para el manager.
+//Declaraciï¿½n adelantada para el manager.
 class dl32Window;
 
 DL32EXCEPTION_SUBCLASS_NODOC(dl32WindowClassRegistrationFailedException);

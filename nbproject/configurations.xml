@@ -4,6 +4,9 @@
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
+          <logicalFolder name="loki" displayName="loki" projectFiles="true">
+            <itemPath>code/headers/utils/loki/dl32Typing.h</itemPath>
+          </logicalFolder>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
           <itemPath>code/headers/utils/dl32Memory.h</itemPath>
           <itemPath>code/headers/utils/dl32Timing.h</itemPath>
@@ -53,8 +56,13 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <standard>3</standard>
+        </cTool>
         <ccTool>
           <developmentMode>2</developmentMode>
           <standard>8</standard>
@@ -67,6 +75,7 @@
             <pElem>code/tests/refactoring</pElem>
             <pElem>code/tests/general tests</pElem>
             <pElem>../../../../../../PROGRAMAS/PROGRAMACION/DirectX SDK Junio 2010/Include</pElem>
+            <pElem>code/headers/utils/loki</pElem>
           </incDir>
         </ccTool>
       </compileType>
@@ -85,6 +94,11 @@
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/loki/dl32Typing.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -112,6 +126,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -155,6 +171,11 @@
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/loki/dl32Typing.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
       </item>

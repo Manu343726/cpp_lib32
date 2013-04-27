@@ -37,6 +37,15 @@ const string PATHSEPARATOR_STRING = (string)PATHSEPARATOR_CSTRING;
 /// @brief	unsigned int "shortcut"
 typedef unsigned int uint;
 
+// Win32API unicode settings:
+#ifndef UNICODE
+#define UNICODE
+#endif
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+
+///< Global to_string function (std::to_string not supported by GCC 4.7)
 template<typename T>
 std::string&& to_string(const T& value)
 {
