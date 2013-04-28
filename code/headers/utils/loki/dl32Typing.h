@@ -168,10 +168,12 @@ private:
                 typedef typename trait_name<T>::typedef_name typedef_name;              \
         private:
     
-    TRAITS_FULL( isPointer   , _pointerTraits    , U , U*      , PointeeType )    //Checks if T is a pointer
-    TRAITS_FULL( isReference , _referenceTraits  , U , U&      , ReferencedType ) //Checks if T is a reference
-    TRAITS_FULL( hasConst    , _constTraits      , U , const U , NonConstType )    //Checks if T is a pointer
-    TRAITS_FULL( isRvalue    , _rvalueTraits     , U , U&&     , MovedType )      //Checks if T is a rvalue
+#define TRAITS_FULL_NOTRAITNAME( attribute_name , type , checking_type , typedef_name ) TRAITS_FULL( attribute_name , _trait_ ## __COUNTER__ , type , checking_type , typedef_name )
+    
+    TRAITS_FULL_NOTRAITNAME( isPointer   , U , U*      , PointeeType )    //Checks if T is a pointer
+    TRAITS_FULL_NOTRAITNAME( isReference , U , U&      , ReferencedType ) //Checks if T is a reference
+    TRAITS_FULL_NOTRAITNAME( hasConst    , U , const U , NonConstType )   //Checks if T is a pointer
+    TRAITS_FULL_NOTRAITNAME( isRvalue    , U , U&&     , MovedType )      //Checks if T is a rvalue
     
     typedef T OriginalType;
 };
