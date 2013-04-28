@@ -164,14 +164,16 @@ private:
 #define TRAITS_FULL(attribute_name , trait_name , type , checking_type , typedef_name ) \
         TRAITS( trait_name , type , checking_type , typedef_name );                     \
         public:                                                                         \
-                enum { attribute_name = trait_name<type>::value };                      \
-                typedef trait_name<type>::typedef_name typedef_name;                    \
+                enum { attribute_name = trait_name<T>::value };                         \
+                typedef typename trait_name<T>::typedef_name typedef_name;              \
         private:
     
-    TRAITS_FULL( isPointer   , _pointerTraits    , T , T*      , PointeeType );    //Checks if T is a pointer
-    TRAITS_FULL( isReference , _referenceTraits  , T , T&      , ReferencedType ); //Checks if T is a reference
-    TRAITS_FULL( hasConst    , _constTraits      , T , const T , PointeeType );    //Checks if T is a pointer
-    TRAITS_FULL( isRvalue    , _rvalueTraits     , T , T&&     , MovedType );      //Checks if T is a rvalue
+    TRAITS_FULL( isPointer   , _pointerTraits    , U , U*      , PointeeType )    //Checks if T is a pointer
+    TRAITS_FULL( isReference , _referenceTraits  , U , U&      , ReferencedType ) //Checks if T is a reference
+    TRAITS_FULL( hasConst    , _constTraits      , U , const U , NonConstType )    //Checks if T is a pointer
+    TRAITS_FULL( isRvalue    , _rvalueTraits     , U , U&&     , MovedType )      //Checks if T is a rvalue
+    
+    typedef T OriginalType;
 };
 #endif	/* DL32TYPING_H */
 
