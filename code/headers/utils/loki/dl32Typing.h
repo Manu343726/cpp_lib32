@@ -13,6 +13,20 @@
 //Nota: Soy plenamente consciente de que todo ésto está implementado desde C++11 en la STL ( http://en.cppreference.com/w/cpp/types ), lo hago por mero entretenimiento.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Type representing types without semantic sense (Non-valid types).
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+class dl32NoType {};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Basic type.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+class dl32EmptyType {};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type checking basic data.
 ///
 /// @author	Manu343726
@@ -113,6 +127,51 @@ public:
     };
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief cpp_lib32 type selection.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<bool flag , typename T , typename U>
+struct dl32Select { typedef T result; };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief cpp_lib32 type selection. (Template specialitation for second type selection). 
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename U>
+struct dl32Select<false,T,U> { typedef U result; };
+
+template<typename T>
+class dl32TypeTraits
+{
+private:
+#define TRAITS( name , type , checkingType , typedefName ) \
+    template<typename type>                                \
+    struct name                                            \
+    {                                                      \
+        enum { value = false };                            \
+        typedef dl32NoType typedefName;                    \
+    };                                                     \
+    template<typename type>                                \
+    struct name<checkingType>                              \
+    {                                                      \
+        enum {value = true };                              \
+        typedef dl32EmptyType typedefName;                 \
+    };                        
+    
+#define TRAITS_FULL(attribute_name , trait_name , type , checking_type , typedef_name ) \
+        TRAITS( trait_name , type , checking_type , typedef_name );                     \
+        public:                                                                         \
+                enum { attribute_name = trait_name<type>::value };                      \
+                typedef trait_name<type>::typedef_name typedef_name;                    \
+        private:
+    
+    TRAITS_FULL( isPointer   , _pointerTraits    , T , T*      , PointeeType );    //Checks if T is a pointer
+    TRAITS_FULL( isReference , _referenceTraits  , T , T&      , ReferencedType ); //Checks if T is a reference
+    TRAITS_FULL( hasConst    , _constTraits      , T , const T , PointeeType );    //Checks if T is a pointer
+    TRAITS_FULL( isRvalue    , _rvalueTraits     , T , T&&     , MovedType );      //Checks if T is a rvalue
+};
 #endif	/* DL32TYPING_H */
 
