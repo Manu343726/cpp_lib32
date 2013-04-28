@@ -158,7 +158,7 @@ private:
     struct name<checkingType>                              \
     {                                                      \
         enum { value = true };                             \
-        typedef dl32EmptyType typedefName;                 \
+        typedef type typedefName;                          \
     };                        
     
 #define TRAITS_FULL(attribute_name , trait_name , type , checking_type , typedef_name ) \
