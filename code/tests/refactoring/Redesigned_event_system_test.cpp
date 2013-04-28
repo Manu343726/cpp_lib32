@@ -29,7 +29,7 @@ int main()
         if( dl32TypeChecking<dl32Point2D , dl32Vector2D>::superclass_subclass)
             cout << "Inheritance!!!";
         
-        if( dl32TypeTraits<int*>::isPointer )
+        if( dl32TypeTraits<int>::isPointer )
             cout << "Is a pointer!!!";
         
 	dl32SystemEventsManager::instance().setUpEvent<dl32MouseMoveEvent>( dispatchFunction , WM_MOUSEMOVE );

@@ -8,6 +8,7 @@
 using namespace std;
 
 #define TOCSTRING(x) #x
+#define CONCAT(x,y) x ## y
 
 #ifdef _WIN32
 #define DL32COMPILETIME_OS_WINDOWS

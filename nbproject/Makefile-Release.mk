@@ -42,7 +42,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
-	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o
+	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
+	${OBJECTDIR}/code/tests/refactoring/typing_test.o
 
 
 # C Compiler Flags
@@ -108,6 +109,11 @@ ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o: code/tests/r
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o code/tests/refactoring/Redesigned_event_system_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/typing_test.o code/tests/refactoring/typing_test.cpp
 
 # Subprojects
 .build-subprojects:
