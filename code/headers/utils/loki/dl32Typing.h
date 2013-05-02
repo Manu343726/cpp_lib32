@@ -10,7 +10,7 @@
 
 #include "dl32Config.h"
 
-//Nota: Soy plenamente consciente de que todo ésto está implementado desde C++11 en la STL ( http://en.cppreference.com/w/cpp/types ), lo hago por mero entretenimiento.
+//Nota: Soy plenamente consciente de que todo ésto (O por lo menos la gran mayoría) está implementado desde C++11 en la STL ( http://en.cppreference.com/w/cpp/types ), lo hago por mero entretenimiento.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Type representing types without semantic sense (Non-valid types).
@@ -25,6 +25,28 @@ class dl32NoType {};
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class dl32EmptyType {};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief cpp_lib32 basic generic type-wrapper.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T>
+struct dl32TypeWrapper
+{
+    typedef T type;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief cpp_lib32 basic compile-time-constant value wrapper. (Valid only for integral types).
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T, T VALUE>
+struct dl32ValueWrapper
+{
+    static const T value = VALUE;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type checking basic data.
@@ -145,18 +167,6 @@ template<typename T , typename U>
 struct dl32Select<false,T,U> { typedef U result; };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief cpp_lib32 type list.
-///
-/// @author	Manu343726
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32BasicTypeList
-{
-    typedef T Head;
-    typedef U Tail;
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Type info provider.
 ///
 /// @author	Manu343726
@@ -213,6 +223,17 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief cpp_lib32 loki-like typelist wrapper
+/// @details This class wrapps recursive-based typelist and provides a variadic template interface
+///
+/// @author	Manu343726
+///
+/// @remarks Forward declaration (Needed for dl32IndexOf<...> and others).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename... Ts>
+struct dl32TypeList;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Implements a linear search of a type in a given type list (Type list in loki-format).
 ///
 /// @author	Manu343726
@@ -224,7 +245,7 @@ struct dl32TypeAt
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Implements a linear search of a type in a given type list (Type list in loki-format).
+/// @brief Implements a linear search of a type in a given loki-style typelist.
 ///
 /// @author	Manu343726
 ///
@@ -236,16 +257,60 @@ struct dl32TypeAt<0,TYPELIST>
     typedef typename TYPELIST::head value;
 };
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief cpp_lib32 loki-like typelist wrapper
-/// @details This class wrapps recursive-based typelist and provides a variadic template interface
+/// @brief Gets the index of a given type in a given typelist.
+/// @details Member "value" is a integer containing the index of T in TYPELIST. 
+///          If TYPELIST not contains T, value is -1.
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename... Ts>
-struct dl32TypeList;
+template<typename T , typename TYPELIST>
+struct dl32IndexOf
+{
+private:
+    /* Forward declaration */
+    template<typename U , typename LOKI_TYPELIST>
+    struct _index_of;
+    
+    /* Base-case for typelist end (type U is not finded in TYPELIST) */
+    template<typename U>
+    struct _index_of<U , dl32NoType>
+    {
+        enum { value = -1 };
+    };
+
+    /* Base-case for finded case (U is in TYPELIST). Note that the list used in the 
+       specialitation is a list with U as head and TYPELIST::tail as tail.       */
+    template<typename U , typename TAIL>
+    struct _index_of<U, dl32Loki_like_TypeList<U,TAIL>>
+    {
+        enum { value = 0 }; ///< The index of the type U in the typelist TYPELIST.
+    };
+
+    /* Recoursive-case specialitation */
+    template<typename U , typename HEAD , typename TAIL>
+    struct _index_of<U,dl32Loki_like_TypeList<HEAD,TAIL>>
+    {
+    private:
+        enum { temp = _index_of<U,TAIL>::value };
+    public:
+        enum { value = ( temp == -1 ? -1 : temp + 1 ) }; 
+    };
+    
+public:
+    typedef dl32ValueWrapper<int, _index_of<T,TYPELIST>::value> value; ///< The index of the type T in the typelist TYPELIST.
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Checks if a type is contained in a given loki-style typelist.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename TYPELIST>
+struct dl32Contains
+{
+    enum { value = dl32IndexOf<T,TYPELIST>::value >= 0 };
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
@@ -264,8 +329,8 @@ struct dl32TypeList<HEAD,TAIL...>
     template<int index>
     using type_at = typename dl32TypeAt<index,value>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
     
-    //template<typename T>
-    //using index_of = dl32IndexOf<T,value>; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+    template<typename T>
+    using index_of = typename dl32IndexOf<T,value>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,7 +352,7 @@ struct dl32TypeList<>
   using type_at = dl32NoType; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
   
   template<typename T>
-  using index_of = dl32NoType; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+  using index_of = typename dl32IndexOf<T,dl32NoType>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
 };
 #endif	/* DL32TYPING_H */
 

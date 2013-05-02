@@ -30,6 +30,13 @@ int main()
     else
         cout << "mmm... Cascao raro" << endl;
     
+    /* TypeList indexof test */
+    
+    if(myList::index_of<int>::value == 1)
+        cout << "ok!" << endl;
+    else
+        cout << "mmm... Cascao raro" << endl;
+    
     /* Type traits checking test */
     
     cout << std::boolalpha;
