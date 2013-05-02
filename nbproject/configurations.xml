@@ -32,6 +32,7 @@
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
       <logicalFolder name="refactoring" displayName="refactoring" projectFiles="true">
         <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
+        <itemPath>code/tests/refactoring/is_design_test.cpp</itemPath>
         <itemPath>code/tests/refactoring/typing_test.cpp</itemPath>
       </logicalFolder>
       <itemPath>code/tests/dl32TestConfig.h</itemPath>
@@ -122,6 +123,11 @@
             tool="1"
             flavor2="0">
       </item>
+      <item path="code/tests/refactoring/is_design_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
       <item path="code/tests/refactoring/typing_test.cpp"
             ex="false"
             tool="1"
@@ -200,6 +206,11 @@
       <item path="code/tests/dl32TestConfig.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/tests/refactoring/Redesigned_event_system_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/is_design_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
