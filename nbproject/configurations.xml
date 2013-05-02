@@ -32,6 +32,7 @@
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
       <logicalFolder name="refactoring" displayName="refactoring" projectFiles="true">
         <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
+        <itemPath>code/tests/refactoring/typing_test.cpp</itemPath>
       </logicalFolder>
       <itemPath>code/tests/dl32TestConfig.h</itemPath>
     </logicalFolder>
