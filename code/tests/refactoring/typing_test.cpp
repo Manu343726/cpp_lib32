@@ -15,7 +15,6 @@ int main()
     
     /* TypeList indexing test */
     
-    //Checks if the type at index 2 is a float:
     if(dl32TypeChecking<float,myList::type_at<2>>::same_type)
         cout << "ok!" << endl;
     else
