@@ -8,6 +8,21 @@
 #include <string>
 #include <vector>
 
+#ifdef __GNUC__
+#include<cxxabi.h>
+
+string demangle( const char* name)
+{ 
+    int status;
+    
+    return string( abi::__cxa_demangle( name , 0 , 0 , &status ) );
+}
+#else
+string demangle( const char* name)
+{ 
+    return string( name );
+}
+#endif
 using namespace std;
 
 enum AppData_Type { APPDATATYPE_PERSONAL = 0 , APPDATATYPE_ESPACIOS = 1 , APPDATATYPE_NOTYPE_CENTINEL = 2 /* ojo, éste siempre debe ser el último */ };
@@ -110,8 +125,8 @@ public:
     TiposResultados::type_at<T::type> search(TiposCriterios::type_at<T::type>)
     {   /* Si el compilador es listo, RVO */
         
-        cout << "Searching items of type " << typeid( T ).name() << " using criteria of type " << typeid( TiposCriterios::type_at<T::type> ).name() << " ...." << endl;
-        cout << "Returning results of type " << typeid( TiposResultados::type_at<T::type> ).name() << " ...." << endl;
+        cout << "Searching items of type " << demangle( typeid( T ).name() ) << " using criteria of type " << demangle( typeid( TiposCriterios::type_at<T::type> ).name() ) << " ...." << endl;
+        cout << "Returning results of type " << demangle( typeid( TiposResultados::type_at<T::type> ).name() ) << " ...." << endl;
         
         return TiposResultados::type_at<T::type>( get_vector<T>().at(0) );//Realmente tendrías en cuenta los criterios de búsqueda. Devuelvo el primero por simplicidad en el ejemplo.
     }
