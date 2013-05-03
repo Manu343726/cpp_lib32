@@ -36,7 +36,7 @@ public:
             _instance = new T;
         }
         
-        return *(reinterpret_cast<T*>(_instance));
+        return *(static_cast<T*>(_instance));
     }
 };
 

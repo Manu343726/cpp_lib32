@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Math.o \
 	${OBJECTDIR}/code/source/dl32Window.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
+	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
@@ -94,6 +95,11 @@ ${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
 	$(COMPILE.cc) -g -O -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
+
+${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32ConsoleColor.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/utils
+	${RM} $@.d
+	$(COMPILE.cc) -g -O -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils

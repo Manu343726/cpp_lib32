@@ -10,6 +10,7 @@
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
           <itemPath>code/headers/utils/dl32ConsoleColor.h</itemPath>
           <itemPath>code/headers/utils/dl32Memory.h</itemPath>
+          <itemPath>code/headers/utils/dl32Singleton.h</itemPath>
           <itemPath>code/headers/utils/dl32Timing.h</itemPath>
         </logicalFolder>
         <itemPath>code/headers/dl32Color.h</itemPath>
@@ -21,6 +22,7 @@
       <logicalFolder name="source" displayName="source" projectFiles="true">
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>code/source/utils/dl32Config.cpp</itemPath>
+          <itemPath>code/source/utils/dl32ConsoleColor.cpp</itemPath>
           <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
           <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
         </logicalFolder>
@@ -100,6 +102,8 @@
       </item>
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="code/headers/utils/dl32Singleton.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/loki/dl32Typing.h"
@@ -116,6 +120,11 @@
       <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32ConsoleColor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -187,6 +196,8 @@
       </item>
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="code/headers/utils/dl32Singleton.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/loki/dl32Typing.h"
@@ -203,6 +214,11 @@
       <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32ConsoleColor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
       </item>

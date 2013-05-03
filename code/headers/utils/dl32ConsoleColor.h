@@ -17,12 +17,16 @@
 using namespace std;
 
 #ifdef WIN32
+
 #include <windows.h>
-typedef HANDLE dl32StandardOutputHandle;
-typedef WORD dl32ConsoleStyle; //En la versión de windows, los styles son los valores de CONSOLE_SCREEN_BUFFER_INFO::wAttributes
+
+typedef WORD dl32ConsoleStyle; //En la versión de windows, los styles son los valores de CONSOLE_SCREEN_BUFFER_INFO::wAttributes (Ver implementación))
+
 #else
+
 typedef unsigned int dl32ConsoleStyle; //Por ejemplo, no lo he mirado
-#endif
+
+#endif /* WIN32 */
 
 enum class dl32ConsoleColor : int
 {
@@ -53,14 +57,21 @@ enum class dl32ConsoleColor : int
 class dl32ConsoleColorSettings : public dl32Singleton<dl32ConsoleColorSettings>
 { 
 private:
-    const dl32StandardOutputHandle _handle;
+#if WIN32 
+    const HANDLE _handle;
     
     std::vector<dl32ConsoleStyle> _styles_stack;
-    bool _styles_stack_autopush;
     
     dl32ConsoleStyle _get_style();
+    void             _set_style( dl32ConsoleStyle style );
+    void             _update_style( dl32ConsoleStyle style );
     void _push_style();
     void _pop_style();
+#else
+    /* TODO Linux version */
+#endif
+    
+    bool _styles_stack_autopush;
 public:  
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Default ctor. Initialices the console-style stack.
@@ -95,6 +106,20 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     void change_foreground( dl32ConsoleColor color );
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Pushes the current console style to the stack (The current style is not changed).
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void push_style();
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Pops the current console style. Current state is changed to the last stacked state.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void pop_style();
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +135,7 @@ struct dl32ColorChange
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class provides an interface to set foreground color by the output stream operator (<<).
+/// @brief This class provides an interface to set foreground color through the output stream operator (<<).
 ///        For example: cout << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << "HELLO WORLD!";
 ///        Prints "HELLO WORLD!" with red text. 
 ///
@@ -124,14 +149,14 @@ struct dl32ChangeForegroundColor : public dl32ColorChange
     dl32ChangeForegroundColor( dl32ConsoleColor color ) : dl32ColorChange( color ) {}
     
     /* output operator */
-    ostream& operator<< (ostream& os , dl32ChangeForegroundColor change)
+    ostream& operator<< (ostream& os)
     {
         dl32ConsoleColorSettings.instance().change_foreground( change.color );
     }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class provides an interface to set background color by the output stream operator (<<).
+/// @brief This class provides an interface to set background color through the output stream operator (<<).
 ///        For example: cout << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << "HELLO WORLD!";
 ///        Prints "HELLO WORLD!" with red background. 
 ///
@@ -145,14 +170,14 @@ struct dl32ChangeBackgroundColor : public dl32ColorChange
     dl32ChangeBackgroundColor( dl32ConsoleColor color ) : dl32ColorChange( color ) {}
     
     /* output operator */
-    ostream& operator<< (ostream& os , dl32ChangeBackgroundColor change)
+    ostream& operator<< (ostream& os)
     {
         dl32ConsoleColorSettings.instance().change_foreground( change.color );
     }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class provides an interface to set the autopush mode by the output stream operator (<<).
+/// @brief This class provides an interface to set the autopush mode through the output stream operator (<<).
 ///        For example: cout << dl32SetAutoPush<false>(); sets the autopush mode to false.
 ///
 /// @author	Manu343726
@@ -160,13 +185,37 @@ struct dl32ChangeBackgroundColor : public dl32ColorChange
 template<bool VALUE>
 struct dl32SetAutoPush : dl32ValueWrapper<bool,VALUE>
 {
-    ostream& operator<< (ostream& os , dl32SetAutoPush<bool VALUE> change)
+    ostream& operator<< (ostream& os)
     {
         dl32ConsoleColorSettings.instance().set_autopush( VALUE );
     }
 };
 
-#endif /* WIN32 */
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This class provides an interface to pùsh the current style through the output stream operator (<<).
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+struct dl32PushStyle
+{
+    ostream& operator<< (ostream& os)
+    {
+        dl32ConsoleColorSettings.instance().push_style();
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This class provides an interface to pop the current style through the output stream operator (<<).
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+struct dl32PopStyle
+{
+    ostream& operator<< (ostream& os)
+    {
+        dl32ConsoleColorSettings.instance().pop_style();
+    }
+};
 
 #endif	/* DL32CONSOLECOLOR_H */
 

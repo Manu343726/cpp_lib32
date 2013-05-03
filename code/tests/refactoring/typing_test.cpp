@@ -3,6 +3,7 @@
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_TYPINGTEST
 
 #include "dl32Typing.h"
+#include "dl32ConsoleColor.h"
 #include <iostream>
 #include <typeinfo>
 #include <string>
@@ -22,7 +23,7 @@ using namespace std;
 #include <assert.h>
 #else
 #define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
-#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << assert_data(x) << "ERROR (Cascao raro)" << endl 
+#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << dl32PushStyle() << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << assert_data(x) << "ERROR (Cascao raro)" << dl32PopStyle() << endl 
 #endif /* TESTING_USEASSERT */
 
 int main()
