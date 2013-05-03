@@ -9,46 +9,66 @@
 
 using namespace std;
 
+#define TESTING_USEASSERT FALSE
+#define TESTING_WAIT_AT_END FALSE
+
+#define EXPAND(x) x
+
+#if TESTING_USEASSERT
+#ifdef NDEBUG
+#undef NDEBUG
+#endif
+
+#include <assert.h>
+#else
+#define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
+#define assert(x) (x) ? cout << assert_data(x) << "ok!" << endl : cout << assert_data(x) << "ERROR (Cascao raro)" << endl 
+#endif /* TESTING_USEASSERT */
+
 int main()
 {  
     typedef dl32TypeList<char , int , float , double> myList;
     
     /* TypeList indexing test */
     
-    if(dl32TypeChecking<float,myList::type_at<2>>::same_type)
-        cout << "ok!" << endl;
-    else
-        cout << "mmm... Cascao raro" << endl;
+    assert( (dl32TypeChecking<float,myList::type_at<2>>::same_type) );
     
     /* Inheritance checking test */
     
     class Foo{};
     class FooChild : public Foo {};
     
-    if(dl32TypeChecking<Foo,FooChild>::superclass_subclass)
-        cout << "ok!" << endl;
-    else
-        cout << "mmm... Cascao raro" << endl;
+    assert( (dl32TypeChecking<Foo,FooChild>::superclass_subclass) );
     
     /* TypeList indexof test */
     
-    if(myList::index_of<int>::value == 1)
-        cout << "ok!" << endl;
-    else
-        cout << "mmm... Cascao raro" << endl;
+    assert( myList::index_of<int>::value == 1 );
     
     /* Type traits checking test */
     
-    cout << std::boolalpha;
-    cout << (bool) dl32TypeTraits<int>::hasConst << endl;
-    cout << (bool) dl32TypeTraits<int*>::isPointer << endl;
-    cout << (bool) dl32TypeTraits<int&>::isReference << endl;
-    cout << (bool) dl32TypeTraits<int&>::isRvalue << endl;
+    //HasConst tests:
+    assert( !dl32TypeTraits<int>::hasConst        );
+    assert(  dl32TypeTraits<const int>::hasConst  );
+    assert(  dl32TypeTraits<const int*>::hasConst );
+    assert(  dl32TypeTraits<const int&>::hasConst );
+    
+    //IsPointer tests:
+    assert( !dl32TypeTraits<int>::isPointer        );
+    assert( !dl32TypeTraits<const int>::isPointer  );
+    assert(  dl32TypeTraits<const int*>::isPointer );
+    assert( !dl32TypeTraits<const int&>::isPointer );
+    
+    //IsReference tests:
+    assert( !dl32TypeTraits<int>::isReference        );
+    assert( !dl32TypeTraits<const int>::isReference  );
+    assert( !dl32TypeTraits<const int*>::isReference );
+    assert(  dl32TypeTraits<const int&>::isReference );
     
     /* end */
-    
+#if TESTING_WAIT_AT_END
     cin.sync();
     cin.get();
+#endif
 }
 
 #endif
