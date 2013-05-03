@@ -5,6 +5,8 @@
  * Created on 3 de mayo de 2013, 11:52
  */
 
+#pragma once
+
 #ifndef DL32CONSOLECOLOR_H
 #define	DL32CONSOLECOLOR_H
 
@@ -74,13 +76,6 @@ private:
     bool _styles_stack_autopush;
 public:  
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Default ctor. Initialices the console-style stack.
-    ///
-    /// @author	Manu343726
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32ConsoleColorSettings();
-    
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Sets the autopush mode.
     /// @details If auto_push is true, the new console style is pushed automatically when "change_background"
     ///          or "change_foreground" are called.
@@ -120,7 +115,11 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     void pop_style();
+private:
+    ~dl32ConsoleColorSettings() {}
 };
+
+/*
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Base class for color change providers.
@@ -145,13 +144,14 @@ struct dl32ColorChange
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 struct dl32ChangeForegroundColor : public dl32ColorChange
 {
-    /* ctor */
+    //ctor
     dl32ChangeForegroundColor( dl32ConsoleColor color ) : dl32ColorChange( color ) {}
     
-    /* output operator */
-    ostream& operator<< (ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32ChangeForegroundColor& change)
     {
-        dl32ConsoleColorSettings.instance().change_foreground( change.color );
+        dl32ConsoleColorSettings::instance().change_foreground( change.color );
+
+        return os;
     }
 };
 
@@ -166,13 +166,14 @@ struct dl32ChangeForegroundColor : public dl32ColorChange
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 struct dl32ChangeBackgroundColor : public dl32ColorChange
 {
-    /* ctor */
+    //ctor
     dl32ChangeBackgroundColor( dl32ConsoleColor color ) : dl32ColorChange( color ) {}
     
-    /* output operator */
-    ostream& operator<< (ostream& os)
+    ostream& operator<<(ostream& os)
     {
-        dl32ConsoleColorSettings.instance().change_foreground( change.color );
+        dl32ConsoleColorSettings::instance().change_foreground( color );
+
+        return os;
     }
 };
 
@@ -183,11 +184,27 @@ struct dl32ChangeBackgroundColor : public dl32ColorChange
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<bool VALUE>
-struct dl32SetAutoPush : dl32ValueWrapper<bool,VALUE>
+struct dl32SetAutoPush : public dl32ValueWrapper<bool,VALUE> {};
+
+template<>
+struct dl32SetAutoPush<true>
 {
-    ostream& operator<< (ostream& os)
+    ostream& operator<<(ostream& os)
     {
-        dl32ConsoleColorSettings.instance().set_autopush( VALUE );
+        dl32ConsoleColorSettings::instance().set_autopush( true );
+
+        return os;
+    }
+};
+
+template<>
+struct dl32SetAutoPush<false>
+{
+    ostream& operator<<(ostream& os)
+    {
+        dl32ConsoleColorSettings::instance().set_autopush( false );
+
+        return os;
     }
 };
 
@@ -196,11 +213,13 @@ struct dl32SetAutoPush : dl32ValueWrapper<bool,VALUE>
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32PushStyle
+struct dl32PushStyle 
 {
-    ostream& operator<< (ostream& os)
+    ostream& operator<<(ostream& os)
     {
-        dl32ConsoleColorSettings.instance().push_style();
+        dl32ConsoleColorSettings::instance().push_style();
+
+        return os;
     }
 };
 
@@ -209,13 +228,20 @@ struct dl32PushStyle
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32PopStyle
+struct dl32PopStyle 
 {
-    ostream& operator<< (ostream& os)
+    ostream& operator<<(ostream& os)
     {
-        dl32ConsoleColorSettings.instance().pop_style();
+        dl32ConsoleColorSettings::instance().pop_style();
+
+        return os;
     }
 };
+
+*/
+
+
+
 
 #endif	/* DL32CONSOLECOLOR_H */
 

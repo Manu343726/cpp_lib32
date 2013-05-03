@@ -8,37 +8,64 @@
 #ifndef DL32SINGLETON_H
 #define	DL32SINGLETON_H
 
+#include <cstdlib>
+
+#if defined(__GXX_EXPERIMENTAL_CXX0X) 
+
+#define NULLPTR nullptr
+
+#else
+
+#define NULLPTR NULL
+
+#endif /* C++11 */
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class provides an abstract singleton implementation.
+/// @brief This class provides a generic implementation of the singleton dessign pattern.
 ///
-/// @tparam T Class that will implement the singleton dessign pattern.
+/// @tparam T Class that implements the singleton.
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 class dl32Singleton
 {
+public:
+    typedef T* PointerToInstance;
+    typedef T& ReferenceToInstance;
+    typedef dl32Singleton<T>* RealPointerToInstance;
 private:
-    dl32Singleton<T>* _instance;
+    dl32Singleton(const dl32Singleton&) {}
+    dl32Singleton& operator=(const dl32Singleton&) {}
     
-    void _singletonDeleter() { delete _instance; }
-
+    static RealPointerToInstance _instance;
+    
+    static void _singleton_instance_deleter() { delete _instance; }
+protected:
+    dl32Singleton() {}
+    virtual ~dl32Singleton() {}; //Correct polymorphic delete
 public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Gets a reference to the singleton instance.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    T& instance()
+    static ReferenceToInstance instance()
     {
-        if( !_instance )
+        if( _instance == NULLPTR)
         {
-            atexit( _singletonDeleter() );
+            /* Register the class at runtime-exit to avoid memory-leaks */
+            atexit( _singleton_instance_deleter );
+            
             _instance = new T;
         }
         
         return *(static_cast<T*>(_instance));
     }
 };
+
+/* Definition of the instance pointer */
+template<typename T>
+typename dl32Singleton<T>::RealPointerToInstance dl32Singleton<T>::_instance = NULLPTR;
 
 #endif	/* DL32SINGLETON_H */
 

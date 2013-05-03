@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define TESTING_USEASSERT FALSE
+#define TESTING_USEASSERT TRUE
 #define TESTING_WAIT_AT_END FALSE
 
 #define EXPAND(x) x
