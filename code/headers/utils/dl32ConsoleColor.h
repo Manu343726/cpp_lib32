@@ -11,24 +11,15 @@
 #define	DL32CONSOLECOLOR_H
 
 #include "dl32Config.h"
-#include "dl32Singleton.h"
 #include "dl32Typing.h"
-
-#include <iostream>
-#include <vector>
-using namespace std;
-
-#ifdef WIN32
+#include "dl32Exceptions.h"
 
 #include <windows.h>
 
-typedef WORD dl32ConsoleStyle; //En la versión de windows, los styles son los valores de CONSOLE_SCREEN_BUFFER_INFO::wAttributes (Ver implementación))
-
-#else
-
-typedef unsigned int dl32ConsoleStyle; //Por ejemplo, no lo he mirado
-
-#endif /* WIN32 */
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+using namespace std;
 
 enum class dl32ConsoleColor : int
 {
@@ -51,30 +42,64 @@ enum class dl32ConsoleColor : int
 	EMPTYVALUE  = -1
 };
 
+typedef HANDLE dl32StandardOutputHandle;
+typedef WORD dl32ConsoleStyle;
+
+DL32EXCEPTION_SUBCLASS_NODOC( dl32ConsoleStyleChangeFailed );
+DL32EXCEPTION_SUBCLASS_NODOC( dl32ConsoleHandleSetupFailed );
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class provides methods for change colors of the standard output stream.
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32ConsoleColorSettings : public dl32Singleton<dl32ConsoleColorSettings>
+class dl32ConsoleColorSettings
 { 
 private:
-#if WIN32 
-    const HANDLE _handle;
+    dl32StandardOutputHandle _handle;
+    void _setup_handle() throw ( dl32ConsoleHandleSetupFailed ) { if(!(_handle = GetStdHandle( STD_OUTPUT_HANDLE ))) throw dl32ConsoleHandleSetupFailed(); }
     
     std::vector<dl32ConsoleStyle> _styles_stack;
     
     dl32ConsoleStyle _get_style();
-    void             _set_style( dl32ConsoleStyle style );
-    void             _update_style( dl32ConsoleStyle style );
+    void             _set_style( dl32ConsoleStyle style )    throw( dl32ConsoleStyleChangeFailed );
+    void             _update_style( dl32ConsoleStyle style ) throw( dl32ConsoleStyleChangeFailed );
     void _push_style();
     void _pop_style();
-#else
-    /* TODO Linux version */
-#endif
-    
     bool _styles_stack_autopush;
+    
+    
+    /* singleton */
+    static dl32ConsoleColorSettings* _instance;
+    static void _singleton_instance_deleter() { delete _instance; }
+    ~dl32ConsoleColorSettings() {}
+    dl32ConsoleColorSettings(const dl32ConsoleColorSettings&) {}
+    dl32ConsoleColorSettings& operator=(const dl32ConsoleColorSettings&) {}
+    
+    dl32ConsoleColorSettings() throw ( dl32ConsoleHandleSetupFailed )
+    {
+        _setup_handle();
+        _styles_stack_autopush = false;
+        _styles_stack.push_back( _get_style() );
+    }
 public:  
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets a reference to the singleton instance
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static dl32ConsoleColorSettings& instance() 
+    {
+        if( _instance == nullptr )
+        {
+            atexit( _singleton_instance_deleter );
+            _instance = new dl32ConsoleColorSettings();
+        }
+        
+        return *_instance;
+    }
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Sets the autopush mode.
     /// @details If auto_push is true, the new console style is pushed automatically when "change_background"
@@ -91,7 +116,7 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    void change_background( dl32ConsoleColor color );
+    void change_background( dl32ConsoleColor color ) throw( dl32ConsoleStyleChangeFailed );
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Changes the foreground color of the standard output stream.
@@ -100,7 +125,7 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    void change_foreground( dl32ConsoleColor color );
+    void change_foreground( dl32ConsoleColor color ) throw( dl32ConsoleStyleChangeFailed );
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Pushes the current console style to the stack (The current style is not changed).
@@ -115,11 +140,8 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     void pop_style();
-private:
-    ~dl32ConsoleColorSettings() {}
 };
 
-/*
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Base class for color change providers.
@@ -237,8 +259,6 @@ struct dl32PopStyle
         return os;
     }
 };
-
-*/
 
 
 

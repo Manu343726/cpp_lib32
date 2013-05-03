@@ -3,6 +3,7 @@
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_CONSOLECOLORSTEST 
 
 #include "dl32ConsoleColor.h"
+#include "dl32Singleton.h"
 
 class Foo : public dl32Singleton<Foo>
 {
@@ -13,7 +14,8 @@ public:
 int main()
 {
     Foo::instance().make_things_happen();
-    cout << "HOLA!!!" << endl;
+    dl32ConsoleColorSettings::instance().pop_style();
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::PURPLE ) << "HOLA!!!" << endl;
 }
 
 #endif /* ISCURRENTTEST */

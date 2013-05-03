@@ -67,5 +67,22 @@ public:
 template<typename T>
 typename dl32Singleton<T>::RealPointerToInstance dl32Singleton<T>::_instance = NULLPTR;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This macro provides a "shortcut" to hide all ctors and assignments operator to performs 
+///        the singleton dessing pattern implementation.
+///
+/// @details Put this macro in the top of your class/struct (Next to the open brace), with your class 
+///          name as argumment.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+#define MAKE_SINGLETON( class_name )                    \
+            friend class dl32Singleton< class_name >;   \
+        private:                                        \
+            class_name() { _setup_instance(); }         \
+            class_name(const class_name&) {}            \
+            class_name& operator=(const class_name&) {} \
+            ~class_name {}
+
 #endif	/* DL32SINGLETON_H */
 
