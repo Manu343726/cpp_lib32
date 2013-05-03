@@ -22,7 +22,7 @@ using namespace std;
 #include <assert.h>
 #else
 #define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
-#define assert(x) (x) ? cout << assert_data(x) << "ok!" << endl : cout << assert_data(x) << "ERROR (Cascao raro)" << endl 
+#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << assert_data(x) << "ERROR (Cascao raro)" << endl 
 #endif /* TESTING_USEASSERT */
 
 int main()
