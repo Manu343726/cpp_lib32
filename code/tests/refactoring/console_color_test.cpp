@@ -13,9 +13,13 @@ public:
 
 int main()
 {
-    Foo::instance().make_things_happen();
-    dl32ConsoleColorSettings::instance().pop_style();
-    cout << dl32ChangeForegroundColor( dl32ConsoleColor::PURPLE ) << "HOLA!!!" << endl;
+    cout << "Before push" << dl32PushStyle() << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::YELLOW ) << dl32ChangeBackgroundColor( dl32ConsoleColor::BLUE );
+    cout << "Old-days syntax highlighting..." << endl;
+    cout << "Old-days syntax highlighting..." << endl;
+    cout << "Old-days syntax highlighting..." << endl;
+    cout << "Old-days syntax highlighting..." << endl;
+    cout << dl32PopStyle() << "After pop" << endl;
 }
 
 #endif /* ISCURRENTTEST */

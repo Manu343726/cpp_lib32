@@ -191,9 +191,9 @@ struct dl32ChangeBackgroundColor : public dl32ColorChange
     //ctor
     dl32ChangeBackgroundColor( dl32ConsoleColor color ) : dl32ColorChange( color ) {}
     
-    ostream& operator<<(ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32ChangeBackgroundColor& change)
     {
-        dl32ConsoleColorSettings::instance().change_foreground( color );
+        dl32ConsoleColorSettings::instance().change_background( change.color );
 
         return os;
     }
@@ -211,7 +211,7 @@ struct dl32SetAutoPush : public dl32ValueWrapper<bool,VALUE> {};
 template<>
 struct dl32SetAutoPush<true>
 {
-    ostream& operator<<(ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32SetAutoPush<true>& enable_autopush)
     {
         dl32ConsoleColorSettings::instance().set_autopush( true );
 
@@ -222,7 +222,7 @@ struct dl32SetAutoPush<true>
 template<>
 struct dl32SetAutoPush<false>
 {
-    ostream& operator<<(ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32SetAutoPush<false>& disable_autopush)
     {
         dl32ConsoleColorSettings::instance().set_autopush( false );
 
@@ -237,7 +237,7 @@ struct dl32SetAutoPush<false>
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 struct dl32PushStyle 
 {
-    ostream& operator<<(ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32PushStyle& push)
     {
         dl32ConsoleColorSettings::instance().push_style();
 
@@ -252,7 +252,7 @@ struct dl32PushStyle
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 struct dl32PopStyle 
 {
-    ostream& operator<<(ostream& os)
+    friend std::ostream& operator<<(ostream& os , const dl32PopStyle& pop)
     {
         dl32ConsoleColorSettings::instance().pop_style();
 
