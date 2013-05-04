@@ -65,6 +65,8 @@ void dl32ConsoleColorSettings::change_background(dl32ConsoleColor color) throw( 
     if( _styles_stack_autopush ) _push_style();
     
     _update_style( _change_background_only( _styles_stack.back() , (DWORD)color ) );
+    
+    _last_change = dl32StyleChange::BACKGROUND;
 }
 
 void dl32ConsoleColorSettings::change_foreground(dl32ConsoleColor color) throw( dl32ConsoleStyleChangeFailed )
@@ -72,6 +74,8 @@ void dl32ConsoleColorSettings::change_foreground(dl32ConsoleColor color) throw( 
     if( _styles_stack_autopush ) _push_style();
     
     _update_style( _change_foreground_only( _styles_stack.back() , (DWORD)color ) );
+    
+    _last_change = dl32StyleChange::FOREGROUND;
 }
 
 void dl32ConsoleColorSettings::push_style()

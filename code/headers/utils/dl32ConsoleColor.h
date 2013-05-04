@@ -49,6 +49,17 @@ DL32EXCEPTION_SUBCLASS_NODOC( dl32ConsoleStyleChangeFailed );
 DL32EXCEPTION_SUBCLASS_NODOC( dl32ConsoleHandleSetupFailed );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set of console-style change types.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+enum class dl32StyleChange
+{
+    FOREGROUND,
+    BACKGROUND
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class provides methods for change colors of the standard output stream.
 ///
 /// @author	Manu343726
@@ -68,6 +79,8 @@ private:
     void _pop_style();
     bool _styles_stack_autopush;
     
+    dl32StyleChange _last_change;
+    
     
     /* singleton */
     static dl32ConsoleColorSettings* _instance;
@@ -80,6 +93,7 @@ private:
     {
         _setup_handle();
         _styles_stack_autopush = false;
+        _last_change = dl32StyleChange::FOREGROUND;
         _styles_stack.push_back( _get_style() );
     }
 public:  
@@ -140,6 +154,34 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     void pop_style();
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the last console-style change performed.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32StyleChange last_change() { return _last_change; }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Executes the last console-style change with the specified color.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void execute_change( dl32ConsoleColor color )
+    {
+        switch( _last_change )
+        {
+            case dl32StyleChange::BACKGROUND: change_background( color ); break;
+            case dl32StyleChange::FOREGROUND: change_foreground( color ); break;
+        }
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Forces function "execute_change()" to perform an specified change. 
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void set_execute_change( dl32StyleChange change) { _last_change = change; }
 };
 
 
@@ -260,7 +302,19 @@ struct dl32PopStyle
     }
 };
 
+inline ostream& operator<<(ostream& os , dl32StyleChange change)
+{
+    dl32ConsoleColorSettings::instance().set_execute_change( change );
+    
+    return os;
+}
 
+inline ostream& operator<<(ostream& os , dl32ConsoleColor color)
+{
+    dl32ConsoleColorSettings::instance().execute_change( color );
+    
+    return os;
+}
 
 
 #endif	/* DL32CONSOLECOLOR_H */

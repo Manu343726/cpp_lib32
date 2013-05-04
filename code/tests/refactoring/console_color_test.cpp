@@ -19,7 +19,7 @@ void test_console_color_settings_api()
     cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
     cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
     
-    cout << dl32ChangeForegroundColor( dl32ConsoleColor::BLACK );
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::BLACK;
     
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
