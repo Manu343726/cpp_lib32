@@ -11,7 +11,7 @@ public:
     void make_things_happen() { cout << "oooohhh!!!" << endl; }
 };
 
-int main()
+void test_console_color_settings_api()
 {
     cout << "Before push" << dl32PushStyle() << endl;
     
@@ -26,6 +26,11 @@ int main()
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
     
     cout << dl32PopStyle() << "After pop" << endl;
+}
+
+int main()
+{
+    test_console_color_settings_api();
 }
 
 #endif /* ISCURRENTTEST */
