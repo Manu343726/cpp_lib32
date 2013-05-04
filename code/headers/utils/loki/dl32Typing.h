@@ -284,7 +284,7 @@ private:
     template<typename U , typename TAIL>
     struct _index_of<U, dl32Loki_like_TypeList<U,TAIL>>
     {
-        enum { value = 0 }; ///< The index of the type U in the typelist TYPELIST.
+        enum { value = 0 };
     };
 
     /* Recoursive-case specialitation */

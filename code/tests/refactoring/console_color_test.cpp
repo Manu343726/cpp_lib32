@@ -11,7 +11,53 @@ public:
     void make_things_happen() { cout << "oooohhh!!!" << endl; }
 };
 
-void test_console_color_settings_api()
+void test_console_color_settings_api_bysingleton()
+{
+    cout << "Before push" << endl;
+    
+    dl32ConsoleColorSettings::instance().push_style();
+    
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTRED );
+    cout << "Red!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTGREEN );
+    cout << "Green!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTBLUE );
+    cout << "Blue!!!" << endl;
+    
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::BLACK );
+
+    dl32ConsoleColorSettings::instance().change_background( dl32ConsoleColor::LIGHTRED );
+    cout << "Red!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_background( dl32ConsoleColor::LIGHTGREEN );
+    cout << "Green!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_background( dl32ConsoleColor::LIGHTBLUE );
+    cout << "Blue!!!" << endl;
+    
+    dl32ConsoleColorSettings::instance().pop_style();
+    cout << "After pop" << endl;
+    
+    dl32ConsoleColorSettings::instance().set_autopush( true );
+    cout << "Auto-push enabled" << endl;
+    
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTRED );
+    cout << "Red!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTGREEN );
+    cout << "Green!!!" << endl;
+    dl32ConsoleColorSettings::instance().change_foreground( dl32ConsoleColor::LIGHTBLUE );
+    cout << "Blue!!!" << endl;
+    
+    dl32ConsoleColorSettings::instance().pop_style();
+    cout << "After pop" << endl;
+    dl32ConsoleColorSettings::instance().pop_style();
+    cout << "After pop" << endl;
+    dl32ConsoleColorSettings::instance().pop_style();
+    cout << "After pop" << endl;
+    
+    dl32ConsoleColorSettings::instance().set_autopush( false );
+    cout << "Auto-push disabled" << endl;
+}
+
+void test_console_color_settings_api_explicit()
 {
     cout << "Before push" << dl32PushStyle() << endl;
     
@@ -19,18 +65,92 @@ void test_console_color_settings_api()
     cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
     cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
     
-    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::BLACK;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::BLACK );
     
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
     cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
     
     cout << dl32PopStyle() << "After pop" << endl;
+    
+    cout << dl32SetAutoPush<true>() << "Auto-push enabled" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
+    cout << dl32PopStyle() << "After pop" << endl;
+    cout << dl32PopStyle() << "After pop" << endl;
+    cout << dl32PopStyle() << "After pop" << endl;
+    
+    cout << dl32SetAutoPush<false>() << "Auto-push disabled" << endl;
+}
+
+void test_console_color_settings_api_explicit_constants()
+{
+    cout << "Before push" << push_style << endl;
+    
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::BLACK );
+    
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
+    cout << pop_style << "After pop" << endl;
+    
+    cout << enable_autopush << "Auto-push enabled" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
+    cout << pop_style << "After pop" << endl;
+    cout << pop_style << "After pop" << endl;
+    cout << pop_style << "After pop" << endl;
+    
+    cout << disable_autopush << "Auto-push disabled" << endl;
+}
+
+void test_console_color_settings_api_implicit()
+{
+    cout << "Before push" << push_style << endl;
+    
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTRED << "Red!!!"   << endl;
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTGREEN << "Green!!!"   << endl;
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTBLUE << "Blue!!!"   << endl;
+    
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::BLACK;
+    
+    cout << dl32StyleChange::BACKGROUND << dl32ConsoleColor::LIGHTRED << "Red!!!"   << endl;
+    cout << dl32StyleChange::BACKGROUND << dl32ConsoleColor::LIGHTGREEN << "Green!!!"   << endl;
+    cout << dl32StyleChange::BACKGROUND << dl32ConsoleColor::LIGHTBLUE << "Blue!!!"   << endl;
+    
+    cout << pop_style << "After pop" << endl;
+    
+    cout << enable_autopush << "Auto-push enabled" << endl;
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTRED << "Red!!!"   << endl;
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTGREEN << "Green!!!"   << endl;
+    cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::LIGHTBLUE << "Blue!!!"   << endl;
+    
+    cout << pop_style << "After pop" << endl;
+    cout << pop_style << "After pop" << endl;
+    cout << pop_style << "After pop" << endl;
+    
+    cout << disable_autopush << "Auto-push disabled" << endl;
 }
 
 int main()
 {
-    test_console_color_settings_api();
+    cout << endl << "USING SINGLETON:" << endl << endl;
+    test_console_color_settings_api_bysingleton();
+    cout << endl << "USING EXPLICIT SYNTAX:" << endl << endl;
+    test_console_color_settings_api_explicit();
+    cout << endl << "USING EXPLICIT SYNTAX WITH CONSTANTS:" << endl << endl;
+    test_console_color_settings_api_explicit_constants();
+    cout << endl << "USING IMPLICIT SYNTAX:" << endl << endl;
+    test_console_color_settings_api_implicit();
 }
 
 #endif /* ISCURRENTTEST */

@@ -1,7 +1,12 @@
 #include "dl32ConsoleColor.h"
 
-dl32ConsoleColorSettings* dl32ConsoleColorSettings::_instance = nullptr;
+/* Useful constants definitions */
+const dl32PushStyle push_style; 
+const dl32PopStyle  pop_style; 
+const dl32SetAutoPush<true>  enable_autopush; 
+const dl32SetAutoPush<false> disable_autopush;
 
+/* DWORD text attributes color masks */
 #define COLORMASK_NOCOLOR        0x11111100
 #define COLORMASK_COLORONLY      0x00000011
 #define COLORMASK_NOFOREGROUND   0x11111110
@@ -9,6 +14,7 @@ dl32ConsoleColorSettings* dl32ConsoleColorSettings::_instance = nullptr;
 #define COLORMASK_NOBACKGROUND   0x11111101
 #define COLORMASK_BACKGROUNDONLY 0x00000010
 
+/* Internal operations */
 std::pair<WORD,WORD> _get_colors_from_style( dl32ConsoleStyle style );
 dl32ConsoleStyle _change_foreground_only(dl32ConsoleStyle style , DWORD color );
 dl32ConsoleStyle _change_background_only(dl32ConsoleStyle style , DWORD color );
@@ -28,6 +34,12 @@ dl32ConsoleStyle _change_background_only(dl32ConsoleStyle style , DWORD color )
     return (style & COLORMASK_NOBACKGROUND) | (color << 4);
 }
 
+void dl32ConsoleColorSettings::_setup_handle() throw ( dl32ConsoleHandleSetupFailed )
+{
+    if(!(_handle = GetStdHandle( STD_OUTPUT_HANDLE ))) 
+        throw dl32ConsoleHandleSetupFailed();
+}
+
 dl32ConsoleStyle dl32ConsoleColorSettings::_get_style()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
@@ -45,6 +57,14 @@ void dl32ConsoleColorSettings::_update_style(dl32ConsoleStyle style) throw( dl32
 {
     _styles_stack.back() = style;
     _set_style( style );
+}
+
+void dl32ConsoleColorSettings::_setup_singleton_instance()
+{
+    _setup_handle();
+    _styles_stack_autopush = false;
+    _last_change = dl32StyleChange::FOREGROUND;
+    _styles_stack.push_back( _get_style() );
 }
 
 void dl32ConsoleColorSettings::_push_style()
