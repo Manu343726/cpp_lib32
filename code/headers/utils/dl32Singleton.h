@@ -5,6 +5,26 @@
  * Created on 3 de mayo de 2013, 12:44
  */
 
+/*******************************************************************************
+* cpp_lib32 project. C++ port of the dx_lib32 project.                         *
+*                                                                              *
+* Copyright (C) 2012 - 2013, Manuel Sánchez Pérez                              *                     
+*                                                                              *
+* This file is part of cpp_lib32 project.                                      *
+*                                                                              *
+* cpp_lib32 project is free software: you can redistribute it and/or modify    *
+* it under the terms of the GNU Lesser General Public License as published by  *
+* the Free Software Foundation, version 2 of the License.                      *
+*                                                                              *
+* cpp_lib32 is distributed in the hope that it will be useful,                 *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
+* GNU Lesser General Public License for more details.                          *
+*                                                                              *
+ You should have received a copy of the GNU Lesser General Public License      *
+ along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
+*******************************************************************************/
+
 #ifndef DL32SINGLETON_H
 #define	DL32SINGLETON_H
 
@@ -97,9 +117,9 @@ bool dl32Singleton<T>::_ctor_called_by_getinstance = false;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 #define MAKE_SINGLETON( class_name )                                                                                          \
             friend class dl32Singleton< class_name >;                                                                         \
-        public:                                                                                                               \
-            class_name() { assert( dl32Singleton< class_name >::_ctor_called_by_getinstance ); _setup_singleton_instance(); } \
         private:                                                                                                              \
+            class_name() { assert( dl32Singleton< class_name >::_ctor_called_by_getinstance ); _setup_singleton_instance(); } \
+                                                                                                                              \
             class_name(const class_name&) {}                                                                                  \
             class_name& operator=(const class_name&) {}                                                                       \
             ~class_name() {}

@@ -1,4 +1,22 @@
-//#include "dl32Console.h"
+/*******************************************************************************
+* cpp_lib32 project. C++ port of the dx_lib32 project.                         *
+*                                                                              *
+* Copyright (C) 2012 - 2013, Manuel SÃ¡nchez PÃ©rez                              *                     
+*                                                                              *
+* This file is part of cpp_lib32 project.                                      *
+*                                                                              *
+* cpp_lib32 project is free software: you can redistribute it and/or modify    *
+* it under the terms of the GNU Lesser General Public License as published by  *
+* the Free Software Foundation, version 2 of the License.                      *
+*                                                                              *
+* cpp_lib32 is distributed in the hope that it will be useful,                 *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
+* GNU Lesser General Public License for more details.                          *
+*                                                                              *
+ You should have received a copy of the GNU Lesser General Public License      *
+ along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
+*******************************************************************************/
 
 #ifndef DL32TIMING_H
 #define DL32TIMING_H
@@ -49,7 +67,7 @@ public:
 	void add(dl32TimingTreeNode* node){_subnodes.push_back(node);}
 };
 
-//NOTA: Ahora que lo veo igual debería haber hecho un singleton en vez de tanta mierda estática...
+//NOTA: Ahora que lo veo igual deberï¿½a haber hecho un singleton en vez de tanta mierda estï¿½tica...
 class dl32Timing
 {
 private:
