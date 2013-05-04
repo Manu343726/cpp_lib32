@@ -43,7 +43,7 @@ void dl32ConsoleColorSettings::_set_style(dl32ConsoleStyle style) throw( dl32Con
 
 void dl32ConsoleColorSettings::_update_style(dl32ConsoleStyle style) throw( dl32ConsoleStyleChangeFailed )
 {
-    _styles_stack.push_back( style );
+    _styles_stack.back() = style;
     _set_style( style );
 }
 

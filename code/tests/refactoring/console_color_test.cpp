@@ -14,11 +14,17 @@ public:
 int main()
 {
     cout << "Before push" << dl32PushStyle() << endl;
-    cout << dl32ChangeForegroundColor( dl32ConsoleColor::YELLOW ) << dl32ChangeBackgroundColor( dl32ConsoleColor::BLUE );
-    cout << "Old-days syntax highlighting..." << endl;
-    cout << "Old-days syntax highlighting..." << endl;
-    cout << "Old-days syntax highlighting..." << endl;
-    cout << "Old-days syntax highlighting..." << endl;
+    
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
+    cout << dl32ChangeForegroundColor( dl32ConsoleColor::BLACK );
+    
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTRED )   << "Red!!!"   << endl;
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTGREEN ) << "Green!!!" << endl;
+    cout << dl32ChangeBackgroundColor( dl32ConsoleColor::LIGHTBLUE )  << "Blue!!!"  << endl;
+    
     cout << dl32PopStyle() << "After pop" << endl;
 }
 
