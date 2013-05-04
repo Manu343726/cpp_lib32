@@ -1,3 +1,6 @@
+ADVERTENCIA: Esta rama del proyecto está desactualizada, la rama principal de desarrollo es BigRefactoring
+( https://github.com/Manu343726/cpp_lib32/tree/BigRefactoring )
+
 Proyecto dx_lib32 C++ 
 =====================
 
