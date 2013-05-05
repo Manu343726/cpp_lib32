@@ -43,6 +43,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
+	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
 	${OBJECTDIR}/code/tests/refactoring/typing_test.o
@@ -111,6 +112,11 @@ ${OBJECTDIR}/code/source/utils/dl32Timing.o: code/source/utils/dl32Timing.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Timing.o code/source/utils/dl32Timing.cpp
+
+${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o: code/tests/ASCII_raster/ASCII_raster_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/ASCII_raster
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o code/tests/ASCII_raster/ASCII_raster_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o: code/tests/refactoring/Redesigned_event_system_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring

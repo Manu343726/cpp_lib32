@@ -33,6 +33,18 @@
       </logicalFolder>
     </logicalFolder>
     <logicalFolder name="tests" displayName="tests" projectFiles="true">
+      <logicalFolder name="ASCII_raster"
+                     displayName="ASCII_raster"
+                     projectFiles="true">
+        <logicalFolder name="f1" displayName="ascii" projectFiles="true">
+          <itemPath>code/tests/ASCII_raster/ascii/ascii_raster.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="graphics" displayName="graphics" projectFiles="true">
+          <itemPath>code/tests/ASCII_raster/graphics/raster.h</itemPath>
+          <itemPath>code/tests/ASCII_raster/graphics/screen.h</itemPath>
+        </logicalFolder>
+        <itemPath>code/tests/ASCII_raster/ASCII_raster_test.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="refactoring" displayName="refactoring" projectFiles="true">
         <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
         <itemPath>code/tests/refactoring/console_color_test.cpp</itemPath>
@@ -69,7 +81,6 @@
           <standard>3</standard>
         </cTool>
         <ccTool>
-          <developmentMode>2</developmentMode>
           <standard>8</standard>
           <incDir>
             <pElem>code/headers</pElem>
@@ -81,6 +92,8 @@
             <pElem>code/tests/general tests</pElem>
             <pElem>../../../../../../PROGRAMAS/PROGRAMACION/DirectX SDK Junio 2010/Include</pElem>
             <pElem>code/headers/utils/loki</pElem>
+            <pElem>code/tests/ASCII_raster</pElem>
+            <pElem>code/tests/ASCII_raster/graphics</pElem>
           </incDir>
         </ccTool>
       </compileType>
@@ -130,6 +143,26 @@
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/ASCII_raster_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/ascii/ascii_raster.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/graphics/raster.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/graphics/screen.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/tests/dl32TestConfig.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -229,6 +262,26 @@
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/ASCII_raster_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/ascii/ascii_raster.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/graphics/raster.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/tests/ASCII_raster/graphics/screen.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/tests/dl32TestConfig.h" ex="false" tool="3" flavor2="0">
       </item>

@@ -26,6 +26,7 @@
 #include "dl32Exceptions.h"
 #include <cmath>
 #include <string>
+#include <functional>
 
 using namespace std;
 
@@ -471,8 +472,14 @@ public:
 	dl32Line2D(dl32Point2D P1,dl32Point2D P2);
 	dl32Line2D(dl32Point2D Position,dl32Vector2D Direction);
 	dl32Line2D(dl32Point2D Position,float Slope);
+        
+        bool is_vertical() { return DL32FLOAT_EQCERO( direction.x ); }
+        bool is_horizontal() { return DL32FLOAT_EQCERO( direction.y ); }
 
-	dl32Point2D GetPoint(float x){return dl32Point2D(x,(a*x+c)/-b);}
+        float get_x( float y ) { return is_horizontal() ? position.x : (-c-b*y)/a; }
+        float get_y( float x ) { return is_vertical() ? position.y : (a*x+c)/-b; } 
+        
+	dl32Point2D GetPoint(float x){return dl32Point2D( x , get_y( x ) ) ;}
 	dl32Point2D GetPointByParameter(float param){return dl32Point2D(position.x+direction.x*param,position.y+direction.y*param);}
 
 	bool BelongTo(float x,float y){return a*x+b*y+c==0;}
@@ -492,6 +499,20 @@ public:
 	void SetDirection(float x,float y);
 	void SetDirection(dl32Vector2D pirection);
 	void SetSlope(float slope);
+        
+        static float get_x_with_y( dl32Point2D begin , dl32Point2D end , float y )
+        {
+            dl32Line2D line( begin , end );
+            
+            return line.get_x( y );
+        }
+        
+        static float get_y_with_x( dl32Point2D begin , dl32Point2D end , float x )
+        {
+            dl32Line2D line( begin , end );
+            
+            return line.get_y( x );
+        }
 };
 
 class dl32Segment2D
@@ -562,6 +583,80 @@ public:
 	void SetCenter(float X, float Y);
 	void SetCenter(const dl32Point2D &Center);
 	void SetArea(const dl32Vector2D &area);
+        
+        static const unsigned int COHEN_SUTHERLAND_CODE_CENTER    = 0x0; //0000
+        static const unsigned int COHEN_SUTHERLAND_CODE_UPLEFT    = 0x9; //1001
+        static const unsigned int COHEN_SUTHERLAND_CODE_UP        = 0x8; //1000
+        static const unsigned int COHEN_SUTHERLAND_CODE_UPRIGHT   = 0xA; //1010
+        static const unsigned int COHEN_SUTHERLAND_CODE_RIGHT     = 0x2; //0010
+        static const unsigned int COHEN_SUTHERLAND_CODE_DOWNRIGHT = 0x6; //0110
+        static const unsigned int COHEN_SUTHERLAND_CODE_DOWN      = 0x4; //0100
+        static const unsigned int COHEN_SUTHERLAND_CODE_DOWNLEFT  = 0x5; //0101
+        static const unsigned int COHEN_SUTHERLAND_CODE_LEFT      = 0x1; //0001
+        
+        unsigned int get_cohen_sutherland_code( const dl32Point2D& point) const
+        {
+            return     point.x < Position.x                    |
+                   ( ( point.x > Position.x + _width  ) << 1 ) |
+                   ( ( point.y < Position.y )           << 2 ) |
+                   ( ( point.y > Position.y + _height ) << 3 );
+        }
+        
+        struct ClippingResult
+        {
+            bool rejected;
+            dl32Point2D begin;
+            dl32Point2D end;
+            
+            ClippingResult( bool Rejected , dl32Point2D Begin , dl32Point2D End ) : rejected( Rejected ) , begin ( Begin ) , end( End ) {}
+        };
+        
+        ClippingResult clip( dl32Point2D begin , dl32Point2D end ) const
+        {
+            /* Cohen-Sutherland algorithm */
+     
+            unsigned int begin_code = get_cohen_sutherland_code( begin );
+            unsigned int end_code   = get_cohen_sutherland_code( end );
+            unsigned int code;
+            float x , y , dx , dy;
+            
+            while(true)
+            {
+                if( (begin_code | end_code) == COHEN_SUTHERLAND_CODE_CENTER )
+                    return ClippingResult(false,begin,end);
+            
+                if( (begin_code & end_code) != COHEN_SUTHERLAND_CODE_CENTER )
+                    return ClippingResult(true,begin,end);
+                
+                if( begin_code == COHEN_SUTHERLAND_CODE_CENTER )
+                    code = end_code;
+                else
+                    code = begin_code;
+                
+                if( code == COHEN_SUTHERLAND_CODE_UP )
+                    x = dl32Line2D::get_x_with_y( begin , end , y = Position.y );
+                else if( code == COHEN_SUTHERLAND_CODE_DOWN )
+                    x = dl32Line2D::get_x_with_y( begin , end , y = ( Position.y + _height ) );
+                else if( code == COHEN_SUTHERLAND_CODE_LEFT )
+                    y = dl32Line2D::get_y_with_x( begin , end , x = Position.x );
+                else if( code == COHEN_SUTHERLAND_CODE_RIGHT )
+                    y = dl32Line2D::get_y_with_x( begin , end , x = ( Position.x + _width ) );
+                
+                if( begin_code == code )
+                {
+                    begin.x = x;
+                    begin.y = y;
+                    begin_code = get_cohen_sutherland_code( begin );
+                }
+                
+                if( end_code == code )
+                {
+                    end.x = x;
+                    end.y = y;
+                    end_code = get_cohen_sutherland_code( end );
+                }
+            }
+        }
 
 	bool BelongTo(const dl32Point2D &Point)		          const {return BelongTo(Point.x,Point.y);}
 	bool BelongTo(float X,float Y)				          const {return (X>=Position.x && X<=(Position.x+_width) && Y>=Position.y && Y<=(Position.y+_height));}
