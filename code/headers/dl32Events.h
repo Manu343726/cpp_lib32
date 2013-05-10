@@ -23,6 +23,7 @@
 
 #include "dl32Config.h"
 #include "dl32Math.h"
+#include "dl32Typing.h"
 
 #include <Windows.h>
 
@@ -145,8 +146,14 @@ struct dl32KeyStrokeData
 template <typename ARGSTYPE>
 class dl32Event {
 public:
+    /// @brief Defines an alias representing type of the event sender.
+    //typedef SENDERTYPE& SenderType;
+    
+    /// @brief Defines an alias representing type of the event sender without reference.
+    //typedef SENDERTYPE SenderType_NoRef;
+    
     /// @brief	Defines an alias representing type of event argumments.
-    typedef ARGSTYPE& ArgummentsType;
+    typedef typename dl32Select<dl32TypeTraits<ARGSTYPE>::isVoid,ARGSTYPE,ARGSTYPE&>::result ArgummentsType;
 
     /// @brief	Defines an alias representing the argumments type without reference.
     typedef ARGSTYPE ArgummentsType_NoRef;
@@ -159,7 +166,7 @@ public:
     /// @brief	Defines an alias representing type of the dispatcher.
     typedef std::function<ARGSTYPE(WINDOWS_PROCEDURE_ARGS_TYPES) > DispatcherType;
 
-#else          // ... as� que me veo obligado a usar feos funteros
+#else          // ... así que me veo obligado a usar feos funteros
 
     /// @brief	Defines an alias representing type of the dispatcher.
     typedef ARGSTYPE(*DispatcherType)(WINDOWS_PROCEDURE_ARGS_TYPES);
@@ -173,18 +180,23 @@ public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
     /// @param [in,out]	args Argumments of the event.
+    /// @tparam ARGS_BY_REF If is set to true, event argumments are passed by reference to the handlers.
+    ///                     If is set to false, event argumments are passed by value to the handlers.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    void RaiseEvent(ArgummentsType args) {
+    template<bool ARGS_BY_REF = true>
+    typename dl32EnableIf<!dl32TypeTraits<ARGSTYPE>::isVoid,void>::type RaiseEvent(typename dl32Select<ARGS_BY_REF,ArgummentsType,ArgummentsType_NoRef>::result args) {
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
-            (*it)(args);
+            (*it)(reinterpret_cast<ArgummentsType>(args));
     }
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
-    /// @param	args Argumments of the event.
+    /// @Remarks Specialitation for non-argumments events.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    void RaiseEvent_NoRef(ArgummentsType_NoRef args) {
-        RaiseEvent(reinterpret_cast<ArgummentsType> (args));
+    template<bool ARGS_BY_REF = true>
+    typename dl32EnableIf<dl32TypeTraits<ARGSTYPE>::isVoid,void>::type RaiseEvent() {
+        for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
+            (*it)();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,70 +216,6 @@ public:
         _handlers.erase(handler);
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	 cpp_lib32 event type (Template specialitation for non-args events)
-/// @details     Specialitation of dl32Event for non-args events. Non-args events handlers are functions
-/// 		 with protoptype "void EventHandler()". 
-/// 		 
-/// 		 
-/// 		 The type of the function-pointers that can be handlers are defined in the HandlerType
-/// 		 typedef.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-template<>
-class dl32Event<void>
-{
-public:
-	/// @brief	Defines an alias representing type of event argumments.
-	typedef void ArgummentsType;
-
-	/// @brief	Defines an alias representing function-pointer type of a event handler.
-	typedef void (*HandlerType)();
-
-#if !defined( _MSC_VER ) //MSVC no implementa todav�a template varargs...
-
-	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef std::function<void ( WINDOWS_PROCEDURE_ARGS_TYPES )> DispatcherType;
-
-#else          // ... as� que me veo obligado a usar feos funteros
-
-	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef void ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
-
-#endif
-private:
-	vector<HandlerType> _handlers;
-public:
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Raises the non-args event.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RaiseEvent()
-	{
-		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
-			(*it)();
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Adds a function as a handler for this event.
-	/// @param	handler	Pointer to the function that will be a handler.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void AddHandler(HandlerType handler) {_handlers.push_back(handler);}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	The function passed stops being a handler of the event.
-	/// @param	handler	Function-pointer to the handler.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RemoveHandler(HandlerType handler) 
-	{
-		auto it = std::begin( _handlers );
-
-		if( ( it = std::find( std::begin( _handlers ) , std::end( _handlers ) , handler ) ) != std::end( _handlers ) )
-			_handlers.erase( it );
-	}
-};
-
-
 
 /// @brief	Alias for a non-args event
 typedef dl32Event<void> dl32NonArgsEvent;
@@ -405,7 +353,7 @@ public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void dispatch( WINDOWS_PROCEDURE_ARGS )
 	{
-            _event.RaiseEvent_NoRef( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
+            _event.RaiseEvent<false>( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
 	}
 };
 

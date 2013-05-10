@@ -115,7 +115,7 @@ dl32KeyStrokeData dl32SystemMessagesDataTranslator::getKeyStrokeData( WINDOWS_PR
 	dl32KeyStrokeData Data;
 
 	Data.Key=char(wParam);
-	Data.PreviousPressed=((lParam >> 30)%2)!=0;//Miguel y Laura, mi cerebro se licua con las operaciones a bits
+	Data.PreviousPressed=(lParam >> 30) & 0x1;//Miguel y Laura, mi cerebro se licua con las operaciones a bits
 	Data.RepeatCount=lParam & 0x00007FFF; //00000000000000000111111111111111
 
 	return Data;
