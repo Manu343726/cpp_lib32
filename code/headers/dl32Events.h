@@ -141,66 +141,68 @@ struct dl32KeyStrokeData
 /// @tparam	ARGTYPE	Event argumments type. For non-args events, use void (See void template 
 /// 				specialitation of this class).
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 template <typename ARGSTYPE>
-class dl32Event
-{
+class dl32Event {
 public:
-	/// @brief	Defines an alias representing type of event argumments.
-	typedef ARGSTYPE& ArgummentsType;
+    /// @brief	Defines an alias representing type of event argumments.
+    typedef ARGSTYPE& ArgummentsType;
 
-	/// @brief	Defines an alias representing the argumments type without reference.
-	typedef ARGSTYPE ArgummentsType_NoRef;
+    /// @brief	Defines an alias representing the argumments type without reference.
+    typedef ARGSTYPE ArgummentsType_NoRef;
 
-	/// @brief	Defines an alias representing function-pointer type of a event handler.
-	typedef void (*HandlerType)(ArgummentsType);
+    /// @brief	Defines an alias representing function-pointer type of a event handler.
+    typedef void (*HandlerType)(ArgummentsType);
 
 #if !defined( _MSC_VER ) //MSVC no implementa todavía template varargs...
 
-	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef std::function<ARGSTYPE ( WINDOWS_PROCEDURE_ARGS_TYPES )> DispatcherType;
-        
+    /// @brief	Defines an alias representing type of the dispatcher.
+    typedef std::function<ARGSTYPE(WINDOWS_PROCEDURE_ARGS_TYPES) > DispatcherType;
+
 #else          // ... as� que me veo obligado a usar feos funteros
 
-	/// @brief	Defines an alias representing type of the dispatcher.
-	typedef ARGSTYPE ( *DispatcherType )( WINDOWS_PROCEDURE_ARGS_TYPES );
+    /// @brief	Defines an alias representing type of the dispatcher.
+    typedef ARGSTYPE(*DispatcherType)(WINDOWS_PROCEDURE_ARGS_TYPES);
 
 #endif
 private:
-	vector<HandlerType> _handlers;
+    vector<HandlerType> _handlers;
 public:
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Raises the event.
-	/// @param [in,out]	args Argumments of the event.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RaiseEvent(ArgummentsType args)
-	{
-		for(auto it = _handlers.begin() ; it != _handlers.end() ; ++it)
-			(*it)(args);
-	}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief	Raises the event.
+    /// @param [in,out]	args Argumments of the event.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void RaiseEvent(ArgummentsType args) {
+        for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
+            (*it)(args);
+    }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Raises the event.
-	/// @param	args Argumments of the event.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RaiseEvent_NoRef(ArgummentsType_NoRef args)
-	{
-            RaiseEvent( reinterpret_cast<ArgummentsType>( args ) );
-	}
-        
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Adds a function as a handler for this event.
-	/// @param	handler	Pointer to the function that will be a handler.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void AddHandler(HandlerType handler) {_handlers.push_back(handler);}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief	Raises the event.
+    /// @param	args Argumments of the event.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void RaiseEvent_NoRef(ArgummentsType_NoRef args) {
+        RaiseEvent(reinterpret_cast<ArgummentsType> (args));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief	Adds a function as a handler for this event.
+    /// @param	handler	Pointer to the function that will be a handler.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void AddHandler(HandlerType handler) {
+        _handlers.push_back(handler);
+    }
 
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Removes the handler described by handler.
-	/// @param	handler	The handler.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void RemoveHandler(HandlerType handler) {_handlers.erase(handler);}
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief	Removes the handler described by handler.
+    /// @param	handler	The handler.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void RemoveHandler(HandlerType handler) {
+        _handlers.erase(handler);
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -413,7 +413,7 @@ struct dl32Point2D
 
 	static float GetSignedArea(dl32Point2D P1, dl32Point2D P2, dl32Point2D P3)        {return (P2.x-P1.x)*(P3.y-P1.y) - (P3.x-P1.x)*(P2.y-P1.y);}
 
-	std::string toString()                                const                       {return "{" + to_string<float>(x) + "," + to_string<float>(y) + ")";}
+	std::string toString()                                const                       {return "{" + to_string(x) + "," + to_string(y) + "}";}
 };
 
 //////////////////////////////////

@@ -45,12 +45,6 @@ void OnMouseMove(dl32MouseMoveEvent::ArgummentsType args)
 int main()
 {
 	auto dispatchFunction = [] ( WINDOWS_PROCEDURE_ARGS ) { return dl32SystemMessagesDataTranslator::getMouseData ( WINDOWS_PROCEDURE_BYPASS ); };
-
-        if( dl32TypeChecking<dl32Point2D , dl32Vector2D>::superclass_subclass)
-            cout << "Inheritance!!!";
-        
-        if( dl32TypeTraits<int>::isPointer )
-            cout << "Is a pointer!!!";
         
 	dl32SystemEventsManager::instance().setUpEvent<dl32MouseMoveEvent>( dispatchFunction , WM_MOUSEMOVE );
 

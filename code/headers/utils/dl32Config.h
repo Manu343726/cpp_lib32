@@ -68,11 +68,11 @@ typedef unsigned int uint;
 
 ///< Global to_string function (std::to_string not supported by GCC 4.7)
 template<typename T>
-std::string&& to_string(const T& value)
+std::string to_string(const T& value)
 {
 	stringstream stream;
 	stream << value;
-	return std::move( stream.str() );
+	return stream.str();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
