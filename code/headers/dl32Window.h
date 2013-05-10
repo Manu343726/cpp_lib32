@@ -22,24 +22,115 @@
 #define WINDOW_H
 
 #include "dl32Config.h"
-
-#include <Windows.h>
-#include <string>
 #include "dl32Events.h"
 #include "dl32Math.h"
 #include "dl32Exceptions.h"
+#include "dl32Singleton.h"
+
+#include <Windows.h>
+
+#include <string>
+#include <memory>
 
 using namespace std;
 
 /// @brief	Defines an alias representing handle of a dl32Window.
 typedef HWND dl32WindowHandle;
 
-//Declaraci�n adelantada para el manager.
-class dl32Window;
+
+class dl32WindowsManager;;
 
 DL32EXCEPTION_SUBCLASS_NODOC(dl32WindowClassRegistrationFailedException);
 
 DL32EXCEPTION_SUBCLASS_NODOC(dl32WindowCreationFailedException);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	cpp_lib32 window class.
+/// @details This class is just a Win32 HWND wrapper, thats simplifies windows operations. 
+///
+/// @author	Manu 343726
+/// @date	09/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class dl32Window
+{
+    friend class dl32WindowsManager;
+private:
+	static const WNDCLASS WINDOWCLASS; ///< cpp_lib32 window class (See http://msdn.microsoft.com/es-es/library/windows/desktop/ms633576(v=vs.85).aspx) 
+	static bool _windowClassRegistered; ///< Window class registration flag.
+
+	dl32WindowHandle _handle; ///< Window handle.
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Setups the window.
+	///
+	/// @author	Manu 343726
+	/// @date	09/04/2013
+	/// 		
+	/// @param	title 	Title for the new window.
+	/// @param	width 	Window width. default value is dl32Window::DEFAULT_WIDTH.
+	/// @param	height	Window height. default value is dl32Window::DEFAULT_HEIGHT.
+	/// @param	left  	Window left. default value is dl32Window::DEFAULT_LEFT.
+	/// @param	top   	Window top. default value is dl32Window::DEFAULT_TOP.
+	/// @param	isNewWindow	(Optional) If this dl32Window instance is a wrapper of an existing window,
+	/// 					this function not performs the window creation operations.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	void _setup(const string& title , uint width , uint height , uint left , uint top , bool isNewWindow = true);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Creates a new window and registers it in the window manager.
+	///
+	/// @author	Manu 343726
+	/// @date	09/04/2013
+	///
+	/// @param	title 	Title for the new window.
+	/// @param	width 	(Optional) Window width. default value is dl32Window::DEFAULT_WIDTH.
+	/// @param	height	(Optional) Window height. default value is dl32Window::DEFAULT_HEIGHT.
+	/// @param	left  	(Optional) Window left. default value is dl32Window::DEFAULT_LEFT.
+	/// @param	top   	(Optional) Window top. default value is dl32Window::DEFAULT_TOP.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	dl32Window(const string& title , uint width = DEFAULT_WIDTH , uint height = DEFAULT_HEIGHT , uint left = DEFAULT_LEFT , uint top = DEFAULT_TOP) {_setup( title , width , height , left , top); }
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Creates a wrapper for an existing window (@see dl32Window details).
+	///
+	/// @author	Manu 343726
+	/// @date	09/04/2013
+	///
+	/// @param	handle	Handle of the existing window.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	dl32Window(dl32WindowHandle handle) : _handle( handle ) {}
+public:
+	static const dl32WindowHandle INVALID_WINDOW_HANDLE;	///< Invalid window handle value.
+
+	static const uint DEFAULT_WIDTH  = 800; ///< dl32Window default width (default value for ctors parameter 'width')
+	static const uint DEFAULT_HEIGHT = 600; ///< dl32Window default width (default value for ctors parameter 'height')
+	static const uint DEFAULT_LEFT   = CW_USEDEFAULT; ///< dl32Window default left  (default value for ctors parameter 'left')
+	static const uint DEFAULT_TOP    = CW_USEDEFAULT; ///< dl32Window default left  (default value for ctors parameter 'top')
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Checks equality of two dl32Window instances.
+	///
+	/// @author	Manu 343726
+	/// @date	09/04/2013
+	///
+	/// @param	other	dl32Window instance to be compared with.
+	///
+	/// @return	true if both instances wrap the same window. False in another case.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool operator ==(const dl32Window& other) const {return _handle == other._handle;}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief	Checks non-equality of two dl32Window instances.
+	///
+	/// @author	Manu 343726
+	/// @date	09/04/2013
+	///
+	/// @param	other	dl32Window instance to be compared with.
+	///
+	/// @return	true if both instances not wrap the same window. False in another case.
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool operator !=(const dl32Window& other) const {return !(*this == other);}
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	Manages all instances of dl32Windows class and performs windows "machinery".
@@ -47,36 +138,11 @@ DL32EXCEPTION_SUBCLASS_NODOC(dl32WindowCreationFailedException);
 /// @author	Manu 343726
 /// @date	09/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32WindowsManager
+class dl32WindowsManager : public dl32Singleton<dl32WindowsManager,true>
 {
+    MAKE_SINGLETON(dl32WindowsManager,true)
 private:
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @fn	dl32WindowsManager::dl32WindowsManager()
-	///
-	/// @brief	Default constructor. Private, dl32WndowsManager implements singleton design pattern.
-	///
-	/// @author	Manu
-	/// @date	16/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32WindowsManager() : _processingMessages(false) {}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @fn	dl32WindowsManager::~dl32WindowManager()
-	///
-	/// @brief	Destructor. Private, dl32WndowsManager implements singleton design pattern.
-	///
-	/// @author	Manu
-	/// @date	16/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	~dl32WindowsManager() {}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Assignment operator. Private, dl32WndowsManager implements singleton design pattern.
-	///
-	/// @author	Manu
-	/// @date	16/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32WindowsManager& operator=( const dl32WindowsManager&) {}
+    virtual void _setup_singleton_instance() { _processingMessages = false; }
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	"Window-specific" (See remarks) message processing callback.
@@ -108,37 +174,8 @@ private:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void _messageLoop();
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Destroys the singleton instance.
-	///
-	/// @author	Manu
-	/// @date	16/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void _destroyInstance() { delete _instance; _instance = nullptr; }
-
-	static dl32WindowsManager* _instance;
-
 	bool _processingMessages; 
 public:
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets the singleton instance.
-	///
-	/// @author	Manu
-	/// @date	16/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	static dl32WindowsManager& instance() 
-	{
-		if( _instance == nullptr )
-		{
-			_instance = new dl32WindowsManager();
-
-			atexit(_destroyInstance);
-		}
-
-		return *_instance;
-	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets the window procedure.
 	///
@@ -176,47 +213,8 @@ public:
 	/// @date	16/04/2013S
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void stop() { _processingMessages = false; }
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	cpp_lib32 window class.
-/// @details This class is just a Win32 HWND wrapper, thats simplifies windows operations. 
-///
-/// @author	Manu 343726
-/// @date	09/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32Window
-{
-private:
-	static const WNDCLASS WINDOWCLASS; ///< cpp_lib32 window class (See http://msdn.microsoft.com/es-es/library/windows/desktop/ms633576(v=vs.85).aspx) 
-	static bool _windowClassRegistered; ///< Window class registration flag.
-
-	dl32WindowHandle _handle; ///< Window handle.
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Setups the window.
-	///
-	/// @author	Manu 343726
-	/// @date	09/04/2013
-	/// 		
-	/// @param	title 	Title for the new window.
-	/// @param	width 	Window width. default value is dl32Window::DEFAULT_WIDTH.
-	/// @param	height	Window height. default value is dl32Window::DEFAULT_HEIGHT.
-	/// @param	left  	Window left. default value is dl32Window::DEFAULT_LEFT.
-	/// @param	top   	Window top. default value is dl32Window::DEFAULT_TOP.
-	/// @param	isNewWindow	(Optional) If this dl32Window instance is a wrapper of an existing window,
-	/// 					this function not performs the window creation operations.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void _setup(const string& title , uint width , uint height , uint left , uint top , bool isNewWindow = true);
-public:
-	static const dl32WindowHandle INVALID_WINDOW_HANDLE;	///< Invalid window handle value.
-
-	static const uint DEFAULT_WIDTH  = 800; ///< dl32Window default width (default value for ctors parameter 'width')
-	static const uint DEFAULT_HEIGHT = 600; ///< dl32Window default width (default value for ctors parameter 'height')
-	static const uint DEFAULT_LEFT   = CW_USEDEFAULT; ///< dl32Window default left  (default value for ctors parameter 'left')
-	static const uint DEFAULT_TOP    = CW_USEDEFAULT; ///< dl32Window default left  (default value for ctors parameter 'top')
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Creates a new window and registers it in the window manager.
 	///
 	/// @author	Manu 343726
@@ -228,7 +226,7 @@ public:
 	/// @param	left  	(Optional) Window left. default value is dl32Window::DEFAULT_LEFT.
 	/// @param	top   	(Optional) Window top. default value is dl32Window::DEFAULT_TOP.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32Window(const string& title , uint width = DEFAULT_WIDTH , uint height = DEFAULT_HEIGHT , uint left = DEFAULT_LEFT , uint top = DEFAULT_TOP) {_setup( title , width , height , left , top); }
+	static shared_ptr<dl32Window> createWindow(const string& title , uint width = dl32Window::DEFAULT_WIDTH , uint height = dl32Window::DEFAULT_HEIGHT , uint left = dl32Window::DEFAULT_LEFT , uint top = dl32Window::DEFAULT_TOP);
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Creates a wrapper for an existing window (@see dl32Window details).
@@ -238,30 +236,6 @@ public:
 	///
 	/// @param	handle	Handle of the existing window.
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32Window(dl32WindowHandle handle) : _handle( handle ) {}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Checks equality of two dl32Window instances.
-	///
-	/// @author	Manu 343726
-	/// @date	09/04/2013
-	///
-	/// @param	other	dl32Window instance to be compared with.
-	///
-	/// @return	true if both instances wrap the same window. False in another case.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool operator ==(const dl32Window& other) const {return _handle == other._handle;}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Checks non-equality of two dl32Window instances.
-	///
-	/// @author	Manu 343726
-	/// @date	09/04/2013
-	///
-	/// @param	other	dl32Window instance to be compared with.
-	///
-	/// @return	true if both instances not wrap the same window. False in another case.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool operator !=(const dl32Window& other) const {return !(*this == other);}
+	static shared_ptr<dl32Window> createWindow(dl32WindowHandle handle);
 };
 #endif

@@ -115,7 +115,7 @@ enum class dl32StyleChange
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 class dl32ConsoleColorSettings : public dl32Singleton<dl32ConsoleColorSettings>
 { 
-    MAKE_SINGLETON( dl32ConsoleColorSettings )
+    MAKE_SINGLETON( dl32ConsoleColorSettings , true )
 private:
     dl32StandardOutputHandle _handle;
     void _setup_handle() throw ( dl32ConsoleHandleSetupFailed );

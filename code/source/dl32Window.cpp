@@ -23,9 +23,6 @@
 
 using namespace std;
 
-/// @brief	The cpp_lib32 windows manager singleton instance.
-dl32WindowsManager* dl32WindowsManager::_instance = NULL;
-
 /*********************************
 * dl32Window static fields setup *
 *********************************/
@@ -45,6 +42,15 @@ const WNDCLASS dl32Window::WINDOWCLASS =
     (LPCTSTR)"cpp_lib32"                                //(WindowClassName)
 };
 
+shared_ptr<dl32Window> dl32WindowsManager::createWindow(const string& title, uint width, uint height, uint left, uint top)
+{
+    return shared_ptr<dl32Window>( new dl32Window( title , width , height , left , top ) );
+}
+
+shared_ptr<dl32Window> dl32WindowsManager::createWindow(dl32WindowHandle handle)
+{
+    return shared_ptr<dl32Window>( new dl32Window( handle ) );
+}
 
 LRESULT CALLBACK dl32WindowsManager::_WindowProcedure( WINDOWS_PROCEDURE_ARGS )
 {

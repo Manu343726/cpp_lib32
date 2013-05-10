@@ -50,7 +50,7 @@ int main()
 
 	dl32SystemEventsManager::instance().getEvent<dl32MouseMoveEvent>( WM_MOUSEMOVE ).AddHandler( OnMouseMove );
 
-	dl32Window* window = new dl32Window("cpp_lib32");
+	auto window = dl32WindowsManager::createWindow("cpp_lib32");
 
 	dl32WindowsManager::instance().start();
         

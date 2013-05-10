@@ -48,7 +48,7 @@ using namespace std;
 /// @tparam T Class that implements the singleton.
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
+template<typename T , bool USE_VIRTUAL_SETUP = true>
 class dl32Singleton
 {
 public:
@@ -66,7 +66,7 @@ protected:
     static bool _ctor_called_by_getinstance;
     
     dl32Singleton() {}
-    virtual ~dl32Singleton() {}; //Correct polymorphic delete
+    virtual ~dl32Singleton() {} //Correct polymorphic delete
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Subclasses must define this setup function. All setup operations of a subclass must be 
@@ -92,6 +92,10 @@ public:
             
             _ctor_called_by_getinstance = true;
             _instance = new T;
+            
+            if(USE_VIRTUAL_SETUP)
+                _instance->_setup_singleton_instance();
+            
             _ctor_called_by_getinstance = false;
         }
         
@@ -100,11 +104,11 @@ public:
 };
 
 /* Definition of the instance pointer */
-template<typename T>
-typename dl32Singleton<T>::RealPointerToInstance dl32Singleton<T>::_instance = NULLPTR;
+template<typename T , bool USE_VIRTUAL_SETUP>
+typename dl32Singleton<T,USE_VIRTUAL_SETUP>::RealPointerToInstance dl32Singleton<T,USE_VIRTUAL_SETUP>::_instance = NULLPTR;
 /* Definition of the subclass ctor call flag */
-template<typename T>
-bool dl32Singleton<T>::_ctor_called_by_getinstance = false;
+template<typename T , bool USE_VIRTUAL_SETUP>
+bool dl32Singleton<T,USE_VIRTUAL_SETUP>::_ctor_called_by_getinstance = false;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This macro provides a "shortcut" to hide all ctors and assignment operator to performs 
@@ -115,14 +119,13 @@ bool dl32Singleton<T>::_ctor_called_by_getinstance = false;
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAKE_SINGLETON( class_name )                                                                                          \
-            friend class dl32Singleton< class_name >;                                                                         \
-        private:                                                                                                              \
-            class_name() { assert( dl32Singleton< class_name >::_ctor_called_by_getinstance ); _setup_singleton_instance(); } \
-                                                                                                                              \
-            class_name(const class_name&) {}                                                                                  \
-            class_name& operator=(const class_name&) {}                                                                       \
-            ~class_name() {}
+#define MAKE_SINGLETON( class_name , use_virtual_setup )                                                             \
+            friend class dl32Singleton< class_name , use_virtual_setup >;                                            \
+        private:                                                                                                     \
+            class_name() { assert( this->_ctor_called_by_getinstance ); } \
+                                                                                                                     \
+            class_name(const class_name&) = delete;                                                                  \
+            class_name& operator=(const class_name&) = delete;                        
 
 #endif	/* DL32SINGLETON_H */
 
