@@ -176,9 +176,15 @@ private:
     struct HandlerData
     {
         HandlerType handler;
-        std::function<bool(SenderType)> is_expected_sender;
         
-        HandlerData(HandlerType handler , std::function<bool(SenderType)> expected_sender_check) : handler(handler) , is_expected_sender(expected_sender_check) {}
+#if !defined( _MSC_VER ) //Por la misma razón que en la definición de DispatcherType: Compativilidad con MSVC.
+        using is_expected_sender_type = std::function<bool(SenderType)>;
+#else
+        typedef bool (*is_expected_sender_type) (const SenderType&);
+#endif
+        is_expected_sender_type is_expected_sender;
+        
+        HandlerData(HandlerType handler , is_expected_sender_type expected_sender_check) : handler(handler) , is_expected_sender(expected_sender_check) {}
     };
     
     vector<HandlerData> _handlers;
