@@ -27,7 +27,6 @@
           <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
         </logicalFolder>
         <itemPath>code/source/dl32Color.cpp</itemPath>
-        <itemPath>code/source/dl32Events.cpp</itemPath>
         <itemPath>code/source/dl32Math.cpp</itemPath>
         <itemPath>code/source/dl32Window.cpp</itemPath>
       </logicalFolder>
@@ -126,8 +125,6 @@
             flavor2="0">
       </item>
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/dl32Events.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -245,8 +242,6 @@
             flavor2="0">
       </item>
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/dl32Events.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
       </item>

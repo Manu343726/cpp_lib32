@@ -1,22 +1,22 @@
 /*******************************************************************************
-* cpp_lib32 project. C++ port of the dx_lib32 project.                         *
-*                                                                              *
-* Copyright (C) 2012 - 2013, Manuel Sánchez Pérez                              *                     
-*                                                                              *
-* This file is part of cpp_lib32 project.                                      *
-*                                                                              *
-* cpp_lib32 project is free software: you can redistribute it and/or modify    *
-* it under the terms of the GNU Lesser General Public License as published by  *
-* the Free Software Foundation, version 2 of the License.                      *
-*                                                                              *
-* cpp_lib32 is distributed in the hope that it will be useful,                 *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
-* GNU Lesser General Public License for more details.                          *
-*                                                                              *
+ * cpp_lib32 project. C++ port of the dx_lib32 project.                         *
+ *                                                                              *
+ * Copyright (C) 2012 - 2013, Manuel Sánchez Pérez                              *                     
+ *                                                                              *
+ * This file is part of cpp_lib32 project.                                      *
+ *                                                                              *
+ * cpp_lib32 project is free software: you can redistribute it and/or modify    *
+ * it under the terms of the GNU Lesser General Public License as published by  *
+ * the Free Software Foundation, version 2 of the License.                      *
+ *                                                                              *
+ * cpp_lib32 is distributed in the hope that it will be useful,                 *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
+ * GNU Lesser General Public License for more details.                          *
+ *                                                                              *
  You should have received a copy of the GNU Lesser General Public License      *
  along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
-*******************************************************************************/
+ *******************************************************************************/
 
 #ifndef DL32EVENTS_H
 #define DL32EVENTS_H
@@ -36,12 +36,11 @@ using namespace std;
 
 
 /// @brief	Mouse buttons enumeration
-enum class dl32MouseButton
-{
-	NONE,   ///< No button
-	RIGHT,  ///< Right button
-	CENTER, ///< Center button (Mouse wheel button, normally)
-	LEFT    ///< Left button
+enum class dl32MouseButton {
+    NONE, ///< No button
+    RIGHT, ///< Right button
+    CENTER, ///< Center button (Mouse wheel button, normally)
+    LEFT ///< Left button
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,12 +49,11 @@ enum class dl32MouseButton
 /// @author	Manu343726
 /// @date	07/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32MouseData
-{
-    dl32Point2D Location;   ///< Mouse-pointer in local coordinates. 
+struct dl32MouseData {
+    dl32Point2D Location; ///< Mouse-pointer in local coordinates. 
     dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton).
-    int Delta;              ///< Mouse wheel delta.
-        
+    int Delta; ///< Mouse wheel delta.
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief dl32MouseData ctor
     ///
@@ -65,17 +63,22 @@ struct dl32MouseData
     ///
     /// @author	Manu343726
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32MouseData( dl32Point2D location , dl32MouseButton button , int delta) : Location( location ) , Button( button ) , Delta (delta ) {}
-    
+    dl32MouseData(dl32Point2D location, dl32MouseButton button, int delta) : Location(location), Button(button), Delta(delta) {
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief dl32MouseData default ctor.
     ///
     /// @author	Manu343726
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32MouseData() {}
-    
+    dl32MouseData() {
+    }
+
     //Apaño:
-    operator dl32MouseData&() { return *this; }
+
+    operator dl32MouseData & () {
+        return *this;
+    }
 };
 
 /// @brief	cpp_lib32 keyboard codes
@@ -87,11 +90,10 @@ typedef char dl32KeyCode;
 /// @author	Manu343726
 /// @date	07/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32KeyStrokeData
-{
-	bool PreviousPressed;  ///< The previous key state. true if its down before, false if its up.
-	dl32KeyCode Key;       ///< Key code.
-	int RepeatCount;       ///< If the previous key state is "pressed", number of times the keystroke is autorepeated as a result of the user holding down the key. Cero in other case.
+struct dl32KeyStrokeData {
+    bool PreviousPressed; ///< The previous key state. true if its down before, false if its up.
+    dl32KeyCode Key; ///< Key code.
+    int RepeatCount; ///< If the previous key state is "pressed", number of times the keystroke is autorepeated as a result of the user holding down the key. Cero in other case.
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,41 +141,47 @@ struct dl32KeyStrokeData
 /// 		 
 /// 		 The type of the function-pointers that can be handlers are defined in the HandlerType
 /// 		 typedef.
-/// @tparam	ARGTYPE	Event argumments type. For non-args events, use void (See void template 
-/// 				specialitation of this class).
+/// @tparam	ARGTYPE	Event argumments type. For non-args events, use void.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <typename ARGSTYPE>
+template <typename SENDERTYPE, typename ARGSTYPE>
 class dl32Event {
 public:
     /// @brief Defines an alias representing type of the event sender.
-    //typedef SENDERTYPE& SenderType;
-    
+    typedef SENDERTYPE& SenderType;
+
     /// @brief Defines an alias representing type of the event sender without reference.
-    //typedef SENDERTYPE SenderType_NoRef;
-    
+    typedef SENDERTYPE SenderType_NoRef;
+
     /// @brief	Defines an alias representing type of event argumments.
-    typedef typename dl32Select<dl32TypeTraits<ARGSTYPE>::isVoid,ARGSTYPE,ARGSTYPE&>::result ArgummentsType;
+    typedef typename dl32Select<dl32TypeTraits<ARGSTYPE>::isVoid, ARGSTYPE, ARGSTYPE&>::result ArgummentsType;
 
     /// @brief	Defines an alias representing the argumments type without reference.
     typedef ARGSTYPE ArgummentsType_NoRef;
 
     /// @brief	Defines an alias representing function-pointer type of a event handler.
-    typedef void (*HandlerType)(ArgummentsType);
+    typedef void(*HandlerType)(SenderType,ArgummentsType);
 
 #if !defined( _MSC_VER ) //MSVC no implementa todavía template varargs...
 
     /// @brief	Defines an alias representing type of the dispatcher.
-    typedef std::function<ARGSTYPE(WINDOWS_PROCEDURE_ARGS_TYPES) > DispatcherType;
+    using DispatcherType = std::function<ARGSTYPE(WINDOWS_PROCEDURE_ARGS_TYPES)>;
 
 #else          // ... así que me veo obligado a usar feos funteros
 
     /// @brief	Defines an alias representing type of the dispatcher.
-    typedef ARGSTYPE(*DispatcherType)(WINDOWS_PROCEDURE_ARGS_TYPES);
+    using DispatcherType = ARGSTYPE(WINDOWS_PROCEDURE_ARGS_TYPES);
 
 #endif
 private:
-    vector<HandlerType> _handlers;
+    struct HandlerData
+    {
+        HandlerType handler;
+        std::function<bool(SenderType)> is_expected_sender;
+        
+        HandlerData(HandlerType handler , std::function<bool(SenderType)> expected_sender_check) : handler(handler) , is_expected_sender(expected_sender_check) {}
+    };
+    
+    vector<HandlerData> _handlers;
 public:
 
 
@@ -182,21 +190,29 @@ public:
     /// @param [in,out]	args Argumments of the event.
     /// @tparam ARGS_BY_REF If is set to true, event argumments are passed by reference to the handlers.
     ///                     If is set to false, event argumments are passed by value to the handlers.
+    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge for make SFINAE working. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<bool ARGS_BY_REF = true>
-    typename dl32EnableIf<!dl32TypeTraits<ARGSTYPE>::isVoid,void>::type RaiseEvent(typename dl32Select<ARGS_BY_REF,ArgummentsType,ArgummentsType_NoRef>::result args) {
+    template<bool PASS_BY_REF = true , typename ARGUMMENTS_TYPE = ARGSTYPE>
+    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, dl32Select<PASS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
+        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
+        
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
-            (*it)(reinterpret_cast<ArgummentsType>(args));
+            if( it->is_expected_sender( sender ) )
+                it->handler(sender, args);
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
     /// @Remarks Specialitation for non-argumments events.
+    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge for make SFINAE working. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<bool ARGS_BY_REF = true>
-    typename dl32EnableIf<dl32TypeTraits<ARGSTYPE>::isVoid,void>::type RaiseEvent() {
+    template<typename ARGUMMENTS_TYPE = ARGSTYPE>
+    void RaiseEvent(typename dl32EnableIf<dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender) {
+        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
+        
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
-            (*it)();
+            if( it->is_expected_sender( sender ) )
+                it->handler(sender);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -204,395 +220,25 @@ public:
     /// @param	handler	Pointer to the function that will be a handler.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddHandler(HandlerType handler) {
-        _handlers.push_back(handler);
+        _handlers.push_back( HandlerData( handler , [](const SenderType) { return true; } ) );
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief	Adds a function as a handler for this event.
+    /// @param	handler	Pointer to the function that will be a handler.
+    /// @param  expected_sender Reference to the sender that the handler expects. If the event is raised,
+    ///         and the sender of the raise is not this expected sender, the handler is not called.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void AddHandler(HandlerType handler , const SenderType expected_sender) {
+        _handlers.push_back( HandlerData( handler , [=](const SenderType sender) { return sender == expected_sender; } ) );
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Removes the handler described by handler.
     /// @param	handler	The handler.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void RemoveHandler(HandlerType handler) {
-        _handlers.erase(handler);
+        _handlers.erase( std::remove_if( std::begin( _handlers ) , std::end( _handlers ) , [=](const HandlerData& data) { return data.handler == handler; } ) );
     }
 };
-
-/// @brief	Alias for a non-args event
-typedef dl32Event<void> dl32NonArgsEvent;
-
-/**********************************************************************************
-* cpp_lib32 basic user input events declarations (As alias of dl32Event template) *
-**********************************************************************************/
-
-/* Mouse events: */
-
-/// @brief	Defines an alias representing the cpp_lib32 mouse event type. This event provides a dl32MouseData args with mouse input data.
-typedef dl32Event<dl32MouseData> dl32MouseEvent;
-
-typedef dl32MouseEvent dl32MouseClickEvent;       ///< Defines the MouseClickEvent as an alias of the MouseEvent type.	
-typedef dl32MouseEvent dl32MouseDoubleClickEvent; ///< Defines the MouseDoubleClickEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseMoveEvent;        ///< Defines the MouseMoveEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseUpEvent;          ///< Defines the MouseUpEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseDownEvent;        ///< Defines the MouseDownEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseWheelEvent;       ///< Defines the MouseWheelEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseEnterEvent;       ///< Defines the MouseEnterEvent as an alias of the MouseEvent type.
-typedef dl32MouseEvent dl32MouseLeaveEvent;       ///< Defines the MouseLeaveEvent as an alias of the MouseEvent type.
-
-
-/* Keyboard events: */
-
-/// @brief	Defines an alias representing the cpp_lib32 keyboard event type. This event provides a dl32KeyStrokeData args with keyboard input data.
-typedef dl32Event<dl32KeyStrokeData> dl32KeyboardEvent;
-typedef dl32KeyboardEvent dl32KeyPressEvent; ///< Defines the KeyPressed event as an alias of the KeyboardEvent type.
-typedef dl32KeyboardEvent dl32KeyDownEvent;  ///< Defines the KeyDown event as an alias of the KeyboardEvent type.
-typedef dl32KeyboardEvent dl32KeyUpEvent;    ///< Defines the KeyUp event as an alias of the KeyboardEvent type.
-
-
-/* Window area events: */
-
-/// @brief	 Defines an alias for a window area event. The 2D AABB provided by event args is the window area.
-/// @details "Area" refers to the screen zone ocuppied by the window, not only window size. Therefore, window movemments are included in this category.
-typedef dl32Event<dl32AABB2D> dl32AreaChangedEvent;
-typedef dl32AreaChangedEvent dl32MoveEvent;        ///< Defines the window movemment event as an alias of the AreaChanged event (@see dl32AreaChangedEvent details).
-typedef dl32AreaChangedEvent dl32ResizeEvent;      ///< Defines the window resize event as an alias of the AreaChanged event.
-typedef dl32AreaChangedEvent dl32ResizeBeginEvent; ///< Defines the window resize begining event as an alias of the AreaChanged event.
-typedef dl32AreaChangedEvent dl32ResizeEndEvent;   ///< Defines the window resize ending event as an alias of the AreaChanged event.
-
-
-/* Miscelaneous: */
-
-typedef dl32NonArgsEvent dl32PaintEvent;      ///< Defines the paint event as a non-args event. 
-typedef dl32Event<bool> dl32WindowCloseEvent; ///< Window close event. Booleam argumment allows the user to cancel the window close process (Set to true to cancel). 
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	 Translates system messages to cpp_lib32 events.
-/// @details This interface provides a method for create user-defined events. User can use this 
-/// 		 interface to translate a specific system message to a cpp_lib32 event.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32EventDispatcher
-{
-public:
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Destructor.
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual ~dl32EventDispatcher() {};
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets a windows message data and raises the high-level event.
-	/// @details This function performs any data-translation operations and raises the high-level event 
-	/// 		 with the translated data as event args.
-	/// 		
-	/// @param	window 	Handle of the window.
-	/// @param	message	System message code.
-	/// @param	wParam 	The wParam field of the message.
-	/// @param	lParam 	The lParam field of the message.
-	/// 				
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	virtual void dispatch(WINDOWS_PROCEDURE_ARGS) = 0;
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	Defines a generic dl32Event dispatcher.
-///
-/// @author	Manu 343726
-/// @date	13/04/2013
-///
-/// @tparam	EVENTTYPE			Type of the event to be dispatched.
-/// @tparam	DISPATCHFUNCTION	The dispatch function provided by the user.
-////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename EVENTARGSTYPE>
-class dl32GenericEventDispatcher : public dl32EventDispatcher
-{
-	friend class dl32SystemEventsManager;
-private:
-	dl32Event<EVENTARGSTYPE> _event;
-	typename dl32Event<EVENTARGSTYPE>::DispatcherType _dispatchFunction;
-public:
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Constructor.
-	///
-	/// @author	Manu 343726
-	/// @date	14/04/2013
-	///
-	/// @param	dispatchFunction	The dispatch function.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32GenericEventDispatcher(typename dl32Event<EVENTARGSTYPE>::DispatcherType dispatchFunction) : _dispatchFunction( dispatchFunction ) {}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Destructor.
-	///
-	/// @author	Manu 343726
-	/// @date	14/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	~dl32GenericEventDispatcher() {}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets a windows message data and raises the high-level event.
-	/// @details This function performs any data-translation operations and raises the high-level event 
-	/// 		 with the translated data as event args.
-	/// 		
-	/// @param	window 	Handle of the window.
-	/// @param	message	System message code.
-	/// @param	wParam 	The wParam field of the message.
-	/// @param	lParam 	The lParam field of the message.
-	/// 				
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void dispatch( WINDOWS_PROCEDURE_ARGS )
-	{
-            _event.RaiseEvent<false>( _dispatchFunction( WINDOWS_PROCEDURE_BYPASS ) );
-	}
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	This class provides a set of functions that translate common system messages data to 
-/// 		high-level events args.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32SystemMessagesDataTranslator
-{
-public:
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets mouse data from a mouse event system message. 
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	///
-	/// @param	window 	Handle of the window.
-	/// @param	message	System message code.
-	/// @param	wParam 	The wParam field of the message.
-	/// @param	lParam 	The lParam field of the message.
-	///
-	/// @return	The mouse data.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	static dl32MouseData getMouseData(WINDOWS_PROCEDURE_ARGS);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets keystroke data from a keystroke event system message. 
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	///
-	/// @param	window 	Handle of the window.
-	/// @param	message	System message code.
-	/// @param	wParam 	The wParam field of the message.
-	/// @param	lParam 	The lParam field of the message.
-	///
-	/// @return	The mouse data.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	static dl32KeyStrokeData getKeyStrokeData(WINDOWS_PROCEDURE_ARGS);
-};
-
-DL32EXCEPTION_SUBCLASS_NODOC(dl32NoSuchEventException);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	 cpp_lib32 high-level events manager.
-/// @details Any cpp_lib32 event that acts as a wrapper of a system message (Or messages), are managed
-/// 		 by this class.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32SystemEventsManager
-{
-private:
-	unordered_map<UINT,dl32EventDispatcher*> _dispatchers;  ///< Hashmap of event dispatchers. System messages are used as keys.
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Sets up the dispatchers for the cpp_lib32 window class default events.
-	/// @details cpp_lib32 provides a set of common events defined by default. 
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void setUpDefaultEvents();
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Copy constructor. Private, dl32SystemEventsManager implements singleton design pattern.
-	///
-	/// @author	Manu
-	/// @date	15/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32SystemEventsManager( const dl32SystemEventsManager& ) {};
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Default constructor. Private, dl32SystemEventsManager implements singleton design pattern.
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	dl32SystemEventsManager() {}
-
-	static dl32SystemEventsManager* _instance;
-
-	static void destroyInstance() { delete _instance; _instance = nullptr; }
-public:
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Destructor.
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	~dl32SystemEventsManager();
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets the singleton instance of dl32SystemEventsManager class
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	///
-	/// @return     Reference to the class instance.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	static dl32SystemEventsManager& instance()
-	{
-		if( _instance == nullptr )
-		{
-			_instance = new dl32SystemEventsManager();
-
-			atexit( destroyInstance );
-		}
-
-		return *_instance;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	A shortcut to the dl32SystemEventsManager instance
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	#define EventsManager dl32SystemEventsManager::instance()
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Sets up a new high-level event through its dispatcher.
-	/// @details User can define new high-level events that "wrap" specific system messages. Also, 
-	/// 		 cpp_lib32 provides a set of common system events preconfigured in the events manager.
-	/// 		 (@see setUpDefaultEvents()). 
-	/// @details Note that a configured event cannot be removed from the events manager. Every configured
-	/// 		 event lives until the end of the application.
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	///
-	/// @param [in,out]	dispatcher	Pointer to the event dispatcher.
-	/// @param	systemMessages	  	List of system messages codes that raises the new event.
-	///
-	/// @return	true if any system message provided is in use. False in other case.
-	/// 
-	/// @remarks A dl32Event can wrap more than one system message, that is the reason that the parameter
-	///			 "systemMessages" is a std::vector<UINT>, not only one UINT.
-	/// @remarks For example: System has three different messages (WM_LBUTTONDOWN , WM_RBUTTONDOWN , 
-	/// 		 WM_MBUTTONDOWN) for mouse down events, one per button. User can define a general 
-	/// 		 MouseDown event that catches this three messages.
-	/// 	
-	/// @return	true if all of the system messages provided are not in use. False in other case.	 
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool setUpEvent(dl32EventDispatcher* dispatcher,const vector<UINT>& systemMessages);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Sets up a new high-level event through its dispatcher.
-	/// @details User can define new high-level events that "wrap" specific system messages. Also, 
-	/// 		 cpp_lib32 provides a set of common system events preconfigured in the events manager.
-	/// 		 (@see setUpDefaultEvents()). 
-	/// @details Note that a configured event cannot be removed from the events manager. Every configured
-	/// 		 event lives until the end of the application.
-	///
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	///
-	/// @param [in,out]	dispatcher	Pointer to the event dispatcher.
-	/// @param	systemMessages	  	System message code that raises the new event.
-	///
-	/// @return	true if system message provided is not in use. False in other case.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	bool setUpEvent(dl32EventDispatcher* dispatcher , UINT systemMessage);
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Sets up a new high-level event through its dispatcher.
-	/// @details This overloaded version of setUptEvent() sets up a new event dispatcher by a dispatch
-	/// 		 function provided by the user.
-	///
-	/// @author	Manu 343726
-	/// @date	14/04/2013
-	///
-	/// @tparam	typename EVENTARGSTYPE	Type of the event argumments.
-	/// @param	dispatchFunction	The dispatch function.
-	/// @param	systemMessages  	List of system messages codes that raises the new event.
-	///
-	/// @return	true if all of the system messages provided are not in use. False in other case.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename EVENTTYPE>
-	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , const vector<UINT>& systemMessages) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>( dispatchFunction ) , systemMessages ); }
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Sets up a new high-level event through its dispatcher.
-	/// @details This overloaded version of setUptEvent() sets up a new event dispatcher by a dispatch
-	/// 		 function provided by the user.
-	///
-	/// @author	Manu 343726
-	/// @date	14/04/2013
-	///
-	/// @tparam	typename EVENTARGSTYPE	Type of the event.
-	/// @param	dispatchFunction	The dispatch function.
-	/// @param	systemMessages  	System message code that raises the new event.
-	///
-	/// @return	true if system message provided is not in use. False in other case.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename EVENTTYPE>
-	bool setUpEvent(typename EVENTTYPE::DispatcherType dispatchFunction , UINT systemMessage) { return setUpEvent( new dl32GenericEventDispatcher<typename EVENTTYPE::ArgummentsType_NoRef>( dispatchFunction ) , systemMessage ); }
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets a reference to the event that wraps a specific system message.
-	///
-	/// @author	Manu
-	/// @date	15/04/2013
-	///
-	/// @exception	dl32NoSuchEventException	Thrown when there is not any event that wraps the provided
-	/// 										system message at the manager.
-	///
-	/// @tparam	EVENTTYPE	Type of the event.
-	/// @param	systemMessage	System message code.
-	///
-	/// @return	A reference to the event.
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<class EVENTTYPE>
-	EVENTTYPE& getEvent(UINT systemMessage) throw ( dl32NoSuchEventException )
-	{
-		auto it = _dispatchers.find( systemMessage );
-
-		if( it != std::end( _dispatchers ) )
-			return ( reinterpret_cast< dl32GenericEventDispatcher< typename EVENTTYPE::ArgummentsType_NoRef >* >(it->second) )->_event;
-		else
-			throw dl32NoSuchEventException();
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief	Gets a windows message data and raises the specific high-level event.
-	/// 		
-	/// @param	window 	Handle of the window.
-	/// @param	message	System message code.
-	/// @param	wParam 	The wParam field of the message.
-	/// @param	lParam 	The lParam field of the message.
-	/// 				
-	/// @author	Manu343726
-	/// @date	07/04/2013
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	void dispatch(WINDOWS_PROCEDURE_ARGS);
-};
-
 #endif

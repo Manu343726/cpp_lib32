@@ -25,7 +25,6 @@
 #include "dl32Config.h"
 
 #include "dl32Window.h"
-#include "dl32Events.h"
 #include "dl32Typing.h"
 
 
@@ -37,7 +36,7 @@
 using namespace std;
 
 
-void OnMouseMove(dl32MouseMoveEvent::ArgummentsType args)
+void OnMouseMove(dl32Window& sender , typename dl32MouseMoveEvent::ArgummentsType args)
 {
 	cout << "MouseMove! " << args.Location.toString() << endl;
 }

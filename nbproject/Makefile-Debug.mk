@@ -36,7 +36,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Color.o \
-	${OBJECTDIR}/code/source/dl32Events.o \
 	${OBJECTDIR}/code/source/dl32Math.o \
 	${OBJECTDIR}/code/source/dl32Window.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
@@ -77,11 +76,6 @@ ${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/graphics -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Color.o code/source/dl32Color.cpp
-
-${OBJECTDIR}/code/source/dl32Events.o: code/source/dl32Events.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/graphics -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Events.o code/source/dl32Events.cpp
 
 ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
