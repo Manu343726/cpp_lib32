@@ -144,6 +144,67 @@ public:
 	static dl32Window& getWindow(dl32WindowHandle handle) { return *( (dl32Window*)GetWindowLongPtr( handle , GWLP_USERDATA ) ); }
 };
 
+/// @brief	Mouse buttons enumeration
+enum class dl32MouseButton {
+    NONE, ///< No button
+    RIGHT, ///< Right button
+    CENTER, ///< Center button (Mouse wheel button, normally)
+    LEFT ///< Left button
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	Basic mouse data.
+///
+/// @author	Manu343726
+/// @date	07/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+struct dl32MouseData {
+    dl32Point2D Location; ///< Mouse-pointer in local coordinates. 
+    dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton).
+    int Delta; ///< Mouse wheel delta.
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief dl32MouseData ctor
+    ///
+    /// @param location Mouse coordinates
+    /// @param button Pressed button
+    /// @param delta MouseWheel delta 
+    ///
+    /// @author	Manu343726
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32MouseData(dl32Point2D location, dl32MouseButton button, int delta) : Location(location), Button(button), Delta(delta) {
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief dl32MouseData default ctor.
+    ///
+    /// @author	Manu343726
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32MouseData() {
+    }
+
+    //Apaño:
+
+    operator dl32MouseData & () {
+        return *this;
+    }
+};
+
+/// @brief	cpp_lib32 keyboard codes
+typedef char dl32KeyCode;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief	Basic keystroke data.
+///
+/// @author	Manu343726
+/// @date	07/04/2013
+////////////////////////////////////////////////////////////////////////////////////////////////////
+struct dl32KeyStrokeData {
+    bool PreviousPressed; ///< The previous key state. true if its down before, false if its up.
+    dl32KeyCode Key; ///< Key code.
+    int RepeatCount; ///< If the previous key state is "pressed", number of times the keystroke is autorepeated as a result of the user holding down the key. Cero in other case.
+};
+
 /**********************************************************************************
  * cpp_lib32 basic user input events declarations (As alias of dl32Event template) *
  **********************************************************************************/

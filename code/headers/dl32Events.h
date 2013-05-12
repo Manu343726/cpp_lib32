@@ -34,67 +34,11 @@
 
 using namespace std;
 
-
-/// @brief	Mouse buttons enumeration
-enum class dl32MouseButton {
-    NONE, ///< No button
-    RIGHT, ///< Right button
-    CENTER, ///< Center button (Mouse wheel button, normally)
-    LEFT ///< Left button
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	Basic mouse data.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32MouseData {
-    dl32Point2D Location; ///< Mouse-pointer in local coordinates. 
-    dl32MouseButton Button; ///< Pressed mouse button (@see dl32MouseButton).
-    int Delta; ///< Mouse wheel delta.
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief dl32MouseData ctor
-    ///
-    /// @param location Mouse coordinates
-    /// @param button Pressed button
-    /// @param delta MouseWheel delta 
-    ///
-    /// @author	Manu343726
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32MouseData(dl32Point2D location, dl32MouseButton button, int delta) : Location(location), Button(button), Delta(delta) {
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief dl32MouseData default ctor.
-    ///
-    /// @author	Manu343726
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32MouseData() {
-    }
-
-    //Apaño:
-
-    operator dl32MouseData & () {
-        return *this;
-    }
-};
-
-/// @brief	cpp_lib32 keyboard codes
-typedef char dl32KeyCode;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief	Basic keystroke data.
-///
-/// @author	Manu343726
-/// @date	07/04/2013
-////////////////////////////////////////////////////////////////////////////////////////////////////
-struct dl32KeyStrokeData {
-    bool PreviousPressed; ///< The previous key state. true if its down before, false if its up.
-    dl32KeyCode Key; ///< Key code.
-    int RepeatCount; ///< If the previous key state is "pressed", number of times the keystroke is autorepeated as a result of the user holding down the key. Cero in other case.
-};
+/********************************************************************************************************************************
+ * Win32 API messaging system. Window procedure paramaters definitions                                                          *
+ *                                                                                                                              *
+ * Plaese see Win32 messaging API documentation: http://msdn.microsoft.com/es-es/library/windows/desktop/ms632586(v=vs.85).aspx *
+ *******************************************************************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	A macro that defines windows procedure arguments types.
@@ -133,14 +77,16 @@ struct dl32KeyStrokeData {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 cpp_lib32 event type
 /// @details     Events are represented as a list of handlers, where handlers are pointers to functions 
-/// 		 that handle the event. This functions always be a void function with cero or one
-/// 		 parameter (The argumments of the event) passed by reference, in other words, functions 
-/// 		 with prototype "void EventHandler(ARGSTYPE &args)".
+/// 		 that handle the event. This functions always be a void function with one or two
+/// 		 parameters (A reference to the object that raises the event and event argumments) passed
+/// 		 by reference, in other words, functions with prototype "void EventHandler(SENDERTYPE &sender , ARGSTYPE &args)".
+///              Template parameter "SENDERTYPE" is the type of the sender.
 /// 		 Template parameter "ARGSTYPE" is the type of these event args. For non-args event, use
-/// 		 void.
+/// 		 void, the template is specialized for that case.
 /// 		 
 /// 		 The type of the function-pointers that can be handlers are defined in the HandlerType
 /// 		 typedef.
+/// @tparam	SENDERTYPE Event sender type.
 /// @tparam	ARGTYPE	Event argumments type. For non-args events, use void.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 template <typename SENDERTYPE, typename ARGSTYPE>
@@ -196,10 +142,10 @@ public:
     /// @param [in,out]	args Argumments of the event.
     /// @tparam ARGS_BY_REF If is set to true, event argumments are passed by reference to the handlers.
     ///                     If is set to false, event argumments are passed by value to the handlers.
-    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge for make SFINAE working. Is not designed to be setted by the user.
+    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<bool PASS_BY_REF = true , typename ARGUMMENTS_TYPE = ARGSTYPE>
-    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, dl32Select<PASS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
+    template<bool ARGS_BY_REF = true , typename ARGUMMENTS_TYPE = ARGSTYPE>
+    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, dl32Select<ARGS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
         static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
         
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
@@ -209,8 +155,8 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
-    /// @Remarks Specialitation for non-argumments events.
-    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge for make SFINAE working. Is not designed to be setted by the user.
+    /// @remarks Specialitation for non-argumments events.
+    /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename ARGUMMENTS_TYPE = ARGSTYPE>
     void RaiseEvent(typename dl32EnableIf<dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender) {
