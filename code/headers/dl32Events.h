@@ -74,6 +74,14 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #define WINDOWS_PROCEDURE_BYPASS window , message , wParam , lParam
 
+
+/****************************************************************************************************************
+ * cpp_lib32 high-level events. Can be used to wrap system events (One or more system messages) or to implement *
+ * class events.                                                                                                *
+ *                                                                                                              *
+ * To understand system messages/events wrapping, see dl32SystemEventsManager class at dl32Windor.h             * 
+ ***************************************************************************************************************/
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief	 cpp_lib32 event type
 /// @details     Events are represented as a list of handlers, where handlers are pointers to functions 
