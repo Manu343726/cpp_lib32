@@ -45,6 +45,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
+	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
 	${OBJECTDIR}/code/tests/refactoring/typing_test.o
 
 
@@ -121,6 +122,11 @@ ${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/graphics -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/is_design_test.o: code/tests/refactoring/is_design_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/refactoring -Icode/tests/general\ tests -I../../../../../../PROGRAMAS/PROGRAMACION/DirectX\ SDK\ Junio\ 2010/Include -Icode/headers/utils/loki -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/graphics -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/is_design_test.o code/tests/refactoring/is_design_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring

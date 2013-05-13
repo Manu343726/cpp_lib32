@@ -45,6 +45,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
+	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
 	${OBJECTDIR}/code/tests/refactoring/typing_test.o
 
 
@@ -121,6 +122,11 @@ ${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/is_design_test.o: code/tests/refactoring/is_design_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -Icode/headers -Icode/headers/utils -Icode/source -Icode/source/utils -Icode/tests -Icode/tests/general\ tests -Icode/tests/isometric\ tilemap -Icode/tests/mandlebrot -Icode/tests/particle\ engine -Icode/tests/polyline -Icode/tests/pong -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/is_design_test.o code/tests/refactoring/is_design_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
