@@ -22,6 +22,7 @@
 #include <string>
 #include <unordered_set>
 #include <windowsx.h>
+#include <Windows.h>
 
 using namespace std;
 
@@ -186,7 +187,7 @@ void dl32Window::_setup(const string& title , uint width , uint height , uint le
         if ((_handle = CreateWindow(WINDOWCLASS.lpszClassName, (LPCWSTR) title.c_str(), WINDOWCLASS.style, left, top, width, height, NULL, NULL, WINDOWCLASS.hInstance, NULL)) == dl32Window::INVALID_WINDOW_HANDLE)
             throw dl32WindowCreationFailedException();
     } else
-        SetWindowLongPtr(_handle, GWL_WNDPROC, dl32WindowsManager::getWindowProcedure()); //Reestablece el procedimiento de ventana (Puede que la ventana no la hayamos creado nosotros y por tanto no use nuestro procedimiento de ventana).
+        SetWindowLongPtr(_handle, -4, dl32WindowsManager::getWindowProcedure()); //Reestablece el procedimiento de ventana (Puede que la ventana no la hayamos creado nosotros y por tanto no use nuestro procedimiento de ventana).
 
     SetWindowLongPtr(_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR> (this)); //Guardamos en el user data de la ventana la instancia de su wrapper.
     //As� podemos obtener facilmente la instancia de dl32Window asociada a una ventana ( Ver implementaci�n de dl32WindowsManager::getWindow() )

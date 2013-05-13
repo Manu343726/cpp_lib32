@@ -21,7 +21,7 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
+CND_PLATFORM=MinGW_1-Windows
 CND_DLIB_EXT=dll
 CND_CONF=Debug
 CND_DISTDIR=dist
@@ -66,11 +66,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
@@ -133,7 +133,7 @@ ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe
 
 # Subprojects
 .clean-subprojects:

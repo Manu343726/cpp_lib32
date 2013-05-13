@@ -145,7 +145,7 @@ public:
     /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool ARGS_BY_REF = true , typename ARGUMMENTS_TYPE = ARGSTYPE>
-    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, dl32Select<ARGS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
+    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, typename dl32Select<ARGS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
         static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
         
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)

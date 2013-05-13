@@ -339,7 +339,7 @@ public:
     /// @date	07/04/2013
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void dispatch(WINDOWS_PROCEDURE_ARGS) {
-        _event.RaiseEvent(dl32Window::getWindow( window ) , _dispatchFunction(WINDOWS_PROCEDURE_BYPASS));
+        _event.RaiseEvent<false>(dl32Window::getWindow( window ) , _dispatchFunction(WINDOWS_PROCEDURE_BYPASS));
     }
 };
 
