@@ -139,6 +139,7 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
+    /// @param [in,out]	sender Reference to the event sender.
     /// @param [in,out]	args Argumments of the event.
     /// @tparam ARGS_BY_REF If is set to true, event argumments are passed by reference to the handlers.
     ///                     If is set to false, event argumments are passed by value to the handlers.
@@ -155,6 +156,7 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Raises the event.
+    /// @param [in,out]	sender Reference to the event sender.
     /// @remarks Specialitation for non-argumments events.
     /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
