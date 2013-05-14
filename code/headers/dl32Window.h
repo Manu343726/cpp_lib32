@@ -393,7 +393,8 @@ DL32EXCEPTION_SUBCLASS_NODOC(dl32NoSuchEventException);
 /// @author	Manu343726
 /// @date	07/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32SystemEventsManager {
+class dl32SystemEventsManager : public dl32Singleton<dl32SystemEventsManager> {
+    MAKE_SINGLETON( dl32SystemEventsManager )
 private:
     unordered_map<UINT, dl32EventDispatcher*> _dispatchers; ///< Hashmap of event dispatchers. System messages are used as keys.
 
@@ -405,31 +406,6 @@ private:
     /// @date	07/04/2013
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void setUpDefaultEvents();
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief	Copy constructor. Private, dl32SystemEventsManager implements singleton design pattern.
-    ///
-    /// @author	Manu
-    /// @date	15/04/2013
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SystemEventsManager(const dl32SystemEventsManager&) {
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief	Default constructor. Private, dl32SystemEventsManager implements singleton design pattern.
-    ///
-    /// @author	Manu343726
-    /// @date	07/04/2013
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SystemEventsManager() {
-    }
-
-    static dl32SystemEventsManager* _instance;
-
-    static void destroyInstance() {
-        delete _instance;
-        _instance = nullptr;
-    }
 public:
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Destructor.
@@ -438,25 +414,7 @@ public:
     /// @date	07/04/2013
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     ~dl32SystemEventsManager();
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief	Gets the singleton instance of dl32SystemEventsManager class
-    ///
-    /// @author	Manu343726
-    /// @date	07/04/2013
-    ///
-    /// @return     Reference to the class instance.
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    static dl32SystemEventsManager& instance() {
-        if (_instance == nullptr) {
-            _instance = new dl32SystemEventsManager();
-
-            atexit(destroyInstance);
-        }
-
-        return *_instance;
-    }
-
+    
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	A shortcut to the dl32SystemEventsManager instance
     ///
@@ -597,12 +555,10 @@ public:
 /// @author	Manu 343726
 /// @date	09/04/2013
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-class dl32WindowsManager : public dl32Singleton<dl32WindowsManager,true>
+class dl32WindowsManager : public dl32Singleton<dl32WindowsManager>
 {
-    MAKE_SINGLETON(dl32WindowsManager,true)
+    MAKE_SINGLETON(dl32WindowsManager)
 private:
-    virtual void _setup_singleton_instance() { _processingMessages = false; }
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	"Window-specific" (See remarks) message processing callback.
 	///
@@ -633,7 +589,7 @@ private:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	void _messageLoop();
 
-	bool _processingMessages; 
+	bool _processingMessages = false; 
 public:
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief	Gets the window procedure.

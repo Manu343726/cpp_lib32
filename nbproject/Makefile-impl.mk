@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=cpp_lib32
+PROJECTNAME=dx_lib32
 
 # Active Configuration
 DEFAULTCONF=Debug

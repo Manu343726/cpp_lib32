@@ -30,6 +30,8 @@
 
 #include <cstdlib>
 #include <assert.h>
+#include "dl32Typing.h"
+
 using namespace std;
 
 #if defined(__GXX_EXPERIMENTAL_CXX0X) 
@@ -43,12 +45,12 @@ using namespace std;
 #endif /* C++11 */
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class provides a generic implementation of the singleton dessign pattern.
+/// @brief This class provides a generic implementation of the singleton dessign pattern based on CRTP.
 ///
 /// @tparam T Class that implements the singleton.
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , bool USE_VIRTUAL_SETUP = true>
+template<typename T>
 class dl32Singleton
 {
 public:
@@ -63,20 +65,8 @@ private:
     
     static void _singleton_instance_deleter() { delete _instance; }
 protected:
-    static bool _ctor_called_by_getinstance;
-    
     dl32Singleton() {}
     virtual ~dl32Singleton() {} //Correct polymorphic delete
-    
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Subclasses must define this setup function. All setup operations of a subclass must be 
-    ///        performed here, not at the ctor. This allows to make the subclass ctor "private" (That ctor
-    ///        only can be used by the instance() method. See assertion on subclass ctor at MAKE_SINGLETON
-    ///        macro.)
-    ///
-    /// @author	Manu343726
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    virtual void _setup_singleton_instance() = 0;
 public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Gets a reference to the singleton instance.
@@ -89,14 +79,8 @@ public:
         {
             /* Register the class at runtime-exit to avoid memory-leaks */
             atexit( _singleton_instance_deleter );
-            
-            _ctor_called_by_getinstance = true;
+
             _instance = new T;
-            
-            if(USE_VIRTUAL_SETUP)
-                _instance->_setup_singleton_instance();
-            
-            _ctor_called_by_getinstance = false;
         }
         
         return *(static_cast<T*>(_instance));
@@ -104,11 +88,8 @@ public:
 };
 
 /* Definition of the instance pointer */
-template<typename T , bool USE_VIRTUAL_SETUP>
-typename dl32Singleton<T,USE_VIRTUAL_SETUP>::RealPointerToInstance dl32Singleton<T,USE_VIRTUAL_SETUP>::_instance = NULLPTR;
-/* Definition of the subclass ctor call flag */
-template<typename T , bool USE_VIRTUAL_SETUP>
-bool dl32Singleton<T,USE_VIRTUAL_SETUP>::_ctor_called_by_getinstance = false;
+template<typename T>
+typename dl32Singleton<T>::RealPointerToInstance dl32Singleton<T>::_instance = NULLPTR;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This macro provides a "shortcut" to hide all ctors and assignment operator to performs 
@@ -119,12 +100,12 @@ bool dl32Singleton<T,USE_VIRTUAL_SETUP>::_ctor_called_by_getinstance = false;
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAKE_SINGLETON( class_name , use_virtual_setup )                                                             \
-            friend class dl32Singleton< class_name , use_virtual_setup >;                                            \
-        private:                                                                                                     \
-            class_name() { assert( this->_ctor_called_by_getinstance ); } \
-                                                                                                                     \
-            class_name(const class_name&) = delete;                                                                  \
+#define MAKE_SINGLETON( class_name )                                                     \
+            friend class dl32Singleton< class_name >;                                    \
+        private:                                                                         \
+            class_name(); /* ctor implementation must be in class_name implementation */ \
+                                                                                         \
+            class_name(const class_name&) = delete;                                      \
             class_name& operator=(const class_name&) = delete;                        
 
 #endif	/* DL32SINGLETON_H */

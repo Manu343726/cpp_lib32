@@ -45,9 +45,6 @@ const WNDCLASS dl32Window::WINDOWCLASS =
     (LPCTSTR)"cpp_lib32"                                //(WindowClassName)
 };
 
-//Singleton instance:
-dl32SystemEventsManager* dl32SystemEventsManager::_instance = nullptr;
-
 /***************************************************************************
 * Deletes event dispatchers pointed by every pointer stored in the hashmap *
 ***************************************************************************/
