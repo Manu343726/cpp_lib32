@@ -45,6 +45,9 @@ const WNDCLASS dl32Window::WINDOWCLASS =
     (LPCTSTR)"cpp_lib32"                                //(WindowClassName)
 };
 
+//Ctor
+dl32SystemEventsManager::dl32SystemEventsManager() {}
+
 /***************************************************************************
 * Deletes event dispatchers pointed by every pointer stored in the hashmap *
 ***************************************************************************/

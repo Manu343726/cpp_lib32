@@ -130,9 +130,6 @@ private:
     bool _styles_stack_autopush;
     
     dl32StyleChange _last_change;
-    
-    
-    void _setup_singleton_instance();
 
 public:  
     ///////////////////////////////////////////////////////////////////////////////////////////////////////

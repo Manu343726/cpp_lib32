@@ -30,7 +30,7 @@
 
 using namespace std;
 
-#define TESTING_USEASSERT TRUE
+#define TESTING_USEASSERT FALSE
 #define TESTING_WAIT_AT_END FALSE
 
 #define EXPAND(x) x
@@ -64,6 +64,12 @@ int main()
     /* TypeList indexof test */
     
     assert( myList::index_of<int>::value == 1 );
+    
+    /* TypeList push_back test */
+    
+    using new_type_list = myList::push_back<bool>;
+    
+    assert( (dl32SameType<bool , myList::push_back<bool>::type_at<myList::size>>::value) );
     
     /* Type traits checking test */
     

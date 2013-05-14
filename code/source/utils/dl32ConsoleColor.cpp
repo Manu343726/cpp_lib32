@@ -54,6 +54,15 @@ dl32ConsoleStyle _change_background_only(dl32ConsoleStyle style , DWORD color )
     return (style & COLORMASK_NOBACKGROUND) | (color << 4);
 }
 
+//Ctor
+dl32ConsoleColorSettings::dl32ConsoleColorSettings()
+{
+    _setup_handle();
+    _styles_stack_autopush = false;
+    _last_change = dl32StyleChange::FOREGROUND;
+    _styles_stack.push_back( _get_style() );
+}
+
 void dl32ConsoleColorSettings::_setup_handle() throw ( dl32ConsoleHandleSetupFailed )
 {
     if(!(_handle = GetStdHandle( STD_OUTPUT_HANDLE ))) 
@@ -77,14 +86,6 @@ void dl32ConsoleColorSettings::_update_style(dl32ConsoleStyle style) throw( dl32
 {
     _styles_stack.back() = style;
     _set_style( style );
-}
-
-void dl32ConsoleColorSettings::_setup_singleton_instance()
-{
-    _setup_handle();
-    _styles_stack_autopush = false;
-    _last_change = dl32StyleChange::FOREGROUND;
-    _styles_stack.push_back( _get_style() );
 }
 
 void dl32ConsoleColorSettings::_push_style()

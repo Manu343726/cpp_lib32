@@ -373,6 +373,9 @@ struct dl32TypeList<HEAD,TAIL...>
     
     template<typename T>
     using index_of = typename dl32IndexOf<T,value>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+    
+    template<typename T>
+    using push_back = dl32TypeList<HEAD,TAIL...,T>;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
