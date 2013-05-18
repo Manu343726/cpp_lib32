@@ -355,6 +355,31 @@ struct dl32Contains
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Creates a new typelist with the first typelist elements followed by the second typelist elements. 
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename TYPELIST1 , typename TYPELIST2>
+class dl32Merge
+{
+private:
+    template<typename TYPELIST1 , typename HEAD , typename TAIL>
+    struct _pushback_list2_in_list1
+    {
+        using result = typename _pushback_list2_in_list1<typename TYPELIST1::push_back<HEAD>,typename TAIL::value::head,typename TAIL::value::tail>::result;
+    };
+    
+    template<typename TYPELIST1 , typename HEAD>
+    struct _pushback_list2_in_list1<TYPELIST1 , HEAD , dl32NoType>//End of typelist 2 (No tail)
+    {
+        using result = typename TYPELIST1::push_back<HEAD>;
+    };
+    
+public:
+    using result = _pushback_list2_in_list1<TYPELIST1 , typename TYPELIST2::value::head , typename TYPELIST2::value::tail>;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
 /// @details This class wrapps recursive-based typelist and provides a variadic template interface
 ///
@@ -381,6 +406,9 @@ struct dl32TypeList<HEAD,TAIL...>
     using push_front = dl32TypeList<T,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
+    
+    template <typename TYPELIST>
+    using merge = dl32Merge<dl32TypeList<HEAD,TAIL...> , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -405,13 +433,16 @@ struct dl32TypeList<>
   using index_of = typename dl32IndexOf<T,dl32NoType>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
 
   template<typename T>
-  using push_back = dl32TypeList<T>;
+  using push_back = dl32TypeList<T>; ///< Pushes back a new type to the typelist (Returns new typelist).
   
   template<typename T>
-  using push_front = dl32TypeList<T>;
+  using push_front = dl32TypeList<T>; ///< Pushes front a new type to the typelist (Returns new typelist).
   
   template<typename T , unsigned int index>
-  using insert = typename dl32EnableIf<index == 0 , dl32TypeList<T>>::type;
+  using insert = typename dl32EnableIf<index == 0 , dl32TypeList<T>>::type; ///< Inserts a new type in the typelist at the specified position (Returns a new typelist).
+  
+  template <typename TYPELIST>
+  using merge = TYPELIST; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
 };
 #endif	/* DL32TYPING_H */
 
