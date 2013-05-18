@@ -381,6 +381,9 @@ struct dl32TypeList<HEAD,TAIL...>
     using push_front = dl32TypeList<T,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
+    
+    template<typename TYPELIST>
+    using merge = dl32TypeList<HEAD,TAIL...,typename TYPELIST::value
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
