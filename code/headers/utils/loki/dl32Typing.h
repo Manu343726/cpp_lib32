@@ -381,9 +381,6 @@ struct dl32TypeList<HEAD,TAIL...>
     using push_front = dl32TypeList<T,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
-    
-    template<typename TYPELIST>
-    using merge = dl32TypeList<HEAD,TAIL...,typename TYPELIST::value
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +403,15 @@ struct dl32TypeList<>
   
   template<typename T>
   using index_of = typename dl32IndexOf<T,dl32NoType>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+
+  template<typename T>
+  using push_back = dl32TypeList<T>;
+  
+  template<typename T>
+  using push_front = dl32TypeList<T>;
+  
+  template<typename T , unsigned int index>
+  using insert = typename dl32EnableIf<index == 0 , dl32TypeList<T>>::type;
 };
 #endif	/* DL32TYPING_H */
 
