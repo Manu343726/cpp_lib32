@@ -363,20 +363,32 @@ template<typename TYPELIST1 , typename TYPELIST2>
 class dl32Merge
 {
 private:
-    template<typename TYPELIST1 , typename HEAD , typename TAIL>
+    template<typename TYPELIST_1 , typename HEAD , typename TAIL>
     struct _pushback_list2_in_list1
     {
-        using result = typename _pushback_list2_in_list1<typename TYPELIST1::push_back<HEAD>,typename TAIL::value::head,typename TAIL::value::tail>::result;
+        using result = typename _pushback_list2_in_list1<typename TYPELIST_1::push_back<HEAD>,typename TAIL::value::head,typename TAIL::value::tail>::result;
     };
     
-    template<typename TYPELIST1 , typename HEAD>
-    struct _pushback_list2_in_list1<TYPELIST1 , HEAD , dl32NoType>//End of typelist 2 (No tail)
+    template<typename TYPELIST_1 , typename HEAD>
+    struct _pushback_list2_in_list1<TYPELIST_1 , HEAD , dl32NoType>//End of typelist 2 (No tail)
     {
-        using result = typename TYPELIST1::push_back<HEAD>;
+        using result = typename TYPELIST_1::push_back<HEAD>;
     };
     
 public:
     using result = _pushback_list2_in_list1<TYPELIST1 , typename TYPELIST2::value::head , typename TYPELIST2::value::tail>;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Splits a specified typelist into two typelist in a spefified index.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename TYPELIST , unsigned int index>
+class dl32Split
+{
+private:
+    
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
