@@ -265,6 +265,40 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Pushes back a type in a loki-style typelist.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename LOKI_STYLE_TYPELIST , typename T>
+struct dl32LokiStyle_pushback
+{
+private:
+    template<typename TYPELIST , typename U>
+    struct _push_back;
+    
+    template<typename U>
+    struct _push_back<dl32NoType , U>
+    {
+        using result = dl32Loki_like_TypeList<U,dl32NoType>;
+    };
+    
+    template<typename HEAD , typename TAIL>
+    struct _push_back<dl32NoType , dl32Loki_like_TypeList<HEAD , TAIL>>
+    {
+        using result = dl32Loki_like_TypeList<HEAD,TAIL>;
+    };
+    
+    template<typename HEAD,typename TAIL , typename U>
+    struct _push_back<dl32Loki_like_TypeList<HEAD,TAIL> , U>
+    {
+        using result = dl32Loki_like_TypeList<HEAD , typename _push_back<TAIL , U>::result>;
+    };
+    
+public:
+    using result = typename _push_back<LOKI_STYLE_TYPELIST , T>::result;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
 /// @details This class wrapps recursive-based typelist and provides a variadic template interface
 ///
@@ -274,6 +308,13 @@ public:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename... Ts>
 struct dl32TypeList;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This alias represents an empty dl32TypeList.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+using dl32EmptyTypelist = dl32TypeList<>;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Implements a linear search of a type in a given type list (Type list in loki-format).
@@ -355,6 +396,35 @@ struct dl32Contains
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Creates a new loki-style typelist with the first typelist elements followed by the second typelist elements. 
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename TYPELIST1 , typename TYPELIST2>
+class dl32MergeInLokiStyle
+{
+private:
+    template<typename TYPELIST_1 , typename HEAD_2 , typename TAIL_2>
+    struct _pushback_list2_in_list1
+    {
+        using next_typelist_1 = typename dl32LokiStyle_pushback<TYPELIST_1,HEAD_2>::result; 
+        using next_head = typename TAIL_2::head;
+        using next_tail = typename TAIL_2::tail;
+        
+        using result = typename _pushback_list2_in_list1< next_typelist_1 , next_head , next_tail >::result;
+    };
+    
+    template<typename TYPELIST_1 , typename HEAD_2>
+    struct _pushback_list2_in_list1<TYPELIST_1 , HEAD_2 , dl32NoType>//End of typelist 2 (No tail)
+    {   
+        using result = typename dl32LokiStyle_pushback<TYPELIST_1,HEAD_2>::result;
+    };
+    
+public:
+    using result = typename _pushback_list2_in_list1<typename TYPELIST1 , typename TYPELIST2::head , typename TYPELIST2::tail>::result;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a new typelist with the first typelist elements followed by the second typelist elements. 
 ///
 /// @author	Manu343726
@@ -363,32 +433,17 @@ template<typename TYPELIST1 , typename TYPELIST2>
 class dl32Merge
 {
 private:
-    template<typename TYPELIST_1 , typename HEAD , typename TAIL>
-    struct _pushback_list2_in_list1
-    {
-        using result = typename _pushback_list2_in_list1<typename TYPELIST_1::push_back<HEAD>,typename TAIL::value::head,typename TAIL::value::tail>::result;
-    };
+    template<typename TYPELIST_1 , typename TYPELIST_2>
+    struct _merge;
     
-    template<typename TYPELIST_1 , typename HEAD>
-    struct _pushback_list2_in_list1<TYPELIST_1 , HEAD , dl32NoType>//End of typelist 2 (No tail)
+    template<typename... TYPES_1 , typename... TYPES_2>
+    struct _merge< dl32TypeList<TYPES_1...> , dl32TypeList<TYPES_2...> >
     {
-        using result = typename TYPELIST_1::push_back<HEAD>;
+        using result = dl32TypeList<TYPES_1... , TYPES_2...>;
     };
     
 public:
-    using result = _pushback_list2_in_list1<TYPELIST1 , typename TYPELIST2::value::head , typename TYPELIST2::value::tail>;
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Splits a specified typelist into two typelist in a spefified index.
-///
-/// @author	Manu343726
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename TYPELIST , unsigned int index>
-class dl32Split
-{
-private:
-    
+    using result = typename _merge<TYPELIST1,TYPELIST2>::result;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -402,8 +457,8 @@ private:
 template<typename HEAD , typename... TAIL>
 struct dl32TypeList<HEAD,TAIL...>
 {
-    enum { size = sizeof...(TAIL) + 1 };
-    typedef dl32Loki_like_TypeList<HEAD, typename dl32TypeList<TAIL...>::value> value;
+    enum { size = sizeof...(TAIL) + 1 }; ///< Size of the typelist (Number of types stored in).
+    typedef dl32Loki_like_TypeList<HEAD, typename dl32TypeList<TAIL...>::value> value; ///< The typelist in loki-style (The unwrapped value)
     
     template<int index>
     using type_at = typename dl32TypeAt<index,value>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
@@ -420,9 +475,9 @@ struct dl32TypeList<HEAD,TAIL...>
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
     
     template <typename TYPELIST>
-    using merge = dl32Merge<dl32TypeList<HEAD,TAIL...> , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
+    using merge = typename dl32Merge<dl32TypeList<HEAD,TAIL...> , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
 };
-
+    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
 /// @details This class wrapps recursive-based typelist and provides a variadic template interface

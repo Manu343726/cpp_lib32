@@ -75,9 +75,9 @@ int main()
     
     using list1 = dl32TypeList<char , int , bool>;
     using list2 = dl32TypeList<float , double>;
-    using merge = list1::merge<list2>;
+    using merged_list = list1::merge<list2>;
     
-    assert( merge::size == list1::size + list2::size );
+    assert( merged_list::size == list1::size + list2::size );
     
     /* Type traits checking test */
     

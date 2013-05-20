@@ -54,7 +54,6 @@
 #define	DL32CONSOLECOLOR_H
 
 #include "dl32Config.h"
-#include "dl32Typing.h"
 #include "dl32Exceptions.h"
 #include "dl32Singleton.h"
 
@@ -70,7 +69,7 @@ using namespace std;
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-enum class dl32ConsoleColor : int
+enum dl32ConsoleColor
 {
 	BLACK       = 0x00000000,
 	BLUE        = 0x00000001,
