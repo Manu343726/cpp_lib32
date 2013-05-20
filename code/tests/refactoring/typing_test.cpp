@@ -38,10 +38,15 @@ using namespace std;
 #if TESTING_USEASSERT
 #ifdef NDEBUG
 #undef NDEBUG
-#endif
+#endif /* NDEBUG */
 
 #include <assert.h>
 #else
+
+#ifdef assert
+#undef assert
+#endif /* ASSERT */
+
 #define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
 #define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << dl32PushStyle() << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << assert_data(x) << "ERROR (Cascao raro)" << dl32PopStyle() << endl 
 #endif /* TESTING_USEASSERT */

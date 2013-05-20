@@ -396,35 +396,6 @@ struct dl32Contains
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Creates a new loki-style typelist with the first typelist elements followed by the second typelist elements. 
-///
-/// @author	Manu343726
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename TYPELIST1 , typename TYPELIST2>
-class dl32MergeInLokiStyle
-{
-private:
-    template<typename TYPELIST_1 , typename HEAD_2 , typename TAIL_2>
-    struct _pushback_list2_in_list1
-    {
-        using next_typelist_1 = typename dl32LokiStyle_pushback<TYPELIST_1,HEAD_2>::result; 
-        using next_head = typename TAIL_2::head;
-        using next_tail = typename TAIL_2::tail;
-        
-        using result = typename _pushback_list2_in_list1< next_typelist_1 , next_head , next_tail >::result;
-    };
-    
-    template<typename TYPELIST_1 , typename HEAD_2>
-    struct _pushback_list2_in_list1<TYPELIST_1 , HEAD_2 , dl32NoType>//End of typelist 2 (No tail)
-    {   
-        using result = typename dl32LokiStyle_pushback<TYPELIST_1,HEAD_2>::result;
-    };
-    
-public:
-    using result = typename _pushback_list2_in_list1<typename TYPELIST1 , typename TYPELIST2::head , typename TYPELIST2::tail>::result;
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Creates a new typelist with the first typelist elements followed by the second typelist elements. 
 ///
 /// @author	Manu343726
