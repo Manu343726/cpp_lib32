@@ -23,7 +23,6 @@
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_TYPINGTEST
 
 #include "dl32Typing.h"
-#include "dl32ConsoleColor.h"
 #include <iostream>
 #include <typeinfo>
 #include <string>
@@ -32,6 +31,7 @@ using namespace std;
 
 #define TESTING_USEASSERT FALSE
 #define TESTING_WAIT_AT_END FALSE
+#define TESTING_USE_COLOR FALSE
 
 #define EXPAND(x) x
 
@@ -43,12 +43,25 @@ using namespace std;
 #include <assert.h>
 #else
 
+#define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
+
+#if TESTING_USE_COLOR
+
+#include "dl32ConsoleColor.h"
+
 #ifdef assert
 #undef assert
 #endif /* ASSERT */
 
-#define assert_data(x) __FILE__ << ", in function " << __FUNCTION__  << " (line " <<  __LINE__ << "):" << " '" << #x << "' --> "
-#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << dl32PushStyle() << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << assert_data(x) << "ERROR (Cascao raro)" << dl32PopStyle() << endl 
+#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << push_style << dl32ChangeForegroundColor( dl32ConsoleColor::RED ) << assert_data(x) << "ERROR (Cascao raro)" << pop_style << endl 
+#else
+
+#ifdef assert
+#undef assert
+#endif /* ASSERT */
+
+#define assert(x) (x) ? cout << assert_data(x) << "OK!" << endl : cout << assert_data(x) << "ERROR (Cascao raro)" << endl
+#endif /* TESTING_USE_COLOR */
 #endif /* TESTING_USEASSERT */
 
 int main()
