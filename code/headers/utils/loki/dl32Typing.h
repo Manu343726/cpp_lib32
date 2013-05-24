@@ -74,7 +74,7 @@ struct dl32ValueWrapper
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template< typename T , typename U>
-class dl32TypeChecker_Base
+class dl32TypeCheckingHelper
 {
 public:
     ///< Small size unit type.
@@ -107,23 +107,17 @@ protected:
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T , typename U>
-struct dl32SameType
+class dl32SameType
 {
-    enum { value = FALSE };
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief cpp_lib32 type comparator. 
-/// @detailts Use dl32SameType<T,U>::same_type to check if T and U are the same type.
-///
-/// @author	Manu343726
-///
-/// @remarks Template specialitation for same types.
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32SameType<T,T>
-{
-    enum { value = TRUE };
+private:
+    template<typename _T , typename _U>
+    struct _same_type { static const bool result = false; };
+    
+    template<typename _T>
+    struct _same_type<_T,_T> { static const bool result = true; };
+    
+public:
+    static const bool result = _same_type<T,U>::result;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,9 +126,9 @@ struct dl32SameType<T,T>
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T , typename U>
-struct dl32Conversion : public dl32TypeChecker_Base<T,U>
+struct dl32Conversion : public dl32TypeCheckingHelper<T,U>
 {
-    enum { value = sizeof( dl32TypeChecker_Base<T,U>::_testTtoU( dl32TypeChecker_Base<T,U>::_makeT() ) ) == dl32TypeChecker_Base<T,U>::_sizeof_Small };
+    enum { result = sizeof( dl32TypeCheckingHelper<T,U>::_testTtoU( dl32TypeCheckingHelper<T,U>::_makeT() ) ) == dl32TypeCheckingHelper<T,U>::_sizeof_Small };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +139,7 @@ struct dl32Conversion : public dl32TypeChecker_Base<T,U>
 template<typename T , typename U>
 struct dl32SuperclassSubclass
 {
-    enum { value = dl32Conversion<const U* , const T*>::value && !dl32SameType<const T* , const void*>::value && !dl32SameType<const T , const U>::value };
+    enum { result = dl32Conversion<const U* , const T*>::result && !dl32SameType<const T* , const void*>::result && !dl32SameType<const T , const U>::result };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,13 +154,13 @@ public:
     enum
     { 
         //Implicit type-conversion checking:
-        conversion_exists = dl32Conversion<T,U>::value, ///< Checks if a conversion from T to U is alowed. Its value is 1 (TRUE) if a implicit conversion is alowed). 0 (FALSE) if is not alowed.)
+        conversion_exists = dl32Conversion<T,U>::result, ///< Checks if a conversion from T to U is alowed. Its value is 1 (TRUE) if a implicit conversion is alowed). 0 (FALSE) if is not alowed.)
         
         //Basic type-checking:
-        same_type = dl32SameType<T,U>::value, ///< Checks if the two types provided are the same type.
+        same_type = dl32SameType<T,U>::result, ///< Checks if the two types provided are the same type.
         
         //Inheritance checking:
-        superclass_subclass = dl32SuperclassSubclass<T,U>::value ///< Checks if T is a superclass of U (U is a subclass of T).
+        superclass_subclass = dl32SuperclassSubclass<T,U>::result ///< Checks if T is a superclass of U (U is a subclass of T).
     };
 };
 
@@ -176,15 +170,21 @@ public:
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<bool flag , typename T , typename U>
-struct dl32Select { typedef T result; };
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief cpp_lib32 type selection. (Template specialitation for second type selection). 
-///
-/// @author	Manu343726
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32Select<false,T,U> { typedef U result; };
+class dl32Select
+{
+private:
+    template<bool _flag , typename _T , typename _U>
+    struct _select;
+    
+    template<typename _T , typename _U>
+    struct _select<true,_T,_U>{ using type = _T; };
+    
+    template<typename _T , typename _U>
+    struct _select<false,_T,_U>{ using type = _U; };
+    
+public:
+    using type = typename _select<flag,T,U>::type;
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 function overloading enabler.
@@ -204,7 +204,7 @@ struct dl32EnableIf {};
 /// @remarks Template specialitation for enabled case.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32EnableIf<true,T>{ typedef T type; };
+struct dl32EnableIf<true,T>{ using type = T; };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Type info provider.
@@ -248,7 +248,7 @@ private:
 public:
     typedef T OriginalType;
     
-    enum { isVoid = dl32SameType<void , NonConstType>::value };
+    enum { isVoid = dl32SameType<void , NonConstType>::result };
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -322,9 +322,17 @@ using dl32EmptyTypelist = dl32TypeList<>;
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<int index, typename TYPELIST>
-struct dl32TypeAt
+class dl32TypeAt
 {
-    typedef typename dl32TypeAt<index-1,typename TYPELIST::tail>::value value;
+private:
+    template<int _index, typename _TYPELIST>
+    struct _type_at{ using value = _type_at<_index-1,_TYPELIST>::value; };
+    
+    template<typename _TYPELIST>
+    struct _type_at<0,_TYPELIST>{ using value = _TYPELIST::head; };
+
+public:
+    using value = _type_at<index,TYPELIST>::value;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

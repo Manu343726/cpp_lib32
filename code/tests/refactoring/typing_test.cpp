@@ -87,7 +87,7 @@ int main()
     
     using new_type_list = myList::push_back<bool>;
     
-    assert( (dl32SameType<bool , myList::push_back<bool>::type_at<myList::size>>::value) );
+    assert( (dl32SameType<bool , myList::push_back<bool>::type_at<myList::size>>::result) );
     
     /* Typelist merge test */
     

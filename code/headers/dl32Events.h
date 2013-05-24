@@ -107,7 +107,7 @@ public:
     typedef SENDERTYPE SenderType_NoRef;
 
     /// @brief	Defines an alias representing type of event argumments.
-    typedef typename dl32Select<dl32TypeTraits<ARGSTYPE>::isVoid, ARGSTYPE, ARGSTYPE&>::result ArgummentsType;
+    typedef typename dl32Select<dl32TypeTraits<ARGSTYPE>::isVoid, ARGSTYPE, ARGSTYPE&>::type ArgummentsType;
 
     /// @brief	Defines an alias representing the argumments type without reference.
     typedef ARGSTYPE ArgummentsType_NoRef;
@@ -154,8 +154,8 @@ public:
     /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool ARGS_BY_REF = true , typename ARGUMMENTS_TYPE = ARGSTYPE>
-    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender, typename dl32Select<ARGS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::result args) {
-        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
+    void RaiseEvent(typename dl32EnableIf<!dl32SameType<ARGUMMENTS_TYPE,void>::result,SenderType>::type sender, typename dl32Select<ARGS_BY_REF , ArgummentsType , ArgummentsType_NoRef>::type args) {
+        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::result , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
         
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
             if( it->is_expected_sender( sender ) )
@@ -169,8 +169,8 @@ public:
     /// @remarks Template parameter ARGUMMENTS_TYPE is a bridge to make SFINAE work. Is not designed to be setted by the user.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename ARGUMMENTS_TYPE = ARGSTYPE>
-    void RaiseEvent(typename dl32EnableIf<dl32SameType<ARGUMMENTS_TYPE,void>::value,SenderType>::type sender) {
-        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::value , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
+    void RaiseEvent(typename dl32EnableIf<dl32SameType<ARGUMMENTS_TYPE,void>::result,SenderType>::type sender) {
+        static_assert(dl32SameType<ARGUMMENTS_TYPE , ARGSTYPE>::result , "template parameter 'ARGUMMENTS_TYPE' is not designed to be setted by the user. Please not use it");
         
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
             if( it->is_expected_sender( sender ) )

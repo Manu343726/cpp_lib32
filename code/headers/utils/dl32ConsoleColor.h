@@ -265,25 +265,14 @@ struct dl32ChangeBackgroundColor : public dl32ColorChange
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<bool VALUE>
-struct dl32SetAutoPush : public dl32ValueWrapper<bool,VALUE> {};
-
-template<>
-struct dl32SetAutoPush<true>
+struct dl32SetAutoPush : public dl32ValueWrapper<bool,VALUE>
 {
-    friend std::ostream& operator<<(ostream& os , const dl32SetAutoPush<true>& enable_autopush)
+private:
+    using auto_push_type = dl32SetAutoPush<VALUE>;
+public:
+    friend std::ostream& operator<<(ostream& os , const auto_push_type& enable_autopush)
     {
-        dl32ConsoleColorSettings::instance().set_autopush( true );
-
-        return os;
-    }
-};
-
-template<>
-struct dl32SetAutoPush<false>
-{
-    friend std::ostream& operator<<(ostream& os , const dl32SetAutoPush<false>& disable_autopush)
-    {
-        dl32ConsoleColorSettings::instance().set_autopush( false );
+        dl32ConsoleColorSettings::instance().set_autopush( VALUE );
 
         return os;
     }
