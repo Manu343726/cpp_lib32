@@ -417,6 +417,14 @@ public:
     using result = typename _merge<TYPELIST1,TYPELIST2>::result;
 };
 
+template<typename TYPELIST , unsigned int index>
+class dl32Split
+{
+private:
+    template<typename LOKI_STYLE_TYPELIST>
+    struct _split;
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
 /// @details This class wrapps recursive-based typelist and provides a variadic template interface

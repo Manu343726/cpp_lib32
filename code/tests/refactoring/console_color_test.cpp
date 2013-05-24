@@ -20,7 +20,7 @@
 
 #include "dl32TestConfig.h"
 
-#if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_CONSOLECOLORSTEST 
+#if 1 == 1
 
 #include "dl32ConsoleColor.h"
 #include "dl32Singleton.h"
