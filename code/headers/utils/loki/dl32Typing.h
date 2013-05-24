@@ -336,19 +336,6 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Implements a linear search of a type in a given loki-style typelist.
-///
-/// @author	Manu343726
-///
-/// @remarks Template specialitation for index-th case (The type was finded).)
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename TYPELIST>
-struct dl32TypeAt<0,TYPELIST>
-{
-    typedef typename TYPELIST::head value;
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Gets the index of a given type in a given typelist.
 /// @details Member "value" is a integer containing the index of T in TYPELIST. 
 ///          If TYPELIST not contains T, value is -1.
