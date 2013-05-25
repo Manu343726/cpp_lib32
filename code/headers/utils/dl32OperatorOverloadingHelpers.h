@@ -22,20 +22,6 @@
  ***************************************************************************/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides inequelity criteria for type T based on user defined equality criteria 
-///        for type T.
-///
-/// @author	Manu343726
-///
-/// @details User class must implement operator==(const T& t1 , const T& t2).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32EqualityHelper
-{
-    bool operator!=(const T& t1 , const T& t2) { return !(t1 == t2); }
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides inequelity criteria for types T vs U based on user-defined equality criteria
 ///        for types T vs U.
 ///        Also, this helper provides the complete set of inverse comparisons to ensure simetry.
@@ -44,29 +30,27 @@ struct dl32EqualityHelper
 ///
 /// @details User class must implement operator==(const T& t , const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 struct dl32EqualityHelper
 { 
-    bool operator!=(const T& t , const T& u) { return !(t == u); }
+    friend bool operator!=(const T& t , const T& u) { return !(t == u); }
     
-    bool operator==(const U& u , const T& t) {return t == u;}
-    bool operator!=(const U& u , const T& t) { return t != u; }
+    friend bool operator==(const U& u , const T& t) {return t == u;}
+    friend bool operator!=(const U& u , const T& t) { return t != u; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides complete comparison criteria for type T based on userdefined biger-than 
-///        criteria for type T.
+/// @brief This helper provides inequelity criteria for type T based on user defined equality criteria 
+///        for type T.
 ///
 /// @author	Manu343726
 ///
-/// @details User class must implement operator>(const T& t1 , const T& t2).
+/// @details User class must implement operator==(const T& t1 , const T& t2).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32ComparisonHelper
+struct dl32EqualityHelper<T,dl32NoType>
 {
-    bool operator<=(const T& t1 , const T& t2) { return !(t1 > t2); }
-    bool operator< (const T& t1 , const T& t2) { return t2 > t1; }
-    bool operator>=(const T& t1 , const T& t2) { return !(t1 < t2); }   
+    friend bool operator!=(const T& t1 , const T& t2) { return !(t1 == t2); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,34 +63,36 @@ struct dl32ComparisonHelper
 /// @details User class must implement operator>(const T& t , const U& u) and 
 ///          operator<(const T& t , const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 struct dl32ComparisonHelper
 {
-    bool operator<=(const T& t , const U& u) { return !(t > u); }
-    bool operator>=(const T& t , const U& u) { return !(t < u); }  
+    friend bool operator<=(const T& t , const U& u) { return !(t > u); }
+    friend bool operator>=(const T& t , const U& u) { return !(t < u); }  
     
-    bool operator> (const U& u , const T& t) { return t < u; }
-    bool operator<=(const U& u , const T& t) { return !(u > t); }
-    bool operator< (const U& u , const T& t) { return t > u; }
-    bool operator>=(const U& u , const T& t) { return !(t < u); }
+    friend bool operator> (const U& u , const T& t) { return t < u; }
+    friend bool operator<=(const U& u , const T& t) { return !(u > t); }
+    friend bool operator< (const U& u , const T& t) { return t > u; }
+    friend bool operator>=(const U& u , const T& t) { return !(t < u); }
 };
 
-template<typename T>
-using dl32ComparisonHelpers = dl32TypeList<dl32EqualityHelper<T>,dl32ComparisonHelper<T>>; ///< Defines the set of helpers that provides comparison operators for type T.
-
-template<typename T , typename U>
-using dl32ComparisonHelpers = dl32TypeList<dl32EqualityHelper<T,U>,dl32ComparisonHelper<T,U>>; ///< Defines the set of helpers that provides comparison operators for types T and U.
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides the complete comparison operators for a given type T.
+/// @brief This helper provides complete comparison criteria for type T based on userdefined biger-than 
+///        criteria for type T.
 ///
 /// @author	Manu343726
 ///
-/// @details User class must implement operator>(const T& t1 , const T& t2)
-///          and operator==(const T& t1 , const T& t2).
+/// @details User class must implement operator>(const T& t1 , const T& t2).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32CompleteComparisonHelper : public dl32ComparisonHelpers<T>::public_inheritance_from_types {};
+struct dl32ComparisonHelper<T,dl32NoType>
+{
+    friend bool operator<=(const T& t1 , const T& t2) { return !(t1 > t2); }
+    friend bool operator< (const T& t1 , const T& t2) { return t2 > t1; }
+    friend bool operator>=(const T& t1 , const T& t2) { return !(t1 < t2); }   
+};
+
+template<typename T , typename U = dl32NoType>
+using dl32ComparisonHelpers = dl32TypeList<dl32EqualityHelper<T,U>,dl32ComparisonHelper<T,U>>; ///< Defines the set of helpers that provides comparison operators for types T and U.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides the complete comparison operators for given types T and U.
@@ -117,8 +103,84 @@ struct dl32CompleteComparisonHelper : public dl32ComparisonHelpers<T>::public_in
 /// @details User class must implement operator>(const T& t , const U& u), operator<(const T& t , const U& u),
 ///          and operator==(const T& t , const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 struct dl32CompleteComparisonHelper : public dl32ComparisonHelpers<T,U>::public_inheritance_from_types {};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This helper provides binary addition operator (T operator+(const T& t , const U& u) based on 
+///        user-defined autoincrement operator ( T& operator+=(const U& u) ).
+///
+/// @author	Manu343726
+///
+/// @details User class must implement T& operator+=(const U& u).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename U = dl32NoType>
+struct dl32AdditionHelper
+{
+    friend T operator+(const T& t , const U& u)
+    {
+        T t2( t );
+        t2 += u;
+        return t2;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This helper provides binary substraction operator (T operator-(const T& t , const T& u) based on 
+///        user-defined autodecrement operator ( T& operator-=(const U& u) ).
+///
+/// @author	Manu343726
+///
+/// @details User class must implement T& operator-=(const U& u).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename U = dl32NoType>
+struct dl32SubstractionHelper
+{
+    friend T operator-(const T& t , const U& u)
+    {
+        T t2( t );
+        t2 -= u;
+        return t2;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This helper provides binary multiplication operator (T operator*(const T& t , const T& u) based on 
+///        user-defined automultiplication operator ( T& operator*=(const U& u) ).
+///
+/// @author	Manu343726
+///
+/// @details User class must implement T& operator*=(const U& u).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename U = dl32NoType>
+struct dl32MultiplicationHelper
+{
+    friend T operator*(const T& t , const U& u)
+    {
+        T t2( t );
+        t2 *= u;
+        return t2;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This helper provides binary division operator (T operator/(const T& t , const U& u) based on 
+///        user-defined autoincrement operator ( T& operator/=(const U& u) ).
+///
+/// @author	Manu343726
+///
+/// @details User class must implement T& operator/=(const U& u).
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , typename U = dl32NoType>
+struct dl32DivisionHelper
+{
+    friend T operator/(const T& t , const U& u)
+    {
+        T t2( t );
+        t2 /= u;
+        return t2;
+    }
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides binary addition operator (T operator+(const T& t1 , const T& t2) based on 
@@ -129,9 +191,9 @@ struct dl32CompleteComparisonHelper : public dl32ComparisonHelpers<T,U>::public_
 /// @details User class must implement T& operator+=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32AdditionHelper
+struct dl32AdditionHelper<T,dl32NoType>
 {
-    T operator+(const T& t1 , const T& t2)
+    friend T operator+(const T& t1 , const T& t2)
     {
         T t3( t1 );
         t3 += t2;
@@ -148,9 +210,9 @@ struct dl32AdditionHelper
 /// @details User class must implement T& operator-=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32SubstractionHelper
+struct dl32SubstractionHelper<T,dl32NoType>
 {
-    T operator-(const T& t1 , const T& t2)
+    friend T operator-(const T& t1 , const T& t2)
     {
         T t3( t1 );
         t3 -= t2;
@@ -167,9 +229,9 @@ struct dl32SubstractionHelper
 /// @details User class must implement T& operator*=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32MultiplicationHelper
+struct dl32MultiplicationHelper<T,dl32NoType>
 {
-    T operator*(const T& t1 , const T& t2)
+    friend T operator*(const T& t1 , const T& t2)
     {
         T t3( t1 );
         t3 *= t2;
@@ -186,9 +248,9 @@ struct dl32MultiplicationHelper
 /// @details User class must implement T& operator/=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32DivisionHelper
+struct dl32DivisionHelper<T,dl32NoType>
 {
-    T operator/(const T& t1 , const T& t2)
+    friend T operator/(const T& t1 , const T& t2)
     {
         T t3( t1 );
         t3 /= t2;
@@ -196,114 +258,10 @@ struct dl32DivisionHelper
     }
 };
 
-template<typename T>
-using dl32BasicAlgebraHelpers = dl32TypeList<dl32AdditionHelper<T>,dl32SubstractionHelper<T>>; ///< Defines the set of basic algebra (Addition and substraction) helpers.
-
-template<typename T>
-using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T>,dl32SubstractionHelper<T>,dl32MultiplicationHelper<T>,dl32DivisionHelper<T>>; ///< Defines the set of algebra (Addition, substraction, multiplication, and division) helpers.
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides the set of basic algebra operators (Addition and substraction) for a type T.
-///
-/// @author	Manu343726
-///
-/// @details User class must implement operator+=(const T&) and operator-=(const T&).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T>::public_inheritance_from_types {}; 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides the set of algebra operators (Addition, substraction, multiplication,
-///        and division) for a type T.
-///
-/// @author	Manu343726
-///
-/// @details User class must implement operator+=(const T&), operator-=(const T&), operator+=(const T&),
-///          and operator/=(const T&).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32AlgebraHelper : public dl32BasicAlgebraHelpers<T>::public_inheritance_from_types {}; 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides binary addition operator (T operator+(const T& t , const U& u) based on 
-///        user-defined autoincrement operator ( T& operator+=(const U& u) ).
-///
-/// @author	Manu343726
-///
-/// @details User class must implement T& operator+=(const U& u).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32AdditionHelper
-{
-    T operator+(const T& t , const U& u)
-    {
-        T t2( t );
-        t2 += u;
-        return t2;
-    }
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides binary substraction operator (T operator-(const T& t , const T& u) based on 
-///        user-defined autodecrement operator ( T& operator-=(const U& u) ).
-///
-/// @author	Manu343726
-///
-/// @details User class must implement T& operator-=(const U& u).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32SubstractionHelper
-{
-    T operator-(const T& t , const U& u)
-    {
-        T t2( t );
-        t2 -= u;
-        return t2;
-    }
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides binary multiplication operator (T operator*(const T& t , const T& u) based on 
-///        user-defined automultiplication operator ( T& operator*=(const U& u) ).
-///
-/// @author	Manu343726
-///
-/// @details User class must implement T& operator*=(const U& u).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32MultiplicationHelper
-{
-    T operator*(const T& t , const U& u)
-    {
-        T t2( t );
-        t2 *= u;
-        return t2;
-    }
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This helper provides binary division operator (T operator/(const T& t , const U& u) based on 
-///        user-defined autoincrement operator ( T& operator/=(const U& u) ).
-///
-/// @author	Manu343726
-///
-/// @details User class must implement T& operator/=(const U& u).
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
-struct dl32DivisionHelper
-{
-    T operator/(const T& t , const U& u)
-    {
-        T t2( t );
-        t2 /= u;
-        return t2;
-    }
-};
-
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 using dl32BasicAlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32SubstractionHelper<T,U>>; ///< Defines the set of basic algebra (Addition and substraction) helpers.
 
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32SubstractionHelper<T,U>,dl32MultiplicationHelper<T,U>,dl32DivisionHelper<T,U>>; ///< Defines the set of algebra (Addition, substraction, multiplication, and division) helpers.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +272,7 @@ using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32Substraction
 ///
 /// @details User class (T) must implement operator+=(const U&) and operator-=(const U&).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inheritance_from_types {}; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +284,7 @@ struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inhe
 /// @details User class (T) must implement operator+=(const U&), operator-=(const U&), operator+=(const U&),
 ///          and operator/=(const U&).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U>
+template<typename T , typename U = dl32NoType>
 struct dl32AlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inheritance_from_types {}; 
 
 #endif	/* DL32OPERATOROVERLOADINGHELPERS_H */

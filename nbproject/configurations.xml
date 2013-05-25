@@ -18,7 +18,7 @@
         <itemPath>code/headers/dl32Events.h</itemPath>
         <itemPath>code/headers/dl32Exceptions.h</itemPath>
         <itemPath>code/headers/dl32Math.h</itemPath>
-        <itemPath>code/dl32NewMath.h</itemPath>
+        <itemPath>code/headers/dl32NewMath.h</itemPath>
         <itemPath>code/headers/dl32Window.h</itemPath>
       </logicalFolder>
       <logicalFolder name="source" displayName="source" projectFiles="true">
@@ -49,6 +49,7 @@
           <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/console_color_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/is_design_test.cpp</itemPath>
+          <itemPath>code/tests/refactoring/new_math_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/typing_test.cpp</itemPath>
         </logicalFolder>
         <itemPath>code/tests/dl32TestConfig.h</itemPath>
@@ -95,8 +96,6 @@
           </incDir>
         </ccTool>
       </compileType>
-      <item path="code/dl32NewMath.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
@@ -104,6 +103,8 @@
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -180,6 +181,11 @@
             flavor2="0">
       </item>
       <item path="code/tests/refactoring/is_design_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/new_math_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
@@ -211,8 +217,6 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="code/dl32NewMath.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
@@ -220,6 +224,8 @@
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -296,6 +302,11 @@
             flavor2="0">
       </item>
       <item path="code/tests/refactoring/is_design_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/new_math_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">

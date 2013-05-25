@@ -11,7 +11,7 @@
 #include "dl32OperatorOverloadingHelpers.h"
 #include "dl32Typing.h"
 
-#include <math.h>
+#include <cmath>
 #include <limits>
 using namespace std;
 
@@ -97,6 +97,8 @@ enum class dl32VectorImplementation : unsigned int
 
 const dl32VectorImplementation _DL32MATH_VECTOR_IMPLEMENTATION = dl32VectorImplementation::HOMEBREW; ///< Vector implementation configuration.
 
+const unsigned int _DL32MATH_VECTOR_IMPLEMENTATION_INTEGRAL = (unsigned int)_DL32MATH_VECTOR_IMPLEMENTATION;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class provides a homebrew implementation of a 2d vector and its most common algebraic
 ///        operations.
@@ -104,15 +106,15 @@ const dl32VectorImplementation _DL32MATH_VECTOR_IMPLEMENTATION = dl32VectorImple
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-struct _vector_2d_implementation_homebrew : public dl32EqualityHelper<_vector_2d_implementation_homebrew> , 
-                                            public dl32Select< BASIC_ALGEBRA_ONLY , dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew> , 
-                                                                           typename dl32TypeList< dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew> , 
-                                                                                                  dl32MultiplicationHelper<_vector_2d_implementation_homebrew,T> , 
-                                                                                                  dl32DivisionHelper<_vector_2d_implementation_homebrew,T>
+struct _vector_2d_implementation_homebrew : public dl32EqualityHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
+                                            public dl32Select< BASIC_ALGEBRA_ONLY , dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
+                                                                           typename dl32TypeList< dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
+                                                                                                  dl32MultiplicationHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>,T> , 
+                                                                                                  dl32DivisionHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>,T>
                                                                                                 >::public_inheritance_from_types
                                                              >::type
 {
-private:
+public:
     using my_type = _vector_2d_implementation_homebrew; //Así es mas facil de escribir
 public:
     static const unsigned int dimensions = 2; ///< Dimensional range of the point.
@@ -156,7 +158,7 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    bool operator==(const my_type& m1 , const my_type m2) 
+    friend bool operator==(const my_type& m1 , const my_type m2) 
     { 
         return dl32FloatingPointHelper<T>::are_equal( m1.x , m2.x ) && 
                dl32FloatingPointHelper<T>::are_equal( m1.y , m2.y ); 
@@ -246,13 +248,24 @@ struct _vector_2d_implementation_direct3d{};
 template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
 struct _vector_2d_implementation_opengl{};
 
-///< The set of 2d vector implementations.
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief 2d vector implementations manager
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-using _vector_2d_implementations = dl32TypeList<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY> , _vector_2d_implementation_direct3d<T,BASIC_ALGEBRA_ONLY> , _vector_2d_implementation_opengl<T,BASIC_ALGEBRA_ONLY>>;
-
-///< Current implementation of 2d vectors.
-template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-using _vector_2d_implementation_current = _vector_2d_implementations<T,BASIC_ALGEBRA_ONLY>::type_at<(unsigned int)_DL32MATH_VECTOR_IMPLEMENTATION>;
+class dl32Vector2dImplementationsManager
+{
+private:
+    
+    ///< Set of vector 2d implementations.
+    using _vector_2d_implementations = dl32TypeList<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY> , 
+                                                    _vector_2d_implementation_direct3d<T,BASIC_ALGEBRA_ONLY> , 
+                                                    _vector_2d_implementation_opengl  <T,BASIC_ALGEBRA_ONLY>>;
+    
+public:
+    using current_implementation = _vector_2d_implementations::type_at<_DL32MATH_VECTOR_IMPLEMENTATION_INTEGRAL>; ///< Gets the current vector 2d implementation.
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a point in 2d space.
@@ -261,7 +274,13 @@ using _vector_2d_implementation_current = _vector_2d_implementations<T,BASIC_ALG
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float>
-struct dl32Point2D : public _vector_2d_implementation_current<T,true> {};
+struct dl32Point2D : public dl32Vector2dImplementationsManager<T,true>::current_implementation
+{
+    using my_implementation = typename dl32Vector2dImplementationsManager<T,true>::current_implementation; ///< Alias to the implementer type.
+    
+    dl32Point2D() : my_implementation() {}
+    dl32Point2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a vector in 2d space.
@@ -270,8 +289,14 @@ struct dl32Point2D : public _vector_2d_implementation_current<T,true> {};
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float>
-struct dl32Vector2D : public _vector_2d_implementation_current<T,false>
+struct dl32Vector2D : public dl32Vector2dImplementationsManager<T,false>::current_implementation
 {
+    using my_implementation = typename dl32Vector2dImplementationsManager<T,false>::current_implementation; ///< Alias to the implementer type.
+    
+    dl32Vector2D() : my_implementation() {}
+    dl32Vector2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
+    dl32Vector2D(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : my_implementation( p2.x - p1.x , p2.y - p1.y ) {}
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Returns the lenght of the vector
     ///
