@@ -14,11 +14,11 @@ GREP=grep
 NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
-CC=gcc.exe
-CCC=g++.exe
-CXX=g++.exe
-FC=gfortran.exe
-AS=as.exe
+CC=gcc
+CCC=g++
+CXX=g++
+FC=gfortran
+AS=as
 
 # Macros
 CND_PLATFORM=MinGW-Windows
@@ -35,18 +35,18 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/code/source/dl32Color.o \
 	${OBJECTDIR}/code/source/dl32Math.o \
-	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
+	${OBJECTDIR}/code/source/dl32Window.o \
+	${OBJECTDIR}/code/source/utils/dl32Config.o \
+	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o \
+	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
-	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
+	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
 	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
-	${OBJECTDIR}/code/tests/refactoring/typing_test.o \
-	${OBJECTDIR}/code/source/utils/dl32Memory.o \
-	${OBJECTDIR}/code/source/dl32Color.o \
-	${OBJECTDIR}/code/source/dl32Window.o \
-	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o
+	${OBJECTDIR}/code/tests/refactoring/typing_test.o
 
 
 # C Compiler Flags
@@ -67,21 +67,41 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS} 
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Color.o code/source/dl32Color.cpp
 
 ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
 
-${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring/console_color_test.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+${OBJECTDIR}/code/source/dl32Window.o: code/source/dl32Window.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Window.o code/source/dl32Window.cpp
+
+${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/utils
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
+
+${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32ConsoleColor.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/utils
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
+
+${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/utils
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Memory.o code/source/utils/dl32Memory.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Timing.o: code/source/utils/dl32Timing.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
@@ -93,15 +113,15 @@ ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o: code/tests/ASCII_raste
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o code/tests/ASCII_raster/ASCII_raster_test.cpp
 
-${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source/utils
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
-
 ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o: code/tests/refactoring/Redesigned_event_system_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o code/tests/refactoring/Redesigned_event_system_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring/console_color_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/is_design_test.o: code/tests/refactoring/is_design_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
@@ -113,33 +133,13 @@ ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/typing_test.o code/tests/refactoring/typing_test.cpp
 
-${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source/utils
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Memory.o code/source/utils/dl32Memory.cpp
-
-${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Color.o code/source/dl32Color.cpp
-
-${OBJECTDIR}/code/source/dl32Window.o: code/source/dl32Window.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Window.o code/source/dl32Window.cpp
-
-${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32ConsoleColor.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source/utils
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/loki -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
-
 # Subprojects
 .build-subprojects:
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32.exe
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
 
 # Subprojects
 .clean-subprojects:

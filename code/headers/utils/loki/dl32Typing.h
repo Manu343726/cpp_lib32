@@ -326,13 +326,13 @@ class dl32TypeAt
 {
 private:
     template<int _index, typename _TYPELIST>
-    struct _type_at{ using value = _type_at<_index-1,_TYPELIST>::value; };
+    struct _type_at{ using value = typename _type_at<_index-1,_TYPELIST>::value; };
     
     template<typename _TYPELIST>
-    struct _type_at<0,_TYPELIST>{ using value = _TYPELIST::head; };
+    struct _type_at<0,_TYPELIST>{ using value = typename _TYPELIST::head; };
 
 public:
-    using value = _type_at<index,TYPELIST>::value;
+    using value = typename _type_at<index,TYPELIST>::value;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -450,6 +450,14 @@ struct dl32TypeList<HEAD,TAIL...>
     
     template <typename TYPELIST>
     using merge = typename dl32Merge<dl32TypeList<HEAD,TAIL...> , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Inheriting type provides public inheritance from all types contained at the typelist.
+    /// @details Note that typelist types must be non-basic types, must be inheritable types.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    struct public_inheritance_from_types : public HEAD , public TAIL... {};
 };
     
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
