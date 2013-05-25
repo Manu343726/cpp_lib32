@@ -18,6 +18,7 @@
         <itemPath>code/headers/dl32Events.h</itemPath>
         <itemPath>code/headers/dl32Exceptions.h</itemPath>
         <itemPath>code/headers/dl32Math.h</itemPath>
+        <itemPath>code/dl32NewMath.h</itemPath>
         <itemPath>code/headers/dl32Window.h</itemPath>
       </logicalFolder>
       <logicalFolder name="source" displayName="source" projectFiles="true">
@@ -94,6 +95,8 @@
           </incDir>
         </ccTool>
       </compileType>
+      <item path="code/dl32NewMath.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
@@ -208,6 +211,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="code/dl32NewMath.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">

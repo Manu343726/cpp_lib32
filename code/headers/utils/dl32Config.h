@@ -110,7 +110,7 @@ public:
 
 //dl32Math configuration:
 //-----------------------
-	static const float float_epsilon;               ///< cpp_lib32 flotating-point comparations epsilon.
+	static const float float_epsilon;               ///< cpp_lib32 floating-point comparations epsilon.
 
 //dl32Graphics configuration:
 //---------------------------
@@ -145,7 +145,7 @@ public:
 #define DISABLED FALSE
 #endif
 
-//FLOTATING-POINT COMPARING OPS:
+//FLOATING-POINT COMPARING OPS:
 //////////////////////////////////////
 #define DL32FLOAT_EPSILON dl32GlobalConfig::float_epsilon
 
