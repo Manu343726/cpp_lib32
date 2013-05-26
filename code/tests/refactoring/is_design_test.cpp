@@ -1,6 +1,6 @@
 #include "dl32TestConfig.h"
 
-#if DL32TEST_DEBUGTEST == DL32TEST_REFACTORING_IS_DESIGN_TEST
+#if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_IS_DESIGN_TEST
 
 #include "dl32Typing.h"
 #include <iostream>

@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['pop_5ffront',['pop_front',['../structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4.html#af6a5858f08ca8f143a5584e70330ed0a',1,'dl32TypeList&lt; HEAD, TAIL...&gt;']]],
+  ['push_5fback',['push_back',['../structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4.html#a196a19360c7e87c85a868cb731ac6fa6',1,'dl32TypeList&lt; HEAD, TAIL...&gt;::push_back()'],['../structdl32_type_list_3_4.html#a2380b4b6362e56cf4d0247d9d9517b91',1,'dl32TypeList&lt;&gt;::push_back()']]],
+  ['push_5ffront',['push_front',['../structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4.html#aa06db183b95a529eb046ad426eac9b18',1,'dl32TypeList&lt; HEAD, TAIL...&gt;::push_front()'],['../structdl32_type_list_3_4.html#a20a32d66d4e904bdda50e6eabe1a880a',1,'dl32TypeList&lt;&gt;::push_front()']]]
+];

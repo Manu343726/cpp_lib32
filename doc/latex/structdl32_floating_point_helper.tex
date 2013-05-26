@@ -1,0 +1,188 @@
+\hypertarget{structdl32_floating_point_helper}{\section{dl32\-Floating\-Point\-Helper$<$ T $>$ Struct Template Reference}
+\label{structdl32_floating_point_helper}\index{dl32\-Floating\-Point\-Helper$<$ T $>$@{dl32\-Floating\-Point\-Helper$<$ T $>$}}
+}
+
+
+This class provides a set of useful floating-\/point functions.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-New\-Math.\-h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_floating_point_helper_a3d87dbfbf29b4cffcc46c7494a2e427b}{using {\bfseries floating\-\_\-point\-\_\-type} = T}\label{structdl32_floating_point_helper_a3d87dbfbf29b4cffcc46c7494a2e427b}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \hyperlink{structdl32_floating_point_helper_af654a94da92d04c2ff67418c5d7472de}{are\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if two floating-\/point numbers are equal. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_acbb88230afd4cb6e9f8e02824428e19c}{are\-\_\-not\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if two floating-\/point numbers are not equal. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_aeaa1eab42c4acc218f31a19539888351}{is\-\_\-zero} (const T \&number)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is not equal to zero. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_a676a85c34e2c9569f2da8f50686d7ee9}{is\-\_\-not\-\_\-zero} (const T \&number)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is not equal to zero. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_a1947178511c75425e9507d5fed95ee3d}{bigger\-\_\-or\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is bigger or equal than other floating-\/point number. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_a154a42a8391f27105b663b242a2d5946}{not\-\_\-bigger\-\_\-or\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is not bigger or equal than other floating-\/point number. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_a82b58cc6bc6b72b8e8f2c8727f7e1c46}{less\-\_\-or\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is less or equal than other floating-\/point number. \end{DoxyCompactList}\item 
+static bool \hyperlink{structdl32_floating_point_helper_a29a21fc10d7aeabeb7f01218ba1acde8}{not\-\_\-less\-\_\-or\-\_\-equal} (const T \&a, const T \&b)
+\begin{DoxyCompactList}\small\item\em Checks if a floating-\/point number is not less or equal than other floating-\/point number. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const floating\-\_\-point\-\_\-type \hyperlink{structdl32_floating_point_helper_a90f2525eb7cd225454fc3854b54fc71c}{epsilon} = numeric\-\_\-limits$<$T$>$\-::epsilon()
+\begin{DoxyCompactList}\small\item\em $<$ Public alias to the floating-\/point type in use. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T = float$>$struct dl32\-Floating\-Point\-Helper$<$ T $>$}
+
+This class provides a set of useful floating-\/point functions. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{structdl32_floating_point_helper_af654a94da92d04c2ff67418c5d7472de}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!are\-\_\-equal@{are\-\_\-equal}}
+\index{are\-\_\-equal@{are\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{are\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::are\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_af654a94da92d04c2ff67418c5d7472de}
+
+
+Checks if two floating-\/point numbers are equal. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_acbb88230afd4cb6e9f8e02824428e19c}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!are\-\_\-not\-\_\-equal@{are\-\_\-not\-\_\-equal}}
+\index{are\-\_\-not\-\_\-equal@{are\-\_\-not\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{are\-\_\-not\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::are\-\_\-not\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_acbb88230afd4cb6e9f8e02824428e19c}
+
+
+Checks if two floating-\/point numbers are not equal. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_a1947178511c75425e9507d5fed95ee3d}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!bigger\-\_\-or\-\_\-equal@{bigger\-\_\-or\-\_\-equal}}
+\index{bigger\-\_\-or\-\_\-equal@{bigger\-\_\-or\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{bigger\-\_\-or\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::bigger\-\_\-or\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_a1947178511c75425e9507d5fed95ee3d}
+
+
+Checks if a floating-\/point number is bigger or equal than other floating-\/point number. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_a676a85c34e2c9569f2da8f50686d7ee9}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!is\-\_\-not\-\_\-zero@{is\-\_\-not\-\_\-zero}}
+\index{is\-\_\-not\-\_\-zero@{is\-\_\-not\-\_\-zero}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{is\-\_\-not\-\_\-zero}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::is\-\_\-not\-\_\-zero (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{number}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_a676a85c34e2c9569f2da8f50686d7ee9}
+
+
+Checks if a floating-\/point number is not equal to zero. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_aeaa1eab42c4acc218f31a19539888351}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!is\-\_\-zero@{is\-\_\-zero}}
+\index{is\-\_\-zero@{is\-\_\-zero}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{is\-\_\-zero}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::is\-\_\-zero (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{number}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_aeaa1eab42c4acc218f31a19539888351}
+
+
+Checks if a floating-\/point number is not equal to zero. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_a82b58cc6bc6b72b8e8f2c8727f7e1c46}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!less\-\_\-or\-\_\-equal@{less\-\_\-or\-\_\-equal}}
+\index{less\-\_\-or\-\_\-equal@{less\-\_\-or\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{less\-\_\-or\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::less\-\_\-or\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_a82b58cc6bc6b72b8e8f2c8727f7e1c46}
+
+
+Checks if a floating-\/point number is less or equal than other floating-\/point number. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_a154a42a8391f27105b663b242a2d5946}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!not\-\_\-bigger\-\_\-or\-\_\-equal@{not\-\_\-bigger\-\_\-or\-\_\-equal}}
+\index{not\-\_\-bigger\-\_\-or\-\_\-equal@{not\-\_\-bigger\-\_\-or\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{not\-\_\-bigger\-\_\-or\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::not\-\_\-bigger\-\_\-or\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_a154a42a8391f27105b663b242a2d5946}
+
+
+Checks if a floating-\/point number is not bigger or equal than other floating-\/point number. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{structdl32_floating_point_helper_a29a21fc10d7aeabeb7f01218ba1acde8}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!not\-\_\-less\-\_\-or\-\_\-equal@{not\-\_\-less\-\_\-or\-\_\-equal}}
+\index{not\-\_\-less\-\_\-or\-\_\-equal@{not\-\_\-less\-\_\-or\-\_\-equal}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{not\-\_\-less\-\_\-or\-\_\-equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ static bool {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::not\-\_\-less\-\_\-or\-\_\-equal (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{a, }
+\item[{const T \&}]{b}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{structdl32_floating_point_helper_a29a21fc10d7aeabeb7f01218ba1acde8}
+
+
+Checks if a floating-\/point number is not less or equal than other floating-\/point number. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structdl32_floating_point_helper_a90f2525eb7cd225454fc3854b54fc71c}{\index{dl32\-Floating\-Point\-Helper@{dl32\-Floating\-Point\-Helper}!epsilon@{epsilon}}
+\index{epsilon@{epsilon}!dl32FloatingPointHelper@{dl32\-Floating\-Point\-Helper}}
+\subsubsection[{epsilon}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T  = float$>$ const floating\-\_\-point\-\_\-type {\bf dl32\-Floating\-Point\-Helper}$<$ T $>$\-::epsilon = numeric\-\_\-limits$<$T$>$\-::epsilon()\hspace{0.3cm}{\ttfamily [static]}}}\label{structdl32_floating_point_helper_a90f2525eb7cd225454fc3854b54fc71c}
+
+
+$<$ Public alias to the floating-\/point type in use. 
+
+floating-\/point epsilon used for comparisons. 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-New\-Math.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,59 @@
+\hypertarget{structdl32_type_list_3_4}{\section{dl32\-Type\-List$<$$>$ Struct Template Reference}
+\label{structdl32_type_list_3_4}\index{dl32\-Type\-List$<$$>$@{dl32\-Type\-List$<$$>$}}
+}
+
+
+cpp\-\_\-lib32 loki-\/like typelist wrapper List of C++ integral types.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Typing.\-h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \{ {\bfseries size} = 0
+ \}
+\item 
+\hypertarget{structdl32_type_list_3_4_a232a600573478a53e3c2d8f560e5f740}{typedef \hyperlink{classdl32_no_type}{dl32\-No\-Type} {\bfseries value}}\label{structdl32_type_list_3_4_a232a600573478a53e3c2d8f560e5f740}
+
+\item 
+\hypertarget{structdl32_type_list_3_4_a340eccdafb8151d764281ead3865f6b5}{{\footnotesize template$<$int index$>$ }\\using {\bfseries type\-\_\-at} = \hyperlink{classdl32_no_type}{dl32\-No\-Type}}\label{structdl32_type_list_3_4_a340eccdafb8151d764281ead3865f6b5}
+
+\item 
+\hypertarget{structdl32_type_list_3_4_a132a8dbff95fbae506702f5c64028d9f}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_4_a132a8dbff95fbae506702f5c64028d9f}{index\-\_\-of} = typename \hyperlink{structdl32_index_of}{dl32\-Index\-Of}$<$ T, \hyperlink{classdl32_no_type}{dl32\-No\-Type} $>$\-::\hyperlink{classdl32_no_type}{value}}\label{structdl32_type_list_3_4_a132a8dbff95fbae506702f5c64028d9f}
+
+\begin{DoxyCompactList}\small\item\em $<$ Gets the index-\/th type of the list. If index is out of range, a compilation error will be generated (\char`\"{}dl32\-Notype not has member 'head'\char`\"{}). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_4_a2380b4b6362e56cf4d0247d9d9517b91}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_4_a2380b4b6362e56cf4d0247d9d9517b91}{push\-\_\-back} = \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ T $>$}\label{structdl32_type_list_3_4_a2380b4b6362e56cf4d0247d9d9517b91}
+
+\begin{DoxyCompactList}\small\item\em $<$ Gets the position of a given type in the list. If the type is not in the list, \hyperlink{classdl32_no_type}{dl32\-No\-Type} will be returned. \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_4_a20a32d66d4e904bdda50e6eabe1a880a}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_4_a20a32d66d4e904bdda50e6eabe1a880a}{push\-\_\-front} = \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ T $>$}\label{structdl32_type_list_3_4_a20a32d66d4e904bdda50e6eabe1a880a}
+
+\begin{DoxyCompactList}\small\item\em $<$ Pushes back a new type to the typelist (Returns new typelist). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_4_a8154acb5918116d4ce4cf28f47b01ea4}{{\footnotesize template$<$typename T , unsigned int index$>$ }\\using \hyperlink{structdl32_type_list_3_4_a8154acb5918116d4ce4cf28f47b01ea4}{insert} = typename \hyperlink{structdl32_enable_if}{dl32\-Enable\-If}$<$ index==0, \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ T $>$$>$\-::type}\label{structdl32_type_list_3_4_a8154acb5918116d4ce4cf28f47b01ea4}
+
+\begin{DoxyCompactList}\small\item\em $<$ Pushes front a new type to the typelist (Returns new typelist). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_4_ac367c908cfcac14aa7cb54691218d1da}{{\footnotesize template$<$typename T\-Y\-P\-E\-L\-I\-S\-T $>$ }\\using \hyperlink{structdl32_type_list_3_4_ac367c908cfcac14aa7cb54691218d1da}{merge} = T\-Y\-P\-E\-L\-I\-S\-T}\label{structdl32_type_list_3_4_ac367c908cfcac14aa7cb54691218d1da}
+
+\begin{DoxyCompactList}\small\item\em $<$ Inserts a new type in the typelist at the specified position (Returns a new typelist). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$$>$struct dl32\-Type\-List$<$$>$}
+
+cpp\-\_\-lib32 loki-\/like typelist wrapper List of C++ integral types. 
+
+This class wrapps recursive-\/based typelist and provides a variadic template interface
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Base-\/case template specialitation. 
+\end{DoxyRemark}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/utils/loki/dl32\-Typing.\-h\end{DoxyCompactItemize}

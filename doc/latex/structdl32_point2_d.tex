@@ -1,0 +1,184 @@
+\hypertarget{structdl32_point2_d}{\section{dl32\-Point2\-D$<$ T $>$ Struct Template Reference}
+\label{structdl32_point2_d}\index{dl32\-Point2\-D$<$ T $>$@{dl32\-Point2\-D$<$ T $>$}}
+}
+
+
+This class represents a point in 2d space.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Math.\-h$>$}
+
+Inheritance diagram for dl32\-Point2\-D$<$ T $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.387856cm]{structdl32_point2_d}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_point2_d_a7ac72dbdc55dbd6102f1ef6da30d3204}{using {\bfseries my\-\_\-implementation} = typename \hyperlink{classdl32_vector2d_implementations_manager}{dl32\-Vector2d\-Implementations\-Manager}$<$ \hyperlink{structdl32_point2_d}{dl32\-Point2\-D}$<$ T $>$, T, true $>$\-::current\-\_\-implementation}\label{structdl32_point2_d_a7ac72dbdc55dbd6102f1ef6da30d3204}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_point2_d_a01c5c4259def324227be846ffad01829}{{\bfseries dl32\-Point2\-D} (float Val\-X, float Val\-Y)}\label{structdl32_point2_d_a01c5c4259def324227be846ffad01829}
+
+\item 
+\hypertarget{structdl32_point2_d_a928eb05410f809c074100cf8643bf61f}{{\bfseries dl32\-Point2\-D} (float $\ast$coords\-Array)}\label{structdl32_point2_d_a928eb05410f809c074100cf8643bf61f}
+
+\item 
+\hypertarget{structdl32_point2_d_a835d47729cf83589b5a165aa61c68ea4}{const float {\bfseries operator\mbox{[}$\,$\mbox{]}} (int coord) const   throw (dl32\-Out\-Of\-Range\-Exception)}\label{structdl32_point2_d_a835d47729cf83589b5a165aa61c68ea4}
+
+\item 
+\hypertarget{structdl32_point2_d_a5417b7fe6de63491406f1a9cf65a08d4}{\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \& {\bfseries operator()} ()}\label{structdl32_point2_d_a5417b7fe6de63491406f1a9cf65a08d4}
+
+\item 
+\hypertarget{structdl32_point2_d_a9043e9070d902a34a358bf94bc204c54}{\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \& {\bfseries operator()} (float x, float y)}\label{structdl32_point2_d_a9043e9070d902a34a358bf94bc204c54}
+
+\item 
+\hypertarget{structdl32_point2_d_a43470ac9404213b79dd61c183bf4f5d0}{const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries operator+} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&point) const }\label{structdl32_point2_d_a43470ac9404213b79dd61c183bf4f5d0}
+
+\item 
+\hypertarget{structdl32_point2_d_a18fd6120e5696a4ade9b5ae9ee781ae2}{const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries operator-\/} () const }\label{structdl32_point2_d_a18fd6120e5696a4ade9b5ae9ee781ae2}
+
+\item 
+\hypertarget{structdl32_point2_d_a528e67f5716e325d6265b1e368e0cca4}{const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries operator-\/} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&point) const }\label{structdl32_point2_d_a528e67f5716e325d6265b1e368e0cca4}
+
+\item 
+\hypertarget{structdl32_point2_d_a6a90c787967046022299b2a3f36a011b}{const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries operator$\ast$} (float factor) const }\label{structdl32_point2_d_a6a90c787967046022299b2a3f36a011b}
+
+\item 
+\hypertarget{structdl32_point2_d_ad1faeb957f5310f928087cc69771b429}{const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries operator/} (float div) const   throw (dl32\-Divided\-By\-Cero\-Exception)}\label{structdl32_point2_d_ad1faeb957f5310f928087cc69771b429}
+
+\item 
+\hypertarget{structdl32_point2_d_ab23cfad956f23c869bbbb494afa6cf83}{bool {\bfseries operator==} (\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} point)}\label{structdl32_point2_d_ab23cfad956f23c869bbbb494afa6cf83}
+
+\item 
+\hypertarget{structdl32_point2_d_a1d0982c5afee0994378e59e42205c085}{bool {\bfseries operator!=} (\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} point)}\label{structdl32_point2_d_a1d0982c5afee0994378e59e42205c085}
+
+\item 
+\hypertarget{structdl32_point2_d_a082f9c45bebc9987c3ea1462b6c36bd6}{std\-::string {\bfseries to\-String} () const }\label{structdl32_point2_d_a082f9c45bebc9987c3ea1462b6c36bd6}
+
+\item 
+\hyperlink{structdl32_point2_d_a085f1fc861a7cda81bc9c9841ddb3fcb}{dl32\-Point2\-D} ()
+\begin{DoxyCompactList}\small\item\em $<$ Alias to the implementer type. \end{DoxyCompactList}\item 
+\hypertarget{structdl32_point2_d_ac2aba4f675fecec71bbdded7a3e396b5}{{\bfseries dl32\-Point2\-D} (const T \&\-\_\-x, const T \&\-\_\-y)}\label{structdl32_point2_d_ac2aba4f675fecec71bbdded7a3e396b5}
+
+\item 
+\hypertarget{structdl32_point2_d_a6dff31a66233cf228ea28d8661650049}{\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \& {\bfseries operator+=} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&p)}\label{structdl32_point2_d_a6dff31a66233cf228ea28d8661650049}
+
+\item 
+\hypertarget{structdl32_point2_d_a4067731c4c15e1cabdafb3378f5495c1}{\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \& {\bfseries operator-\/=} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&p)}\label{structdl32_point2_d_a4067731c4c15e1cabdafb3378f5495c1}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_point2_d_a8237dabb9363f4dadab04c10c78726fd}{static const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries Add} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&P1, const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&P2)}\label{structdl32_point2_d_a8237dabb9363f4dadab04c10c78726fd}
+
+\item 
+\hypertarget{structdl32_point2_d_a68ada1ce82671cd63c4b681c8cbb7d68}{static const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries Sub} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&P1, const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&P2)}\label{structdl32_point2_d_a68ada1ce82671cd63c4b681c8cbb7d68}
+
+\item 
+\hypertarget{structdl32_point2_d_a571c88bb780e4734281e218b99748408}{static const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries Mul} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&Point, float Factor)}\label{structdl32_point2_d_a571c88bb780e4734281e218b99748408}
+
+\item 
+\hypertarget{structdl32_point2_d_a2fbc5d3168185e5ccaee61c5f3e4990f}{static const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries Div} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&Point, float Divisor)  throw (dl32\-Divided\-By\-Cero\-Exception)}\label{structdl32_point2_d_a2fbc5d3168185e5ccaee61c5f3e4990f}
+
+\item 
+\hypertarget{structdl32_point2_d_ab57187a9fcc306a853055937c598f7d6}{static \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} {\bfseries Baricenter} (\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} Point\-List\mbox{[}$\,$\mbox{]}, int Point\-Count)}\label{structdl32_point2_d_ab57187a9fcc306a853055937c598f7d6}
+
+\item 
+\hypertarget{structdl32_point2_d_a96c0a31afb70d3dc13b2f6d28e8c5476}{static float {\bfseries Get\-Signed\-Area} (\hyperlink{structdl32_point2_d}{dl32\-Point2\-D} P1, \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} P2, \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} P3)}\label{structdl32_point2_d_a96c0a31afb70d3dc13b2f6d28e8c5476}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_point2_d_a4a96ea1ff9a1b8402edc546a8c0095f1}{\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\hypertarget{uniondl32_point2_d_1_1@8_ad8c1575a4bd25ba5ba973bb67860814e}{\>struct \{\\
+\>\>float {\bfseries x}\\
+\>\>float {\bfseries y}\\
+\>\} }\label{uniondl32_point2_d_1_1@8_ad8c1575a4bd25ba5ba973bb67860814e}
+\\
+\>float {\bfseries c} \mbox{[}2\mbox{]}\\
+\}; }\label{structdl32_point2_d_a4a96ea1ff9a1b8402edc546a8c0095f1}
+\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{structdl32_point2_d_a28f0efd9469521752c89a485907510cc}{operator==} (const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&p1, const \hyperlink{structdl32_point2_d}{dl32\-Point2\-D} \&p2)
+\begin{DoxyCompactList}\small\item\em Checks if two dl32\-Point2\-Ds are equal. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T = float$>$struct dl32\-Point2\-D$<$ T $>$}
+
+This class represents a point in 2d space. 
+
+Represents a point in 2\-D space
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Type used for point coordinates. \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structdl32_point2_d_a085f1fc861a7cda81bc9c9841ddb3fcb}{\index{dl32\-Point2\-D@{dl32\-Point2\-D}!dl32\-Point2\-D@{dl32\-Point2\-D}}
+\index{dl32\-Point2\-D@{dl32\-Point2\-D}!dl32Point2D@{dl32\-Point2\-D}}
+\subsubsection[{dl32\-Point2\-D}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T = float$>$ {\bf dl32\-Point2\-D}$<$ T $>$\-::{\bf dl32\-Point2\-D} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structdl32_point2_d_a085f1fc861a7cda81bc9c9841ddb3fcb}
+
+
+$<$ Alias to the implementer type. 
+
+Default constructor. Initialices coordinates x and y to zero.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Friends And Related Function Documentation}
+\hypertarget{structdl32_point2_d_a28f0efd9469521752c89a485907510cc}{\index{dl32\-Point2\-D@{dl32\-Point2\-D}!operator==@{operator==}}
+\index{operator==@{operator==}!dl32Point2D@{dl32\-Point2\-D}}
+\subsubsection[{operator==}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T = float$>$ bool operator== (
+\begin{DoxyParamCaption}
+\item[{const {\bf dl32\-Point2\-D}$<$ T $>$ \&}]{p1, }
+\item[{const {\bf dl32\-Point2\-D}$<$ T $>$ \&}]{p2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [friend]}}}\label{structdl32_point2_d_a28f0efd9469521752c89a485907510cc}
+
+
+Checks if two dl32\-Point2\-Ds are equal. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyReturn}{Returns}
+True if thw two points are equal. False if not. 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Math.\-h\item 
+code/headers/dl32\-New\-Math.\-h\item 
+code/source/dl32\-Math.\-cpp\end{DoxyCompactItemize}

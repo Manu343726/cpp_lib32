@@ -105,20 +105,13 @@ const unsigned int _DL32MATH_VECTOR_IMPLEMENTATION_INTEGRAL = (unsigned int)_DL3
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-struct _vector_2d_implementation_homebrew : public dl32EqualityHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
-                                            public dl32Select< BASIC_ALGEBRA_ONLY , dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
-                                                                           typename dl32TypeList< dl32BasicAlgebraHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>> , 
-                                                                                                  dl32MultiplicationHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>,T> , 
-                                                                                                  dl32DivisionHelper<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY>,T>
-                                                                                                >::public_inheritance_from_types
-                                                             >::type
+template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
+struct _vector_2d_implementation_homebrew
 {
 public:
-    using my_type = _vector_2d_implementation_homebrew; //Así es mas facil de escribir
+    using my_type = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; //Así es mas facil de escribir
 public:
     static const unsigned int dimensions = 2; ///< Dimensional range of the point.
-    static const my_type zero = my_type(0,0); ///< Addition neutral operand.
     using coord_type = T; ///< Type used for the coordinates.
     
     union
@@ -130,6 +123,8 @@ public:
         };
         T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x. Second element with y.
     };
+    
+    static_assert( dl32TypeTraits<T>::isIntegral || dl32TypeTraits<T>::isFloatingPoint , "2d vectors must have integral or floating-point types as coordinates");
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Default constructor. Set all coordinates to zero.
@@ -157,11 +152,36 @@ public:
     /// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
     ///
     /// @author	Manu343726
+    ///
+    /// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
+    ///          working with class template parameter T. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    friend bool operator==(const my_type& m1 , const my_type m2) 
+    template<typename T_DUMMY_SFINAE_BRIDGE = T>
+    static typename dl32EnableIf<dl32TypeTraits<T_DUMMY_SFINAE_BRIDGE>::isFloatingPoint , bool>::type 
+    equal(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
     { 
         return dl32FloatingPointHelper<T>::are_equal( m1.x , m2.x ) && 
                dl32FloatingPointHelper<T>::are_equal( m1.y , m2.y ); 
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Equality operator for two 2d vectors. 
+    /// 
+    /// @param m1 First vector to be compared.
+    /// @param m2 Second vector to be compared.
+    ///
+    /// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
+    ///          working with class template parameter T. Please don't use it.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T_DUMMY_SFINAE_BRIDGE = T>
+    static typename dl32EnableIf<dl32TypeTraits<T_DUMMY_SFINAE_BRIDGE>::isIntegral , bool>::type 
+    equal(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
+    { 
+        return m1.x == m2.x && m1.y == m2.y; 
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,12 +189,12 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    my_type& operator+=(const my_type& m)
+    IMPLEMENTER& add(const IMPLEMENTER& m)
     {
         this->x += m.x;
         this->y += m.y;
         
-        return *this;
+        return static_cast<IMPLEMENTER&>(*this);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,12 +203,12 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    my_type& operator-=(const my_type& m)
+    IMPLEMENTER& substract(const IMPLEMENTER& m)
     {
         this->x -= m.x;
         this->y -= m.y;
         
-        return *this;
+        return static_cast<IMPLEMENTER&>(*this);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,13 +221,13 @@ public:
     ///          working with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
-    typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , my_type&>::type 
-    operator*=(const coord_type& n)
+    typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , IMPLEMENTER&>::type 
+    multiply(const coord_type& n)
     {
         this->x *= n;
         this->y *= n;
         
-        return *this;
+        return static_cast<IMPLEMENTER&>(*this);
     }
         
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -221,12 +241,12 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
     typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , my_type&>::type 
-    operator/=(const coord_type& n)
+    divide(const coord_type& n)
     {
         this->x /= n;
         this->y /= n;
         
-        return *this;
+        return static_cast<IMPLEMENTER&>(*this);
     }
 };
 
@@ -236,7 +256,7 @@ public:
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
+template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
 struct _vector_2d_implementation_direct3d{};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +265,7 @@ struct _vector_2d_implementation_direct3d{};
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
+template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
 struct _vector_2d_implementation_opengl{};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,19 +273,32 @@ struct _vector_2d_implementation_opengl{};
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T = float , bool BASIC_ALGEBRA_ONLY = false>
+template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
 class dl32Vector2dImplementationsManager
 {
 private:
     
     ///< Set of vector 2d implementations.
-    using _vector_2d_implementations = dl32TypeList<_vector_2d_implementation_homebrew<T,BASIC_ALGEBRA_ONLY> , 
-                                                    _vector_2d_implementation_direct3d<T,BASIC_ALGEBRA_ONLY> , 
-                                                    _vector_2d_implementation_opengl  <T,BASIC_ALGEBRA_ONLY>>;
+    using _vector_2d_implementations = dl32TypeList<_vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY> , 
+                                                    _vector_2d_implementation_direct3d<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY> , 
+                                                    _vector_2d_implementation_opengl  <IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>>;
     
 public:
-    using current_implementation = _vector_2d_implementations::type_at<_DL32MATH_VECTOR_IMPLEMENTATION_INTEGRAL>; ///< Gets the current vector 2d implementation.
+    using current_implementation = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; ///< Gets the current vector 2d implementation.
 };
+
+///< Operator overloading helpers for vectors with only basic algebra (Addition and substraction).
+template<typename VECTOR_IMPLEMENTATION , typename T = float>
+using vector_implementation_operators_basic_algebra = dl32BasicAlgebraHelper<VECTOR_IMPLEMENTATION>;
+
+///< Operator overloading helpers for vectors with complete algebra (Addition, substraction, multiplication, and division).
+template<typename VECTOR_IMPLEMENTATION , typename T = float>
+using vector_implementation_operators_algebra = typename dl32TypeList<dl32BasicAlgebraHelper<VECTOR_IMPLEMENTATION> , dl32MultiplicationHelper<VECTOR_IMPLEMENTATION,T> , dl32DivisionHelper<VECTOR_IMPLEMENTATION,T>>::public_inheritance_from_types;
+
+///< Vector operation overloading selector.
+template<typename VECTOR_IMPLEMENTATION , bool BASIC_ALGEBRA_ONLY , typename T = float>
+using vector_implementation_operators = typename dl32Select<BASIC_ALGEBRA_ONLY , vector_implementation_operators_basic_algebra<VECTOR_IMPLEMENTATION,T> , vector_implementation_operators_algebra<VECTOR_IMPLEMENTATION,T>>::type;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a point in 2d space.
@@ -274,13 +307,37 @@ public:
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float>
-struct dl32Point2D : public dl32Vector2dImplementationsManager<T,true>::current_implementation
+struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,true>::current_implementation ,
+                     public dl32EqualityHelper<dl32Point2D<T>>,    //Binary operator !=, based on ==.
+                     public dl32BasicAlgebraHelper<dl32Point2D<T>> //Binary operators + and -, based on += and -=.
 {
-    using my_implementation = typename dl32Vector2dImplementationsManager<T,true>::current_implementation; ///< Alias to the implementer type.
+    using my_implementation = typename dl32Vector2dImplementationsManager<dl32Point2D<T>,T,true>::current_implementation; ///< Alias to the implementer type.
     
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor. Initialices coordinates x and y to zero.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     dl32Point2D() : my_implementation() {}
+    
+    
     dl32Point2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if two dl32Point2Ds are equal.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @return True if thw two points are equal. False if not.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    friend bool operator==(const dl32Point2D& p1 , const dl32Point2D& p2) { return my_implementation::equal( p1 , p2 ); }
+    
+    dl32Point2D& operator+=(const dl32Point2D& p) { return this->add       ( p ); }
+    dl32Point2D& operator-=(const dl32Point2D& p) { return this->substract ( p ); }
 };
+
+using dl32Point2Df = dl32Point2D<float>; ///< Alias for single-precision 2d points.
+using dl32Point2Dd = dl32Point2D<double>; ///< Alias for double-precision 2d points.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a vector in 2d space.
@@ -289,9 +346,9 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<T,true>::current_
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float>
-struct dl32Vector2D : public dl32Vector2dImplementationsManager<T,false>::current_implementation
+struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation
 {
-    using my_implementation = typename dl32Vector2dImplementationsManager<T,false>::current_implementation; ///< Alias to the implementer type.
+    using my_implementation = typename dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation; ///< Alias to the implementer type.
     
     dl32Vector2D() : my_implementation() {}
     dl32Vector2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
@@ -331,6 +388,8 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<T,false>::curren
     }
 };
 
+using dl32Vector2Df = dl32Vector2D<float>; ///< Alias for single-precision 2d points.
+using dl32Vector2Dd = dl32Vector2D<double>; ///< Alias for double-precision 2d points.
 
 #endif	/* DL32NEWMATH_H */
 

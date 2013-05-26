@@ -1,0 +1,100 @@
+\hypertarget{classdl32_event_dispatcher}{\section{dl32\-Event\-Dispatcher Class Reference}
+\label{classdl32_event_dispatcher}\index{dl32\-Event\-Dispatcher@{dl32\-Event\-Dispatcher}}
+}
+
+
+Translates system messages to cpp\-\_\-lib32 events.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Window.\-h$>$}
+
+Inheritance diagram for dl32\-Event\-Dispatcher\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdl32_event_dispatcher}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{classdl32_event_dispatcher_a769a13752ceed22d4a32d36fadc89deb}{$\sim$dl32\-Event\-Dispatcher} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classdl32_event_dispatcher_ad77376cf78424c392a53195bfd871ee1}{dispatch} (W\-I\-N\-D\-O\-W\-S\-\_\-\-P\-R\-O\-C\-E\-D\-U\-R\-E\-\_\-\-A\-R\-G\-S)=0
+\begin{DoxyCompactList}\small\item\em Gets a windows message data and raises the high-\/level event. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Translates system messages to cpp\-\_\-lib32 events. 
+
+This interface provides a method for create user-\/defined events. User can use this interface to translate a specific system message to a cpp\-\_\-lib32 event. Note that a system-\/message event allways has a \hyperlink{classdl32_window}{dl32\-Window} as sender.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classdl32_event_dispatcher_a769a13752ceed22d4a32d36fadc89deb}{\index{dl32\-Event\-Dispatcher@{dl32\-Event\-Dispatcher}!$\sim$dl32\-Event\-Dispatcher@{$\sim$dl32\-Event\-Dispatcher}}
+\index{$\sim$dl32\-Event\-Dispatcher@{$\sim$dl32\-Event\-Dispatcher}!dl32EventDispatcher@{dl32\-Event\-Dispatcher}}
+\subsubsection[{$\sim$dl32\-Event\-Dispatcher}]{\setlength{\rightskip}{0pt plus 5cm}virtual dl32\-Event\-Dispatcher\-::$\sim$dl32\-Event\-Dispatcher (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classdl32_event_dispatcher_a769a13752ceed22d4a32d36fadc89deb}
+
+
+Destructor. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdl32_event_dispatcher_ad77376cf78424c392a53195bfd871ee1}{\index{dl32\-Event\-Dispatcher@{dl32\-Event\-Dispatcher}!dispatch@{dispatch}}
+\index{dispatch@{dispatch}!dl32EventDispatcher@{dl32\-Event\-Dispatcher}}
+\subsubsection[{dispatch}]{\setlength{\rightskip}{0pt plus 5cm}virtual void dl32\-Event\-Dispatcher\-::dispatch (
+\begin{DoxyParamCaption}
+\item[{W\-I\-N\-D\-O\-W\-S\-\_\-\-P\-R\-O\-C\-E\-D\-U\-R\-E\-\_\-\-A\-R\-G\-S}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classdl32_event_dispatcher_ad77376cf78424c392a53195bfd871ee1}
+
+
+Gets a windows message data and raises the high-\/level event. 
+
+This function performs any data-\/translation operations and raises the high-\/level event with the translated data as event args.
+
+
+\begin{DoxyParams}{Parameters}
+{\em window} & Handle of the window. \\
+\hline
+{\em message} & System message code. \\
+\hline
+{\em w\-Param} & The w\-Param field of the message. \\
+\hline
+{\em l\-Param} & The l\-Param field of the message.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+
+
+Implemented in \hyperlink{classdl32_generic_event_dispatcher_a9e8caf1dc3f10fba9be7e45fe64525bb}{dl32\-Generic\-Event\-Dispatcher$<$ E\-V\-E\-N\-T\-A\-R\-G\-S\-T\-Y\-P\-E $>$}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Window.\-h\end{DoxyCompactItemize}

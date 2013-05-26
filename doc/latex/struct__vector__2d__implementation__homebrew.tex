@@ -1,0 +1,260 @@
+\hypertarget{struct__vector__2d__implementation__homebrew}{\section{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$ Struct Template Reference}
+\label{struct__vector__2d__implementation__homebrew}\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$}}
+}
+
+
+This class provides a homebrew implementation of a 2d vector and its most common algebraic operations.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-New\-Math.\-h$>$}
+
+Inheritance diagram for \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.618497cm]{struct__vector__2d__implementation__homebrew}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct__vector__2d__implementation__homebrew_a5f9db55a33ee3c3f9b378b0a09d4adc4}{using {\bfseries my\-\_\-type} = \hyperlink{struct__vector__2d__implementation__homebrew}{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$}\label{struct__vector__2d__implementation__homebrew_a5f9db55a33ee3c3f9b378b0a09d4adc4}
+
+\item 
+\hypertarget{struct__vector__2d__implementation__homebrew_a542e040d8e079709d8cc8cbd7906fd7c}{using {\bfseries coord\-\_\-type} = T}\label{struct__vector__2d__implementation__homebrew_a542e040d8e079709d8cc8cbd7906fd7c}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{struct__vector__2d__implementation__homebrew_a1c37a184957c4b164aeab062cf3aebad}{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew} ()
+\begin{DoxyCompactList}\small\item\em Default constructor. Set all coordinates to zero. \end{DoxyCompactList}\item 
+\hyperlink{struct__vector__2d__implementation__homebrew_a9c97981bedd38886f1101aa3dbcff399}{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew} (const T \&\-\_\-x, const T \&\-\_\-y)
+\begin{DoxyCompactList}\small\item\em Constructor. Creates a vector with the specified coordinates. \end{DoxyCompactList}\item 
+I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \& \hyperlink{struct__vector__2d__implementation__homebrew_aa0fe8caf65a4d7db9fa29cab5a11182f}{add} (const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&m)
+\begin{DoxyCompactList}\small\item\em Addition implementation. This function performs addition of a provided vector to this instance. \end{DoxyCompactList}\item 
+I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \& \hyperlink{struct__vector__2d__implementation__homebrew_a7dfe5da15568c7a6eeda25c5801774e1}{substract} (const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&m)
+\begin{DoxyCompactList}\small\item\em Substraction implementation. This function performs substraction of a provided vector to this instance. \end{DoxyCompactList}\item 
+{\footnotesize template$<$bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E = B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y$>$ }\\\hyperlink{structdl32_enable_if}{dl32\-Enable\-If}\\*
+$<$!B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E, \\*
+I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \& $>$\-::type \hyperlink{struct__vector__2d__implementation__homebrew_aeb57949f6d07928b11b88e7e2a55d4f2}{multiply} (const coord\-\_\-type \&n)
+\begin{DoxyCompactList}\small\item\em Multiplication implementation. This function performs multiplication of a provided vector to this instance. \end{DoxyCompactList}\item 
+{\footnotesize template$<$bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E = B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y$>$ }\\\hyperlink{structdl32_enable_if}{dl32\-Enable\-If}\\*
+$<$!B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E, \\*
+\hyperlink{struct__vector__2d__implementation__homebrew}{my\-\_\-type} \& $>$\-::type \hyperlink{struct__vector__2d__implementation__homebrew_a803a8ee8c5cf68aefc2a260bc381e240}{divide} (const coord\-\_\-type \&n)
+\begin{DoxyCompactList}\small\item\em Division implementation. This function performs division of a provided vector to this instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E  = T$>$ }\\static \hyperlink{structdl32_enable_if}{dl32\-Enable\-If}\\*
+$<$ \hyperlink{classdl32_type_traits}{dl32\-Type\-Traits}\\*
+$<$ T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E $>$\\*
+\-::is\-Floating\-Point, bool $>$\\*
+\-::type \hyperlink{struct__vector__2d__implementation__homebrew_aefd67fe313aa763544ffc075f67e168d}{equal} (const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&m1, const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R m2)
+\begin{DoxyCompactList}\small\item\em Equality operator for two 2d vectors. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E  = T$>$ }\\static \hyperlink{structdl32_enable_if}{dl32\-Enable\-If}\\*
+$<$ \hyperlink{classdl32_type_traits}{dl32\-Type\-Traits}\\*
+$<$ T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E $>$\\*
+\-::is\-Integral, bool $>$\-::type \hyperlink{struct__vector__2d__implementation__homebrew_a7de8b55d741e160c17e397bf574f89ad}{equal} (const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&m1, const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R m2)
+\begin{DoxyCompactList}\small\item\em Equality operator for two 2d vectors. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct__vector__2d__implementation__homebrew_ab75ac53f8ba2c6ef8d152c8be329b09d}{\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\hypertarget{union__vector__2d__implementation__homebrew_1_1@16_a2526ab902c42bc635e75a08fca0c92d9}{\>struct \{\\
+\>\>T \hyperlink{struct__vector__2d__implementation__homebrew_aece494e9f697437454ff9bd2dcf9294e}{x}\\
+\>\>\>{\em First coordinate of the vector. }\\
+\>\>T \hyperlink{struct__vector__2d__implementation__homebrew_a968f7b09a88b82002d0516e6fdea95c8}{y}\\
+\>\>\>{\em Second coordinate of the vector. }\\
+\>\} }\label{union__vector__2d__implementation__homebrew_1_1@16_a2526ab902c42bc635e75a08fca0c92d9}
+\\
+\>T \hyperlink{struct__vector__2d__implementation__homebrew_a3b012292b627e3ce5ae6d8303bd34618}{coords} \mbox{[}\hyperlink{struct__vector__2d__implementation__homebrew_a23910585ebd491dc0878c78fec39bd30}{dimensions}\mbox{]}\\
+\>\>\>{\em Vector coordinates in array-\/style. First element corresponds with x. Second element with y. }\\
+\}; }\label{struct__vector__2d__implementation__homebrew_ab75ac53f8ba2c6ef8d152c8be329b09d}
+\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{struct__vector__2d__implementation__homebrew_a23910585ebd491dc0878c78fec39bd30}{static const unsigned int \hyperlink{struct__vector__2d__implementation__homebrew_a23910585ebd491dc0878c78fec39bd30}{dimensions} = 2}\label{struct__vector__2d__implementation__homebrew_a23910585ebd491dc0878c78fec39bd30}
+
+\begin{DoxyCompactList}\small\item\em Dimensional range of the point. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, typename T = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$struct \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$}
+
+This class provides a homebrew implementation of a 2d vector and its most common algebraic operations. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{struct__vector__2d__implementation__homebrew_a1c37a184957c4b164aeab062cf3aebad}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::{\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_a1c37a184957c4b164aeab062cf3aebad}
+
+
+Default constructor. Set all coordinates to zero. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{struct__vector__2d__implementation__homebrew_a9c97981bedd38886f1101aa3dbcff399}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::{\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew} (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{\-\_\-x, }
+\item[{const T \&}]{\-\_\-y}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_a9c97981bedd38886f1101aa3dbcff399}
+
+
+Constructor. Creates a vector with the specified coordinates. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \-\_\-x} & First coordinate of the vector. \\
+\hline
+{\em \-\_\-y} & Second coordinate of the vector.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{struct__vector__2d__implementation__homebrew_aa0fe8caf65a4d7db9fa29cab5a11182f}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!add@{add}}
+\index{add@{add}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{add}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R\& {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::add (
+\begin{DoxyParamCaption}
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&}]{m}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_aa0fe8caf65a4d7db9fa29cab5a11182f}
+
+
+Addition implementation. This function performs addition of a provided vector to this instance. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{struct__vector__2d__implementation__homebrew_a803a8ee8c5cf68aefc2a260bc381e240}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!divide@{divide}}
+\index{divide@{divide}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{divide}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ template$<$bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E = B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y$>$ {\bf dl32\-Enable\-If}$<$!B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E , {\bf my\-\_\-type}\&$>$\-::type {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::divide (
+\begin{DoxyParamCaption}
+\item[{const coord\-\_\-type \&}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_a803a8ee8c5cf68aefc2a260bc381e240}
+
+
+Division implementation. This function performs division of a provided vector to this instance. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Template parameter B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E is designed only for make S\-F\-I\-N\-A\-E working with class template parameter B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y. Please don't use it. 
+\end{DoxyRemark}
+\hypertarget{struct__vector__2d__implementation__homebrew_aefd67fe313aa763544ffc075f67e168d}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!equal@{equal}}
+\index{equal@{equal}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ template$<$typename T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E  = T$>$ static {\bf dl32\-Enable\-If}$<${\bf dl32\-Type\-Traits}$<$T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E$>$\-::is\-Floating\-Point , bool$>$\-::type {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::equal (
+\begin{DoxyParamCaption}
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&}]{m1, }
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R}]{m2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{struct__vector__2d__implementation__homebrew_aefd67fe313aa763544ffc075f67e168d}
+
+
+Equality operator for two 2d vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em m1} & First vector to be compared. \\
+\hline
+{\em m2} & Second vector to be compared.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Template parameter T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E is designed only for make S\-F\-I\-N\-A\-E working with class template parameter T. Please don't use it. 
+\end{DoxyRemark}
+\hypertarget{struct__vector__2d__implementation__homebrew_a7de8b55d741e160c17e397bf574f89ad}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!equal@{equal}}
+\index{equal@{equal}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{equal}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ template$<$typename T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E  = T$>$ static {\bf dl32\-Enable\-If}$<${\bf dl32\-Type\-Traits}$<$T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E$>$\-::is\-Integral , bool$>$\-::type {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::equal (
+\begin{DoxyParamCaption}
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&}]{m1, }
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R}]{m2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}}\label{struct__vector__2d__implementation__homebrew_a7de8b55d741e160c17e397bf574f89ad}
+
+
+Equality operator for two 2d vectors. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em m1} & First vector to be compared. \\
+\hline
+{\em m2} & Second vector to be compared.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
+\end{DoxyReturn}
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Template parameter T\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E is designed only for make S\-F\-I\-N\-A\-E working with class template parameter T. Please don't use it. 
+\end{DoxyRemark}
+\hypertarget{struct__vector__2d__implementation__homebrew_aeb57949f6d07928b11b88e7e2a55d4f2}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!multiply@{multiply}}
+\index{multiply@{multiply}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{multiply}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ template$<$bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E = B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y$>$ {\bf dl32\-Enable\-If}$<$!B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E , I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R\&$>$\-::type {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::multiply (
+\begin{DoxyParamCaption}
+\item[{const coord\-\_\-type \&}]{n}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_aeb57949f6d07928b11b88e7e2a55d4f2}
+
+
+Multiplication implementation. This function performs multiplication of a provided vector to this instance. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Template parameter B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y\-\_\-\-D\-U\-M\-M\-Y\-\_\-\-S\-F\-I\-N\-A\-E\-\_\-\-B\-R\-I\-D\-G\-E is designed only for make S\-F\-I\-N\-A\-E working with class template parameter B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y. Please don't use it. 
+\end{DoxyRemark}
+\hypertarget{struct__vector__2d__implementation__homebrew_a7dfe5da15568c7a6eeda25c5801774e1}{\index{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}!substract@{substract}}
+\index{substract@{substract}!_vector_2d_implementation_homebrew@{\-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}}
+\subsubsection[{substract}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R , typename T  = float, bool B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y = false$>$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R\& {\bf \-\_\-vector\-\_\-2d\-\_\-implementation\-\_\-homebrew}$<$ I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R, T, B\-A\-S\-I\-C\-\_\-\-A\-L\-G\-E\-B\-R\-A\-\_\-\-O\-N\-L\-Y $>$\-::substract (
+\begin{DoxyParamCaption}
+\item[{const I\-M\-P\-L\-E\-M\-E\-N\-T\-E\-R \&}]{m}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{struct__vector__2d__implementation__homebrew_a7dfe5da15568c7a6eeda25c5801774e1}
+
+
+Substraction implementation. This function performs substraction of a provided vector to this instance. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-New\-Math.\-h\end{DoxyCompactItemize}

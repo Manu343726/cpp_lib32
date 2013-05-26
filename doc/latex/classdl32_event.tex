@@ -1,0 +1,172 @@
+\hypertarget{classdl32_event}{\section{dl32\-Event$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$ Class Template Reference}
+\label{classdl32_event}\index{dl32\-Event$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$@{dl32\-Event$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$}}
+}
+
+
+cpp\-\_\-lib32 event type  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Events.\-h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{typedef S\-E\-N\-D\-E\-R\-T\-Y\-P\-E \& \hyperlink{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{Sender\-Type}}\label{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing type of the event sender. \end{DoxyCompactList}\item 
+\hypertarget{classdl32_event_a26435d0d9eaecb8702b44778ebd2f766}{typedef S\-E\-N\-D\-E\-R\-T\-Y\-P\-E \hyperlink{classdl32_event_a26435d0d9eaecb8702b44778ebd2f766}{Sender\-Type\-\_\-\-No\-Ref}}\label{classdl32_event_a26435d0d9eaecb8702b44778ebd2f766}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing type of the event sender without reference. \end{DoxyCompactList}\item 
+\hypertarget{classdl32_event_aa538fe87567988f01835e94ab65ddfaa}{typedef \hyperlink{classdl32_select}{dl32\-Select}\\*
+$<$ \hyperlink{classdl32_type_traits}{dl32\-Type\-Traits}$<$ A\-R\-G\-S\-T\-Y\-P\-E $>$\\*
+\-::is\-Void, A\-R\-G\-S\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E \& $>$\\*
+\-::type \hyperlink{classdl32_event_aa538fe87567988f01835e94ab65ddfaa}{Argumments\-Type}}\label{classdl32_event_aa538fe87567988f01835e94ab65ddfaa}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing type of event argumments. \end{DoxyCompactList}\item 
+\hypertarget{classdl32_event_acfe0f352d4d5797e1d6371ea326bfcc3}{typedef A\-R\-G\-S\-T\-Y\-P\-E \hyperlink{classdl32_event_acfe0f352d4d5797e1d6371ea326bfcc3}{Argumments\-Type\-\_\-\-No\-Ref}}\label{classdl32_event_acfe0f352d4d5797e1d6371ea326bfcc3}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing the argumments type without reference. \end{DoxyCompactList}\item 
+\hypertarget{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}{typedef void($\ast$ \hyperlink{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}{Handler\-Type} )(\hyperlink{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{Sender\-Type}, \hyperlink{classdl32_event_aa538fe87567988f01835e94ab65ddfaa}{Argumments\-Type})}\label{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing function-\/pointer type of a event handler. \end{DoxyCompactList}\item 
+\hypertarget{classdl32_event_a052c4f4167153ed118fb53ff0e7d43a4}{using \hyperlink{classdl32_event_a052c4f4167153ed118fb53ff0e7d43a4}{Dispatcher\-Type} = std\-::function$<$ A\-R\-G\-S\-T\-Y\-P\-E(W\-I\-N\-D\-O\-W\-S\-\_\-\-P\-R\-O\-C\-E\-D\-U\-R\-E\-\_\-\-A\-R\-G\-S\-\_\-\-T\-Y\-P\-E\-S)$>$}\label{classdl32_event_a052c4f4167153ed118fb53ff0e7d43a4}
+
+\begin{DoxyCompactList}\small\item\em Defines an alias representing type of the dispatcher. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$bool A\-R\-G\-S\-\_\-\-B\-Y\-\_\-\-R\-E\-F = true, typename A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E  = A\-R\-G\-S\-T\-Y\-P\-E$>$ }\\void \hyperlink{classdl32_event_a390017b71d6d9b42d4faa82262d2658d}{Raise\-Event} (typename \hyperlink{structdl32_enable_if}{dl32\-Enable\-If}$<$!\hyperlink{classdl32_same_type}{dl32\-Same\-Type}$<$ A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E, void $>$\-::result, \hyperlink{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{Sender\-Type} $>$\-::type sender, typename \hyperlink{classdl32_select}{dl32\-Select}$<$ A\-R\-G\-S\-\_\-\-B\-Y\-\_\-\-R\-E\-F, \hyperlink{classdl32_event_aa538fe87567988f01835e94ab65ddfaa}{Argumments\-Type}, \hyperlink{classdl32_event_acfe0f352d4d5797e1d6371ea326bfcc3}{Argumments\-Type\-\_\-\-No\-Ref} $>$\-::type args)
+\begin{DoxyCompactList}\small\item\em Raises the event. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E  = A\-R\-G\-S\-T\-Y\-P\-E$>$ }\\void \hyperlink{classdl32_event_aa65cceb7ad1fb6f46c23a0753ed85205}{Raise\-Event} (typename \hyperlink{structdl32_enable_if}{dl32\-Enable\-If}$<$ \hyperlink{classdl32_same_type}{dl32\-Same\-Type}$<$ A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E, void $>$\-::result, \hyperlink{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{Sender\-Type} $>$\-::type sender)
+\begin{DoxyCompactList}\small\item\em Raises the event. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_event_a35ad65c92e6f9f042f75026b8a65155c}{Add\-Handler} (\hyperlink{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}{Handler\-Type} handler)
+\begin{DoxyCompactList}\small\item\em Adds a function as a handler for this event. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_event_a06d930f3e641708d2063ad0ce6b8709d}{Add\-Handler} (\hyperlink{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}{Handler\-Type} handler, const \hyperlink{classdl32_event_a9117f53a76ba65e2bd3e81b4e284fc99}{Sender\-Type} expected\-\_\-sender)
+\begin{DoxyCompactList}\small\item\em Adds a function as a handler for this event. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_event_adec5aedb6b5e779179ff3acd7942aefb}{Remove\-Handler} (\hyperlink{classdl32_event_a38bb65a0ecb861ef8cf99cc22bf2b393}{Handler\-Type} handler)
+\begin{DoxyCompactList}\small\item\em Removes the handler described by handler. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$class dl32\-Event$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$}
+
+cpp\-\_\-lib32 event type 
+
+Events are represented as a list of handlers, where handlers are pointers to functions that handle the event. This functions always be a void function with one or two parameters (A reference to the object that raises the event and event argumments) passed by reference, in other words, functions with prototype \char`\"{}void Event\-Handler(\-S\-E\-N\-D\-E\-R\-T\-Y\-P\-E \&sender , A\-R\-G\-S\-T\-Y\-P\-E \&args)\char`\"{}. Template parameter \char`\"{}\-S\-E\-N\-D\-E\-R\-T\-Y\-P\-E\char`\"{} is the type of the sender. Template parameter \char`\"{}\-A\-R\-G\-S\-T\-Y\-P\-E\char`\"{} is the type of these event args. For non-\/args event, use void, the template is specialized for that case.
+
+The type of the function-\/pointers that can be handlers are defined in the Handler\-Type typedef. 
+\begin{DoxyTemplParams}{Template Parameters}
+{\em S\-E\-N\-D\-E\-R\-T\-Y\-P\-E} & Event sender type. \\
+\hline
+{\em A\-R\-G\-T\-Y\-P\-E} & Event argumments type. For non-\/args events, use void. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdl32_event_a35ad65c92e6f9f042f75026b8a65155c}{\index{dl32\-Event@{dl32\-Event}!Add\-Handler@{Add\-Handler}}
+\index{Add\-Handler@{Add\-Handler}!dl32Event@{dl32\-Event}}
+\subsubsection[{Add\-Handler}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$ void {\bf dl32\-Event}$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$\-::Add\-Handler (
+\begin{DoxyParamCaption}
+\item[{{\bf Handler\-Type}}]{handler}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_event_a35ad65c92e6f9f042f75026b8a65155c}
+
+
+Adds a function as a handler for this event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handler} & Pointer to the function that will be a handler. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classdl32_event_a06d930f3e641708d2063ad0ce6b8709d}{\index{dl32\-Event@{dl32\-Event}!Add\-Handler@{Add\-Handler}}
+\index{Add\-Handler@{Add\-Handler}!dl32Event@{dl32\-Event}}
+\subsubsection[{Add\-Handler}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$ void {\bf dl32\-Event}$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$\-::Add\-Handler (
+\begin{DoxyParamCaption}
+\item[{{\bf Handler\-Type}}]{handler, }
+\item[{const {\bf Sender\-Type}}]{expected\-\_\-sender}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_event_a06d930f3e641708d2063ad0ce6b8709d}
+
+
+Adds a function as a handler for this event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handler} & Pointer to the function that will be a handler. \\
+\hline
+{\em expected\-\_\-sender} & Reference to the sender that the handler expects. If the event is raised, and the sender of the raise is not this expected sender, the handler is not called. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classdl32_event_a390017b71d6d9b42d4faa82262d2658d}{\index{dl32\-Event@{dl32\-Event}!Raise\-Event@{Raise\-Event}}
+\index{Raise\-Event@{Raise\-Event}!dl32Event@{dl32\-Event}}
+\subsubsection[{Raise\-Event}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$ template$<$bool A\-R\-G\-S\-\_\-\-B\-Y\-\_\-\-R\-E\-F = true, typename A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E  = A\-R\-G\-S\-T\-Y\-P\-E$>$ void {\bf dl32\-Event}$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$\-::Raise\-Event (
+\begin{DoxyParamCaption}
+\item[{typename {\bf dl32\-Enable\-If}$<$!{\bf dl32\-Same\-Type}$<$ A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E, void $>$\-::result, {\bf Sender\-Type} $>$\-::type}]{sender, }
+\item[{typename {\bf dl32\-Select}$<$ A\-R\-G\-S\-\_\-\-B\-Y\-\_\-\-R\-E\-F, {\bf Argumments\-Type}, {\bf Argumments\-Type\-\_\-\-No\-Ref} $>$\-::type}]{args}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_event_a390017b71d6d9b42d4faa82262d2658d}
+
+
+Raises the event. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em sender} & Reference to the event sender. \\
+\hline
+\mbox{\tt in,out}  & {\em args} & Argumments of the event. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em A\-R\-G\-S\-\_\-\-B\-Y\-\_\-\-R\-E\-F} & If is set to true, event argumments are passed by reference to the handlers. If is set to false, event argumments are passed by value to the handlers. \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyRemark}{Remarks}
+Template parameter A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E is a bridge to make S\-F\-I\-N\-A\-E work. Is not designed to be setted by the user. 
+\end{DoxyRemark}
+\hypertarget{classdl32_event_aa65cceb7ad1fb6f46c23a0753ed85205}{\index{dl32\-Event@{dl32\-Event}!Raise\-Event@{Raise\-Event}}
+\index{Raise\-Event@{Raise\-Event}!dl32Event@{dl32\-Event}}
+\subsubsection[{Raise\-Event}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$ template$<$typename A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E  = A\-R\-G\-S\-T\-Y\-P\-E$>$ void {\bf dl32\-Event}$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$\-::Raise\-Event (
+\begin{DoxyParamCaption}
+\item[{typename {\bf dl32\-Enable\-If}$<$ {\bf dl32\-Same\-Type}$<$ A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E, void $>$\-::result, {\bf Sender\-Type} $>$\-::type}]{sender}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_event_aa65cceb7ad1fb6f46c23a0753ed85205}
+
+
+Raises the event. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em sender} & Reference to the event sender. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRemark}{Remarks}
+Specialitation for non-\/argumments events. 
+
+Template parameter A\-R\-G\-U\-M\-M\-E\-N\-T\-S\-\_\-\-T\-Y\-P\-E is a bridge to make S\-F\-I\-N\-A\-E work. Is not designed to be setted by the user. 
+\end{DoxyRemark}
+\hypertarget{classdl32_event_adec5aedb6b5e779179ff3acd7942aefb}{\index{dl32\-Event@{dl32\-Event}!Remove\-Handler@{Remove\-Handler}}
+\index{Remove\-Handler@{Remove\-Handler}!dl32Event@{dl32\-Event}}
+\subsubsection[{Remove\-Handler}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, typename A\-R\-G\-S\-T\-Y\-P\-E$>$ void {\bf dl32\-Event}$<$ S\-E\-N\-D\-E\-R\-T\-Y\-P\-E, A\-R\-G\-S\-T\-Y\-P\-E $>$\-::Remove\-Handler (
+\begin{DoxyParamCaption}
+\item[{{\bf Handler\-Type}}]{handler}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_event_adec5aedb6b5e779179ff3acd7942aefb}
+
+
+Removes the handler described by handler. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em handler} & The handler. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Events.\-h\end{DoxyCompactItemize}

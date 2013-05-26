@@ -1,0 +1,285 @@
+\hypertarget{classdl32_system_events_manager}{\section{dl32\-System\-Events\-Manager Class Reference}
+\label{classdl32_system_events_manager}\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}}
+}
+
+
+cpp\-\_\-lib32 high-\/level events manager.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Window.\-h$>$}
+
+Inheritance diagram for dl32\-System\-Events\-Manager\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdl32_system_events_manager}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classdl32_system_events_manager_a37f5bfdac50da387db781da7c8d64755}{$\sim$dl32\-System\-Events\-Manager} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+bool \hyperlink{classdl32_system_events_manager_ac509a709e91dcb1a9239c949889dc369}{set\-Up\-Event} (\hyperlink{classdl32_event_dispatcher}{dl32\-Event\-Dispatcher} $\ast$dispatcher, const vector$<$ U\-I\-N\-T $>$ \&system\-Messages)
+\begin{DoxyCompactList}\small\item\em Sets up a new high-\/level event through its dispatcher. \end{DoxyCompactList}\item 
+bool \hyperlink{classdl32_system_events_manager_a0cf660cc13b46495f6cae5d387aa9303}{set\-Up\-Event} (\hyperlink{classdl32_event_dispatcher}{dl32\-Event\-Dispatcher} $\ast$dispatcher, U\-I\-N\-T system\-Message)
+\begin{DoxyCompactList}\small\item\em Sets up a new high-\/level event through its dispatcher. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ }\\bool \hyperlink{classdl32_system_events_manager_a45063dea4e7e802562475ef8282bcbd0}{set\-Up\-Event} (typename E\-V\-E\-N\-T\-T\-Y\-P\-E\-::\-Dispatcher\-Type dispatch\-Function, const vector$<$ U\-I\-N\-T $>$ \&system\-Messages)
+\begin{DoxyCompactList}\small\item\em Sets up a new high-\/level event through its dispatcher. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ }\\bool \hyperlink{classdl32_system_events_manager_a305ce2db049ad7f0d67ff87ab23d6746}{set\-Up\-Event} (typename E\-V\-E\-N\-T\-T\-Y\-P\-E\-::\-Dispatcher\-Type dispatch\-Function, U\-I\-N\-T system\-Message)
+\begin{DoxyCompactList}\small\item\em Sets up a new high-\/level event through its dispatcher. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ }\\E\-V\-E\-N\-T\-T\-Y\-P\-E \& \hyperlink{classdl32_system_events_manager_a37792022cf7627e804f251f49cc25c70}{get\-Event} (U\-I\-N\-T system\-Message)  throw ( dl32\-No\-Such\-Event\-Exception)
+\begin{DoxyCompactList}\small\item\em Gets a reference to the event that wraps a specific system message. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_system_events_manager_ae291bc5c48f2b46c0d06d7e69cf084c7}{dispatch} (W\-I\-N\-D\-O\-W\-S\-\_\-\-P\-R\-O\-C\-E\-D\-U\-R\-E\-\_\-\-A\-R\-G\-S)
+\begin{DoxyCompactList}\small\item\em Gets a windows message data and raises the specific high-\/level event. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+cpp\-\_\-lib32 high-\/level events manager. 
+
+Any cpp\-\_\-lib32 event that acts as a wrapper of a system message (Or messages), are managed by this class.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classdl32_system_events_manager_a37f5bfdac50da387db781da7c8d64755}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!$\sim$dl32\-System\-Events\-Manager@{$\sim$dl32\-System\-Events\-Manager}}
+\index{$\sim$dl32\-System\-Events\-Manager@{$\sim$dl32\-System\-Events\-Manager}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{$\sim$dl32\-System\-Events\-Manager}]{\setlength{\rightskip}{0pt plus 5cm}dl32\-System\-Events\-Manager\-::$\sim$dl32\-System\-Events\-Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classdl32_system_events_manager_a37f5bfdac50da387db781da7c8d64755}
+
+
+Destructor. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdl32_system_events_manager_ae291bc5c48f2b46c0d06d7e69cf084c7}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!dispatch@{dispatch}}
+\index{dispatch@{dispatch}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{dispatch}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-System\-Events\-Manager\-::dispatch (
+\begin{DoxyParamCaption}
+\item[{W\-I\-N\-D\-O\-W\-S\-\_\-\-P\-R\-O\-C\-E\-D\-U\-R\-E\-\_\-\-A\-R\-G\-S}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_system_events_manager_ae291bc5c48f2b46c0d06d7e69cf084c7}
+
+
+Gets a windows message data and raises the specific high-\/level event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em window} & Handle of the window. \\
+\hline
+{\em message} & System message code. \\
+\hline
+{\em w\-Param} & The w\-Param field of the message. \\
+\hline
+{\em l\-Param} & The l\-Param field of the message.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013 
+\end{DoxyDate}
+\hypertarget{classdl32_system_events_manager_a37792022cf7627e804f251f49cc25c70}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!get\-Event@{get\-Event}}
+\index{get\-Event@{get\-Event}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{get\-Event}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ E\-V\-E\-N\-T\-T\-Y\-P\-E\& dl32\-System\-Events\-Manager\-::get\-Event (
+\begin{DoxyParamCaption}
+\item[{U\-I\-N\-T}]{system\-Message}
+\end{DoxyParamCaption}
+)  throw ( dl32\-No\-Such\-Event\-Exception)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_system_events_manager_a37792022cf7627e804f251f49cc25c70}
+
+
+Gets a reference to the event that wraps a specific system message. 
+
+\begin{DoxyAuthor}{Author}
+Manu 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+15/04/2013
+\end{DoxyDate}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em dl32\-No\-Such\-Event\-Exception} & Thrown when there is not any event that wraps the provided system message at the manager.\\
+\hline
+\end{DoxyExceptions}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em E\-V\-E\-N\-T\-T\-Y\-P\-E} & Type of the event. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em system\-Message} & System message code.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A reference to the event. 
+\end{DoxyReturn}
+\hypertarget{classdl32_system_events_manager_ac509a709e91dcb1a9239c949889dc369}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!set\-Up\-Event@{set\-Up\-Event}}
+\index{set\-Up\-Event@{set\-Up\-Event}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{set\-Up\-Event}]{\setlength{\rightskip}{0pt plus 5cm}bool dl32\-System\-Events\-Manager\-::set\-Up\-Event (
+\begin{DoxyParamCaption}
+\item[{{\bf dl32\-Event\-Dispatcher} $\ast$}]{dispatcher, }
+\item[{const vector$<$ U\-I\-N\-T $>$ \&}]{system\-Messages}
+\end{DoxyParamCaption}
+)}}\label{classdl32_system_events_manager_ac509a709e91dcb1a9239c949889dc369}
+
+
+Sets up a new high-\/level event through its dispatcher. 
+
+User can define new high-\/level events that \char`\"{}wrap\char`\"{} specific system messages. Also, cpp\-\_\-lib32 provides a set of common system events preconfigured in the events manager. (\begin{DoxySeeAlso}{See Also}
+set\-Up\-Default\-Events()).
+\end{DoxySeeAlso}
+Note that a configured event cannot be removed from the events manager. Every configured event lives until the end of the application.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em dispatcher} & Pointer to the event dispatcher. \\
+\hline
+ & {\em system\-Messages} & List of system messages codes that raises the new event.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if any system message provided is in use. False in other case.
+\end{DoxyReturn}
+\begin{DoxyRemark}{Remarks}
+A \hyperlink{classdl32_event}{dl32\-Event} can wrap more than one system message, that is the reason that the parameter \char`\"{}system\-Messages\char`\"{} is a std\-::vector$<$\-U\-I\-N\-T$>$, not only one U\-I\-N\-T. 
+
+For example\-: System has three different messages (W\-M\-\_\-\-L\-B\-U\-T\-T\-O\-N\-D\-O\-W\-N , W\-M\-\_\-\-R\-B\-U\-T\-T\-O\-N\-D\-O\-W\-N , W\-M\-\_\-\-M\-B\-U\-T\-T\-O\-N\-D\-O\-W\-N) for mouse down events, one per button. User can define a general Mouse\-Down event that catches this three messages.
+\end{DoxyRemark}
+\begin{DoxyReturn}{Returns}
+true if all of the system messages provided are not in use. False in other case. 
+\end{DoxyReturn}
+\hypertarget{classdl32_system_events_manager_a0cf660cc13b46495f6cae5d387aa9303}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!set\-Up\-Event@{set\-Up\-Event}}
+\index{set\-Up\-Event@{set\-Up\-Event}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{set\-Up\-Event}]{\setlength{\rightskip}{0pt plus 5cm}bool dl32\-System\-Events\-Manager\-::set\-Up\-Event (
+\begin{DoxyParamCaption}
+\item[{{\bf dl32\-Event\-Dispatcher} $\ast$}]{dispatcher, }
+\item[{U\-I\-N\-T}]{system\-Message}
+\end{DoxyParamCaption}
+)}}\label{classdl32_system_events_manager_a0cf660cc13b46495f6cae5d387aa9303}
+
+
+Sets up a new high-\/level event through its dispatcher. 
+
+User can define new high-\/level events that \char`\"{}wrap\char`\"{} specific system messages. Also, cpp\-\_\-lib32 provides a set of common system events preconfigured in the events manager. (\begin{DoxySeeAlso}{See Also}
+set\-Up\-Default\-Events()).
+\end{DoxySeeAlso}
+Note that a configured event cannot be removed from the events manager. Every configured event lives until the end of the application.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+07/04/2013
+\end{DoxyDate}
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em dispatcher} & Pointer to the event dispatcher. \\
+\hline
+ & {\em system\-Messages} & System message code that raises the new event.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if system message provided is not in use. False in other case. 
+\end{DoxyReturn}
+\hypertarget{classdl32_system_events_manager_a45063dea4e7e802562475ef8282bcbd0}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!set\-Up\-Event@{set\-Up\-Event}}
+\index{set\-Up\-Event@{set\-Up\-Event}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{set\-Up\-Event}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ bool dl32\-System\-Events\-Manager\-::set\-Up\-Event (
+\begin{DoxyParamCaption}
+\item[{typename E\-V\-E\-N\-T\-T\-Y\-P\-E\-::\-Dispatcher\-Type}]{dispatch\-Function, }
+\item[{const vector$<$ U\-I\-N\-T $>$ \&}]{system\-Messages}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_system_events_manager_a45063dea4e7e802562475ef8282bcbd0}
+
+
+Sets up a new high-\/level event through its dispatcher. 
+
+This overloaded version of set\-Upt\-Event() sets up a new event dispatcher by a dispatch function provided by the user.
+
+\begin{DoxyAuthor}{Author}
+Manu 343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+14/04/2013
+\end{DoxyDate}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em typename} & E\-V\-E\-N\-T\-A\-R\-G\-S\-T\-Y\-P\-E Type of the event argumments. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em dispatch\-Function} & The dispatch function. \\
+\hline
+{\em system\-Messages} & List of system messages codes that raises the new event.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if all of the system messages provided are not in use. False in other case. 
+\end{DoxyReturn}
+\hypertarget{classdl32_system_events_manager_a305ce2db049ad7f0d67ff87ab23d6746}{\index{dl32\-System\-Events\-Manager@{dl32\-System\-Events\-Manager}!set\-Up\-Event@{set\-Up\-Event}}
+\index{set\-Up\-Event@{set\-Up\-Event}!dl32SystemEventsManager@{dl32\-System\-Events\-Manager}}
+\subsubsection[{set\-Up\-Event}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename E\-V\-E\-N\-T\-T\-Y\-P\-E $>$ bool dl32\-System\-Events\-Manager\-::set\-Up\-Event (
+\begin{DoxyParamCaption}
+\item[{typename E\-V\-E\-N\-T\-T\-Y\-P\-E\-::\-Dispatcher\-Type}]{dispatch\-Function, }
+\item[{U\-I\-N\-T}]{system\-Message}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_system_events_manager_a305ce2db049ad7f0d67ff87ab23d6746}
+
+
+Sets up a new high-\/level event through its dispatcher. 
+
+This overloaded version of set\-Upt\-Event() sets up a new event dispatcher by a dispatch function provided by the user.
+
+\begin{DoxyAuthor}{Author}
+Manu 343726 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+14/04/2013
+\end{DoxyDate}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em typename} & E\-V\-E\-N\-T\-A\-R\-G\-S\-T\-Y\-P\-E Type of the event. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em dispatch\-Function} & The dispatch function. \\
+\hline
+{\em system\-Messages} & System message code that raises the new event.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if system message provided is not in use. False in other case. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Window.\-h\item 
+code/source/dl32\-Window.\-cpp\end{DoxyCompactItemize}

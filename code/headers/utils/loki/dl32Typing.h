@@ -207,51 +207,6 @@ template<typename T>
 struct dl32EnableIf<true,T>{ using type = T; };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Type info provider.
-///
-/// @author	Manu343726
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-class dl32TypeTraits
-{
-private:
-#define TRAITS( name , type , checkingType , typedefName ) \
-    template<typename type>                                \
-    struct name                                            \
-    {                                                      \
-        enum { value = FALSE };                            \
-        typedef dl32NoType typedefName;                    \
-    };                                                     \
-    template<typename type>                                \
-    struct name<checkingType>                              \
-    {                                                      \
-        enum { value = TRUE };                             \
-        typedef type typedefName;                          \
-    };                        
-    
-#define TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , trait_name , type , checking_type , typedef_name ) \
-        TRAITS( trait_name , type , checking_type , typedef_name );                                       \
-        public:                                                                                           \
-                enum { attribute_name = trait_name<T>::value };                                           \
-                typedef typename trait_name<T>::typedef_name typedef_name;                                \
-        private:
-    
-#define TRAITS_FULL_IMPLICITTRAITNAME( attribute_name , unique_id , type , checking_type , typedef_name ) TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , CONCAT( _trait_ , unique_id ) , type , checking_type , typedef_name )
-    
-#define TRAITS_FULL( attribute_name , type , checking_type , typedef_name ) TRAITS_FULL_IMPLICITTRAITNAME( attribute_name , __COUNTER__ /* unique class identifier */ , type , checking_type , typedef_name )
-    
-    TRAITS_FULL( isPointer   , U , U*      , PointeeType )    //Checks if T is a pointer
-    TRAITS_FULL( isReference , U , U&      , ReferencedType ) //Checks if T is a reference
-    TRAITS_FULL( hasConst    , U , const U , NonConstType )   //Checks if T is const
-    TRAITS_FULL( isRvalue    , U , U&&     , MovedType )      //Checks if T is a rvalue
- 
-public:
-    typedef T OriginalType;
-    
-    enum { isVoid = dl32SameType<void , NonConstType>::result };
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Implementation of a loki-like (C++ 98/03 style) type list
 ///
 /// @author	Manu343726
@@ -441,6 +396,9 @@ struct dl32TypeList<HEAD,TAIL...>
     using index_of = typename dl32IndexOf<T,value>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
     
     template<typename T>
+    using contains = dl32Contains<T,dl32TypeList<HEAD,TAIL...>>; ///< Checks if the typelist contains a specified type.
+    
+    template<typename T>
     using push_back = dl32TypeList<HEAD,TAIL...,T>; ///< Pushes back a new type to the typelist (Returns new typelist).
     
     template<typename T>
@@ -492,6 +450,77 @@ struct dl32TypeList<>
   
   template <typename TYPELIST>
   using merge = TYPELIST; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
+};
+
+///< List of C++ integral types.
+using dl32IntegralTypes = dl32TypeList<unsigned char , char , unsigned int , int , unsigned long int , long int>;
+
+///< List of C++ floating-point types.
+using dl32FloatingPointTypes = dl32TypeList<float , double , long double>;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This class returns a type T without the const specifier (Equivalent to static_cast<T>(const T)).
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T>
+class dl32WithoutConst
+{
+private:
+    template<typename _T>
+    struct _remove_const{ using result = _T; };
+    
+    template<typename _T>
+    struct _remove_const<const _T>{ using result = _T; };
+public:
+    using result = typename _remove_const<T>::result;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Type info provider.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T>
+class dl32TypeTraits
+{
+private:
+#define TRAITS( name , type , checkingType , typedefName ) \
+    template<typename type>                                \
+    struct name                                            \
+    {                                                      \
+        enum { value = FALSE };                            \
+        typedef dl32NoType typedefName;                    \
+    };                                                     \
+    template<typename type>                                \
+    struct name<checkingType>                              \
+    {                                                      \
+        enum { value = TRUE };                             \
+        typedef type typedefName;                          \
+    };                        
+    
+#define TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , trait_name , type , checking_type , typedef_name ) \
+        TRAITS( trait_name , type , checking_type , typedef_name );                                       \
+        public:                                                                                           \
+                enum { attribute_name = trait_name<T>::value };                                           \
+                typedef typename trait_name<T>::typedef_name typedef_name;                                \
+        private:
+    
+#define TRAITS_FULL_IMPLICITTRAITNAME( attribute_name , unique_id , type , checking_type , typedef_name ) TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , CONCAT( _trait_ , unique_id ) , type , checking_type , typedef_name )
+    
+#define TRAITS_FULL( attribute_name , type , checking_type , typedef_name ) TRAITS_FULL_IMPLICITTRAITNAME( attribute_name , __COUNTER__ /* unique class identifier */ , type , checking_type , typedef_name )
+    
+    TRAITS_FULL( isPointer   , U , U*      , PointeeType )    //Checks if T is a pointer
+    TRAITS_FULL( isReference , U , U&      , ReferencedType ) //Checks if T is a reference
+    TRAITS_FULL( hasConst    , U , const U , NonConstType )   //Checks if T is const
+    TRAITS_FULL( isRvalue    , U , U&&     , MovedType )      //Checks if T is a rvalue
+ 
+public:
+    typedef T OriginalType;
+    
+    static const bool isVoid = dl32SameType<void , NonConstType>::result; ///< Checks if T is void.
+    static const bool isFloatingPoint = dl32FloatingPointTypes::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is a floating-point type.
+    static const bool isIntegral      = dl32IntegralTypes     ::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is a integral type.
 };
 #endif	/* DL32TYPING_H */
 

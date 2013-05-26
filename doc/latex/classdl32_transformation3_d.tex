@@ -1,0 +1,74 @@
+\hypertarget{classdl32_transformation3_d}{\section{dl32\-Transformation3\-D Class Reference}
+\label{classdl32_transformation3_d}\index{dl32\-Transformation3\-D@{dl32\-Transformation3\-D}}
+}
+
+
+{\ttfamily \#include $<$dl32\-Math.\-h$>$}
+
+Inheritance diagram for dl32\-Transformation3\-D\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdl32_transformation3_d}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_transformation3_d_a9270b90c06cb890a326756930e3f50bb}{{\bfseries dl32\-Transformation3\-D} (const \hyperlink{structdl32_matrix4x4}{dl32\-Matrix4x4} \&matrix)}\label{classdl32_transformation3_d_a9270b90c06cb890a326756930e3f50bb}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a389b399df682477560da0fb139f50d52}{{\bfseries dl32\-Transformation3\-D} (float m11, float m12, float m13, float m14, float m21, float m22, float m23, float m24, float m31, float m32, float m33, float m34, float m41, float m42, float m43, float m44)}\label{classdl32_transformation3_d_a389b399df682477560da0fb139f50d52}
+
+\item 
+\hypertarget{classdl32_transformation3_d_aade8b767bfe4b6689783b0fd132076a3}{void {\bfseries Apply} (\hyperlink{structdl32_point3_d}{dl32\-Point3\-D} $\ast$Point)}\label{classdl32_transformation3_d_aade8b767bfe4b6689783b0fd132076a3}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a67f45b3add8bd4a511d62af15a9e48bb}{void {\bfseries Apply} (float $\ast$x, float $\ast$y, float $\ast$z)}\label{classdl32_transformation3_d_a67f45b3add8bd4a511d62af15a9e48bb}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a1f69969d534b86215e43ac545471ed97}{\hyperlink{structdl32_point3_d}{dl32\-Point3\-D} {\bfseries Apply} (float x, float y, float z)}\label{classdl32_transformation3_d_a1f69969d534b86215e43ac545471ed97}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a47441dc7c99f66a26e8dec07f994e938}{\hyperlink{structdl32_point3_d}{dl32\-Point3\-D} {\bfseries Apply} (\hyperlink{structdl32_point3_d}{dl32\-Point3\-D} point)}\label{classdl32_transformation3_d_a47441dc7c99f66a26e8dec07f994e938}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a2b204a8ced0ffe7b3551e998a0ef84de}{void {\bfseries Concat} (const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} Transformation)}\label{classdl32_transformation3_d_a2b204a8ced0ffe7b3551e998a0ef84de}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a7e723fa206b43b527c7de96af234d7b9}{void {\bfseries Reverse\-Concat} (const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} Transformation)}\label{classdl32_transformation3_d_a7e723fa206b43b527c7de96af234d7b9}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_transformation3_d_afac2a905e5484d69d19c0acba33fe8d5}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Concat} (const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} T1, const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} T2)}\label{classdl32_transformation3_d_afac2a905e5484d69d19c0acba33fe8d5}
+
+\item 
+\hypertarget{classdl32_transformation3_d_aa529fc1265e42970b95d9538956a53de}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Reverse\-Concat} (const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} T1, const \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} T2)}\label{classdl32_transformation3_d_aa529fc1265e42970b95d9538956a53de}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a3d05322e4aafcfeb237981526938db2f}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Translation} (float tx, float ty, float tz)}\label{classdl32_transformation3_d_a3d05322e4aafcfeb237981526938db2f}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a8e5c064b0eacfdf6f1e6bdfd9fc9e846}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Translation} (\hyperlink{structdl32_vector3_d}{dl32\-Vector3\-D} Translation)}\label{classdl32_transformation3_d_a8e5c064b0eacfdf6f1e6bdfd9fc9e846}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a1ff894fc7ba94583de5cb32c905f954e}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Translation} (\hyperlink{structdl32_point3_d}{dl32\-Point3\-D} origin, \hyperlink{structdl32_point3_d}{dl32\-Point3\-D} destiny)}\label{classdl32_transformation3_d_a1ff894fc7ba94583de5cb32c905f954e}
+
+\item 
+\hypertarget{classdl32_transformation3_d_a5a74d8d4de6568b0f0331b03559fabe6}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Scale} (float tx, float ty, float tz)}\label{classdl32_transformation3_d_a5a74d8d4de6568b0f0331b03559fabe6}
+
+\item 
+\hypertarget{classdl32_transformation3_d_ab6ce710103cc6ff20b1f6609918f9153}{static \hyperlink{classdl32_transformation3_d}{dl32\-Transformation3\-D} {\bfseries Scale} (\hyperlink{structdl32_vector3_d}{dl32\-Vector3\-D} Translation)}\label{classdl32_transformation3_d_ab6ce710103cc6ff20b1f6609918f9153}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Represents a geometric Transformationation in 3\-D space 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Math.\-h\item 
+code/source/dl32\-Math.\-cpp\end{DoxyCompactItemize}

@@ -1,0 +1,173 @@
+\hypertarget{classdl32_console_color_settings}{\section{dl32\-Console\-Color\-Settings Class Reference}
+\label{classdl32_console_color_settings}\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}}
+}
+
+
+This class provides methods for change colors of the standard output stream.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Console\-Color.\-h$>$}
+
+Inheritance diagram for dl32\-Console\-Color\-Settings\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdl32_console_color_settings}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classdl32_console_color_settings_acbab4004a3265c9da413588eb458230e}{set\-\_\-autopush} (bool value)
+\begin{DoxyCompactList}\small\item\em Sets the autopush mode. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_ae3b3878b4e42fe3ba3c4064be2321226}{change\-\_\-background} (dl32\-Console\-Color color)  throw ( dl32\-Console\-Style\-Change\-Failed )
+\begin{DoxyCompactList}\small\item\em Changes the background color of the standard output stream. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_a1e21ddc919771c3304d6840cf33b52a5}{change\-\_\-foreground} (dl32\-Console\-Color color)  throw ( dl32\-Console\-Style\-Change\-Failed )
+\begin{DoxyCompactList}\small\item\em Changes the foreground color of the standard output stream. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_a197fd95f9f490722b427b3b082c9260a}{push\-\_\-style} ()
+\begin{DoxyCompactList}\small\item\em Pushes the current console style to the stack (The current style is not changed). \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_a823ccee6028e27d3de0f9010602c1633}{pop\-\_\-style} ()
+\begin{DoxyCompactList}\small\item\em Pops the current console style. Current state is changed to the last stacked state. \end{DoxyCompactList}\item 
+dl32\-Style\-Change \hyperlink{classdl32_console_color_settings_ae9ab48d003523415bfe24f0ef2ab7c88}{last\-\_\-change} ()
+\begin{DoxyCompactList}\small\item\em Gets the last console-\/style change performed. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_ae545c361b859a42b6695a9c207c379b0}{execute\-\_\-change} (dl32\-Console\-Color color)
+\begin{DoxyCompactList}\small\item\em Executes the last console-\/style change with the specified color. \end{DoxyCompactList}\item 
+void \hyperlink{classdl32_console_color_settings_a821adba4ae3b992ba7918ad5e87df6b8}{set\-\_\-execute\-\_\-change} (dl32\-Style\-Change change)
+\begin{DoxyCompactList}\small\item\em Forces function \char`\"{}execute\-\_\-change()\char`\"{} to perform an specified change. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+This class provides methods for change colors of the standard output stream. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdl32_console_color_settings_ae3b3878b4e42fe3ba3c4064be2321226}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!change\-\_\-background@{change\-\_\-background}}
+\index{change\-\_\-background@{change\-\_\-background}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{change\-\_\-background}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::change\-\_\-background (
+\begin{DoxyParamCaption}
+\item[{dl32\-Console\-Color}]{color}
+\end{DoxyParamCaption}
+)  throw ( dl32\-Console\-Style\-Change\-Failed )}}\label{classdl32_console_color_settings_ae3b3878b4e42fe3ba3c4064be2321226}
+
+
+Changes the background color of the standard output stream. 
+
+@ param color New background color.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_a1e21ddc919771c3304d6840cf33b52a5}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!change\-\_\-foreground@{change\-\_\-foreground}}
+\index{change\-\_\-foreground@{change\-\_\-foreground}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{change\-\_\-foreground}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::change\-\_\-foreground (
+\begin{DoxyParamCaption}
+\item[{dl32\-Console\-Color}]{color}
+\end{DoxyParamCaption}
+)  throw ( dl32\-Console\-Style\-Change\-Failed )}}\label{classdl32_console_color_settings_a1e21ddc919771c3304d6840cf33b52a5}
+
+
+Changes the foreground color of the standard output stream. 
+
+@ param color New foreground color.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_ae545c361b859a42b6695a9c207c379b0}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!execute\-\_\-change@{execute\-\_\-change}}
+\index{execute\-\_\-change@{execute\-\_\-change}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{execute\-\_\-change}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::execute\-\_\-change (
+\begin{DoxyParamCaption}
+\item[{dl32\-Console\-Color}]{color}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_console_color_settings_ae545c361b859a42b6695a9c207c379b0}
+
+
+Executes the last console-\/style change with the specified color. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_ae9ab48d003523415bfe24f0ef2ab7c88}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!last\-\_\-change@{last\-\_\-change}}
+\index{last\-\_\-change@{last\-\_\-change}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{last\-\_\-change}]{\setlength{\rightskip}{0pt plus 5cm}dl32\-Style\-Change dl32\-Console\-Color\-Settings\-::last\-\_\-change (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_console_color_settings_ae9ab48d003523415bfe24f0ef2ab7c88}
+
+
+Gets the last console-\/style change performed. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_a823ccee6028e27d3de0f9010602c1633}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!pop\-\_\-style@{pop\-\_\-style}}
+\index{pop\-\_\-style@{pop\-\_\-style}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{pop\-\_\-style}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::pop\-\_\-style (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classdl32_console_color_settings_a823ccee6028e27d3de0f9010602c1633}
+
+
+Pops the current console style. Current state is changed to the last stacked state. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_a197fd95f9f490722b427b3b082c9260a}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!push\-\_\-style@{push\-\_\-style}}
+\index{push\-\_\-style@{push\-\_\-style}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{push\-\_\-style}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::push\-\_\-style (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classdl32_console_color_settings_a197fd95f9f490722b427b3b082c9260a}
+
+
+Pushes the current console style to the stack (The current style is not changed). 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_acbab4004a3265c9da413588eb458230e}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!set\-\_\-autopush@{set\-\_\-autopush}}
+\index{set\-\_\-autopush@{set\-\_\-autopush}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{set\-\_\-autopush}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::set\-\_\-autopush (
+\begin{DoxyParamCaption}
+\item[{bool}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_console_color_settings_acbab4004a3265c9da413588eb458230e}
+
+
+Sets the autopush mode. 
+
+If auto\-\_\-push is true, the new console style is pushed automatically when \char`\"{}change\-\_\-background\char`\"{} or \char`\"{}change\-\_\-foreground\char`\"{} are called.
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+\hypertarget{classdl32_console_color_settings_a821adba4ae3b992ba7918ad5e87df6b8}{\index{dl32\-Console\-Color\-Settings@{dl32\-Console\-Color\-Settings}!set\-\_\-execute\-\_\-change@{set\-\_\-execute\-\_\-change}}
+\index{set\-\_\-execute\-\_\-change@{set\-\_\-execute\-\_\-change}!dl32ConsoleColorSettings@{dl32\-Console\-Color\-Settings}}
+\subsubsection[{set\-\_\-execute\-\_\-change}]{\setlength{\rightskip}{0pt plus 5cm}void dl32\-Console\-Color\-Settings\-::set\-\_\-execute\-\_\-change (
+\begin{DoxyParamCaption}
+\item[{dl32\-Style\-Change}]{change}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdl32_console_color_settings_a821adba4ae3b992ba7918ad5e87df6b8}
+
+
+Forces function \char`\"{}execute\-\_\-change()\char`\"{} to perform an specified change. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726 
+\end{DoxyAuthor}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/utils/dl32\-Console\-Color.\-h\item 
+code/source/utils/dl32\-Console\-Color.\-cpp\end{DoxyCompactItemize}

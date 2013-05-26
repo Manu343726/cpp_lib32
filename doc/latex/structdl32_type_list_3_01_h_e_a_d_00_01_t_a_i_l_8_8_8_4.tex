@@ -1,0 +1,69 @@
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4}{\section{dl32\-Type\-List$<$ H\-E\-A\-D, T\-A\-I\-L...$>$ Struct Template Reference}
+\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4}\index{dl32\-Type\-List$<$ H\-E\-A\-D, T\-A\-I\-L...$>$@{dl32\-Type\-List$<$ H\-E\-A\-D, T\-A\-I\-L...$>$}}
+}
+
+
+cpp\-\_\-lib32 loki-\/like typelist wrapper  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Typing.\-h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_1_1public__inheritance__from__types}{public\-\_\-inheritance\-\_\-from\-\_\-types}
+\begin{DoxyCompactList}\small\item\em $<$ Creates a new typelist with this typelist elements followed by the provided typelist elements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \{ {\bfseries size} = sizeof...(T\-A\-I\-L) + 1
+ \}
+\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{typedef \hyperlink{classdl32_loki__like___type_list}{dl32\-Loki\-\_\-like\-\_\-\-Type\-List}\\*
+$<$ H\-E\-A\-D, typename \hyperlink{structdl32_type_list}{dl32\-Type\-List}\\*
+$<$ T\-A\-I\-L...$>$\-::\hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value} $>$ \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value}}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}
+
+\begin{DoxyCompactList}\small\item\em The typelist in loki-\/style (The unwrapped value) \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af6de037b1d27ec5b8af7483bc580b4f4}{{\footnotesize template$<$int index$>$ }\\using {\bfseries type\-\_\-at} = typename \hyperlink{classdl32_type_at}{dl32\-Type\-At}$<$ index, \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value} $>$\-::\hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value}}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af6de037b1d27ec5b8af7483bc580b4f4}
+
+\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a9d5a10bc245a9ca2785bda5762624b23}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a9d5a10bc245a9ca2785bda5762624b23}{index\-\_\-of} = typename \hyperlink{structdl32_index_of}{dl32\-Index\-Of}$<$ T, \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value} $>$\-::\hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af4eaf1a048d9b7b41453af3d5ba7f889}{value}}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a9d5a10bc245a9ca2785bda5762624b23}
+
+\begin{DoxyCompactList}\small\item\em $<$ Gets the index-\/th type of the list. If index is out of range, a compilation error will be generated (\char`\"{}dl32\-Notype not has member 'head'\char`\"{}). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a734356b04c182da95863402b1f646f20}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a734356b04c182da95863402b1f646f20}{contains} = \hyperlink{structdl32_contains}{dl32\-Contains}$<$ T, \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ H\-E\-A\-D, T\-A\-I\-L...$>$$>$}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a734356b04c182da95863402b1f646f20}
+
+\begin{DoxyCompactList}\small\item\em $<$ Gets the position of a given type in the list. If the type is not in the list, \hyperlink{classdl32_no_type}{dl32\-No\-Type} will be returned. \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a196a19360c7e87c85a868cb731ac6fa6}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a196a19360c7e87c85a868cb731ac6fa6}{push\-\_\-back} = \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ H\-E\-A\-D, T\-A\-I\-L..., T $>$}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a196a19360c7e87c85a868cb731ac6fa6}
+
+\begin{DoxyCompactList}\small\item\em $<$ Checks if the typelist contains a specified type. \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_aa06db183b95a529eb046ad426eac9b18}{{\footnotesize template$<$typename T $>$ }\\using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_aa06db183b95a529eb046ad426eac9b18}{push\-\_\-front} = \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ T, H\-E\-A\-D, T\-A\-I\-L...$>$}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_aa06db183b95a529eb046ad426eac9b18}
+
+\begin{DoxyCompactList}\small\item\em $<$ Pushes back a new type to the typelist (Returns new typelist). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af6a5858f08ca8f143a5584e70330ed0a}{using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af6a5858f08ca8f143a5584e70330ed0a}{pop\-\_\-front} = \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ T\-A\-I\-L...$>$}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_af6a5858f08ca8f143a5584e70330ed0a}
+
+\begin{DoxyCompactList}\small\item\em $<$ Pushes front a new type to the typelist (Returns new typelist). \end{DoxyCompactList}\item 
+\hypertarget{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a7ebb39a5de4d720703a351443a7d2958}{{\footnotesize template$<$typename T\-Y\-P\-E\-L\-I\-S\-T $>$ }\\using \hyperlink{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a7ebb39a5de4d720703a351443a7d2958}{merge} = typename \hyperlink{classdl32_merge}{dl32\-Merge}$<$ \hyperlink{structdl32_type_list}{dl32\-Type\-List}$<$ H\-E\-A\-D, T\-A\-I\-L...$>$, T\-Y\-P\-E\-L\-I\-S\-T $>$\-::result}\label{structdl32_type_list_3_01_h_e_a_d_00_01_t_a_i_l_8_8_8_4_a7ebb39a5de4d720703a351443a7d2958}
+
+\begin{DoxyCompactList}\small\item\em $<$ Pops the begining type of the typelist (Returns new typelist). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename H\-E\-A\-D, typename... T\-A\-I\-L$>$struct dl32\-Type\-List$<$ H\-E\-A\-D, T\-A\-I\-L...$>$}
+
+cpp\-\_\-lib32 loki-\/like typelist wrapper 
+
+This class wrapps recursive-\/based typelist and provides a variadic template interface
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+\begin{DoxyRemark}{Remarks}
+Recoursive-\/case template specialitation. 
+\end{DoxyRemark}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/utils/loki/dl32\-Typing.\-h\end{DoxyCompactItemize}

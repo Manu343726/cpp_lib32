@@ -1,0 +1,48 @@
+\hypertarget{structdl32_comparison_helper}{\section{dl32\-Comparison\-Helper$<$ T, U $>$ Struct Template Reference}
+\label{structdl32_comparison_helper}\index{dl32\-Comparison\-Helper$<$ T, U $>$@{dl32\-Comparison\-Helper$<$ T, U $>$}}
+}
+
+
+This helper provides ccmplete comparison criteria for types T vs U based on user-\/defined bigger-\/than and less-\/than criteria for types T vs U. Also, this helper provides the complete set of inverse comparisons to ensure simetry.  
+
+
+
+
+{\ttfamily \#include $<$dl32\-Operator\-Overloading\-Helpers.\-h$>$}
+
+\subsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structdl32_comparison_helper_a979d5b504cbcec728e86c79d9ba5671e}{bool {\bfseries operator$<$=} (const T \&t, const U \&u)}\label{structdl32_comparison_helper_a979d5b504cbcec728e86c79d9ba5671e}
+
+\item 
+\hypertarget{structdl32_comparison_helper_ae12a39e256d7fcd621e488866ba63924}{bool {\bfseries operator$>$=} (const T \&t, const U \&u)}\label{structdl32_comparison_helper_ae12a39e256d7fcd621e488866ba63924}
+
+\item 
+\hypertarget{structdl32_comparison_helper_ad4c0736deed95e5cb4a18464e59e0118}{bool {\bfseries operator$>$} (const U \&u, const T \&t)}\label{structdl32_comparison_helper_ad4c0736deed95e5cb4a18464e59e0118}
+
+\item 
+\hypertarget{structdl32_comparison_helper_ab01843d56868acff1f25c70abc7428f6}{bool {\bfseries operator$<$=} (const U \&u, const T \&t)}\label{structdl32_comparison_helper_ab01843d56868acff1f25c70abc7428f6}
+
+\item 
+\hypertarget{structdl32_comparison_helper_af9e239e65355cd0e42c55b5b90bf7ddb}{bool {\bfseries operator$<$} (const U \&u, const T \&t)}\label{structdl32_comparison_helper_af9e239e65355cd0e42c55b5b90bf7ddb}
+
+\item 
+\hypertarget{structdl32_comparison_helper_a4a7a94a9acff35d76d79ed1598e98061}{bool {\bfseries operator$>$=} (const U \&u, const T \&t)}\label{structdl32_comparison_helper_a4a7a94a9acff35d76d79ed1598e98061}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$typename T, typename U = dl32\-No\-Type$>$struct dl32\-Comparison\-Helper$<$ T, U $>$}
+
+This helper provides ccmplete comparison criteria for types T vs U based on user-\/defined bigger-\/than and less-\/than criteria for types T vs U. Also, this helper provides the complete set of inverse comparisons to ensure simetry. 
+
+\begin{DoxyAuthor}{Author}
+Manu343726
+\end{DoxyAuthor}
+User class must implement operator$>$(const T\& t , const U\& u) and operator$<$(const T\& t , const U\& u). 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/utils/dl32\-Operator\-Overloading\-Helpers.\-h\end{DoxyCompactItemize}

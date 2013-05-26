@@ -1,0 +1,172 @@
+\hypertarget{classdl32_matrix}{\section{dl32\-Matrix Class Reference}
+\label{classdl32_matrix}\index{dl32\-Matrix@{dl32\-Matrix}}
+}
+
+
+{\ttfamily \#include $<$dl32\-Math.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_matrix_a3ece7a975e04320920fc1fb4deca1b30}{{\bfseries dl32\-Matrix} (const \hyperlink{classdl32_matrix}{dl32\-Matrix} \&matrix)}\label{classdl32_matrix_a3ece7a975e04320920fc1fb4deca1b30}
+
+\item 
+\hypertarget{classdl32_matrix_acac14a6c8baf39be7ed416e8b0d4e7ef}{{\bfseries dl32\-Matrix} (int rows, int columns)}\label{classdl32_matrix_acac14a6c8baf39be7ed416e8b0d4e7ef}
+
+\item 
+\hypertarget{classdl32_matrix_a9f2ea24a0ae05d96978f481ed6e1e26d}{{\bfseries dl32\-Matrix} (const \hyperlink{structdl32_matrix3x3}{dl32\-Matrix3x3} \&matrix)}\label{classdl32_matrix_a9f2ea24a0ae05d96978f481ed6e1e26d}
+
+\item 
+\hypertarget{classdl32_matrix_ac5c66c0f121fd0518d7fe41e09d20d87}{{\bfseries dl32\-Matrix} (const \hyperlink{structdl32_matrix4x4}{dl32\-Matrix4x4} \&matrix)}\label{classdl32_matrix_ac5c66c0f121fd0518d7fe41e09d20d87}
+
+\item 
+\hypertarget{classdl32_matrix_a25c6de9e7062941214ab339920cb9f49}{\hyperlink{classdl32_matrix}{dl32\-Matrix} \& {\bfseries operator=} (const \hyperlink{classdl32_matrix}{dl32\-Matrix} \&matrix)}\label{classdl32_matrix_a25c6de9e7062941214ab339920cb9f49}
+
+\item 
+\hypertarget{classdl32_matrix_a1cfdb28b1b1177c3589ad4ead45deb44}{void {\bfseries Copy\-Ref} (\hyperlink{classdl32_matrix}{dl32\-Matrix} \&matrix)}\label{classdl32_matrix_a1cfdb28b1b1177c3589ad4ead45deb44}
+
+\item 
+\hypertarget{classdl32_matrix_a7ee5a0b7ee1491daa80b6906052f54db}{void {\bfseries Dispose} ()}\label{classdl32_matrix_a7ee5a0b7ee1491daa80b6906052f54db}
+
+\item 
+\hypertarget{classdl32_matrix_a8e0258d4aa4398b5dc1a14ddf496b24a}{bool {\bfseries Ready} () const }\label{classdl32_matrix_a8e0258d4aa4398b5dc1a14ddf496b24a}
+
+\item 
+\hypertarget{classdl32_matrix_a700d580e04b245039cac740d7333dff8}{float {\bfseries At} (int row, int column)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a700d580e04b245039cac740d7333dff8}
+
+\item 
+\hypertarget{classdl32_matrix_a43493e7328b92d94b32ab7a0c7056486}{dl32\-Matrix\-Row {\bfseries operator\mbox{[}$\,$\mbox{]}} (int row) const   throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a43493e7328b92d94b32ab7a0c7056486}
+
+\item 
+\hypertarget{classdl32_matrix_a19ff2641e2b4a43297e1e7901fbcc9f2}{int {\bfseries Get\-Columns\-Count} () const }\label{classdl32_matrix_a19ff2641e2b4a43297e1e7901fbcc9f2}
+
+\item 
+\hypertarget{classdl32_matrix_a6ca98a30c9a89112eea752bf1507aa2d}{int {\bfseries Get\-Rows\-Count} () const }\label{classdl32_matrix_a6ca98a30c9a89112eea752bf1507aa2d}
+
+\item 
+\hypertarget{classdl32_matrix_ac9b93f5e703cd23103d51c89e498b05c}{bool {\bfseries Is\-Square} () const }\label{classdl32_matrix_ac9b93f5e703cd23103d51c89e498b05c}
+
+\item 
+\hypertarget{classdl32_matrix_a3e83985b28ca837546838782b227d979}{dl32\-Matrix\-Column {\bfseries Get\-Column} (int column)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a3e83985b28ca837546838782b227d979}
+
+\item 
+\hypertarget{classdl32_matrix_a1bc5136051dd24e091a7fc32f1869d3b}{dl32\-Matrix\-Row {\bfseries Get\-Row} (int row)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a1bc5136051dd24e091a7fc32f1869d3b}
+
+\item 
+\hypertarget{classdl32_matrix_af7e62c774666a531abdefd477a313701}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Sub\-Matrix} (int row, int column, int rows, int columns)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_af7e62c774666a531abdefd477a313701}
+
+\item 
+\hypertarget{classdl32_matrix_ac95a94aaeb592b0e728bbbd64513adc7}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Sub\-Matrix} (int row, int column, int size)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_ac95a94aaeb592b0e728bbbd64513adc7}
+
+\item 
+\hypertarget{classdl32_matrix_a09662e9d5313f3f5b48e3f52e69916ca}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Sub\-Matrix} (int row, int column)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a09662e9d5313f3f5b48e3f52e69916ca}
+
+\item 
+\hypertarget{classdl32_matrix_ab3be1ba62592ab58580baf399f83c96b}{float {\bfseries Get\-Minor} (int row, int column)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_ab3be1ba62592ab58580baf399f83c96b}
+
+\item 
+\hypertarget{classdl32_matrix_a369173790e9ad1ba2ccdcc6c94ce7914}{float {\bfseries Get\-Minor} (int row, int column, int size)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a369173790e9ad1ba2ccdcc6c94ce7914}
+
+\item 
+\hypertarget{classdl32_matrix_a06c904a1752d9447a660bd275d48bcbd}{float {\bfseries Get\-Adjugate} (int row, int column)  throw (dl32\-Out\-Of\-Range\-Exception)}\label{classdl32_matrix_a06c904a1752d9447a660bd275d48bcbd}
+
+\item 
+\hypertarget{classdl32_matrix_a6e2d8d5961e301604fb230348420516e}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Adjugate} ()}\label{classdl32_matrix_a6e2d8d5961e301604fb230348420516e}
+
+\item 
+\hypertarget{classdl32_matrix_a8b7a7942d26fec9c58c7ea16ffd131e9}{float {\bfseries Get\-Determinant} ()}\label{classdl32_matrix_a8b7a7942d26fec9c58c7ea16ffd131e9}
+
+\item 
+\hypertarget{classdl32_matrix_aabe77a830c2ba2530ac5e0fbffa6ccf3}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Transpose} ()}\label{classdl32_matrix_aabe77a830c2ba2530ac5e0fbffa6ccf3}
+
+\item 
+\hypertarget{classdl32_matrix_ab01a369e2ce838b68a3a923a5eefa935}{void {\bfseries Transpose} ()}\label{classdl32_matrix_ab01a369e2ce838b68a3a923a5eefa935}
+
+\item 
+\hypertarget{classdl32_matrix_ae442cf8c4b410f2a90084dbff408d4c3}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Get\-Inverse} ()}\label{classdl32_matrix_ae442cf8c4b410f2a90084dbff408d4c3}
+
+\item 
+\hypertarget{classdl32_matrix_ab963b98be0fd54d12b86073b05a7aabf}{int {\bfseries Get\-Range} ()}\label{classdl32_matrix_ab963b98be0fd54d12b86073b05a7aabf}
+
+\item 
+\hypertarget{classdl32_matrix_aa4149bda7906442a72f726a3963ca784}{int {\bfseries Get\-Range} (\hyperlink{classdl32_matrix}{dl32\-Matrix} \&Final\-Matrix)}\label{classdl32_matrix_aa4149bda7906442a72f726a3963ca784}
+
+\item 
+\hypertarget{classdl32_matrix_a6e662d10610a73d87a846589b39c5641}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries operator+} (\hyperlink{classdl32_matrix}{dl32\-Matrix} matrix)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a6e662d10610a73d87a846589b39c5641}
+
+\item 
+\hypertarget{classdl32_matrix_a0f1983703befe4e2a6c17fdc59ae77f6}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries operator-\/} (\hyperlink{classdl32_matrix}{dl32\-Matrix} matrix)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a0f1983703befe4e2a6c17fdc59ae77f6}
+
+\item 
+\hypertarget{classdl32_matrix_abe763c04fc70a6e5450436200df393a6}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries operator$\ast$} (\hyperlink{classdl32_matrix}{dl32\-Matrix} matrix)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_abe763c04fc70a6e5450436200df393a6}
+
+\item 
+\hypertarget{classdl32_matrix_adbae95c51003093b95c27d5097a83b44}{\hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries operator$\ast$} (float factor)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_adbae95c51003093b95c27d5097a83b44}
+
+\item 
+\hypertarget{classdl32_matrix_a60b0d52d045abe4b533b977de01e5b54}{bool {\bfseries operator==} (\hyperlink{classdl32_matrix}{dl32\-Matrix} \&matrix)}\label{classdl32_matrix_a60b0d52d045abe4b533b977de01e5b54}
+
+\item 
+\hypertarget{classdl32_matrix_aa523f3920c13f9acea9779f0adf2dbf7}{bool {\bfseries operator!=} (\hyperlink{classdl32_matrix}{dl32\-Matrix} \&matrix)}\label{classdl32_matrix_aa523f3920c13f9acea9779f0adf2dbf7}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_matrix_a22209d789107e62e223dd451c26abfbf}{static \hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Add} (\hyperlink{classdl32_matrix}{dl32\-Matrix} m1, \hyperlink{classdl32_matrix}{dl32\-Matrix} m2)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a22209d789107e62e223dd451c26abfbf}
+
+\item 
+\hypertarget{classdl32_matrix_a46a1f0e30e9b2a06c648442052b4dde0}{static \hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Sub} (\hyperlink{classdl32_matrix}{dl32\-Matrix} m1, \hyperlink{classdl32_matrix}{dl32\-Matrix} m2)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a46a1f0e30e9b2a06c648442052b4dde0}
+
+\item 
+\hypertarget{classdl32_matrix_a94b5defb7c99f19e42f6e4dbdd0f7264}{static \hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Mul} (\hyperlink{classdl32_matrix}{dl32\-Matrix} matrix, float mul)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a94b5defb7c99f19e42f6e4dbdd0f7264}
+
+\item 
+\hypertarget{classdl32_matrix_a2f53b5e969990869f72a761677f0069a}{static \hyperlink{classdl32_matrix}{dl32\-Matrix} {\bfseries Mul} (\hyperlink{classdl32_matrix}{dl32\-Matrix} m1, \hyperlink{classdl32_matrix}{dl32\-Matrix} m2)  throw (dl32\-Invalid\-Matrix\-Operation\-Exception)}\label{classdl32_matrix_a2f53b5e969990869f72a761677f0069a}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_matrix_a82d974dab72b180c93d70c546ef6bc12}{void {\bfseries Row\-Mul} (int row, float mul)}\label{classdl32_matrix_a82d974dab72b180c93d70c546ef6bc12}
+
+\item 
+\hypertarget{classdl32_matrix_a53ffc842dca28993f661ab0d3a52ad75}{void {\bfseries Row\-Add} (int source\-\_\-row, int aux\-\_\-row, float aux\-\_\-mul=1)}\label{classdl32_matrix_a53ffc842dca28993f661ab0d3a52ad75}
+
+\item 
+\hypertarget{classdl32_matrix_a2480df183766924cee896ad7b367333d}{void {\bfseries Row\-Swap} (int row1, int row2)}\label{classdl32_matrix_a2480df183766924cee896ad7b367333d}
+
+\item 
+\hypertarget{classdl32_matrix_a1e50d1d95925c278464149f1ac888a9c}{void {\bfseries Column\-Mul} (int column, float mul)}\label{classdl32_matrix_a1e50d1d95925c278464149f1ac888a9c}
+
+\item 
+\hypertarget{classdl32_matrix_a7e78a56968abf7657c4eb8018342de75}{void {\bfseries Column\-Add} (int source\-\_\-column, int aux\-\_\-column, float aux\-\_\-mul=1)}\label{classdl32_matrix_a7e78a56968abf7657c4eb8018342de75}
+
+\item 
+\hypertarget{classdl32_matrix_ae98c28d8e7dd61ee581df2807932e78d}{void {\bfseries Column\-Swap} (int column1, int column2)}\label{classdl32_matrix_ae98c28d8e7dd61ee581df2807932e78d}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classdl32_matrix_a09692d9e9988267505756ab51f2cfe17}{int {\bfseries rows}}\label{classdl32_matrix_a09692d9e9988267505756ab51f2cfe17}
+
+\item 
+\hypertarget{classdl32_matrix_a36cb2edbaf4238f7ef7640c47f571652}{int {\bfseries columns}}\label{classdl32_matrix_a36cb2edbaf4238f7ef7640c47f571652}
+
+\item 
+\hypertarget{classdl32_matrix_a27ed6dbf5273974683b30e76327380e6}{float $\ast$$\ast$ {\bfseries Array}}\label{classdl32_matrix_a27ed6dbf5273974683b30e76327380e6}
+
+\item 
+\hypertarget{classdl32_matrix_a238874d8adcf135ca3d0edbfee9dca76}{bool {\bfseries Not\-Initialized}}\label{classdl32_matrix_a238874d8adcf135ca3d0edbfee9dca76}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Represents a float generic matrix 
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+code/headers/dl32\-Math.\-h\item 
+code/source/dl32\-Math.\-cpp\end{DoxyCompactItemize}
