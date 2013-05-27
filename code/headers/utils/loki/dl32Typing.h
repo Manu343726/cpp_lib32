@@ -54,7 +54,7 @@ class dl32EmptyType {};
 template<typename T>
 struct dl32TypeWrapper
 {
-    typedef T type;
+    using type = T;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,19 +76,18 @@ struct dl32ValueWrapper
 template< typename T , typename U>
 class dl32TypeCheckingHelper
 {
+private:
+    class _dummy_bigger_than_char_class { char _dummy[2]; };
 public:
     ///< Small size unit type.
-    typedef char dl32TypeSize_Small;
+    using dl32TypeSize_Small = char;
 
     ///< Big size unit type.
-    typedef class { char _dummy[2]; } dl32TypeSize_Big;
+    using dl32TypeSize_Big = _dummy_bigger_than_char_class;
     
-    ///< Compile-time size units types size.
-    enum
-    {
-        _sizeof_Small = sizeof( dl32TypeSize_Small ),
-        _sizeof_Big   = sizeof( dl32TypeSize_Big )
-    };
+    //Compile-time constants with sizeof of size units:
+    static const unsigned int _sizeof_Small = sizeof( dl32TypeSize_Small ); ///< Small size unit
+    static const unsigned int _sizeof_Big   = sizeof( dl32TypeSize_Big ); ///< Big size unit
 
 protected:    
     static dl32TypeSize_Small _testTtoU( U );   //U args calls use this.
@@ -96,6 +95,7 @@ protected:
     static dl32TypeSize_Small _testUtoT( T );   //T args calls use this.
     static dl32TypeSize_Big   _testUtoT( ... ); //Non-T args calls use this.
     
+    //Helper functions (Not implemented, used only for type retrieval)
     static T _makeT();
     static U _makeU();
 };
@@ -128,7 +128,7 @@ public:
 template<typename T , typename U>
 struct dl32Conversion : public dl32TypeCheckingHelper<T,U>
 {
-    enum { result = sizeof( dl32TypeCheckingHelper<T,U>::_testTtoU( dl32TypeCheckingHelper<T,U>::_makeT() ) ) == dl32TypeCheckingHelper<T,U>::_sizeof_Small };
+    static const bool result = sizeof( dl32TypeCheckingHelper<T,U>::_testTtoU( dl32TypeCheckingHelper<T,U>::_makeT() ) ) == dl32TypeCheckingHelper<T,U>::_sizeof_Small;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ struct dl32Conversion : public dl32TypeCheckingHelper<T,U>
 template<typename T , typename U>
 struct dl32SuperclassSubclass
 {
-    enum { result = dl32Conversion<const U* , const T*>::result && !dl32SameType<const T* , const void*>::result && !dl32SameType<const T , const U>::result };
+    static const bool result = dl32Conversion<const U* , const T*>::result && !dl32SameType<const T* , const void*>::result && !dl32SameType<const T , const U>::result;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -151,17 +151,14 @@ template<typename T , typename U>
 class dl32TypeChecking
 {
 public:
-    enum
-    { 
-        //Implicit type-conversion checking:
-        conversion_exists = dl32Conversion<T,U>::result, ///< Checks if a conversion from T to U is alowed. Its value is 1 (TRUE) if a implicit conversion is alowed). 0 (FALSE) if is not alowed.)
-        
-        //Basic type-checking:
-        same_type = dl32SameType<T,U>::result, ///< Checks if the two types provided are the same type.
-        
-        //Inheritance checking:
-        superclass_subclass = dl32SuperclassSubclass<T,U>::result ///< Checks if T is a superclass of U (U is a subclass of T).
-    };
+    //Implicit type-conversion checking:
+    static const bool conversion_exists = dl32Conversion<T,U>::result; ///< Checks if a conversion from T to U is alowed. Its value is 1 (TRUE) if a implicit conversion is alowed). 0 (FALSE) if is not alowed.)
+
+    //Basic type-checking:
+    static const bool same_type = dl32SameType<T,U>::result; ///< Checks if the two types provided are the same type.
+
+    //Inheritance checking:
+    static const bool superclass_subclass = dl32SuperclassSubclass<T,U>::result; ///< Checks if T is a superclass of U (U is a subclass of T).
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,12 +209,21 @@ struct dl32EnableIf<true,T>{ using type = T; };
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename HEAD ,typename TAIL>
-class dl32Loki_like_TypeList 
+class dl32LokiStyleTypeList 
 {
 public:
   typedef HEAD head;
   typedef TAIL tail;
 };
+
+#define DL32LOKI_STYLE_TYPELIST_1( T1 )                                    dl32LokiStyleTypeList< T1 , dl32NoType >                                                    ///< Macro for creating 1 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_2( T1 , T2 )                               dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_1( T2 ) >                               ///< Macro for creating 2 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_3( T1 , T2 , T3 )                          dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_2( T2 , T3 ) >                          ///< Macro for creating 3 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_4( T1 , T2 , T3 , T4 )                     dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_3( T2 , T3 , T4 ) >                     ///< Macro for creating 4 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_5( T1 , T2 , T3 , T4 , T5 )                dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_4( T2 , T3 , T4 , T5 ) >                ///< Macro for creating 5 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_6( T1 , T2 , T3 , T4 , T5 , T6 )           dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_5( T2 , T3 , T4 , T5 , T6 ) >           ///< Macro for creating 6 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_7( T1 , T2 , T3 , T4 , T5 , T6 , T7 )      dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_6( T2 , T3 , T4 , T5 , T6 , T7 ) >      ///< Macro for creating 7 element loki-style typelist
+#define DL32LOKI_STYLE_TYPELIST_8( T1 , T2 , T3 , T4 , T5 , T6 , T7 , T8 ) dl32LokiStyleTypeList< T1 , DL32LOKI_STYLE_TYPELIST_7( T2 , T3 , T4 , T5 , T6 , T7 , T8 ) > ///< Macro for creating 8 element loki-style typelist
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Pushes back a type in a loki-style typelist.
@@ -234,19 +240,19 @@ private:
     template<typename U>
     struct _push_back<dl32NoType , U>
     {
-        using result = dl32Loki_like_TypeList<U,dl32NoType>;
+        using result = dl32LokiStyleTypeList<U,dl32NoType>;
     };
     
     template<typename HEAD , typename TAIL>
-    struct _push_back<dl32NoType , dl32Loki_like_TypeList<HEAD , TAIL>>
+    struct _push_back<dl32NoType , dl32LokiStyleTypeList<HEAD , TAIL>>
     {
-        using result = dl32Loki_like_TypeList<HEAD,TAIL>;
+        using result = dl32LokiStyleTypeList<HEAD,TAIL>;
     };
     
     template<typename HEAD,typename TAIL , typename U>
-    struct _push_back<dl32Loki_like_TypeList<HEAD,TAIL> , U>
+    struct _push_back<dl32LokiStyleTypeList<HEAD,TAIL> , U>
     {
-        using result = dl32Loki_like_TypeList<HEAD , typename _push_back<TAIL , U>::result>;
+        using result = dl32LokiStyleTypeList<HEAD , typename _push_back<TAIL , U>::result>;
     };
     
 public:
@@ -315,14 +321,14 @@ private:
     /* Base-case for finded case (U is in TYPELIST). Note that the list used in the 
        specialitation is a list with U as head and TYPELIST::tail as tail.       */
     template<typename U , typename TAIL>
-    struct _index_of<U, dl32Loki_like_TypeList<U,TAIL>>
+    struct _index_of<U, dl32LokiStyleTypeList<U,TAIL>>
     {
         enum { value = 0 };
     };
 
     /* Recoursive-case specialitation */
     template<typename U , typename HEAD , typename TAIL>
-    struct _index_of<U,dl32Loki_like_TypeList<HEAD,TAIL>>
+    struct _index_of<U,dl32LokiStyleTypeList<HEAD,TAIL>>
     {
     private:
         enum { temp = _index_of<U,TAIL>::value };
@@ -387,7 +393,7 @@ template<typename HEAD , typename... TAIL>
 struct dl32TypeList<HEAD,TAIL...>
 {
     enum { size = sizeof...(TAIL) + 1 }; ///< Size of the typelist (Number of types stored in).
-    typedef dl32Loki_like_TypeList<HEAD, typename dl32TypeList<TAIL...>::value> value; ///< The typelist in loki-style (The unwrapped value)
+    typedef dl32LokiStyleTypeList<HEAD, typename dl32TypeList<TAIL...>::value> value; ///< The typelist in loki-style (The unwrapped value)
     
     template<int index>
     using type_at = typename dl32TypeAt<index,value>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
@@ -489,21 +495,21 @@ private:
     template<typename type>                                \
     struct name                                            \
     {                                                      \
-        enum { value = FALSE };                            \
-        typedef dl32NoType typedefName;                    \
+        static const bool value = false;                   \
+        using typedefName = dl32NoType;                    \
     };                                                     \
     template<typename type>                                \
     struct name<checkingType>                              \
     {                                                      \
-        enum { value = TRUE };                             \
-        typedef type typedefName;                          \
+        static const bool value = true;                    \
+        using typedefName = type;                          \
     };                        
     
 #define TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , trait_name , type , checking_type , typedef_name ) \
         TRAITS( trait_name , type , checking_type , typedef_name );                                       \
         public:                                                                                           \
-                enum { attribute_name = trait_name<T>::value };                                           \
-                typedef typename trait_name<T>::typedef_name typedef_name;                                \
+                static const bool attribute_name = trait_name<T>::value;                                  \
+                using typedef_name = typename trait_name<T>::typedef_name;                                \
         private:
     
 #define TRAITS_FULL_IMPLICITTRAITNAME( attribute_name , unique_id , type , checking_type , typedef_name ) TRAITS_FULL_EXPLICITTRAITNAME(attribute_name , CONCAT( _trait_ , unique_id ) , type , checking_type , typedef_name )
@@ -516,7 +522,7 @@ private:
     TRAITS_FULL( isRvalue    , U , U&&     , MovedType )      //Checks if T is a rvalue
  
 public:
-    typedef T OriginalType;
+    using OriginalType = T;
     
     static const bool isVoid = dl32SameType<void , NonConstType>::result; ///< Checks if T is void.
     static const bool isFloatingPoint = dl32FloatingPointTypes::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is a floating-point type.
