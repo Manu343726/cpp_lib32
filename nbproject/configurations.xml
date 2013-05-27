@@ -7,6 +7,7 @@
           <logicalFolder name="loki" displayName="loki" projectFiles="true">
             <itemPath>code/headers/utils/loki/dl32Typing.h</itemPath>
           </logicalFolder>
+          <itemPath>code/headers/utils/dl32Assert.h</itemPath>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
           <itemPath>code/headers/utils/dl32ConsoleColor.h</itemPath>
           <itemPath>code/headers/utils/dl32Memory.h</itemPath>
@@ -107,6 +108,8 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -228,6 +231,8 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
       </item>

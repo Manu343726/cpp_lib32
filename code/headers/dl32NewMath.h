@@ -332,7 +332,18 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     friend bool operator==(const dl32Point2D& p1 , const dl32Point2D& p2) { return my_implementation::equal( p1 , p2 ); }
     
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Adds a dl32Point2D to this instance.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     dl32Point2D& operator+=(const dl32Point2D& p) { return this->add       ( p ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Substracts a dl32Point2D from this instance.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     dl32Point2D& operator-=(const dl32Point2D& p) { return this->substract ( p ); }
 };
 
@@ -346,13 +357,54 @@ using dl32Point2Dd = dl32Point2D<double>; ///< Alias for double-precision 2d poi
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T = float>
-struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation
+struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation,
+                      public dl32EqualityHelper<dl32Vector2D<T>>,         //Binary operator!=(dl32Vector2D<T>,dl32Vector2D<T>)
+                      public dl32BasicAlgebraHelper<dl32Vector2D<T>>,     //Binary operator+ (dl32Vector2D<T>,dl32Vector2D<T>) , binary operator+(dl32Vector2D<T>,dl32Vector2D<T>)
+                      public dl32MultiplicationHelper<dl32Vector2D<T>,T>, //Binary operator* (dl32Vector2D<T>,T)
+                      public dl32DivisionHelper<dl32Vector2D<T>,T>        //Binary operator/ (dl32Vector2D<T>,T)
 {
     using my_implementation = typename dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation; ///< Alias to the implementer type.
     
     dl32Vector2D() : my_implementation() {}
     dl32Vector2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
     dl32Vector2D(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : my_implementation( p2.x - p1.x , p2.y - p1.y ) {}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if two dl32Vector2Ds are equal.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @return True if thw two points are equal. False if not.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    friend bool operator==(const dl32Vector2D& p1 , const dl32Vector2D& p2) { return my_implementation::equal( p1 , p2 ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Adds a dl32Vector2D to this instance.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32Vector2D& operator+=(const dl32Vector2D& p) { return this->add       ( p ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Sobstracts a dl32Vector2D from this instance.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32Vector2D& operator-=(const dl32Vector2D& p) { return this->substract ( p ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Multiplies this instcance by a scalar.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32Vector2D& operator*=(const T& s) { return this->multiply ( s ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Divides this instance by a scalar.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32Vector2D& operator/=(const T& s) { return this->divide   ( s ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Returns the lenght of the vector

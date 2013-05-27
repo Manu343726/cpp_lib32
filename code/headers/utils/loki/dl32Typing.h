@@ -331,7 +331,7 @@ private:
     };
     
 public:
-    typedef dl32ValueWrapper<int, _index_of<T,TYPELIST>::value> value; ///< The index of the type T in the typelist TYPELIST.
+    using value = dl32ValueWrapper<unsigned int ,_index_of<T,typename TYPELIST::value>::value>; ///< The index of the type T in the typelist TYPELIST.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ public:
 template<typename T , typename TYPELIST>
 struct dl32Contains
 {
-    enum { value = dl32IndexOf<T,TYPELIST>::value >= 0 };
+    static const bool value = dl32IndexOf<T,TYPELIST>::value::value >= 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
