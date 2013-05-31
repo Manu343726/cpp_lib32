@@ -278,13 +278,14 @@ struct dl32TypeList;
 using dl32EmptyTypelist = dl32TypeList<>;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Implements a linear search of a type in a given type list (Type list in loki-format).
+/// @brief Implements a linear search of a type in a given type list.
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<int index, typename TYPELIST>
 class dl32TypeAt
 {
+    static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
 private:
     template<int _index, typename _TYPELIST>
     struct _type_at{ using value = typename _type_at<_index-1,_TYPELIST>::value; };
@@ -293,7 +294,7 @@ private:
     struct _type_at<0,_TYPELIST>{ using value = typename _TYPELIST::head; };
 
 public:
-    using value = typename _type_at<index,TYPELIST>::value;
+    using value = typename _type_at<index,typename TYPELIST::value>::value;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -373,12 +374,52 @@ public:
     using result = typename _merge<TYPELIST1,TYPELIST2>::result;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Splits a typelist in two typelists, right and left, from the specified index.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename TYPELIST , unsigned int index>
 class dl32Split
 {
+    static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
 private:
-    template<typename LOKI_STYLE_TYPELIST>
+    template<typename FIRST , typename... REST>
+    struct _extract_first_type{ using first = FIRST; };
+    
+    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL>
     struct _split;
+    
+    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL>
+    struct _split<destiny,current_index,HEAD,TAIL...>
+    {
+        using right     = dl32TypeList<TAIL...>;
+        using next_left = typename _split<destiny,current_index+1,TAIL...>::left;
+        using left      = typename next_left::push_front<HEAD>;
+    };
+    
+    template<unsigned int destiny , typename HEAD , typename... TAIL>
+    struct _split<destiny,destiny,HEAD,TAIL...>
+    {
+        using right     = dl32TypeList<TAIL...>;
+        using left      = dl32TypeList<HEAD>;
+    };
+    
+    template<unsigned int _index , typename _TYPELIST>
+    struct _splitter;
+    
+    template<unsigned int index , typename HEAD , typename... TAIL>
+    struct _splitter<index,dl32TypeList<HEAD,TAIL...>>
+    {
+        using split = _split<index,0,HEAD,TAIL...>;
+        using right = typename split::right;
+        using left  = typename split::left;
+    };
+    
+    using splitter = _splitter<index,TYPELIST>;
+public:
+    using right = typename splitter::right; ///< Typelist containing types before index (Indexth type included).
+    using left  = typename splitter::left;  ///< Typelist containing types before index (Indexth type included).
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -392,17 +433,20 @@ private:
 template<typename HEAD , typename... TAIL>
 struct dl32TypeList<HEAD,TAIL...>
 {
+private:
+    using this_list = dl32TypeList<HEAD,TAIL...>;
+public:
     enum { size = sizeof...(TAIL) + 1 }; ///< Size of the typelist (Number of types stored in).
     typedef dl32LokiStyleTypeList<HEAD, typename dl32TypeList<TAIL...>::value> value; ///< The typelist in loki-style (The unwrapped value)
     
     template<int index>
-    using type_at = typename dl32TypeAt<index,value>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
+    using type_at = typename dl32TypeAt<index,this_list>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
     
     template<typename T>
     using index_of = typename dl32IndexOf<T,value>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
     
     template<typename T>
-    using contains = dl32Contains<T,dl32TypeList<HEAD,TAIL...>>; ///< Checks if the typelist contains a specified type.
+    using contains = dl32Contains<T,this_list>; ///< Checks if the typelist contains a specified type.
     
     template<typename T>
     using push_back = dl32TypeList<HEAD,TAIL...,T>; ///< Pushes back a new type to the typelist (Returns new typelist).
