@@ -103,12 +103,16 @@ const unsigned int _DL32MATH_VECTOR_IMPLEMENTATION_INTEGRAL = (unsigned int)_DL3
 /// @brief This class provides a homebrew implementation of a 2d vector and its most common algebraic
 ///        operations.
 ///
+/// @tparam IMPLEMENTER Class that uses (inherits from) this implementation (CRTP subclass)
+/// @tparam T Vector implementation coordinates type. Its default value is float.
+/// @tparam BASIC_ALGEBRA_ONLY Defines the set of algebra operations to be implemented.
+///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
 struct _vector_2d_implementation_homebrew
 {
-public:
+private:
     using my_type = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; //Así es mas facil de escribir
 public:
     static const unsigned int dimensions = 2; ///< Dimensional range of the point.
