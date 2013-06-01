@@ -145,6 +145,7 @@ public:
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Equality operator for two 2d vectors. 
+    /// @details This version is enabled only for floating-point Ts. 
     /// 
     /// @param m1 First vector to be compared.
     /// @param m2 Second vector to be compared.
@@ -166,6 +167,7 @@ public:
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Equality operator for two 2d vectors. 
+    /// @details This version is enabled only for integral Ts. 
     /// 
     /// @param m1 First vector to be compared.
     /// @param m2 Second vector to be compared.
@@ -214,6 +216,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Multiplication implementation. This function performs multiplication of a provided vector to 
     ///        this instance.
+    /// @details This function is enabled only for implementers wich use complete algebra ( BASIC_ALGEBRA_ONLY == false )
     ///
     /// @author	Manu343726
     ///
@@ -233,6 +236,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Division implementation. This function performs division of a provided vector to 
     ///        this instance.
+    /// @details This function is enabled only for implementers wich use complete algebra ( BASIC_ALGEBRA_ONLY == false )
     ///
     /// @author	Manu343726
     ///
@@ -287,19 +291,6 @@ public:
     using current_implementation = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; ///< Gets the current vector 2d implementation.
 };
 
-///< Operator overloading helpers for vectors with only basic algebra (Addition and substraction).
-template<typename VECTOR_IMPLEMENTATION , typename T = float>
-using vector_implementation_operators_basic_algebra = dl32BasicAlgebraHelper<VECTOR_IMPLEMENTATION>;
-
-///< Operator overloading helpers for vectors with complete algebra (Addition, substraction, multiplication, and division).
-template<typename VECTOR_IMPLEMENTATION , typename T = float>
-using vector_implementation_operators_algebra = typename dl32TypeList<dl32BasicAlgebraHelper<VECTOR_IMPLEMENTATION> , dl32MultiplicationHelper<VECTOR_IMPLEMENTATION,T> , dl32DivisionHelper<VECTOR_IMPLEMENTATION,T>>::public_inheritance_from_types;
-
-///< Vector operation overloading selector.
-template<typename VECTOR_IMPLEMENTATION , bool BASIC_ALGEBRA_ONLY , typename T = float>
-using vector_implementation_operators = typename dl32Select<BASIC_ALGEBRA_ONLY , vector_implementation_operators_basic_algebra<VECTOR_IMPLEMENTATION,T> , vector_implementation_operators_algebra<VECTOR_IMPLEMENTATION,T>>::type;
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a point in 2d space.
 ///
@@ -323,6 +314,8 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     
     dl32Point2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
     
+    using my_type = dl32Point2D<T>;
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Point2Ds are equal.
     ///
@@ -330,21 +323,21 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     ///
     /// @return True if thw two points are equal. False if not.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    friend bool operator==(const dl32Point2D& p1 , const dl32Point2D& p2) { return my_implementation::equal( p1 , p2 ); }
+    friend bool operator==(const my_type& p1 , const my_type& p2) { return my_implementation::equal( p1 , p2 ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Adds a dl32Point2D to this instance.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Point2D& operator+=(const dl32Point2D& p) { return this->add       ( p ); }
+    my_type& operator+=(const my_type& p) { return this->add       ( p ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Substracts a dl32Point2D from this instance.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Point2D& operator-=(const dl32Point2D& p) { return this->substract ( p ); }
+    my_type& operator-=(const my_type& p) { return this->substract ( p ); }
 };
 
 using dl32Point2Df = dl32Point2D<float>; ///< Alias for single-precision 2d points.
@@ -359,7 +352,7 @@ using dl32Point2Dd = dl32Point2D<double>; ///< Alias for double-precision 2d poi
 template<typename T = float>
 struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation,
                       public dl32EqualityHelper<dl32Vector2D<T>>,         //Binary operator!=(dl32Vector2D<T>,dl32Vector2D<T>)
-                      public dl32BasicAlgebraHelper<dl32Vector2D<T>>,     //Binary operator+ (dl32Vector2D<T>,dl32Vector2D<T>) , binary operator+(dl32Vector2D<T>,dl32Vector2D<T>)
+                      public dl32BasicAlgebraHelper<dl32Vector2D<T>>,     //Binary operator+ (dl32Vector2D<T>,dl32Vector2D<T>) , binary operator-(dl32Vector2D<T>,dl32Vector2D<T>)
                       public dl32MultiplicationHelper<dl32Vector2D<T>,T>, //Binary operator* (dl32Vector2D<T>,T)
                       public dl32DivisionHelper<dl32Vector2D<T>,T>        //Binary operator/ (dl32Vector2D<T>,T)
 {
@@ -369,6 +362,8 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     dl32Vector2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
     dl32Vector2D(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : my_implementation( p2.x - p1.x , p2.y - p1.y ) {}
     
+    using my_type = dl32Vector2D<T>;
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Vector2Ds are equal.
     ///
@@ -376,35 +371,35 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     ///
     /// @return True if thw two points are equal. False if not.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    friend bool operator==(const dl32Vector2D& p1 , const dl32Vector2D& p2) { return my_implementation::equal( p1 , p2 ); }
+    friend bool operator==(const my_type& p1 , const my_type& p2) { return my_implementation::equal( p1 , p2 ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Adds a dl32Vector2D to this instance.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Vector2D& operator+=(const dl32Vector2D& p) { return this->add       ( p ); }
+    my_type& operator+=(const my_type& p) { return this->add       ( p ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Sobstracts a dl32Vector2D from this instance.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Vector2D& operator-=(const dl32Vector2D& p) { return this->substract ( p ); }
+    my_type& operator-=(const my_type& p) { return this->substract ( p ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Multiplies this instcance by a scalar.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Vector2D& operator*=(const T& s) { return this->multiply ( s ); }
+    my_type& operator*=(const T& s) { return this->multiply ( s ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Divides this instance by a scalar.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Vector2D& operator/=(const T& s) { return this->divide   ( s ); }
+    my_type& operator/=(const T& s) { return this->divide   ( s ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Returns the lenght of the vector
@@ -420,6 +415,7 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     void normalize()
     {
+        //Fast Inverse Square Root? Me lo pensaré...
         T lenght = lenght();
         
         this->x /= lenght;
@@ -431,9 +427,9 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Vector2D get_normalized()
+    my_type get_normalized()
     {
-        dl32Vector2D ret( *this );
+        my_type ret( *this );
         ret.normalize();
         
         return ret;

@@ -97,6 +97,14 @@ int main()
     
     assert( merged_list::size == list1::size + list2::size );
     
+    /* Typelist split test */
+    
+    using split = dl32Split<2,myList>;
+    using right = split::right;
+    using left  = split::left;
+    
+    assert( right::size + left::size == myList::size );
+    
     /* Type traits checking test */
     
     //HasConst tests:

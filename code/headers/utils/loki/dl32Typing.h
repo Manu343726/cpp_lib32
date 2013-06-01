@@ -237,18 +237,21 @@ private:
     template<typename TYPELIST , typename U>
     struct _push_back;
     
+    //Base case:
     template<typename U>
     struct _push_back<dl32NoType , U>
     {
         using result = dl32LokiStyleTypeList<U,dl32NoType>;
     };
     
+    //Empty typelist case:
     template<typename HEAD , typename TAIL>
-    struct _push_back<dl32NoType , dl32LokiStyleTypeList<HEAD , TAIL>>
+    struct _push_back<dl32LokiStyleTypeList<HEAD , TAIL> , dl32NoType>
     {
         using result = dl32LokiStyleTypeList<HEAD,TAIL>;
     };
     
+    //Recursive case:
     template<typename HEAD,typename TAIL , typename U>
     struct _push_back<dl32LokiStyleTypeList<HEAD,TAIL> , U>
     {
@@ -357,7 +360,7 @@ struct dl32Contains
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename TYPELIST1 , typename TYPELIST2>
+template<typename TYPELIST1 , typename TYPELIST2> //http://stackoverflow.com/questions/16648144/merge-two-variadic-templates-in-one
 class dl32Merge
 {
 private:
@@ -379,39 +382,38 @@ public:
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename TYPELIST , unsigned int index>
+template<unsigned int index , typename TYPELIST>
 class dl32Split
 {
     static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
 private:
-    template<typename FIRST , typename... REST>
-    struct _extract_first_type{ using first = FIRST; };
     
-    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL>
-    struct _split;
     
+    //Recursive case:
     template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL>
-    struct _split<destiny,current_index,HEAD,TAIL...>
+    struct _split
     {
         using right     = dl32TypeList<TAIL...>;
         using next_left = typename _split<destiny,current_index+1,TAIL...>::left;
-        using left      = typename next_left::push_front<HEAD>;
+        using left      = HEAD;
     };
     
+    //Base case:
     template<unsigned int destiny , typename HEAD , typename... TAIL>
     struct _split<destiny,destiny,HEAD,TAIL...>
     {
-        using right     = dl32TypeList<TAIL...>;
-        using left      = dl32TypeList<HEAD>;
+        using right = dl32TypeList<TAIL...>;
+        using left  = dl32TypeList<HEAD>;
     };
     
+    //dl32TypeList template args extractor (Split helper)
     template<unsigned int _index , typename _TYPELIST>
     struct _splitter;
     
-    template<unsigned int index , typename HEAD , typename... TAIL>
-    struct _splitter<index,dl32TypeList<HEAD,TAIL...>>
+    template<unsigned int _index , typename HEAD , typename... TAIL>
+    struct _splitter<_index,dl32TypeList<HEAD,TAIL...>>
     {
-        using split = _split<index,0,HEAD,TAIL...>;
+        using split = _split<_index,0,HEAD,TAIL...>;
         using right = typename split::right;
         using left  = typename split::left;
     };
@@ -419,7 +421,7 @@ private:
     using splitter = _splitter<index,TYPELIST>;
 public:
     using right = typename splitter::right; ///< Typelist containing types before index (Indexth type included).
-    using left  = typename splitter::left;  ///< Typelist containing types before index (Indexth type included).
+    using left  = typename splitter::left;  ///< Typelist containing types after index.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -443,7 +445,7 @@ public:
     using type_at = typename dl32TypeAt<index,this_list>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
     
     template<typename T>
-    using index_of = typename dl32IndexOf<T,value>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+    using index_of = typename dl32IndexOf<T,this_list>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
     
     template<typename T>
     using contains = dl32Contains<T,this_list>; ///< Checks if the typelist contains a specified type.
@@ -457,11 +459,11 @@ public:
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
     
     template <typename TYPELIST>
-    using merge = typename dl32Merge<dl32TypeList<HEAD,TAIL...> , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
+    using merge = typename dl32Merge<this_list , TYPELIST>::result; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Inheriting type provides public inheritance from all types contained at the typelist.
-    /// @details Note that typelist types must be non-basic types, must be inheritable types.
+    /// @brief Inheriting from this type provides public inheritance from all types contained at the typelist.
+    /// @remarks Note that typelist types must be non-basic types, must be inheritable types.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -570,7 +572,7 @@ public:
     
     static const bool isVoid = dl32SameType<void , NonConstType>::result; ///< Checks if T is void.
     static const bool isFloatingPoint = dl32FloatingPointTypes::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is a floating-point type.
-    static const bool isIntegral      = dl32IntegralTypes     ::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is a integral type.
+    static const bool isIntegral      = dl32IntegralTypes     ::contains<typename dl32WithoutConst<T>::result>::value; ///< Checks if T is an integral type.
 };
 #endif	/* DL32TYPING_H */
 
