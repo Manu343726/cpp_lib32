@@ -1,7 +1,7 @@
 language: cpp
 script:
-    - teapot -c travis fetch
-    - teapot -c travis run variant-debug compiler-clang-3.2
+    - travis fetch
+    - travis run variant-debug compiler-clang-3.2
 compiler: clang
 install:
 # libstdc++-4.8-dev
@@ -10,6 +10,3 @@ install:
     - sudo add-apt-repository --yes ppa:h-rayflood/llvm
     - sudo apt-get -qq update
     - sudo apt-get -qq install libstdc++-4.8-dev clang-3.2
-# ruby 2.0 and teapot
-    - rvm use 2.0 --install --binary --fuzzy
-    - gem install teapot
