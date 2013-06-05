@@ -103,7 +103,10 @@ int main()
     using right = split::right;
     using left  = split::left;
     
-    //assert( right::size + left::size == myList::size );
+    assert( right::size + left::size == myList::size );
+    cout << "original typelist size: " << myList::size << endl;
+    cout << "Splitted left-typelist size: " << left::size << endl;
+    cout << "Splitted right-typelist size: " << right::size << endl;
     
     /* Type traits checking test */
     

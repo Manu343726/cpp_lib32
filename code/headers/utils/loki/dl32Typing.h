@@ -281,7 +281,7 @@ struct dl32TypeList;
 using dl32EmptyTypelist = dl32TypeList<>;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Implements a linear search of a type in a given type list.
+/// @brief Implements a linear search of a type in a given typelist.
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +341,7 @@ private:
     };
     
 public:
-    using value = dl32ValueWrapper<unsigned int ,_index_of<T,typename TYPELIST::value>::value>; ///< The index of the type T in the typelist TYPELIST.
+    using value = dl32ValueWrapper<unsigned int , _index_of<T,typename TYPELIST::value>::value>; ///< The index of the type T in the typelist TYPELIST.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,23 +387,27 @@ class dl32Split
 {
     static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
 private:
-    
+    //Forward declaration:
+    template<unsigned int destiny , unsigned int current_index , typename LEFT_LIST , typename HEAD , typename... TAIL>
+    struct _split;
     
     //Recursive case:
-    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL>
-    struct _split
+    template<unsigned int destiny , unsigned int current_index , typename... LEFT_TYPES , typename HEAD , typename... TAIL>
+    struct _split<destiny , current_index , dl32TypeList<LEFT_TYPES...> , HEAD , TAIL...>
     {
-        using right     = dl32TypeList<TAIL...>;
-        using next_left = typename _split<destiny,current_index+1,TAIL...>::left;
-        using left      = HEAD;
+        using next_left  = dl32TypeList<LEFT_TYPES...,HEAD>;
+        using next_split = _split<destiny , current_index + 1 , next_left , TAIL...>;
+        
+        using right      = typename next_split::right;
+        using left       = typename next_split::left;    
     };
     
     //Base case:
-    template<unsigned int destiny , typename HEAD , typename... TAIL>
-    struct _split<destiny,destiny,HEAD,TAIL...>
+    template<unsigned int destiny , typename... LEFT_TYPES , typename HEAD , typename... TAIL>
+    struct _split<destiny,destiny,dl32TypeList<LEFT_TYPES...>,HEAD,TAIL...>
     {
         using right = dl32TypeList<TAIL...>;
-        using left  = dl32TypeList<HEAD>;
+        using left  = dl32TypeList<LEFT_TYPES...,HEAD>;
     };
     
     //dl32TypeList template args extractor (Split helper)
@@ -413,7 +417,7 @@ private:
     template<unsigned int _index , typename HEAD , typename... TAIL>
     struct _splitter<_index,dl32TypeList<HEAD,TAIL...>>
     {
-        using split = _split<_index,0,HEAD,TAIL...>;
+        using split = _split<_index,0,dl32EmptyTypelist,HEAD,TAIL...>;
         using right = typename split::right;
         using left  = typename split::left;
     };
