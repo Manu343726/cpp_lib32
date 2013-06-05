@@ -68,6 +68,9 @@ struct dl32ValueWrapper
     static const T value = VALUE;
 };
 
+template<bool VALUE>
+using dl32BoolWrapper = dl32ValueWrapper<bool,VALUE>; ///< Compile-time boolean expression wrapper.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type checking basic data.
 ///
@@ -429,6 +432,40 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Checks if two typelists are same.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename TYPELIST1 , typename TYPELIST2>
+class dl32SameTypeList
+{
+private:
+    //NOTA: Podría haber utilizado dl32SameType< typename TYPELIST1::type_at<index> , typename TYPELIST2::type_at<index> > recursivamente hasta llegar al final de las listas
+    //pero eso tendría un coste O(n^2), y no quiero tardar veinte millones de años en compilar.
+    
+    //Forward declaration:
+    template<typename _TYPELIST1 , typename _TYPELIST2>
+    struct _are_same;
+    
+    //Recursive case:
+    template<typename HEAD1 , typename... TAIL1 , typename HEAD2 , typename... TAIL2>
+    struct _are_same<dl32TypeList<HEAD1,TAIL1...> , dl32TypeList<HEAD2,TAIL2...>>
+    {
+        static const bool value = dl32SameType<HEAD1,HEAD2>::result && _are_same<dl32TypeList<TAIL1...>,dl32TypeList<TAIL2...>>::value;
+    };
+    
+    //Base case:
+    template<typename HEAD1 , typename HEAD2>
+    struct _are_same<dl32TypeList<HEAD1> , dl32TypeList<HEAD2>>
+    {
+        static const bool value = dl32SameType<HEAD1,HEAD2>::result;
+    }; 
+public:
+    //dl32Select provides lazy instantation of _are_same (Equivalent to boolean lazy-evaluation at runtime).
+    static const bool result = dl32Select<TYPELIST1::size == TYPELIST2::size , _are_same<TYPELIST1,TYPELIST2>,dl32BoolWrapper<false>>::type::value; //< True if the two typelists provided are the same. False if not.
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 loki-like typelist wrapper
 /// @details This class wrapps recursive-based typelist and provides a variadic template interface
 ///
@@ -442,11 +479,13 @@ struct dl32TypeList<HEAD,TAIL...>
 private:
     using this_list = dl32TypeList<HEAD,TAIL...>;
 public:
-    enum { size = sizeof...(TAIL) + 1 }; ///< Size of the typelist (Number of types stored in).
+    static const unsigned int size = sizeof...(TAIL) + 1; ///< Size of the typelist (Number of types stored in).
     typedef dl32LokiStyleTypeList<HEAD, typename dl32TypeList<TAIL...>::value> value; ///< The typelist in loki-style (The unwrapped value)
     
     template<int index>
     using type_at = typename dl32TypeAt<index,this_list>::value; ///< Gets the index-th type of the list. If index is out of range, a compilation error will be generated ("dl32Notype not has member 'head'").
+    
+    using front = HEAD; ///< Gets the first type stored at the typelist.
     
     template<typename T>
     using index_of = typename dl32IndexOf<T,this_list>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
@@ -459,6 +498,9 @@ public:
     
     template<typename T>
     using push_front = dl32TypeList<T,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
+    
+    //template<unsigned int index , typename T>
+    //using insert = typename dl32Merge< typename dl32Split<index,this_list>::left::push_back<T> , typename dl32Split<index,this_list>::right>::result;
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
     

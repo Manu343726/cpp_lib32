@@ -108,6 +108,11 @@ int main()
     cout << "Splitted left-typelist size: " << left::size << endl;
     cout << "Splitted right-typelist size: " << right::size << endl;
     
+    /* Same typelist test */
+    
+    assert( (dl32SameTypeList<myList,myList>::result) );
+    assert( !(dl32SameTypeList<dl32TypeList<int,char>,dl32TypeList<char,int>>::result) );
+    
     /* Type traits checking test */
     
     //HasConst tests:
