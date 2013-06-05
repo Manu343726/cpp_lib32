@@ -1,6 +1,9 @@
 Proyecto cpp_lib32
 ==================
 
+[![Build Status](https://secure.travis-ci.org/Manu343726/cpp_lib32.png?branch=BigRefactoring)](http://travis-ci.org/Manu343726/cpp_lib32)
+
+
 Éste proyecto es un intento de portar dx_lib32 a C++ utilizando DirectX9, y en un futuro OpenGL.
 
 
