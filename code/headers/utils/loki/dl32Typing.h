@@ -71,6 +71,9 @@ struct dl32ValueWrapper
 template<bool VALUE>
 using dl32BoolWrapper = dl32ValueWrapper<bool,VALUE>; ///< Compile-time boolean expression wrapper.
 
+template<unsigned int VALUE>
+using dl32UintWrapper = dl32ValueWrapper<unsigned int , VALUE>; ///< Compile-time unsigned int value wrapper.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type checking basic data.
 ///
@@ -442,27 +445,44 @@ class dl32SameTypeList
 private:
     //NOTA: Podría haber utilizado dl32SameType< typename TYPELIST1::type_at<index> , typename TYPELIST2::type_at<index> > recursivamente hasta llegar al final de las listas
     //pero eso tendría un coste O(n^2), y no quiero tardar veinte millones de años en compilar.
+    //Además así es mucho más sencillo.
     
     //Forward declaration:
     template<typename _TYPELIST1 , typename _TYPELIST2>
     struct _are_same;
     
-    //Recursive case:
-    template<typename HEAD1 , typename... TAIL1 , typename HEAD2 , typename... TAIL2>
-    struct _are_same<dl32TypeList<HEAD1,TAIL1...> , dl32TypeList<HEAD2,TAIL2...>>
+    template<typename... Ts>
+    struct _are_same<dl32TypeList<Ts...>,dl32TypeList<Ts...>>
     {
-        static const bool value = dl32SameType<HEAD1,HEAD2>::result && _are_same<dl32TypeList<TAIL1...>,dl32TypeList<TAIL2...>>::value;
+        static const bool value = true;
     };
     
-    //Base case:
-    template<typename HEAD1 , typename HEAD2>
-    struct _are_same<dl32TypeList<HEAD1> , dl32TypeList<HEAD2>>
+    template<typename... Ts , typename... Us>
+    struct _are_same<dl32TypeList<Ts...>,dl32TypeList<Us...>>
     {
-        static const bool value = dl32SameType<HEAD1,HEAD2>::result;
-    }; 
+        static const bool value = false;
+    };
 public:
-    //dl32Select provides lazy instantation of _are_same (Equivalent to boolean lazy-evaluation at runtime).
-    static const bool result = dl32Select<TYPELIST1::size == TYPELIST2::size , _are_same<TYPELIST1,TYPELIST2>,dl32BoolWrapper<false>>::type::value; //< True if the two typelists provided are the same. False if not.
+    static const bool result = _are_same<TYPELIST1,TYPELIST2>::value; //< True if the two typelists provided are the same. False if not.
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Inserts a set of types in a typelist at the specified position.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<unsigned int index  , typename TYPELIST , typename... Ts>
+class dl32Insert
+{
+private:
+    using _split = dl32Split<index,TYPELIST>;
+    using _right = typename _split::right;
+    using _left  = typename _split::left;
+    using _new_left   = typename dl32Merge<_left , dl32TypeList<Ts...>>::result;
+    using _final_list = typename dl32Merge<_new_left , _right>::result;
+    
+public:
+    using result = _final_list; ///< The new typelist as the initial typelist with Ts inserted begining at index.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -493,14 +513,14 @@ public:
     template<typename T>
     using contains = dl32Contains<T,this_list>; ///< Checks if the typelist contains a specified type.
     
-    template<typename T>
-    using push_back = dl32TypeList<HEAD,TAIL...,T>; ///< Pushes back a new type to the typelist (Returns new typelist).
+    template<typename... Ts>
+    using push_back = dl32TypeList<HEAD,TAIL...,Ts...>; ///< Pushes back a new type to the typelist (Returns new typelist).
     
-    template<typename T>
-    using push_front = dl32TypeList<T,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
+    template<typename... Ts>
+    using push_front = dl32TypeList<Ts...,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
     
-    //template<unsigned int index , typename T>
-    //using insert = typename dl32Merge< typename dl32Split<index,this_list>::left::push_back<T> , typename dl32Split<index,this_list>::right>::result;
+    template<unsigned int index , typename... Ts>
+    using insert = typename dl32Insert<index , this_list , Ts...>::result;
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
     

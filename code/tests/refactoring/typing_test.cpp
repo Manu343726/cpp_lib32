@@ -108,10 +108,23 @@ int main()
     cout << "Splitted left-typelist size: " << left::size << endl;
     cout << "Splitted right-typelist size: " << right::size << endl;
     
+    assert( (dl32SameTypeList<typename dl32Split<0,dl32TypeList<char,int,bool>>::left  , dl32TypeList<char>>::result) );
+    assert( (dl32SameTypeList<typename dl32Split<0,dl32TypeList<char,int,bool>>::right , dl32TypeList<int,bool>>::result) );
+    
+    assert( (dl32SameTypeList<typename dl32Split<1,dl32TypeList<char,int,bool>>::left  , dl32TypeList<char,int>>::result) );
+    assert( (dl32SameTypeList<typename dl32Split<1,dl32TypeList<char,int,bool>>::right , dl32TypeList<bool>>::result) );
+    
+    assert( (dl32SameTypeList<typename dl32Split<2,dl32TypeList<char,int,bool>>::left  , dl32TypeList<char,int,bool>>::result) );
+    assert( (dl32SameTypeList<typename dl32Split<2,dl32TypeList<char,int,bool>>::right , dl32TypeList<>>::result) );
+    
     /* Same typelist test */
     
     assert( (dl32SameTypeList<myList,myList>::result) );
     assert( !(dl32SameTypeList<dl32TypeList<int,char>,dl32TypeList<char,int>>::result) );
+    
+    /* typelist insert test */
+    
+    assert( (dl32SameTypeList<dl32TypeList<bool,int,char> , dl32TypeList<bool,char>::insert<0,int>>::result) );
     
     /* Type traits checking test */
     
