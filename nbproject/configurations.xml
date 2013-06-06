@@ -4,8 +4,11 @@
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
-          <logicalFolder name="loki" displayName="loki" projectFiles="true">
-            <itemPath>code/headers/utils/loki/dl32Typing.h</itemPath>
+          <logicalFolder name="tmp" displayName="tmp" projectFiles="true">
+            <itemPath>code/headers/utils/tmp/dl32MetaprogrammingLibrary.h</itemPath>
+            <itemPath>code/headers/utils/tmp/dl32TMPCore.h</itemPath>
+            <itemPath>code/headers/utils/tmp/dl32TypeList.h</itemPath>
+            <itemPath>code/headers/utils/tmp/dl32TypeTraits.h</itemPath>
           </logicalFolder>
           <itemPath>code/headers/utils/dl32Assert.h</itemPath>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
@@ -88,7 +91,7 @@
             <pElem>code/source</pElem>
             <pElem>code/tests</pElem>
             <pElem>code/headers/utils</pElem>
-            <pElem>code/headers/utils/loki</pElem>
+            <pElem>code/headers/utils/tmp</pElem>
             <pElem>code/source/utils</pElem>
             <pElem>code/tests/ASCII_raster</pElem>
             <pElem>code/tests/ASCII_raster/ascii</pElem>
@@ -129,7 +132,22 @@
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/utils/loki/dl32Typing.h"
+      <item path="code/headers/utils/tmp/dl32MetaprogrammingLibrary.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TMPCore.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TypeList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TypeTraits.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -252,7 +270,22 @@
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/utils/loki/dl32Typing.h"
+      <item path="code/headers/utils/tmp/dl32MetaprogrammingLibrary.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TMPCore.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TypeList.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/utils/tmp/dl32TypeTraits.h"
             ex="false"
             tool="3"
             flavor2="0">

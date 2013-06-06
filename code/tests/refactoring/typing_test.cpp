@@ -22,7 +22,7 @@
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_TYPINGTEST
 
-#include "dl32Typing.h"
+#include "dl32MetaprogrammingLibrary.h"
 #include <iostream>
 #include <typeinfo>
 #include <string>
@@ -70,14 +70,14 @@ int main()
     
     /* TypeList indexing test */
     
-    assert( (dl32TypeChecking<float,myList::type_at<2>>::same_type) );
+    assert( (dl32SameType<float , myList::type_at<2>>::value) );
     
     /* Inheritance checking test */
     
     class Foo{};
     class FooChild : public Foo {};
     
-    assert( (dl32TypeChecking<Foo,FooChild>::superclass_subclass) );
+    assert( (dl32HaveInheritance<Foo,FooChild>::result) );
     
     /* TypeList indexof test */
     
@@ -87,7 +87,7 @@ int main()
     
     using new_type_list = myList::push_back<bool>;
     
-    assert( (dl32SameType<bool , myList::push_back<bool>::type_at<myList::size>>::result) );
+    assert( (dl32SameType<bool , typename myList::push_back<bool>::type_at<myList::size>>::value) );
     
     /* Typelist merge test */
     
@@ -129,22 +129,22 @@ int main()
     /* Type traits checking test */
     
     //HasConst tests:
-    assert( !dl32TypeTraits<int>::hasConst        );
-    assert(  dl32TypeTraits<const int>::hasConst  );
-    assert(  dl32TypeTraits<const int*>::hasConst );
-    assert(  dl32TypeTraits<const int&>::hasConst );
+    assert( !dl32WithoutConst<int>::has_const        );
+    assert(  dl32WithoutConst<const int>::has_const  );
+    assert(  dl32WithoutConst<const int*>::has_const );
+    assert(  dl32WithoutConst<const int&>::has_const );
     
     //IsPointer tests:
-    assert( !dl32TypeTraits<int>::isPointer        );
-    assert( !dl32TypeTraits<const int>::isPointer  );
-    assert(  dl32TypeTraits<const int*>::isPointer );
-    assert( !dl32TypeTraits<const int&>::isPointer );
+    assert( !dl32IsPointer<int>::value        );
+    assert( !dl32IsPointer<const int>::value  );
+    assert(  dl32IsPointer<const int*>::value );
+    assert( !dl32IsPointer<const int&>::value );
     
     //IsReference tests:
-    assert( !dl32TypeTraits<int>::isReference        );
-    assert( !dl32TypeTraits<const int>::isReference  );
-    assert( !dl32TypeTraits<const int*>::isReference );
-    assert(  dl32TypeTraits<const int&>::isReference );
+    assert( !dl32IsReference<int>::value        );
+    assert( !dl32IsReference<const int>::value  );
+    assert( !dl32IsReference<const int*>::value );
+    assert(  dl32IsReference<const int&>::value );
     
     /* end */
 #if TESTING_WAIT_AT_END
