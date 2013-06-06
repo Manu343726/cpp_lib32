@@ -47,6 +47,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
 	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
 	${OBJECTDIR}/code/tests/refactoring/new_math_test.o \
+	${OBJECTDIR}/code/tests/refactoring/quicksort.o \
 	${OBJECTDIR}/code/tests/refactoring/typing_test.o
 
 
@@ -133,6 +134,11 @@ ${OBJECTDIR}/code/tests/refactoring/new_math_test.o: code/tests/refactoring/new_
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/new_math_test.o code/tests/refactoring/new_math_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/quicksort.o: code/tests/refactoring/quicksort.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/quicksort.o code/tests/refactoring/quicksort.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring

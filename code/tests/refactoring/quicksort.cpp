@@ -31,11 +31,15 @@
 
 #include "dl32MetaprogrammingLibrary.h"
 
+#include <iostream>
+using namespace std;
+
+/* quicksort sorts lists of unsigned ints */
 template<unsigned int... Ns>
 using uint_list = dl32TypeList<dl32UintWrapper<Ns>...>;
+using empty_uint_list = dl32EmptyTypeList;
 
-using empty_uint_list = dl32EmptyTypelist;
-
+/* set of unsigned int comparers */
 template<typename UINT1, typename UINT2>
 struct equal           : public dl32BoolWrapper< UINT1::value == UINT2::value > {};
 template<typename UINT1, typename UINT2>
@@ -49,85 +53,150 @@ struct bigger_or_equal : public dl32BoolWrapper< UINT1::value >= UINT2::value > 
 template<typename UINT1, typename UINT2>
 struct less_or_equal   : public dl32BoolWrapper< UINT1::value <= UINT2::value > {};
 
-template<unsigned int... Ns>
+
+/* Compile-time quicksort implementation */
+template<typename UINT_LIST>
 class quicksort
 {
 private:
+    //Forward declaration:
     template<unsigned int lenght , typename SUBLIST>
     struct _quicksort;
     
-    template<unsigned int... Ns>
-    struct _quicksort<0,uint_list<Ns...>>
+    //Base-case for empty sublists:
+    template<typename... Ns>
+    struct _quicksort<0,dl32TypeList<Ns...>>
     {
         using result = empty_uint_list;
     };
     
-    template<unsigned int... Ns>
-    struct _quicksort<1,uint_list<Ns...>>
+    //Base case for one element sublists:
+    template<typename UINT_WRAPPER>
+    struct _quicksort<1,dl32TypeList<UINT_WRAPPER>>
     {
-        using result = uint_list<Ns...>;
+        using result = dl32TypeList<UINT_WRAPPER>;
     };
     
-    template<unsigned int... Ns>
-    struct _quicksort<2,uint_list<Ns...>>
+    //Base-case for two elements sublists (Simple compare and swap):
+    template<typename FIRST , typename LAST >
+    struct _quicksort<2,dl32TypeList<FIRST,LAST>>
+    {
+        using result = typename dl32tmp_if< bigger_or_equal<FIRST,LAST>::value , //CONDITION
+                                            dl32TypeList<FIRST,LAST>,            //THEN
+                                            dl32TypeList<LAST,FIRST>             //ELSE
+                                          >::type;
+    };
+    
+    //Recursive case:
+    template<unsigned int lenght , typename... Ns>
+    struct _quicksort<lenght,dl32TypeList<Ns...>>
     {
     private:
-        static const unsigned int left  = uint_list<Ns...>::type_at<0>::value;
-        static const unsigned int right = uint_list<Ns...>::type_at<1>::value;
+        /* STEP 1: Reorder the sublist in two sublists: Left sublist, with elements greater than to pivot, and right, with the others */
         
-    public:
-        using result = dl32tmp_if< bigger_or_equal<left,right>::value , 
-                                   uint_list<left,right>,
-                                   uint_list<right,left>
-                                 >::type;
-    };
-    
-    template<unsigned int lenght , unsigned int... Ns>
-    struct _quicksort<lenght,uint_list<Ns...>>
-    {
-    private:
-        template<unsigned int PIVOT , typename RIGHT , typename LEFT , unsigned int... Ns>
+        //Forward declaration:
+        template<typename PIVOT , typename RIGHT /* initial (or actual) right sublist */ , typename LEFT /* initial (or actual) left sublist */ , typename _UINT_LIST /* the sublist */>
         struct _reorder_sublists;
         
-        template<unsigned int PIVOT , typename RIGHT , typename LEFT , unsigned int HEAD , unsigned int... TAIL>
-        struct _reorder_sublists
+        //Recursive case:
+        template<typename PIVOT , typename... RIGHT_UINTS , typename... LEFT_UINTS , typename HEAD , typename... TAIL>
+        struct _reorder_sublists<PIVOT,dl32TypeList<RIGHT_UINTS...>,dl32TypeList<LEFT_UINTS...>,dl32TypeList<HEAD,TAIL...>>
         {
-            using next_reorder = typename dl32tmp_if< bigger_or_equal<PIVOT,HEAD::value>::value ,
-                                                      _reorder_sublists<PIVOT,RIGHT::push_back<dl32UintWrapper<HEAD>>,LEFT,TAIL...>,
-                                                      _reorder_sublists<PIVOT,RIGHT,LEFT::push_front<dl32UintWrapper<HEAD>>,TAIL...>
-                                                    >::type;
+            using _next_left  = dl32TypeList<LEFT_UINTS...,HEAD>;  ///< Next left  sublist if HEAD is greather than PIVOT.
+            using _next_right = dl32TypeList<HEAD,RIGHT_UINTS...>; ///< Next right sublist if HEAD is less than PIVOT.
+            //                                                    CONDITION                  THEN                    ELSE
+            using next_left  = typename dl32tmp_if< !bigger_or_equal<PIVOT,HEAD>::value , _next_left  , dl32TypeList<LEFT_UINTS...>>::type;
+            using next_right = typename dl32tmp_if<  bigger_or_equal<PIVOT,HEAD>::value , _next_right , dl32TypeList<RIGHT_UINTS...>>::type;
             
-            using right = typename next_reorder::right;
-            using left  = typename next_reorder::left;
+            using next_reorder = _reorder_sublists<PIVOT,next_right,next_left,dl32TypeList<TAIL...>>; // "Recursive call" (Iteration)
+            
+            using right = typename next_reorder::right; //Recursive result return
+            using left  = typename next_reorder::left;  //Recursive result return
         };
         
-        template<unsigned int PIVOT , typename RIGHT , typename LEFT>
-        struct _reorder_sublists<PIVOT,RIGHT,LEFT>
+        //Base case (End of the iteration):
+        template<typename PIVOT , typename RIGHT , typename LEFT>
+        struct _reorder_sublists<PIVOT,RIGHT,LEFT,empty_uint_list>
         {
             using right = RIGHT;
             using left  = LEFT;
         };
         
-        template<unsigned int PIVOT>
-        using _right_sublist = typename _reorder_sublists<PIVOT,empty_uint_list,empty_uint_list,Ns...>::right;
-        template<unsigned int PIVOT>
-        using _left_sublist  = typename _reorder_sublists<PIVOT,empty_uint_list,empty_uint_list,Ns...>::left;
+        template<typename PIVOT>
+        using _right_sublist = typename _reorder_sublists<PIVOT,empty_uint_list,empty_uint_list,dl32TypeList<Ns...>>::right; //Right sublist computation
+        template<typename PIVOT>
+        using _left_sublist  = typename _reorder_sublists<PIVOT,empty_uint_list,empty_uint_list,dl32TypeList<Ns...>>::left;  //Left sublist computation
+
     private:
-        static const unsigned int _half_size   = sizeof...(Ns)/2;
-        static const unsigned int _pivot_index = _half_size;
-        static const unsigned int _pivot       = uint_list<Ns...>::type_at<_pivot_index>::value;
+        static const unsigned int _half_size   = lenght/2;
+        static const unsigned int _pivot_index = _half_size; //"Silly" pivot policy. Random-pivot instead? http://stackoverflow.com/questions/11498304/generate-random-numbers-in-c-at-compile-time
+        using _pivot = typename dl32TypeAt<_pivot_index,dl32TypeList<Ns...>>::type;
         
-        using _right = _right_sublist<_pivot>;
-        using _left  = _left_sublist<_pivot>;
+        using _right = _right_sublist<_pivot>; //"Call" to reordered right sublist computation
+        using _left  = _left_sublist<_pivot>;  //"Call" to reordered left sublist computation
         
-        using result = typename dl32Merge< typename _quicksort< _half_size , _left >::result , typename _quicksort< _half_size , _right > >::result;
+    public:
+        /* STEP 2: Recursive "call" to quicksort passing the two generated sublists */
+        
+        using result = typename dl32Merge< typename _quicksort< _left::size , _left >::result , typename _quicksort< _right::size , _right >::result >::result;
+    };
+
+public:
+    using result = typename _quicksort<UINT_LIST::size,UINT_LIST>::result; //"Call" to quicksort computation;
+};
+
+
+/* input/output printing tools */
+
+template<typename OUTPUT>
+struct print_output;
+
+template<>
+struct print_output<empty_uint_list>{ static void print() { cout << endl << endl; } };
+
+template<typename HEAD , typename... TAIL>
+struct print_output<dl32TypeList<HEAD,TAIL...>>
+{
+    static void print() 
+    { 
+        cout << HEAD::value << (sizeof...(TAIL) > 0 ? "," : ""); 
+        print_output<dl32TypeList<TAIL...>>::print(); 
+    }
+};
+
+
+/* unsigned int lists generator */
+
+template<unsigned int BEGIN , unsigned int END>
+class uint_list_generator
+{
+private:
+    template<unsigned int _CURRENT,unsigned int _END>
+    struct _generator
+    {
+        using result = typename dl32Merge<uint_list<_CURRENT>,typename _generator<(BEGIN <= END ? _CURRENT + 1 : _CURRENT - 1) , _END>::result>::result;
     };
     
+    template<unsigned int _END>
+    struct _generator<_END,_END>
+    {
+        using result = uint_list<_END>;
+    };
     
-    using _input_list = uint_list<Ns...>;
-    using _result = typename _quicksort<_input_list::size,_input_list>::result;
 public:
-    using result = _result;
+    using result  = typename _generator<BEGIN,END>::result;
 };
+
+using input = typename uint_list_generator<0,199>::result;
+using output = typename quicksort<input>::result;
+
+int main()
+{
+    print_output<input>::print();
+    print_output<output>::print();
+    
+    return 0;
+}
+
 #endif /* CURRENT_TEST */
 

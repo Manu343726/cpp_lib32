@@ -45,7 +45,7 @@ struct dl32TypeList;
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-using dl32EmptyTypelist = dl32TypeList<>;
+using dl32EmptyTypeList = dl32TypeList<>;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Implements a linear search of a type in a given typelist.
@@ -97,7 +97,7 @@ private:
     
     /* Base-case for typelist end (type U is not finded in TYPELIST) */
     template<typename U>
-    struct _index_of<U , dl32EmptyTypelist>
+    struct _index_of<U , dl32EmptyTypeList>
     {
         static const int value = -1;
     };
@@ -197,7 +197,7 @@ private:
     template<unsigned int _index , typename HEAD , typename... TAIL>
     struct _splitter<_index,dl32TypeList<HEAD,TAIL...>>
     {
-        using split = _split<_index,0,dl32EmptyTypelist,HEAD,TAIL...>;
+        using split = _split<_index,0,dl32EmptyTypeList,HEAD,TAIL...>;
         using right = typename split::right;
         using left  = typename split::left;
     };
