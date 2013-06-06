@@ -317,6 +317,7 @@ struct dl32ImplicitCast
 template<typename T , typename U>
 struct dl32HaveInheritance
 {
+    static_assert( dl32IsClass<T>::value && dl32IsClass<U>::value , "Template parameters T and U must be classes");
     
     static const bool result = dl32ImplicitCast<const U* , const T*>::result && !dl32SameType<const T* , const void*>::value && !dl32SameType<const T , const U>::value;
 };
