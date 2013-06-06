@@ -4,11 +4,13 @@
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
-          <logicalFolder name="tmp" displayName="tmp" projectFiles="true">
-            <itemPath>code/headers/utils/tmp/dl32MetaprogrammingLibrary.h</itemPath>
-            <itemPath>code/headers/utils/tmp/dl32TMPCore.h</itemPath>
-            <itemPath>code/headers/utils/tmp/dl32TypeList.h</itemPath>
-            <itemPath>code/headers/utils/tmp/dl32TypeTraits.h</itemPath>
+          <logicalFolder name="metaprogramming_library"
+                         displayName="metaprogramming_library"
+                         projectFiles="true">
+            <itemPath>code/headers/utils/metaprogramming_library/dl32MetaprogrammingLibrary.h</itemPath>
+            <itemPath>code/headers/utils/metaprogramming_library/dl32TMPCore.h</itemPath>
+            <itemPath>code/headers/utils/metaprogramming_library/dl32TypeList.h</itemPath>
+            <itemPath>code/headers/utils/metaprogramming_library/dl32TypeTraits.h</itemPath>
           </logicalFolder>
           <itemPath>code/headers/utils/dl32Assert.h</itemPath>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
@@ -91,7 +93,7 @@
             <pElem>code/source</pElem>
             <pElem>code/tests</pElem>
             <pElem>code/headers/utils</pElem>
-            <pElem>code/headers/utils/tmp</pElem>
+            <pElem>code/headers/utils/metaprogramming_library</pElem>
             <pElem>code/source/utils</pElem>
             <pElem>code/tests/ASCII_raster</pElem>
             <pElem>code/tests/ASCII_raster/ascii</pElem>
@@ -132,22 +134,22 @@
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32MetaprogrammingLibrary.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32MetaprogrammingLibrary.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TMPCore.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TMPCore.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TypeList.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TypeList.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TypeTraits.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TypeTraits.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -270,22 +272,22 @@
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32MetaprogrammingLibrary.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32MetaprogrammingLibrary.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TMPCore.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TMPCore.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TypeList.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TypeList.h"
             ex="false"
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/utils/tmp/dl32TypeTraits.h"
+      <item path="code/headers/utils/metaprogramming_library/dl32TypeTraits.h"
             ex="false"
             tool="3"
             flavor2="0">
