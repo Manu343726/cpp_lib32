@@ -46,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
 	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
+	${OBJECTDIR}/code/tests/refactoring/minimax.o \
 	${OBJECTDIR}/code/tests/refactoring/new_math_test.o \
 	${OBJECTDIR}/code/tests/refactoring/quicksort.o \
 	${OBJECTDIR}/code/tests/refactoring/typing_test.o
@@ -129,6 +130,11 @@ ${OBJECTDIR}/code/tests/refactoring/is_design_test.o: code/tests/refactoring/is_
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/is_design_test.o code/tests/refactoring/is_design_test.cpp
+
+${OBJECTDIR}/code/tests/refactoring/minimax.o: code/tests/refactoring/minimax.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/minimax.o code/tests/refactoring/minimax.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/new_math_test.o: code/tests/refactoring/new_math_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring

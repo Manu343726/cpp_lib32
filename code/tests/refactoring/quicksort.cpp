@@ -41,10 +41,6 @@ using empty_uint_list = dl32EmptyTypeList;
 
 /* set of unsigned int comparers */
 template<typename UINT1, typename UINT2>
-struct equal           : public dl32BoolWrapper< UINT1::value == UINT2::value > {};
-template<typename UINT1, typename UINT2>
-struct not_equal       : public dl32BoolWrapper< UINT1::value != UINT2::value > {};
-template<typename UINT1, typename UINT2>
 struct bigger_than     : public dl32BoolWrapper< (UINT1::value > UINT2::value) > {};
 template<typename UINT1, typename UINT2>
 struct less_than       : public dl32BoolWrapper< (UINT1::value < UINT2::value) > {};
@@ -54,8 +50,34 @@ template<typename UINT1, typename UINT2>
 struct less_or_equal   : public dl32BoolWrapper< UINT1::value <= UINT2::value > {};
 
 
+/* Comparer wrappers for generic quicksort implementation */
+struct bigger_than_comparer
+{
+    template<typename UINT1 , typename UINT2>
+    using comparer = bigger_than<UINT1,UINT2>;
+};
+
+struct less_than_comparer
+{
+    template<typename UINT1 , typename UINT2>
+    using comparer = less_than<UINT1,UINT2>;
+};
+
+struct bigger_or_equal_comparer
+{
+    template<typename UINT1 , typename UINT2>
+    using comparer = bigger_or_equal<UINT1,UINT2>;
+};
+
+struct less_or_equal_comparer
+{
+    template<typename UINT1 , typename UINT2>
+    using comparer = less_or_equal<UINT1,UINT2>;
+};
+
+
 /* Compile-time quicksort implementation */
-template<typename UINT_LIST>
+template<typename UINT_LIST , template <typename UINT1, typename UINT2> class COMPARER = bigger_than_comparer>
 class quicksort
 {
 private:
@@ -81,9 +103,9 @@ private:
     template<typename FIRST , typename LAST >
     struct _quicksort<2,dl32TypeList<FIRST,LAST>>
     {
-        using result = typename dl32tmp_if< bigger_or_equal<FIRST,LAST>::value , //CONDITION
-                                            dl32TypeList<FIRST,LAST>,            //THEN
-                                            dl32TypeList<LAST,FIRST>             //ELSE
+        using result = typename dl32tmp_if< COMPARER<FIRST,LAST>::value , //CONDITION
+                                            dl32TypeList<FIRST,LAST>,               //THEN
+                                            dl32TypeList<LAST,FIRST>                //ELSE
                                           >::type;
     };
     
@@ -92,10 +114,10 @@ private:
     struct _quicksort<lenght,dl32TypeList<Ns...>>
     {
     private:
-        /* STEP 1: Reorder the sublist in two sublists: Left sublist, with elements greater than to pivot, and right, with the others */
+        /* STEP 1: Reorder the sublist in two sublists: Left sublist, with elements greater than pivot, and right, with the others */
         
         //Forward declaration:
-        template<typename PIVOT , typename RIGHT /* initial (or actual) right sublist */ , typename LEFT /* initial (or actual) left sublist */ , typename _UINT_LIST /* the sublist */>
+        template<typename PIVOT , typename RIGHT /* initial (or actual) right sublist */ , typename LEFT /* initial (or actual) left sublist */ , typename _UINT_LIST /* original sublist */>
         struct _reorder_sublists;
         
         //Recursive case:
@@ -105,8 +127,8 @@ private:
             using _next_left  = dl32TypeList<LEFT_UINTS...,HEAD>;  ///< Next left  sublist if HEAD is greather than PIVOT.
             using _next_right = dl32TypeList<HEAD,RIGHT_UINTS...>; ///< Next right sublist if HEAD is less than PIVOT.
             //                                                    CONDITION                  THEN                    ELSE
-            using next_left  = typename dl32tmp_if< !bigger_or_equal<PIVOT,HEAD>::value , _next_left  , dl32TypeList<LEFT_UINTS...>>::type;
-            using next_right = typename dl32tmp_if<  bigger_or_equal<PIVOT,HEAD>::value , _next_right , dl32TypeList<RIGHT_UINTS...>>::type;
+            using next_left  = typename dl32tmp_if< !COMPARER<PIVOT,HEAD>::value , _next_left  , dl32TypeList<LEFT_UINTS...>>::type;
+            using next_right = typename dl32tmp_if<  COMPARER<PIVOT,HEAD>::value , _next_right , dl32TypeList<RIGHT_UINTS...>>::type;
             
             using next_reorder = _reorder_sublists<PIVOT,next_right,next_left,dl32TypeList<TAIL...>>; // "Recursive call" (Iteration)
             
@@ -187,7 +209,7 @@ public:
     using result  = typename _generator<BEGIN,END>::result;
 };
 
-using input = typename uint_list_generator<0,199>::result;
+using input = typename uint_list_generator<0,499>::result;
 using output = typename quicksort<input>::result;
 
 int main()

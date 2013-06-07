@@ -248,15 +248,81 @@ public:
 template<unsigned int index  , typename TYPELIST , typename... Ts>
 class dl32Insert
 {
+    static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
 private:
-    using _split = dl32Split<index,TYPELIST>;
-    using _right = typename _split::right;
-    using _left  = typename _split::left;
-    using _new_left   = typename dl32Merge<_left , dl32TypeList<Ts...>>::result;
-    using _final_list = typename dl32Merge<_new_left , _right>::result;
+    template<unsigned int destiny , unsigned int current_index , typename _TYPELIST , typename... LEFT_TYPES>
+    struct _insert;
+    
+    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _insert<destiny , current_index , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = typename _insert<destiny , current_index+1 , dl32TypeList<TAIL...> , LEFT_TYPES... , HEAD>::result;
+    };
+    
+    template<unsigned int destiny , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _insert<destiny , destiny , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = dl32TypeList<LEFT_TYPES...,Ts...,HEAD,TAIL...>;
+    };
     
 public:
-    using result = _final_list; ///< The new typelist as the initial typelist with Ts inserted begining at index.
+    using result = typename _insert<index,0,TYPELIST,dl32EmptyTypeList>::result; ///< The new typelist as the initial typelist with Ts inserted begining at index.
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Removes the type contained in a specified position of a typelist.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<unsigned int index  , typename TYPELIST>
+class dl32Remove
+{
+    static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
+private:
+    template<unsigned int destiny , unsigned int current_index , typename _TYPELIST , typename... LEFT_TYPES>
+    struct _remove;
+    
+    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _remove<destiny , current_index , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = typename _remove<destiny , current_index+1 , dl32TypeList<TAIL...> , LEFT_TYPES... , HEAD>::result;
+    };
+    
+    template<unsigned int destiny , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _remove<destiny , destiny , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = dl32TypeList<LEFT_TYPES...,TAIL...>;
+    };
+public:
+    using result = typename _remove<index,0,TYPELIST,dl32EmptyTypeList>::result; ///< The new typelist as the initial typelist with the type at index erased.
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Replaces the type contained in a specified position of a typelist with an specified type.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<unsigned int index  , typename TYPELIST , typename T>
+class dl32Replace
+{
+    static_assert( index >= 0 && index < TYPELIST::size , "Parameter 'index' is out of bounds" );
+private:
+    template<unsigned int destiny , unsigned int current_index , typename _TYPELIST , typename... LEFT_TYPES>
+    struct _set;
+    
+    template<unsigned int destiny , unsigned int current_index , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _set<destiny , current_index , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = typename _set<destiny , current_index+1 , dl32TypeList<TAIL...> , LEFT_TYPES... , HEAD>::result;
+    };
+    
+    template<unsigned int destiny , typename HEAD , typename... TAIL , typename... LEFT_TYPES>
+    struct _set<destiny , destiny , dl32TypeList<HEAD,TAIL...> , LEFT_TYPES...>
+    {
+        using result = dl32TypeList<LEFT_TYPES...,T,TAIL...>; //Replaces HEAD with T.
+    };
+public:
+    using result = typename _set<index,0,TYPELIST,dl32EmptyTypeList>::result; ///< The new typelist as the initial typelist with the type at index erased.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
