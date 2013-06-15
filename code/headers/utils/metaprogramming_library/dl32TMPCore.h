@@ -66,10 +66,31 @@ struct dl32ValueWrapper
 
 template<bool VALUE>
 using dl32BoolWrapper = dl32ValueWrapper<bool,VALUE>; ///< Compile-time boolean expression wrapper.
+using dl32TrueWrapper = dl32BoolWrapper<true>; ///< Compile time true boolean value wrapper.
+using dl32FalseWrapper = dl32BoolWrapper<false>; ///< Compile-time false boolean wrapper.
 
 template<unsigned int VALUE>
 using dl32UintWrapper = dl32ValueWrapper<unsigned int , VALUE>; ///< Compile-time unsigned int value wrapper.
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Checks if a type is a compile-time integral value wrapper.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename U>
+struct dl32IsValueWrapper : public dl32FalseWrapper {};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Checks if a type is a compile-time integral value wrapper.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename U , U _wrapped_value>
+struct dl32IsValueWrapper<dl32ValueWrapper<U,_wrapped_value>> : public dl32TrueWrapper
+{
+    static const U wrapped_value = _wrapped_value; ///< Wrapped value.
+    using type = U; ///< Type of the wrapped value.
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type selection.

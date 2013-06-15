@@ -5,10 +5,30 @@
  * Created on 25 de mayo de 2013, 13:14
  */
 
+/*******************************************************************************
+* cpp_lib32 project. C++ port of the dx_lib32 project.                         *
+*                                                                              *
+* Copyright (C) 2012 - 2013, Manuel Sánchez Pérez                              *                     
+*                                                                              *
+* This file is part of cpp_lib32 project.                                      *
+*                                                                              *
+* cpp_lib32 project is free software: you can redistribute it and/or modify    *
+* it under the terms of the GNU Lesser General Public License as published by  *
+* the Free Software Foundation, version 2 of the License.                      *
+*                                                                              *
+* cpp_lib32 is distributed in the hope that it will be useful,                 *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
+* GNU Lesser General Public License for more details.                          *
+*                                                                              *
+ You should have received a copy of the GNU Lesser General Public License      *
+ along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
+*******************************************************************************/
+
 #ifndef DL32OPERATOROVERLOADINGHELPERS_H
 #define	DL32OPERATOROVERLOADINGHELPERS_H
 
-#include "dl32Typing.h"
+#include "dl32MetaprogrammingLibrary.h"
 
 /****************************************************************************
  * This header provides a set of operator overloading helpers based on CRTP *

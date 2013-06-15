@@ -5,11 +5,34 @@
  * Created on 25 de mayo de 2013, 17:04
  */
 
+/*******************************************************************************
+* cpp_lib32 project. C++ port of the dx_lib32 project.                         *
+*                                                                              *
+* Copyright (C) 2012 - 2013, Manuel Sánchez Pérez                              *                     
+*                                                                              *
+* This file is part of cpp_lib32 project.                                      *
+*                                                                              *
+* cpp_lib32 project is free software: you can redistribute it and/or modify    *
+* it under the terms of the GNU Lesser General Public License as published by  *
+* the Free Software Foundation, version 2 of the License.                      *
+*                                                                              *
+* cpp_lib32 is distributed in the hope that it will be useful,                 *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of               * 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                *
+* GNU Lesser General Public License for more details.                          *
+*                                                                              *
+ You should have received a copy of the GNU Lesser General Public License      *
+ along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
+*******************************************************************************/
+
 #ifndef DL32NEWMATH_H
 #define	DL32NEWMATH_H
 
+#include "utils/metaprogramming_library/dl32TypeTraits.h"
+
+
 #include "dl32OperatorOverloadingHelpers.h"
-#include "dl32Typing.h"
+#include "dl32MetaprogrammingLibrary.h"
 
 #include <cmath>
 #include <limits>
@@ -128,7 +151,7 @@ public:
         T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x. Second element with y.
     };
     
-    static_assert( dl32TypeTraits<T>::isIntegral || dl32TypeTraits<T>::isFloatingPoint , "2d vectors must have integral or floating-point types as coordinates");
+    static_assert( dl32IsFloatingPointType<T>::value || dl32IsIntegralType<T>::value , "2d vectors must have integral or floating-point types as coordinates");
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Default constructor. Set all coordinates to zero.
@@ -159,10 +182,10 @@ public:
     /// @author	Manu343726
     ///
     /// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
-    ///          working with class template parameter T. Please don't use it.
+    ///          work with class template parameter T. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename T_DUMMY_SFINAE_BRIDGE = T>
-    static typename dl32EnableIf<dl32TypeTraits<T_DUMMY_SFINAE_BRIDGE>::isFloatingPoint , bool>::type 
+    static typename dl32EnableIf<dl32IsFloatingPointType<T_DUMMY_SFINAE_BRIDGE>::value , bool>::type 
     equal(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
     { 
         return dl32FloatingPointHelper<T>::are_equal( m1.x , m2.x ) && 
@@ -181,10 +204,10 @@ public:
     /// @author	Manu343726
     ///
     /// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
-    ///          working with class template parameter T. Please don't use it.
+    ///          work with class template parameter T. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename T_DUMMY_SFINAE_BRIDGE = T>
-    static typename dl32EnableIf<dl32TypeTraits<T_DUMMY_SFINAE_BRIDGE>::isIntegral , bool>::type 
+    static typename dl32EnableIf<dl32IsIntegralType<T_DUMMY_SFINAE_BRIDGE>::value , bool>::type 
     equal(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
     { 
         return m1.x == m2.x && m1.y == m2.y; 
@@ -225,7 +248,7 @@ public:
     /// @author	Manu343726
     ///
     /// @remarks Template parameter BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
-    ///          working with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
+    ///          work with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
     typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , IMPLEMENTER&>::type 
@@ -245,10 +268,10 @@ public:
     /// @author	Manu343726
     ///
     /// @remarks Template parameter BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
-    ///          working with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
+    ///          work with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
-    typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , my_type&>::type 
+    typename dl32EnableIf<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , IMPLEMENTER&>::type 
     divide(const coord_type& n)
     {
         this->x /= n;
@@ -289,7 +312,8 @@ private:
     ///< Set of vector 2d implementations.
     using _vector_2d_implementations = dl32TypeList<_vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY> , 
                                                     _vector_2d_implementation_direct3d<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY> , 
-                                                    _vector_2d_implementation_opengl  <IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>>;
+                                                    _vector_2d_implementation_opengl  <IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>
+                                                   >;
     
 public:
     using current_implementation = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; ///< Gets the current vector 2d implementation.
@@ -306,7 +330,7 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
                      public dl32EqualityHelper<dl32Point2D<T>>,    //Binary operator !=, based on ==.
                      public dl32BasicAlgebraHelper<dl32Point2D<T>> //Binary operators + and -, based on += and -=.
 {
-    using my_implementation = typename dl32Vector2dImplementationsManager<dl32Point2D<T>,T,true>::current_implementation; ///< Alias to the implementer type.
+    using my_implementation = typename dl32Vector2dImplementationsManager<dl32Point2D<T>,T,true>::current_implementation; ///< Alias to the implementation type.
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Default constructor. Initialices coordinates x and y to zero.
@@ -440,8 +464,8 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     }
 };
 
-using dl32Vector2Df = dl32Vector2D<float>; ///< Alias for single-precision 2d points.
-using dl32Vector2Dd = dl32Vector2D<double>; ///< Alias for double-precision 2d points.
+using dl32Vector2Df = dl32Vector2D<float>; ///< Alias for single-precision 2d vectors.
+using dl32Vector2Dd = dl32Vector2D<double>; ///< Alias for double-precision 2d vectors.
 
 #endif	/* DL32NEWMATH_H */
 

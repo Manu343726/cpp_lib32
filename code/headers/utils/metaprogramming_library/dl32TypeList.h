@@ -29,6 +29,9 @@
 #define	DL32TYPELIST_H
 
 #include "dl32TMPCore.h"
+#include "dl32Demangling.h"
+#include <sstream>
+#include <string>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief cpp_lib32 type list.
@@ -121,7 +124,7 @@ private:
     };
     
 public:
-    using value = dl32UintWrapper<_index_of<T,TYPELIST>::value>; ///< The index of the type T in the typelist TYPELIST.
+    static const int value = _index_of<T,TYPELIST>::value; ///< The index of the type T in the typelist TYPELIST.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +135,7 @@ public:
 template<typename T , typename TYPELIST>
 struct dl32Contains
 {
-    static const bool value = dl32IndexOf<T,TYPELIST>::value::value >= 0;
+    static const bool value = dl32IndexOf<T,TYPELIST>::value >= 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -266,7 +269,7 @@ private:
     };
     
 public:
-    using result = typename _insert<index,0,TYPELIST,dl32EmptyTypeList>::result; ///< The new typelist as the initial typelist with Ts inserted begining at index.
+    using result = typename _insert<index,0,TYPELIST>::result; ///< The new typelist as the initial typelist with Ts inserted begining at index.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +297,7 @@ private:
         using result = dl32TypeList<LEFT_TYPES...,TAIL...>;
     };
 public:
-    using result = typename _remove<index,0,TYPELIST,dl32EmptyTypeList>::result; ///< The new typelist as the initial typelist with the type at index erased.
+    using result = typename _remove<index,0,TYPELIST>::result; ///< The new typelist as the initial typelist with the type at index erased.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,6 +341,8 @@ struct dl32TypeList<HEAD,TAIL...>
 {
 private:
     using this_list = dl32TypeList<HEAD,TAIL...>;
+    
+    using _head_is_value_wrapper = dl32IsValueWrapper<HEAD>;
 public:
     static const unsigned int size = sizeof...(TAIL) + 1; ///< Size of the typelist (Number of types stored in).
     
@@ -347,7 +352,7 @@ public:
     using front = HEAD; ///< Gets the first type stored at the typelist.
     
     template<typename T>
-    using index_of = typename dl32IndexOf<T,this_list>::value; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
+    using index_of = dl32ValueWrapper<int,dl32IndexOf<T,this_list>::value>; ///< Gets the position of a given type in the list. If the type is not in the list, dl32NoType will be returned.
     
     template<typename T>
     using contains = dl32Contains<T,this_list>; ///< Checks if the typelist contains a specified type.
@@ -373,6 +378,37 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     struct public_inheritance_from_types : public HEAD , public TAIL... {};
+    
+    
+    static void _to_string(std::stringstream& ss)
+    {
+        if( _head_is_value_wrapper::value )
+        {
+            typename _head_is_value_wrapper::type wrapped_value = _head_is_value_wrapper::wrapped_value;
+            
+            ss << wrapped_value << ( (sizeof...(TAIL) > 0) ? "," : "" );
+        }
+        else
+            ss << type_to_string<HEAD>() << ( (sizeof...(TAIL) > 0) ? "," : "" );
+        
+        dl32TypeList<TAIL...>::_to_string( ss );
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Retrieves a string representation of this typelist.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static std::string to_string()
+    {
+        std::stringstream ss;
+        
+        ss << '{';
+        _to_string(ss);
+        ss << '}';
+        
+        return ss.str();
+    }
 };
     
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +442,18 @@ struct dl32TypeList<>
 
     template <typename TYPELIST>
     using merge = TYPELIST; ///< Creates a new typelist with this typelist elements followed by the provided typelist elements. 
+
+    static void _to_string(std::stringstream& ss){}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Retrieves a string representation of this typelist.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static std::string to_string()
+    {
+        return "{}";
+    }
 };
 
 #endif	/* DL32TYPELIST_H */

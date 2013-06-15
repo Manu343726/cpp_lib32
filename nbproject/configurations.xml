@@ -15,6 +15,7 @@
           <itemPath>code/headers/utils/dl32Assert.h</itemPath>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
           <itemPath>code/headers/utils/dl32ConsoleColor.h</itemPath>
+          <itemPath>code/headers/utils/dl32Demangling.h</itemPath>
           <itemPath>code/headers/utils/dl32Memory.h</itemPath>
           <itemPath>code/headers/utils/dl32OperatorOverloadingHelpers.h</itemPath>
           <itemPath>code/headers/utils/dl32Singleton.h</itemPath>
@@ -32,6 +33,7 @@
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>code/source/utils/dl32Config.cpp</itemPath>
           <itemPath>code/source/utils/dl32ConsoleColor.cpp</itemPath>
+          <itemPath>code/source/utils/dl32Demangling.cpp</itemPath>
           <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
           <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
         </logicalFolder>
@@ -127,6 +129,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="code/headers/utils/dl32Demangling.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32OperatorOverloadingHelpers.h"
@@ -172,6 +179,11 @@
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32ConsoleColor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Demangling.cpp"
             ex="false"
             tool="1"
             flavor2="0">
@@ -277,6 +289,11 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="code/headers/utils/dl32Demangling.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="code/headers/utils/dl32Memory.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32OperatorOverloadingHelpers.h"
@@ -322,6 +339,11 @@
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/utils/dl32ConsoleColor.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/source/utils/dl32Demangling.cpp"
             ex="false"
             tool="1"
             flavor2="0">

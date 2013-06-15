@@ -94,7 +94,7 @@ public:
 template<typename T>
 class dl32WithoutConst
 {
-private:
+private:    
     template<typename _T>
     struct _without_const
     {

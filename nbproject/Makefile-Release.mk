@@ -40,6 +40,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Window.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o \
+	${OBJECTDIR}/code/source/utils/dl32Demangling.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
@@ -100,6 +101,11 @@ ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32Console
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
+
+${OBJECTDIR}/code/source/utils/dl32Demangling.o: code/source/utils/dl32Demangling.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/utils
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Demangling.o code/source/utils/dl32Demangling.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils

@@ -19,6 +19,7 @@
 *******************************************************************************/
 
 #include "dl32TestConfig.h"
+#include "dl32TypeTraits.h"
 
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_TYPINGTEST
 
@@ -124,15 +125,18 @@ int main()
     
     /* typelist insert test */
     
-    assert( (dl32SameTypeList<dl32TypeList<bool,int,char> , dl32TypeList<bool,char>::insert<0,int>>::result) );
+    assert( (dl32SameTypeList<dl32TypeList<bool,int,char> , dl32TypeList<bool,char>::insert<1,int>>::result) );
+    cout << "insert test. typelist A: " << dl32TypeList<bool,int,char>::to_string() << endl;
+    cout << "insert test. typelist B: " << dl32TypeList<bool,char>::to_string() << endl;
+    cout << "insert test. Result of insert: " << dl32TypeList<bool,char>::insert<1,int>::to_string() << endl;
     
     /* Type traits checking test */
     
     //HasConst tests:
-    assert( !dl32WithoutConst<int>::has_const        );
-    assert(  dl32WithoutConst<const int>::has_const  );
-    assert(  dl32WithoutConst<const int*>::has_const );
-    assert(  dl32WithoutConst<const int&>::has_const );
+    assert( !dl32WithoutConst<int>::has_const        ); 
+    assert(  dl32WithoutConst<const int>::has_const  ); cout << type_to_string<const int>() << " ==> " << type_to_string<dl32WithoutConst<const int>::result>() << endl;
+    assert(  dl32WithoutConst<int* const>::has_const ); cout << type_to_string<int* const>() << " ==> " << type_to_string<dl32WithoutConst<int* const>::result>() << endl;
+    assert(  dl32WithoutConst<const int&>::has_const ); cout << type_to_string<const int&>() << " ==> " << type_to_string<dl32WithoutConst<const int&>::result>() << endl;
     
     //IsPointer tests:
     assert( !dl32IsPointer<int>::value        );
@@ -145,6 +149,28 @@ int main()
     assert( !dl32IsReference<const int>::value  );
     assert( !dl32IsReference<const int*>::value );
     assert(  dl32IsReference<const int&>::value );
+    
+    //IsIntegral tests:
+    assert( dl32IsIntegralType<unsigned char>::value );
+    assert( dl32IsIntegralType<char>::value );
+    assert( dl32IsIntegralType<unsigned int>::value );
+    assert( dl32IsIntegralType<int>::value );
+    assert( dl32IsIntegralType<unsigned long int>::value );
+    assert( dl32IsIntegralType<long int>::value );
+    assert( !dl32IsIntegralType<bool>::value );
+    assert( !dl32IsIntegralType<float>::value );
+    assert( !dl32IsIntegralType<double>::value );
+    
+    //IsFloatingPoint tests:
+    assert( !dl32IsFloatingPointType<unsigned char>::value );
+    assert( !dl32IsFloatingPointType<char>::value );
+    assert( !dl32IsFloatingPointType<unsigned int>::value );
+    assert( !dl32IsFloatingPointType<int>::value );
+    assert( !dl32IsFloatingPointType<unsigned long int>::value );
+    assert( !dl32IsFloatingPointType<long int>::value );
+    assert( !dl32IsFloatingPointType<bool>::value ); cout << dl32IntegralTypes::to_string() << " (index of: " << dl32IntegralTypes::index_of<bool>::value << ")" << endl;
+    assert( dl32IsFloatingPointType<float>::value );
+    assert( dl32IsFloatingPointType<double>::value );
     
     /* end */
 #if TESTING_WAIT_AT_END

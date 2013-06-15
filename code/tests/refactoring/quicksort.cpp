@@ -146,25 +146,6 @@ public:
 };
 
 
-/* input/output printing tools */
-
-template<typename OUTPUT>
-struct print_output;
-
-template<>
-struct print_output<empty_uint_list>{ static void print() { cout << endl << endl; } };
-
-template<typename HEAD , typename... TAIL>
-struct print_output<dl32TypeList<HEAD,TAIL...>>
-{
-    static void print() 
-    { 
-        cout << HEAD::value << (sizeof...(TAIL) > 0 ? "," : ""); 
-        print_output<dl32TypeList<TAIL...>>::print(); 
-    }
-};
-
-
 /* unsigned int lists generator */
 
 template<unsigned int BEGIN , unsigned int END>
@@ -192,8 +173,8 @@ using output = typename quicksort<input>::result;
 
 int main()
 {
-    print_output<input>::print();
-    print_output<output>::print();
+    cout << input::to_string() << endl;
+    cout << output::to_string() << endl;
     
     return 0;
 }
