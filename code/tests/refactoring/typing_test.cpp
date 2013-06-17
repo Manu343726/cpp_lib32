@@ -172,6 +172,15 @@ int main()
     assert( dl32IsFloatingPointType<float>::value );
     assert( dl32IsFloatingPointType<double>::value );
     
+    
+    /* Compile-time "hashmap" tests */
+    
+    //For example: A map that associates integral types with its unsigned types.
+    using map = dl32KeyValueMap<dl32KeyValuePair<int , unsigned int> , dl32KeyValuePair<char , unsigned char>>;
+    
+    cout << type_to_string<int>()  << " ---> " << type_to_string< map::get_value<int> >()  << endl;
+    cout << type_to_string<char>() << " ---> " << type_to_string< map::get_value<char> >() << endl;
+    
     /* end */
 #if TESTING_WAIT_AT_END
     cin.sync();

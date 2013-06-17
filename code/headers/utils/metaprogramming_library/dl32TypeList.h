@@ -364,7 +364,13 @@ public:
     using push_front = dl32TypeList<Ts...,HEAD,TAIL...>; ///< Pushes front a new type to the typelist (Returns new typelist).
     
     template<unsigned int index , typename... Ts>
-    using insert = typename dl32Insert<index , this_list , Ts...>::result;
+    using insert = typename dl32Insert<index , this_list , Ts...>::result; ///< Inserts a set of types at the specified position.
+    
+    template<unsigned int index>
+    using remove = typename dl32Remove<index,this_list>::result; ///< Removes the type at the specified index.
+    
+    template<unsigned int index , typename T>
+    using replace = typename dl32Replace<index , this_list , T>::result; ///< Replace the type at the specified position with a given type.
     
     using pop_front = dl32TypeList<TAIL...>; ///< Pops the begining type of the typelist (Returns new typelist).
     
@@ -382,13 +388,6 @@ public:
     
     static void _to_string(std::stringstream& ss)
     {
-        if( _head_is_value_wrapper::value )
-        {
-            typename _head_is_value_wrapper::type wrapped_value = _head_is_value_wrapper::wrapped_value;
-            
-            ss << wrapped_value << ( (sizeof...(TAIL) > 0) ? "," : "" );
-        }
-        else
             ss << type_to_string<HEAD>() << ( (sizeof...(TAIL) > 0) ? "," : "" );
         
         dl32TypeList<TAIL...>::_to_string( ss );

@@ -173,8 +173,8 @@ using output = typename quicksort<input>::result;
 
 int main()
 {
-    cout << input::to_string() << endl;
-    cout << output::to_string() << endl;
+    cout << input::to_string() << endl << endl;
+    cout << output::to_string() << endl << endl;
     
     return 0;
 }

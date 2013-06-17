@@ -31,6 +31,7 @@
 #include "dl32TMPCore.h"
 #include "dl32TypeList.h"
 #include "dl32TypeTraits.h"
+#include "dl32KeyValueMap.h"
 
 #endif	/* DL32MTP_LIBRARY_H */
 
