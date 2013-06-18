@@ -322,5 +322,12 @@ struct dl32HaveInheritance
     static const bool result = dl32ImplicitCast<const U* , const T*>::result && !dl32SameType<const T* , const void*>::value && !dl32SameType<const T , const U>::value;
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Generates an array of the specified type with a specified lenght.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T , unsigned int lenght>
+struct dl32MakeArray : public dl32TypeWrapper<T[lenght]> {};
 #endif	/* DL32TYPETRAITS_H */
 

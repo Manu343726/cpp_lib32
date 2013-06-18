@@ -50,6 +50,9 @@ struct dl32TypeList;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 using dl32EmptyTypeList = dl32TypeList<>;
 
+template<unsigned int... Ns>
+using dl32UintList = dl32TypeList<dl32UintWrapper<Ns>...>; ///< An alias for an unsigned int list.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Implements a linear search of a type in a given typelist.
 ///
@@ -388,6 +391,7 @@ public:
     
     static void _to_string(std::stringstream& ss)
     {
+        
             ss << type_to_string<HEAD>() << ( (sizeof...(TAIL) > 0) ? "," : "" );
         
         dl32TypeList<TAIL...>::_to_string( ss );

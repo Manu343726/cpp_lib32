@@ -181,6 +181,15 @@ int main()
     cout << type_to_string<int>()  << " ---> " << type_to_string< map::get_value<int> >()  << endl;
     cout << type_to_string<char>() << " ---> " << type_to_string< map::get_value<char> >() << endl;
     
+    /* n-dimensional static array test */
+    dl32Array<int,1,2,3> my_array;
+    
+    my_array[0][1][2] = 1234;
+    
+    cout << my_array[0][1][2] << endl;
+    cout << type_to_string<dl32Array<int,1,2,3>::array_type>() << endl;
+    cout << dl32Array<int,1,2,3>::lenghts::to_string() << endl;
+    
     /* end */
 #if TESTING_WAIT_AT_END
     cin.sync();

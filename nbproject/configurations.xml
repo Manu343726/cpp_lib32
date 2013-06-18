@@ -7,6 +7,7 @@
           <logicalFolder name="metaprogramming_library"
                          displayName="metaprogramming_library"
                          projectFiles="true">
+            <itemPath>code/headers/utils/metaprogramming_library/dl32Array.h</itemPath>
             <itemPath>code/headers/utils/metaprogramming_library/dl32KeyValueMap.h</itemPath>
             <itemPath>code/headers/utils/metaprogramming_library/dl32MetaprogrammingLibrary.h</itemPath>
             <itemPath>code/headers/utils/metaprogramming_library/dl32TMPCore.h</itemPath>
@@ -150,6 +151,11 @@
             flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/metaprogramming_library/dl32Array.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/utils/metaprogramming_library/dl32KeyValueMap.h"
             ex="false"
@@ -315,6 +321,11 @@
             flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Timing.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/utils/metaprogramming_library/dl32Array.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/utils/metaprogramming_library/dl32KeyValueMap.h"
             ex="false"
