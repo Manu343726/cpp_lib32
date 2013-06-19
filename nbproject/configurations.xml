@@ -3,6 +3,11 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
+        <logicalFolder name="math" displayName="math" projectFiles="true">
+          <itemPath>code/headers/math/dl32FloatingPointHelper.h</itemPath>
+          <itemPath>code/headers/math/dl32Matrix.h</itemPath>
+          <itemPath>code/headers/dl32NewMath.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <logicalFolder name="metaprogramming_library"
                          displayName="metaprogramming_library"
@@ -28,7 +33,6 @@
         <itemPath>code/headers/dl32Events.h</itemPath>
         <itemPath>code/headers/dl32Exceptions.h</itemPath>
         <itemPath>code/headers/dl32Math.h</itemPath>
-        <itemPath>code/headers/dl32NewMath.h</itemPath>
         <itemPath>code/headers/dl32Window.h</itemPath>
       </logicalFolder>
       <logicalFolder name="source" displayName="source" projectFiles="true">
@@ -106,6 +110,7 @@
             <pElem>code/tests/ASCII_raster/ascii</pElem>
             <pElem>code/tests/ASCII_raster/graphics</pElem>
             <pElem>code/tests/refactoring</pElem>
+            <pElem>code/headers/math</pElem>
           </incDir>
           <commandLine>-ftemplate-depth=10000</commandLine>
         </ccTool>
@@ -121,6 +126,13 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/math/dl32FloatingPointHelper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/math/dl32Matrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -291,6 +303,13 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/math/dl32FloatingPointHelper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/math/dl32Matrix.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>

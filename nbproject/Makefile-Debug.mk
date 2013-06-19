@@ -80,82 +80,82 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe: ${OBJECTFILES}
 ${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Color.o code/source/dl32Color.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Color.o code/source/dl32Color.cpp
 
 ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
 
 ${OBJECTDIR}/code/source/dl32Window.o: code/source/dl32Window.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Window.o code/source/dl32Window.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Window.o code/source/dl32Window.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32ConsoleColor.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Demangling.o: code/source/utils/dl32Demangling.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Demangling.o code/source/utils/dl32Demangling.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Demangling.o code/source/utils/dl32Demangling.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Memory.o code/source/utils/dl32Memory.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Memory.o code/source/utils/dl32Memory.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Timing.o: code/source/utils/dl32Timing.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Timing.o code/source/utils/dl32Timing.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Timing.o code/source/utils/dl32Timing.cpp
 
 ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o: code/tests/ASCII_raster/ASCII_raster_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/ASCII_raster
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o code/tests/ASCII_raster/ASCII_raster_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o code/tests/ASCII_raster/ASCII_raster_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o: code/tests/refactoring/Redesigned_event_system_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o code/tests/refactoring/Redesigned_event_system_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o code/tests/refactoring/Redesigned_event_system_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring/console_color_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/is_design_test.o: code/tests/refactoring/is_design_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/is_design_test.o code/tests/refactoring/is_design_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/is_design_test.o code/tests/refactoring/is_design_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/minimax.o: code/tests/refactoring/minimax.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/minimax.o code/tests/refactoring/minimax.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/minimax.o code/tests/refactoring/minimax.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/new_math_test.o: code/tests/refactoring/new_math_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/new_math_test.o code/tests/refactoring/new_math_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/new_math_test.o code/tests/refactoring/new_math_test.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/quicksort.o: code/tests/refactoring/quicksort.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/quicksort.o code/tests/refactoring/quicksort.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/quicksort.o code/tests/refactoring/quicksort.cpp
 
 ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/typing_test.o code/tests/refactoring/typing_test.cpp
+	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/typing_test.o code/tests/refactoring/typing_test.cpp
 
 # Subprojects
 .build-subprojects:
