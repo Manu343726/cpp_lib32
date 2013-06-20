@@ -68,6 +68,7 @@ public:
     static const unsigned int dimensions_count = 1; ///< The number of dimensions of the array.
     using array_type = typename dl32MakeArray<_access_return_type,PRIMARY_DIMENSION_LENGHT>::type; ///< Defines the type of the underlying array.
     using value_type = T; ///< Type of array values.
+    using element_type = _access_return_type; ///< Type of array elements;
  
 protected:
     array_type _array;
@@ -121,6 +122,7 @@ public:
     using lenghts    = dl32TypeList<dl32UintWrapper<PRIMARY_DIMENSION_LENGHT>,dl32UintWrapper<NEXT_LENGHTS>...>; ///< List of every array-dimension lenghts.
     using array_type = typename dl32MakeArray<_access_return_type,PRIMARY_DIMENSION_LENGHT>::type; ///< Defines the type of the underlying array.
     using value_type = T; ///< Type of array values.
+    using element_type = _access_return_type; ///< Type of array elements;
  
 protected:
     array_type _array;

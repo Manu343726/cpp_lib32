@@ -108,9 +108,10 @@ protected:
 	dl32Range _range;
 	int _index;
 public:
-	dl32OutOfRangeException(dl32Range range, int index, const MessageType& message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message) , _range(range) , _index(index) {}
+    dl32OutOfRangeException(const MessageType& message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message) , _range() , _index(-1) {}
+    dl32OutOfRangeException(dl32Range range, int index, const MessageType& message=DEFAULTEXCEPTIONMESSAGE(dl32OutOfRangeException)):dl32Exception(message) , _range(range) , _index(index) {}
 
-	dl32Range getRange() const {return _range;}
-	int getIndex() const {return _index;}
+    dl32Range getRange() const {return _range;}
+    int getIndex() const {return _index;}
 };
 #endif

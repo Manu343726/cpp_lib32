@@ -34,18 +34,26 @@ int main()
 {
    dl32Point2Df p1(1,1) , p2(2,2) , p3(3,3);
    dl32Vector2Df v1(1,1) , v2(2,2) , v3(3,3);
-   dl32Matrix<int,2,2> m1 , m2 , m3 , m4;
+   dl32Matrix<int,4,4> m1 , m2 , m3 , m4;
    
    p3 = p2 + p3;
    v1 = v2 + v3*3;
    
-   m1[0][0] = 1;
-   m2[0][0] = 1;
+   for(unsigned int i = 0 ; i < 4 ; ++i)
+       for(unsigned int j = 0 ; j < 4 ; ++j)
+       {
+           m1[i][j] = 1;
+           m2[i][j] = 1; //Caché catapum!
+       }
+   
+   auto sub1 = m1.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );
+   auto sub2 = m2.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );
+   sub1 += sub2;
    
    m3 = m1 + m2*2;
    m4 = m1 + 2*m2;
    
-   if( m3 == m4 )
+   if( m3.complete_interval == m4.complete_interval )
        cout << "ok" << endl;
    else
        cout << "mmmm...." << endl;
