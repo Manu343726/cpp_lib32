@@ -1213,7 +1213,7 @@ dl32Matrix dl32Matrix::Mul(dl32Matrix m1,dl32Matrix m2) throw (dl32InvalidMatrix
 {
 	if(m1.columns==m2.rows)
 	{
-		dl32Matrix Return(m1.rows,m2.rows);
+		dl32Matrix Return(m1.rows,m2.columns);
 
 		for(int i=0;i<m1.rows;++i)
 			for(int j=0;j<m2.columns;++j)
