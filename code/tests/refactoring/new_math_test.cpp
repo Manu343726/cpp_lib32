@@ -34,7 +34,7 @@ int main()
 {
    dl32Point2Df p1(1,1) , p2(2,2) , p3(3,3);
    dl32Vector2Df v1(1,1) , v2(2,2) , v3(3,3);
-   dl32Matrix<int,2,2> m1{ { {0,0} , {0,0} } } , m2{ { {1,1} , {1,1} } };
+   dl32Matrix<int,2,2> m1 , m2;
    
    p3 = p2 + p3;
    v1 = v2 + v3*3;

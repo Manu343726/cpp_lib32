@@ -44,7 +44,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides inequelity criteria for types T vs U based on user-defined equality criteria
 ///        for types T vs U.
-///        Also, this helper provides the complete set of inverse comparisons to ensure simetry.
+///        Also, this helper provides the complete set of inverse comparisons to ensure symmetry.
 ///
 /// @author	Manu343726
 ///
@@ -76,7 +76,7 @@ struct dl32EqualityHelper<T,dl32NoType>
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides ccmplete comparison criteria for types T vs U based on user-defined 
 ///        bigger-than and less-than criteria for types T vs U.
-///        Also, this helper provides the complete set of inverse comparisons to ensure simetry.
+///        Also, this helper provides the complete set of inverse comparisons to ensure symmetry.
 ///
 /// @author	Manu343726
 ///
@@ -116,7 +116,7 @@ using dl32ComparisonHelpers = dl32TypeList<dl32EqualityHelper<T,U>,dl32Compariso
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides the complete comparison operators for given types T and U.
-///        Also, this helper provides the complete set of inverse comparisons to ensure simetry.
+///        Also, this helper provides the complete set of inverse comparisons to ensure symmetry.
 ///
 /// @author	Manu343726
 ///
@@ -134,7 +134,7 @@ struct dl32CompleteComparisonHelper : public dl32ComparisonHelpers<T,U>::public_
 ///
 /// @details User class must implement T& operator+=(const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = true>
 struct dl32AdditionHelper
 {
     friend T operator+(const T& t , const U& u)
@@ -142,6 +142,13 @@ struct dl32AdditionHelper
         T t2( t );
         t2 += u;
         return t2;
+    }
+    
+    template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
+    friend typename dl32EnableIf<SFINAE_BRIDGE,T>::type
+    operator+(const U& u , const T& t)
+    {
+        return t+u;
     }
 };
 
@@ -153,7 +160,7 @@ struct dl32AdditionHelper
 ///
 /// @details User class must implement T& operator-=(const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
 struct dl32SubstractionHelper
 {
     friend T operator-(const T& t , const U& u)
@@ -161,6 +168,13 @@ struct dl32SubstractionHelper
         T t2( t );
         t2 -= u;
         return t2;
+    }
+    
+    template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
+    friend typename dl32EnableIf<SFINAE_BRIDGE,T>::type
+    operator-(const U& u , const T& t)
+    {
+        return t-u;
     }
 };
 
@@ -172,7 +186,7 @@ struct dl32SubstractionHelper
 ///
 /// @details User class must implement T& operator*=(const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = true>
 struct dl32MultiplicationHelper
 {
     friend T operator*(const T& t , const U& u)
@@ -180,6 +194,13 @@ struct dl32MultiplicationHelper
         T t2( t );
         t2 *= u;
         return t2;
+    }
+    
+    template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
+    friend typename dl32EnableIf<SFINAE_BRIDGE,T>::type
+    operator*(const U& u , const T& t)
+    {
+        return t*u;
     }
 };
 
@@ -191,7 +212,7 @@ struct dl32MultiplicationHelper
 ///
 /// @details User class must implement T& operator/=(const U& u).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
 struct dl32DivisionHelper
 {
     friend T operator/(const T& t , const U& u)
@@ -199,6 +220,13 @@ struct dl32DivisionHelper
         T t2( t );
         t2 /= u;
         return t2;
+    }
+    
+    template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
+    friend typename dl32EnableIf<SFINAE_BRIDGE,T>::type
+    operator/(const U& u , const T& t)
+    {
+        return t/u;
     }
 };
 
@@ -210,8 +238,8 @@ struct dl32DivisionHelper
 ///
 /// @details User class must implement T& operator+=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32AdditionHelper<T,dl32NoType>
+template<typename T , bool ENABLE_SYMMETRY>
+struct dl32AdditionHelper<T,dl32NoType,ENABLE_SYMMETRY>
 {
     friend T operator+(const T& t1 , const T& t2)
     {
@@ -229,8 +257,8 @@ struct dl32AdditionHelper<T,dl32NoType>
 ///
 /// @details User class must implement T& operator-=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32SubstractionHelper<T,dl32NoType>
+template<typename T , bool ENABLE_SYMMETRY>
+struct dl32SubstractionHelper<T,dl32NoType,ENABLE_SYMMETRY>
 {
     friend T operator-(const T& t1 , const T& t2)
     {
@@ -248,8 +276,8 @@ struct dl32SubstractionHelper<T,dl32NoType>
 ///
 /// @details User class must implement T& operator*=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32MultiplicationHelper<T,dl32NoType>
+template<typename T , bool ENABLE_SYMMETRY>
+struct dl32MultiplicationHelper<T,dl32NoType,ENABLE_SYMMETRY>
 {
     friend T operator*(const T& t1 , const T& t2)
     {
@@ -267,8 +295,8 @@ struct dl32MultiplicationHelper<T,dl32NoType>
 ///
 /// @details User class must implement T& operator/=(const T& t).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T>
-struct dl32DivisionHelper<T,dl32NoType>
+template<typename T , bool ENABLE_SYMMETRY>
+struct dl32DivisionHelper<T,dl32NoType,ENABLE_SYMMETRY>
 {
     friend T operator/(const T& t1 , const T& t2)
     {
@@ -278,11 +306,11 @@ struct dl32DivisionHelper<T,dl32NoType>
     }
 };
 
-template<typename T , typename U = dl32NoType>
-using dl32BasicAlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32SubstractionHelper<T,U>>; ///< Defines the set of basic algebra (Addition and substraction) helpers.
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+using dl32BasicAlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U,ENABLE_SYMMETRY>,dl32SubstractionHelper<T,U,ENABLE_SYMMETRY>>; ///< Defines the set of basic algebra (Addition and substraction) helpers.
 
-template<typename T , typename U = dl32NoType>
-using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32SubstractionHelper<T,U>,dl32MultiplicationHelper<T,U>,dl32DivisionHelper<T,U>>; ///< Defines the set of algebra (Addition, substraction, multiplication, and division) helpers.
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U,ENABLE_SYMMETRY>,dl32SubstractionHelper<T,U,ENABLE_SYMMETRY>,dl32MultiplicationHelper<T,U,ENABLE_SYMMETRY>,dl32DivisionHelper<T,U,ENABLE_SYMMETRY>>; ///< Defines the set of algebra (Addition, substraction, multiplication, and division) helpers.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides the set of basic algebra operators (Addition and substraction) for types
@@ -292,8 +320,8 @@ using dl32AlgebraHelpers = dl32TypeList<dl32AdditionHelper<T,U>,dl32Substraction
 ///
 /// @details User class (T) must implement operator+=(const U&) and operator-=(const U&).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
-struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inheritance_from_types {}; 
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T,U,ENABLE_SYMMETRY>::public_inheritance_from_types {}; 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This helper provides the set of algebra operators (Addition, substraction, multiplication,
@@ -304,8 +332,8 @@ struct dl32BasicAlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inhe
 /// @details User class (T) must implement operator+=(const U&), operator-=(const U&), operator+=(const U&),
 ///          and operator/=(const U&).
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T , typename U = dl32NoType>
-struct dl32AlgebraHelper : public dl32BasicAlgebraHelpers<T,U>::public_inheritance_from_types {}; 
+template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+struct dl32AlgebraHelper : public dl32BasicAlgebraHelpers<T,U,ENABLE_SYMMETRY>::public_inheritance_from_types {}; 
 
 #endif	/* DL32OPERATOROVERLOADINGHELPERS_H */
 

@@ -37,20 +37,20 @@ class dl32Matrix : public dl32Array<T,HEIGHT,WIDTH> , //Ojo: Los arrays bidimens
         return *this;
     }
     
-    dl32Matrix<T,WIDTH,HEIGHT>& operator*=(const T& other)
+    dl32Matrix<T,WIDTH,HEIGHT>& operator*=(const T& scalar)
     {
         for(unsigned int i = 0 ; i < HEIGHT ; ++i)
             for(unsigned int j = 0 ; j < WIDTH ; ++j)
-                (*this)[i][j] *= other;
+                (*this)[i][j] *= scalar;
                 
         return *this;
     }
     
-    dl32Matrix<T,WIDTH,HEIGHT>& operator/=(const T& other)
+    dl32Matrix<T,WIDTH,HEIGHT>& operator/=(const T& scalar)
     {
         for(unsigned int i = 0 ; i < HEIGHT ; ++i)
             for(unsigned int j = 0 ; j < WIDTH ; ++j)
-                (*this)[i][j] /= other;
+                (*this)[i][j] /= scalar;
                 
         return *this;
     }
