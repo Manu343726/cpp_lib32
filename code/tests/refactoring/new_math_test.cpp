@@ -65,7 +65,7 @@ int main()
     * 1 1 1 1   
     */
    
-   //En cambio, si trabajas con operaciones binarias de toda la vida, el resultado es una copia (Tampoco se puede hacer magia)
+   //Ojo, si en cambio, trabajas con operaciones binarias de toda la vida, el resultado también es una referencia (Una referencia a la matriz del primer operando, es decir c = a + b es lo mismo que a += b. Eso tengo que buscar una solución) (Tampoco se puede hacer magia)
    auto sub3 = sub1 + 3*sub2;
    
    //Operaciones normales de matrices:
