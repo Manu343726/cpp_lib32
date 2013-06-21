@@ -107,16 +107,102 @@ struct dl32MatrixInterval : public dl32ComparisonHelpers<dl32MatrixInterval> // 
     ///
     /// @author	Manu343726
     ///
+    /// @param interval Matrix interval to be checked.
+    ///
     /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
     ///         to end_column. Returns false otherwise.
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    static bool is_valid(const dl32MatrixInterval& range) 
+    static bool is_valid(const dl32MatrixInterval& interval) 
     {
-        return range.begin_row <= range.end_row && range.begin_column <= range.end_column;
+        return interval.begin_row <= interval.end_row && interval.begin_column <= interval.end_column;
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Checks if the matrix interval is valid. 
+    /// @brief Checks if a specified matrix interval is valid. 
+    /// @details A matrix interval is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param interval Matrix interval to be checked.
+    /// @param matrix_rows Number of rows of the matrix.
+    /// @param matrix_columns Number of columns of the matrix.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool is_valid(const dl32MatrixInterval& interval , unsigned int matrix_rows , unsigned int matrix_columns) 
+    {
+        return interval.begin_row >= 0 && interval.begin_column >= 0 && interval.end_row < matrix_rows && interval.end_column < matrix_columns &&
+               interval.begin_row <= interval.end_row && interval.begin_column <= interval.end_column;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a specified matrix interval is valid. 
+    /// @details A matrix interval is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @tparam T Elements type of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam ROWS Number of rows of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam COLUMNS Number of columns of the matrix. This parameter could be deduced by the compiler.
+    ///
+    /// @param interval Matrix interval to be checked.
+    /// @param matrix Matrix that the interval will be checked with.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T , unsigned int ROWS , unsigned int COLUMNS>
+    static bool is_valid(const dl32MatrixInterval& interval , dl32Matrix<T,ROWS,COLUMNS> matrix) 
+    {
+        return is_valid(interval,ROWS,COLUMNS);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix interval is valid. 
+    /// @details A matrix interval is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param matrix_rows Number of rows of the matrix.
+    /// @param matrix_columns Number of columns of the matrix.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool is_valid(unsigned int matrix_rows , unsigned int matrix_columns) const
+    {
+        return is_valid(*this,matrix_rows,matrix_columns);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix interval is valid. 
+    /// @details A matrix interval is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @tparam T Elements type of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam ROWS Number of rows of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam COLUMNS Number of columns of the matrix. This parameter could be deduced by the compiler.
+    ///
+    /// @param interval Matrix interval to be checked.
+    /// @param matrix Matrix that the interval will be checked with.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T , unsigned int ROWS , unsigned int COLUMNS>
+    bool is_valid(dl32Matrix<T,ROWS,COLUMNS> matrix) const
+    {
+        return is_valid(*this,ROWS,COLUMNS);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix interval is valid. 
     /// @details A matrix interval is valid if the beginning is less than or equal to the end. 
     ///
     /// @author	Manu343726
@@ -196,6 +282,7 @@ class dl32SubMatrix<dl32Matrix<T,MATRIX_ROWS,MATRIX_COLUMNS>,USE_MATRIX_REFERENC
 {
 public:
     using matrix_type = dl32Matrix<T,MATRIX_ROWS,MATRIX_COLUMNS>; ///< Gets the type of the underlying matrix.
+    using my_type = dl32SubMatrix<dl32Matrix<T,MATRIX_ROWS,MATRIX_COLUMNS>,USE_MATRIX_REFERENCE>;
     
 private:
     dl32MakeReferenceIf<USE_MATRIX_REFERENCE,matrix_type> _underlying_matrix;
@@ -262,16 +349,30 @@ public:
     }
     
     template<unsigned int ROWS , unsigned int COLUMNS , bool OTHER_USES_REFRRENCE>
-    dl32SubMatrix& operator+=(const dl32SubMatrix<dl32Matrix<T,ROWS,COLUMNS>,OTHER_USES_REFRRENCE>& other)
+    my_type& operator+=(const dl32SubMatrix<dl32Matrix<T,ROWS,COLUMNS>,OTHER_USES_REFRRENCE>& other)
     {
-        if( dl32MatrixInterval::valid_addition(_interval , other._interval) )
-        {
-            _underlying_matrix.add(other._underlying_matrix,_interval,other._interval);
-            return *this;
-        }
-        else
-            throw dl32InvalidMatrixOperationException();
+        _underlying_matrix.add(other._underlying_matrix,_interval,other._interval);
+        return *this;
     }
+    
+    template<unsigned int ROWS , unsigned int COLUMNS , bool OTHER_USES_REFRRENCE>
+    my_type& operator-=(const dl32SubMatrix<dl32Matrix<T,ROWS,COLUMNS>,OTHER_USES_REFRRENCE>& other)
+    {
+        _underlying_matrix.substract(other._underlying_matrix,_interval,other._interval);
+        return *this;
+    }
+    
+    my_type& operator*=(const T& scalar)
+    {
+        _underlying_matrix.multiply(scalar,_interval);
+        return *this;
+    }
+    
+    my_type& operator/=(const T& scalar)
+    {
+        _underlying_matrix.divide(scalar,_interval);
+        return *this;
+    }    
 };
 
 const bool reference_submatrix = true;  ///< Boolean constant to make submatrix constructions more readable.
@@ -311,14 +412,87 @@ public:
     ///        at this instance.
     ///
     /// @author	Manu343726
+    ///
+    /// @tparam OTHER_ROWS    Number of rows of the other matrix type. This parameter can be deduced by the compiler.
+    /// @tparam OTHER_COLUMNS Number of columns of the other matrix type. This parameter can be deduced by the compiler.
+    /// 
+    /// @param other The matrix that the operation will de performed with. 
+    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    //  @param other_interval Interval of the matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval).
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    void add(const dl32Matrix<T,ROWS,COLUMNS>& other , const dl32MatrixInterval& this_interval = complete_interval , const dl32MatrixInterval& other_interval = complete_interval)
+    template<unsigned int OTHER_ROWS,unsigned int OTHER_COLUMNS>
+    void add(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32MatrixInterval& this_interval = complete_interval , const dl32MatrixInterval& other_interval = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval)
     {
-        if( !dl32MatrixInterval::valid_addition(this_interval,other_interval) ) throw dl32InvalidMatrixOperationException();
+        if( !this_interval.is_valid(*this) || !other_interval.is_valid(other) || !dl32MatrixInterval::valid_addition(this_interval,other_interval) ) throw dl32InvalidMatrixOperationException();
         
         for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
             for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
                 (*this)[this_interval.begin_row + i][this_interval.begin_column + j] += other[other_interval.begin_row + i][other_interval.begin_column + j];
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Performs a substraction operation between this instance and other matrix. The result is stored 
+    ///        at this instance.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @tparam OTHER_ROWS    Number of rows of the other matrix type. This parameter can be deduced by the compiler.
+    /// @tparam OTHER_COLUMNS Number of columns of the other matrix type. This parameter can be deduced by the compiler.
+    /// 
+    /// @param other The matrix that the operation will de performed with. 
+    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    //  @param other_interval Interval of the matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval).
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<unsigned int OTHER_ROWS,unsigned int OTHER_COLUMNS>
+    void substract(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32MatrixInterval& this_interval = complete_interval , const dl32MatrixInterval& other_interval = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval)
+    {
+        if( !this_interval.is_valid(*this) || !other_interval.is_valid(other) || !dl32MatrixInterval::valid_substraction(this_interval,other_interval) ) throw dl32InvalidMatrixOperationException();
+        
+        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
+            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
+                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] -= other[other_interval.begin_row + i][other_interval.begin_column + j];
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Performs a multiplication operation between this instance and a scalar value. The result is stored 
+    ///        at this instance.
+    ///
+    /// @author	Manu343726
+    /// 
+    /// @param scalar The scalar value that the operation will be performed with.
+    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void multiply(const T& scalar , const dl32MatrixInterval& this_interval = complete_interval)
+    {
+        if( !this_interval.is_valid(*this) ) throw dl32InvalidMatrixOperationException();
+        
+        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
+            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
+                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] *= scalar;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Performs a division operation between this instance and a scalar value. The result is stored 
+    ///        at this instance.
+    ///
+    /// @author	Manu343726
+    /// 
+    /// @param scalar The scalar value that the operation will be performed with.
+    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void divide(const T& scalar , const dl32MatrixInterval& this_interval = complete_interval)
+    {
+        if( !this_interval.is_valid(*this) ) throw dl32InvalidMatrixOperationException();
+        
+        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
+            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
+                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] /= scalar;
     }
     
     dl32Matrix<T,ROWS,COLUMNS>& operator+=(const dl32Matrix<T,ROWS,COLUMNS>& other)
@@ -329,28 +503,19 @@ public:
     
     dl32Matrix<T,ROWS,COLUMNS>& operator-=(const dl32Matrix<T,ROWS,COLUMNS>& other)
     {
-        for(unsigned int i = 0 ; i < ROWS ; ++i)
-            for(unsigned int j = 0 ; j < COLUMNS ; ++j)
-                (*this)[i][j] -= other[i][j];
-                
+        substract(other);
         return *this;
     }
     
     dl32Matrix<T,ROWS,COLUMNS>& operator*=(const T& scalar)
     {
-        for(unsigned int i = 0 ; i < ROWS ; ++i)
-            for(unsigned int j = 0 ; j < COLUMNS ; ++j)
-                (*this)[i][j] *= scalar;
-                
+        multiply(scalar);       
         return *this;
     }
     
     dl32Matrix<T,ROWS,COLUMNS>& operator/=(const T& scalar)
     {
-        for(unsigned int i = 0 ; i < ROWS ; ++i)
-            for(unsigned int j = 0 ; j < COLUMNS ; ++j)
-                (*this)[i][j] /= scalar;
-                
+        divide(scalar);
         return *this;
     }
     

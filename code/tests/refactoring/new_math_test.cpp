@@ -46,10 +46,29 @@ int main()
            m2[i][j] = 1; //Caché catapum!
        }
    
-   auto sub1 = m1.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );
-   auto sub2 = m2.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );
-   sub1 += sub2;
+   //Tras inicializarlas de esa manera, m1 y m2 valen:
+   /* 1 1 1 1
+    * 1 1 1 1
+    * 1 1 1 1
+    * 1 1 1 1   
+    */
    
+   //Creamos submatrices de m1 y m2 (Nòtese que es submatriz por referencia, es decir, trabaja sobre la matriz original, no sobre una copia):
+   auto sub1 = m1.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );//Fila inicial, columna inicial, fila final, columna final 
+   auto sub2 = m2.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );//Fila inicial, columna inicial, fila final, columna final
+   sub1 += sub2*3;//Operas como si fueran matrices normales, pero en realidad estás haciendo la operación solo en un trozo (submatriz) de la matriz
+   
+   //Tras esa operación, m1 vale:
+   /* 1 1 1 1
+    * 1 4 4 1
+    * 1 4 4 1
+    * 1 1 1 1   
+    */
+   
+   //En cambio, si trabajas con operaciones binarias de toda la vida, el resultado es una copia (Tampoco se puede hacer magia)
+   auto sub3 = sub1 + 3*sub2;
+   
+   //Operaciones normales de matrices:
    m3 = m1 + m2*2;
    m4 = m1 + 2*m2;
    
