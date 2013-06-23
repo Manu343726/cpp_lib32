@@ -562,6 +562,115 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set of supported matrix fluent operations.
+/// @details This operations include matrix vs matrix operations and 
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+enum class dl32FluentMatrixOperation
+{
+    FLUSH,
+    ASSIGN,
+    ADDITION,
+    SUBSTRACTION,
+    MULTIPLICATION,
+    DIVISION
+};
+
+const dl32FluentMatrixOperation MATRIX_OP_FLUSH  = dl32FluentMatrixOperation::FLUSH;          ///< Constant for easy-to-write flush operations.
+const dl32FluentMatrixOperation MATRIX_OP_ASSIGN = dl32FluentMatrixOperation::ASSIGN;         ///< Constant for easy-to-write assign operations.
+const dl32FluentMatrixOperation MATRIX_OP_ADD    = dl32FluentMatrixOperation::ADDITION;       ///< Constant for easy-to-write adition operations.
+const dl32FluentMatrixOperation MATRIX_OP_SUB    = dl32FluentMatrixOperation::SUBSTRACTION;   ///< Constant for easy-to-write substraction operations.
+const dl32FluentMatrixOperation MATRIX_OP_MUL    = dl32FluentMatrixOperation::MULTIPLICATION; ///< Constant for easy-to-write multiplication operations.
+const dl32FluentMatrixOperation MATRIX_OP_DIV    = dl32FluentMatrixOperation::DIVISION;       ///< Constant for easy-to-write division operations.
+
+template<typename T , typename MATRIX_TYPE>
+class dl32FluentMatrixOperator
+{
+private:
+    enum class operationStatus { WAITING_OPERAND , WAITING_OPERATOR };
+    
+    /* NOTA SOBRE IMPLEMENTACIÓN: ¿Por qué un puntero y no una referencia?
+     * *******************************************************************
+     * 
+     * Esta clase (dl32FluentMatrixOperation) está diseñada para ser utilizada como policy class
+     * dentro de una clase que implemente una matriz. Así, una instacia de ésta clase forma parte de
+     * los atributos privados de dicha implementación de matriz.
+     * 
+     * El problema viene debido a que de esa manera las dos clases tienen una referencia en bucle 
+     * (La matrix guarda una referencia (instancia) de dl32FluentMatrixOperation, y dl32FluentMatrixOperation 
+     * guarda una referencia de la matriz (dl32FluentMatrixOperation::_current_matrix)).
+     * Si se utlizara una referencia a la matriz, las llamadas al constructor de copia/operador
+     * de asignación de la matriz generarían una recursividad infinita, ya que al asignar la matriz se 
+     * aigna el fluent_operator, que a su vez intenta asignar su _current_matrix (Y así sucesivamente).
+     * 
+     * Para solucionarlo, se utiliza un raw-pointer en lugar de una referencia en _current_matrix.
+     */
+    
+    MATRIX_TYPE*    _current_matrix;
+    operationStatus _current_status;
+    dl32FluentMatrixOperation _operation;
+    
+public:
+    
+    dl32FluentMatrixOperator( MATRIX_TYPE* matrix ) : _current_matrix( matrix ) , _current_status( operationStatus::WAITING_OPERATOR ) {}
+    
+    dl32FluentMatrixOperator( const dl32FluentMatrixOperator<T,MATRIX_TYPE>& other ) : _current_matrix( other._current_matrix ) ,  _current_status( other._current_status ) , _operation( other._operation ) {}
+    
+    
+    dl32FluentMatrixOperator<T,MATRIX_TYPE>& operator=(const dl32FluentMatrixOperator<T,MATRIX_TYPE>& other )
+    {
+        _current_status = other._current_status;
+        _operation = other._operation;
+        
+        return *this;
+    }
+    
+    friend dl32FluentMatrixOperator<T,MATRIX_TYPE>& operator<<(dl32FluentMatrixOperator<T,MATRIX_TYPE>& fop , const T& operand)
+    {
+        if( fop._current_status == operationStatus::WAITING_OPERATOR ) throw dl32InvalidMatrixOperationException("Operator expected, got an operand");
+        
+        switch( fop._operation )
+        {
+            case dl32FluentMatrixOperation::ASSIGN:       fop._current_matrix->fill( operand );  fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::ADDITION:     throw dl32InvalidMatrixOperationException("That operation is not supported.");
+            case dl32FluentMatrixOperation::SUBSTRACTION: throw dl32InvalidMatrixOperationException("That operation is not supported.");
+            case dl32FluentMatrixOperation::MULTIPLICATION: (*fop._current_matrix) *= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::DIVISION:       (*fop._current_matrix) /= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+        }
+    }
+    
+    friend dl32FluentMatrixOperator<T,MATRIX_TYPE>& operator<<(dl32FluentMatrixOperator<T,MATRIX_TYPE>& fop , const MATRIX_TYPE& operand)
+    {
+        if( fop._current_status == operationStatus::WAITING_OPERATOR ) throw dl32InvalidMatrixOperationException("Operator expected, got an operand");
+        
+        switch( fop._operation )
+        {
+            case dl32FluentMatrixOperation::ASSIGN:       (*fop._current_matrix) = operand;  fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::ADDITION:     (*fop._current_matrix) += operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::SUBSTRACTION: (*fop._current_matrix) -= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::MULTIPLICATION: throw dl32InvalidMatrixOperationException("That operation is not supported."); /* (PROVISIONAL) fop._current_matrix *= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop; */
+            case dl32FluentMatrixOperation::DIVISION:       throw dl32InvalidMatrixOperationException("That operation is not supported."); /* (PROVISIONAL) fop._current_matrix /= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop; */
+        }
+    }
+    
+    friend dl32FluentMatrixOperator<T,MATRIX_TYPE>& operator<<(dl32FluentMatrixOperator<T,MATRIX_TYPE>& fop , dl32FluentMatrixOperation operation)
+    {
+        if( operation == dl32FluentMatrixOperation::FLUSH)
+        {
+            fop._current_status = operationStatus::WAITING_OPERATOR;
+            return fop;
+        }
+        
+        if( fop._current_status == operationStatus::WAITING_OPERAND ) throw dl32InvalidMatrixOperationException("Operand expected, got an operator");
+        
+        fop._operation = operation;
+        fop._current_status = operationStatus::WAITING_OPERAND;
+        return fop;
+    }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This type represents a submatrix.
 /// @details A submatrix holds a reference or a copy of a given matrix.
 ///          It can be used to do aritmetic operations as if the submatrix was a common matrix, but
@@ -590,6 +699,8 @@ private:
     dl32MakeReferenceIf<USE_MATRIX_REFERENCE,matrix_type> _underlying_matrix;
     dl32SubMatrixBounds _bounds;
 
+    dl32FluentMatrixOperator<T,my_type> _fluent_operator;
+    
 public:
     
     //Proxy class for submatrix row indexing
@@ -626,14 +737,14 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const dl32SubMatrixBounds& bounds) : _underlying_matrix( matrix ) , _bounds( bounds ) {}
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const dl32SubMatrixBounds& bounds) : _underlying_matrix( matrix ) , _fluent_operator( this ) , _bounds( bounds ) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Creates a submatrix from the specified bounds of a matrix.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , unsigned int begin_row , unsigned int begin_column , unsigned int end_row , unsigned int end_column) : _underlying_matrix( matrix ) , _bounds(begin_row,begin_column,end_row,end_column) {}
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , unsigned int begin_row , unsigned int begin_column , unsigned int end_row , unsigned int end_column) : _underlying_matrix( matrix ) , _fluent_operator( this ) , _bounds(begin_row,begin_column,end_row,end_column) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Creates a submatrix from the specified bounds of a matrix.
@@ -647,7 +758,7 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns) : _underlying_matrix( matrix ) , _bounds( rows , columns ) {}
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns) : _underlying_matrix( matrix ) , _fluent_operator( this ) , _bounds( rows , columns ) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Sets the value of the element stored at the specified position of the submatrix.
@@ -669,6 +780,21 @@ public:
     const Proxy operator[](unsigned int row) const
     {
         return Proxy(_underlying_matrix,row,_bounds.columns_count);
+    }
+    
+    dl32FluentMatrixOperator<T,my_type>& operator<<(dl32FluentMatrixOperation operation)
+    {
+        return _fluent_operator << operation;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Fills the entire submatrix with the specified value.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void fill(const T& value)
+    {
+        _underlying_matrix.fill( value , _bounds);
     }
     
     template<unsigned int ROWS , unsigned int COLUMNS , bool OTHER_USES_REFRRENCE>
@@ -718,6 +844,8 @@ class dl32Matrix : public dl32Array<T,ROWS,COLUMNS> ,
 private:
     bool _check_matrix_operations;
     
+    dl32FluentMatrixOperator<T,dl32Matrix<T,ROWS,COLUMNS>> _fluent_operator;
+    
 public:
     static const unsigned int rows    = ROWS;    ///< Gets the number of rows of this type of matrix.
     static const unsigned int columns = COLUMNS; ///< Gets the number of columns of this type of matrix.
@@ -727,7 +855,7 @@ public:
     
     using matrix_type = dl32Matrix<T,ROWS,COLUMNS>; //< Gets an alias to the matrix type.
     
-    dl32Matrix(bool check_matrix_operations = false) : _check_matrix_operations( check_matrix_operations ) {}
+    dl32Matrix(bool check_matrix_operations = false) : _check_matrix_operations( check_matrix_operations ) , _fluent_operator( this ) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if this matrix performs validation before any algebraic operation.
@@ -759,7 +887,12 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     operator dl32SubMatrix<matrix_type,true>()
     {
-        return dl32SubMatrix<matrix_type,true>(*this,complete_interval);
+        return dl32SubMatrix<matrix_type,true>(*this,complete_bounds);
+    }
+    
+    dl32FluentMatrixOperator<T,matrix_type>& operator<<(dl32FluentMatrixOperation operation)
+    {
+        return _fluent_operator << operation;
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -768,6 +901,18 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     constexpr bool is_square() const { return rows == columns; }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Fills the specified bounds of the matrix with the same value.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void fill(const T& value , const dl32SubMatrixBounds& bounds = complete_bounds)
+    {
+        for(unsigned int i = 0 ; i < bounds.rows_count() ; ++i)
+            for(unsigned int j = 0 ; j < bounds.columns_count() ; ++j)
+                (*this)[bounds.row(i)][bounds.column(j)] = value;
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Performs an addition operation between this instance and other matrix. The result is stored 
@@ -945,6 +1090,20 @@ public:
     {
         //La verdad es que no hacía falta el cast, la conversión de initializer_list a vector es implícita
         return dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX>(*this, std::vector<unsigned int> { rows },std::vector<unsigned int> { columns });
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the submatrix that fits the entire matrix..
+    ///
+    ///@tparam GET_REFERENCE_SUBMATRIX If is set to true, the submatrix is a reference to this matrix.
+    ///        If is set to false, the submatrix is an independent copy of this matrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<bool GET_REFERENCE_SUBMATRIX = false>
+    dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX> get_submatrix()
+    {
+        return dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX>(*this, complete_bounds);
     }
 };
 

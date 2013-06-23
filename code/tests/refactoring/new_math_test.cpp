@@ -34,7 +34,7 @@ int main()
 {
    dl32Point2Df p1(1,1) , p2(2,2) , p3(3,3);
    dl32Vector2Df v1(1,1) , v2(2,2) , v3(3,3);
-   dl32Matrix<int,4,4> m1 , m2 , m3 , m4;
+   dl32Matrix<int,4,4> m1 , m2 , m3 , m4 , m5;
    
    p3 = p2 + p3;
    v1 = v2 + v3*3;
@@ -69,8 +69,11 @@ int main()
    auto sub3 = sub1 + 3*sub2;
    
    //Operaciones normales de matrices:
-   m3 = m1 + m2*2;
-   m4 = m1 + 2*m2;
+   m3 = (m1 + m2 - m1)*2;
+   m4 = 2*(m1 + m2 - m1);
+   
+   //La operación equivalente sin valores temporales intermedios (Más eficiente):
+   m3 << MATRIX_OP_ASSIGN << m1 << MATRIX_OP_ADD << m2 << MATRIX_OP_SUB << m1 << MATRIX_OP_MUL << 2;
    
    if( m3.complete_interval == m4.complete_interval )
        cout << "ok" << endl;
