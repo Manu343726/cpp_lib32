@@ -54,8 +54,8 @@ int main()
     */
    
    //Creamos submatrices de m1 y m2 (Nòtese que es submatriz por referencia, es decir, trabaja sobre la matriz original, no sobre una copia):
-   auto sub1 = m1.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );//Fila inicial, columna inicial, fila final, columna final 
-   auto sub2 = m2.get_submatrix<reference_submatrix>( dl32MatrixInterval(1,1,2,2) );//Fila inicial, columna inicial, fila final, columna final
+   auto sub1 = m1.get_submatrix<reference_submatrix>( {1,2} , {1,2} );//Filas, columnas
+   auto sub2 = m2.get_submatrix<reference_submatrix>( 1,1,2,2 );//Fila inicial, columna inicial, fila final, columna final
    sub1 += sub2*3;//Operas como si fueran matrices normales, pero en realidad estás haciendo la operación solo en un trozo (submatriz) de la matriz
    
    //Tras esa operación, m1 vale:

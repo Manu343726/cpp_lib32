@@ -32,6 +32,10 @@
 #include "dl32MetaprogrammingLibrary.h"
 #include "dl32Exceptions.h"
 
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
 DL32EXCEPTION_SUBCLASS_NODOC(dl32InvalidMatrixOperationException)
 
 //Forwrad declaration for submatrix:
@@ -39,7 +43,7 @@ template<typename T , unsigned int ROWS , unsigned int COLUMNS>
 class dl32Matrix;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This type stores an interval of rows and columns of a matrix.
+/// @brief This type stores an interval of rows and columns of a matrix (DEPRECATED, USING dl32SubMatrixBounds INSTEAD).
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,12 +56,18 @@ struct dl32MatrixInterval : public dl32ComparisonHelpers<dl32MatrixInterval> // 
     
     dl32MatrixInterval() : begin_row( 0 ) , begin_column( 0 ) , end_row( 0 ) , end_column( 0 ) {}
     
+    
     dl32MatrixInterval( unsigned int begin_r , unsigned int begin_c , unsigned int end_r , unsigned int end_c ) : begin_row( begin_r ) , begin_column( begin_c ) , end_row( end_r ) , end_column( end_c )
     {
         if( begin_row > end_row || begin_column > end_column ) throw dl32OutOfRangeException("Invalid matrix interval. The beginning must be less than or equal to the end");
     }
     
     dl32MatrixInterval( const dl32MatrixInterval& other ) : begin_row( other.begin_row ) , begin_column( other.begin_column ) , end_row( other.end_row ) , end_column( other.end_column )
+    {
+        if( begin_row > end_row || begin_column > end_column ) throw dl32OutOfRangeException("Invalid matrix interval. The beginning must be less than or equal to the end");
+    }
+    
+    dl32MatrixInterval( const dl32MatrixInterval&& other ) : begin_row( other.begin_row ) , begin_column( other.begin_column ) , end_row( other.end_row ) , end_column( other.end_column )
     {
         if( begin_row > end_row || begin_column > end_column ) throw dl32OutOfRangeException("Invalid matrix interval. The beginning must be less than or equal to the end");
     }
@@ -259,6 +269,298 @@ struct dl32MatrixInterval : public dl32ComparisonHelpers<dl32MatrixInterval> // 
     }
 };
 
+using submatrix_map = std::unordered_map<unsigned int , unsigned int>; ///< An alias to the type used to map submatrix coordinates to matrix coordinates.
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Represents the bounds (The set of rows and columns of the original matrix) that forms part of 
+///        a submatrix.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+class dl32SubMatrixBounds : public dl32ComparisonHelpers<dl32SubMatrixBounds>
+{
+private:
+    submatrix_map _rows;
+    submatrix_map _columns;
+   
+public:
+    dl32SubMatrixBounds(unsigned int begin_row , unsigned int begin_column , unsigned int end_row , unsigned int end_column)
+    {
+        _rows.rehash( (end_row - begin_row) + 1 );
+        _columns.rehash( (end_column - begin_column) + 1 );
+        
+        for(unsigned int i = begin_row ; i <= end_row ; ++i)
+            _rows[i - begin_row] = i;
+        
+        for(unsigned int i = begin_column ; i <= end_column ; ++i)
+            _columns[i - begin_column] = i;
+    }
+    
+    dl32SubMatrixBounds(const dl32MatrixInterval& interval) : dl32SubMatrixBounds( interval.begin_row , interval.begin_column , interval.end_row , interval.end_column ) {}
+    
+    dl32SubMatrixBounds(const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns)
+    {
+        _rows.rehash( rows.size() );
+        _columns.rehash( columns.size() );
+        
+        for(unsigned int i = 0 ; i < rows.size() ; ++i)
+            _rows[i] = rows[i];
+        
+        for(unsigned int i = 0 ; i < columns.size() ; ++i)
+            _columns[i] = columns[i];
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the number of rows of this matrix bounds.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int rows_count() const { return _rows.size(); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the number of columns of this matrix bounds.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int columns_count() const { return _columns.size(); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this bounds is square.
+    /// @details A matrix bounds is square if has the same number of rows and of columns.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool is_square() const { return rows_count() == columns_count(); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the number of elements holded in the matrix bounds
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int area() const { return columns_count() * rows_count(); }
+    
+    bool operator==(const dl32SubMatrixBounds& other) const
+    {
+        return _rows == other._rows && _columns == other._columns;
+    }
+    
+    bool operator>(const dl32SubMatrixBounds& other) const
+    {
+        return area() > other.area();
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a specified matrix bounds is valid. 
+    /// @details A matrix bounds is valid if the associated rows/columns are not out of the size of the original matrix.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param bounds Matrix bounds to be checked.
+    /// @param matrix_rows Number of rows of the matrix.
+    /// @param matrix_columns Number of columns of the matrix.
+    ///
+    /// @return Returns true if the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool is_valid(const dl32SubMatrixBounds& bounds , unsigned int matrix_rows , unsigned int matrix_columns) 
+    {
+        return std::find_if_not( bounds._rows.begin() , bounds._rows.end()       , [=](const submatrix_map::value_type& pair) { return pair.second < matrix_rows; } )    == bounds._columns.end() &&
+               std::find_if_not( bounds._columns.begin() , bounds._columns.end() , [=](const submatrix_map::value_type& pair) { return pair.second < matrix_columns; } ) == bounds._columns.end();
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a specified matrix bounds is valid. 
+    /// @details A matrix bounds is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @tparam T Elements type of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam ROWS Number of rows of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam COLUMNS Number of columns of the matrix. This parameter could be deduced by the compiler.
+    ///
+    /// @param bounds Matrix bounds to be checked.
+    /// @param matrix Matrix that the bounds will be checked with.
+    ///
+    /// @return Returns true if the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T , unsigned int ROWS , unsigned int COLUMNS>
+    static bool is_valid(const dl32SubMatrixBounds& bounds , dl32Matrix<T,ROWS,COLUMNS> matrix) 
+    {
+        return is_valid(bounds,ROWS,COLUMNS);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix bounds is valid. 
+    /// @details A matrix bounds is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param matrix_rows Number of rows of the matrix.
+    /// @param matrix_columns Number of columns of the matrix.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool is_valid(unsigned int matrix_rows , unsigned int matrix_columns) const
+    {
+        return is_valid(*this,matrix_rows,matrix_columns);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix bounds is valid. 
+    /// @details A matrix bounds is valid if the beginning is less than or equal to the end. 
+    ///
+    /// @author	Manu343726
+    ///
+    /// @tparam T Elements type of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam ROWS Number of rows of the matrix. This parameter could be deduced by the compiler.
+    /// @tparam COLUMNS Number of columns of the matrix. This parameter could be deduced by the compiler.
+    ///
+    /// @param bounds Matrix bounds to be checked.
+    /// @param matrix Matrix that the bounds will be checked with.
+    ///
+    /// @return Returns true if begin_row is less or equal to end_row and begin_column is less or equal 
+    ///         to end_column, and the rows and columns are bounded in the matrix size. 
+    ///         Returns false otherwise.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T , unsigned int ROWS , unsigned int COLUMNS>
+    bool is_valid(dl32Matrix<T,ROWS,COLUMNS> matrix) const
+    {
+        return is_valid(*this,ROWS,COLUMNS);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if an addition operation between two matrix boundss is valid. 
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool valid_addition(const dl32SubMatrixBounds& i1 , const dl32SubMatrixBounds& i2)
+    {
+        return i1.rows_count() == i2.rows_count() && i1.columns_count() == i2.columns_count();
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a substraction operation between two matrix boundss is valid. 
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool valid_substraction(const dl32SubMatrixBounds& i1 , const dl32SubMatrixBounds& i2)
+    {
+        return valid_addition(i1,i2);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a multiplication operation between two matrix boundss is valid. 
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool valid_multiplication(const dl32SubMatrixBounds& i1 , const dl32SubMatrixBounds& i2)
+    {
+        return i1.columns_count() == i2.rows_count();
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if a division operation between two matrix boundss is valid. 
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    static bool valid_division(const dl32SubMatrixBounds& i1 , const dl32SubMatrixBounds& i2)
+    {
+        /* 
+         * La división de matrices se implementa como el producto de la primera matriz con la inversa de la segunda.
+         * Solo las matrices cuadradas pueden ser invertibles (Pueden ser, no tiene por que), y esto sumado a los 
+         * criterios necesarios para la multiplicación, implica que solo se pueden dividir entre si matrices cuadradas 
+         * del mismo tamaño.
+         */ 
+        return i1.is_square() && i1.rows_count() == i2.rows_count();
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Swaps two specified rows of the submatrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void swap_rows(unsigned int r1 , unsigned int r2)
+    {
+        auto value1 = _rows.at( r1 );
+        auto value2 = _rows.at( r2 );
+        
+        _rows[r1] = value2;
+        _rows[r2] = value1;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Swaps two specified columns of the submatrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void swap_columns(unsigned int c1 , unsigned int c2)
+    {
+        auto value1 = _rows.at( c1 );
+        auto value2 = _rows.at( c2 );
+        
+        _columns[c1] = value2;
+        _columns[c2] = value1;
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the row of the original matrix associated with the specified submatrix row.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int row(unsigned int index) const
+    { 
+        return _rows.at(index);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets the column of the original matrix associated with the specified submatrix column.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int column(unsigned int index) const
+    { 
+        return _columns.at(index);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Erases the specified row from the submatrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int erase_row(unsigned int index)
+    { 
+        return _rows.erase( index );
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Erases the specified column from the submatrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    unsigned int erase_column(unsigned int index)
+    { 
+        return _columns.erase( index );
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Returns the map used to associate submatrix rows with original matrix rows (True rows)
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    const submatrix_map& rows_map() const { return _rows; }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Returns the map used to associate submatrix columns with original matrix columns (True columns)
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    const submatrix_map& columns_map() const { return _columns; }
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This type represents a submatrix.
 /// @details A submatrix holds a reference or a copy of a given matrix.
@@ -286,91 +588,112 @@ public:
     
 private:
     dl32MakeReferenceIf<USE_MATRIX_REFERENCE,matrix_type> _underlying_matrix;
-    const dl32MatrixInterval _interval;
-    
+    dl32SubMatrixBounds _bounds;
+
 public:
+    
+    //Proxy class for submatrix row indexing
+    class Proxy
+    {
+    private:
+        matrix_type& _matrix;
+        const unsigned int _row;
+        const submatrix_map& _columns;
+        
+    public:
+        Proxy(matrix_type& matrix , const unsigned int row , const submatrix_map& columns) : _matrix( matrix ) , _row( row ) , _columns( columns ) {}
+        
+        typename matrix_type::element_type& operator[](unsigned int index)
+        {
+            return _matrix[_row][_columns.at(index)];
+        }
+        
+        const typename matrix_type::element_type& operator[](unsigned int index) const
+        {
+            return _matrix[_row][_columns.at(index)];
+        }
+    };
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Creates a submatrix of the specified matrix (The submatrix fits the entire matrix).
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix) : _underlying_matrix( matrix ) , _interval( 0 , 0 , MATRIX_ROWS-1 , MATRIX_COLUMNS-1 ) {}
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix) : dl32SubMatrix(matrix,0,0,matrix_type::rows-1,matrix_type::columns-1) {}
     
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Creates a submatrix from the specified interval of a matrix.
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Creates a submatrix of the specified matrix (The submatrix fits the entire matrix).
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , unsigned int begin_row , unsigned int begin_column , unsigned int end_row , unsigned int end_column) : _underlying_matrix( matrix ) , _interval( begin_row , begin_column , end_row , end_column )
-    {
-        if( end_row >= MATRIX_ROWS && end_column >= MATRIX_COLUMNS ) throw dl32OutOfRangeException( "The submatrix interval is out of range");
-    }
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const dl32SubMatrixBounds& bounds) : _underlying_matrix( matrix ) , _bounds( bounds ) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Creates a submatrix from the specified interval of a matrix.
+    /// @brief Creates a submatrix from the specified bounds of a matrix.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const dl32MatrixInterval& interval) : _underlying_matrix( matrix ) , _interval( interval )
-    {
-        if( _interval.end_row >= MATRIX_ROWS && _interval.end_column >= MATRIX_COLUMNS || !interval.is_valid() ) throw dl32OutOfRangeException( "The submatrix interval is out of range");
-    }
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , unsigned int begin_row , unsigned int begin_column , unsigned int end_row , unsigned int end_column) : _underlying_matrix( matrix ) , _bounds(begin_row,begin_column,end_row,end_column) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Gets the submatrix interval.
+    /// @brief Creates a submatrix from the specified bounds of a matrix.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    const dl32MatrixInterval& get_interval() const { return _interval; }
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const dl32MatrixInterval& interval) : dl32SubMatrix(matrix,interval.begin_row,interval.begin_column,interval.end_row,interval.end_column) {}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Creates a submatrix from the specified set of rows and columns of the original matrix..
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32SubMatrix(dl32MakeConstIf<!USE_MATRIX_REFERENCE,matrix_type&> matrix , const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns) : _underlying_matrix( matrix ) , _bounds( rows , columns ) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Sets the value of the element stored at the specified position of the submatrix.
-    /// @remarks Coordinates in submatrix space (column 0 is the _interval.begin_column column of the 
-    ///          underlying matrix).
+    /// @remarks Coordinates in submatrix space.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    typename matrix_type::element_type& at(unsigned int row , unsigned int column)
+    Proxy operator[](unsigned int row)
     {
-        return _underlying_matrix[_interval.begin_row + row][_interval.begin_column + column];
+        return Proxy(_underlying_matrix,row,_bounds.rows_map());
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Gets the value of the element stored at the specified position of the submatrix.
-    /// @remarks Coordinates in submatrix space (column 0 is the _interval.begin_column column of the 
-    ///          underlying matrix).
+    /// @remarks Coordinates in submatrix space.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    const typename matrix_type::element_type& at(unsigned int row , unsigned int column) const
+    const Proxy operator[](unsigned int row) const
     {
-        return _underlying_matrix[_interval.begin_row + row][_interval.begin_column + column];
+        return Proxy(_underlying_matrix,row,_bounds.columns_count);
     }
     
     template<unsigned int ROWS , unsigned int COLUMNS , bool OTHER_USES_REFRRENCE>
     my_type& operator+=(const dl32SubMatrix<dl32Matrix<T,ROWS,COLUMNS>,OTHER_USES_REFRRENCE>& other)
     {
-        _underlying_matrix.add(other._underlying_matrix,_interval,other._interval);
+        _underlying_matrix.add(other._underlying_matrix,_bounds,other._bounds);
         return *this;
     }
     
     template<unsigned int ROWS , unsigned int COLUMNS , bool OTHER_USES_REFRRENCE>
     my_type& operator-=(const dl32SubMatrix<dl32Matrix<T,ROWS,COLUMNS>,OTHER_USES_REFRRENCE>& other)
     {
-        _underlying_matrix.substract(other._underlying_matrix,_interval,other._interval);
+        _underlying_matrix.add(other._underlying_matrix,_bounds,other._bounds);
         return *this;
     }
     
     my_type& operator*=(const T& scalar)
     {
-        _underlying_matrix.multiply(scalar,_interval);
+        _underlying_matrix.multiply(scalar,_bounds);
         return *this;
     }
     
     my_type& operator/=(const T& scalar)
     {
-        _underlying_matrix.divide(scalar,_interval);
+        _underlying_matrix.divide(scalar,_bounds);
         return *this;
     }    
 };
@@ -392,13 +715,52 @@ class dl32Matrix : public dl32Array<T,ROWS,COLUMNS> ,
 {
     static_assert(ROWS > 0 && COLUMNS > 0 , "A matrix must have at least onle row and one column");
     
+private:
+    bool _check_matrix_operations;
+    
 public:
     static const unsigned int rows    = ROWS;    ///< Gets the number of rows of this type of matrix.
     static const unsigned int columns = COLUMNS; ///< Gets the number of columns of this type of matrix.
     
     static const dl32MatrixInterval complete_interval; ///< Gets the interval that fits the complete matrix.
+    static const dl32SubMatrixBounds complete_bounds; ///< Gets the bounds that fits the entire matrix.
     
     using matrix_type = dl32Matrix<T,ROWS,COLUMNS>; //< Gets an alias to the matrix type.
+    
+    dl32Matrix(bool check_matrix_operations = false) : _check_matrix_operations( check_matrix_operations ) {}
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this matrix performs validation before any algebraic operation.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @return Returns true if validation is enabled. Returns false if its disabled.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool operations_validation_enabled() const { return _check_matrix_operations; }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Enables matrix operations validation.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    void enable_operations_validation() { _check_matrix_operations = true; }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Disanables matrix operations validation.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////    
+    void disable_operations_validation() { _check_matrix_operations = false; }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Implicit conversion operator to submatrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    operator dl32SubMatrix<matrix_type,true>()
+    {
+        return dl32SubMatrix<matrix_type,true>(*this,complete_interval);
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if this type of matrix is a square matrix.
@@ -417,19 +779,19 @@ public:
     /// @tparam OTHER_COLUMNS Number of columns of the other matrix type. This parameter can be deduced by the compiler.
     /// 
     /// @param other The matrix that the operation will de performed with. 
-    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
-    //  @param other_interval Interval of the matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval).
+    /// @param this_bounds Bounds of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_bounds).
+    //  @param other_bounds Bounds of the matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_bounds).
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<unsigned int OTHER_ROWS,unsigned int OTHER_COLUMNS>
-    void add(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32MatrixInterval& this_interval = complete_interval , const dl32MatrixInterval& other_interval = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval)
+    void add(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32SubMatrixBounds& this_bounds = complete_bounds , const dl32SubMatrixBounds& other_bounds = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_bounds)
     {
-        if( !this_interval.is_valid(*this) || !other_interval.is_valid(other) || !dl32MatrixInterval::valid_addition(this_interval,other_interval) ) throw dl32InvalidMatrixOperationException();
+        if( (_check_matrix_operations || other._check_matrix_operations) && !dl32SubMatrixBounds::valid_addition(this_bounds,other_bounds) ) throw dl32InvalidMatrixOperationException();
         
-        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
-            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
-                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] += other[other_interval.begin_row + i][other_interval.begin_column + j];
+        for(unsigned int i = 0 ; i < this_bounds.rows_count() ; ++i)
+            for(unsigned int j = 0 ; j < this_bounds.columns_count() ; ++j)
+                (*this)[this_bounds.row(i)][this_bounds.column(j)] += other[other_bounds.row(i)][other_bounds.column(j)];
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -442,19 +804,19 @@ public:
     /// @tparam OTHER_COLUMNS Number of columns of the other matrix type. This parameter can be deduced by the compiler.
     /// 
     /// @param other The matrix that the operation will de performed with. 
-    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
-    //  @param other_interval Interval of the matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval).
+    /// @param this_bounds Bounds of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_bounds).
+    //  @param other_bounds Bounds of the matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_bounds).
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     template<unsigned int OTHER_ROWS,unsigned int OTHER_COLUMNS>
-    void substract(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32MatrixInterval& this_interval = complete_interval , const dl32MatrixInterval& other_interval = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_interval)
+    void substract(const dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>& other , const dl32SubMatrixBounds& this_bounds = complete_bounds , const dl32SubMatrixBounds& other_bounds = dl32Matrix<T,OTHER_ROWS,OTHER_COLUMNS>::complete_bounds)
     {
-        if( !this_interval.is_valid(*this) || !other_interval.is_valid(other) || !dl32MatrixInterval::valid_substraction(this_interval,other_interval) ) throw dl32InvalidMatrixOperationException();
+        if( (_check_matrix_operations || other._check_matrix_operations) && !dl32SubMatrixBounds::valid_addition(this_bounds,other_bounds) ) throw dl32InvalidMatrixOperationException();
         
-        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
-            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
-                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] -= other[other_interval.begin_row + i][other_interval.begin_column + j];
+        for(unsigned int i = 0 ; i < this_bounds.rows_count() ; ++i)
+            for(unsigned int j = 0 ; j < this_bounds.columns_count() ; ++j)
+                (*this)[this_bounds.row(i)][this_bounds.column(j)] -= other[other_bounds.row(i)][other_bounds.column(j)];
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -464,16 +826,14 @@ public:
     /// @author	Manu343726
     /// 
     /// @param scalar The scalar value that the operation will be performed with.
-    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    /// @param this_bounds Bounds of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_bounds).
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    void multiply(const T& scalar , const dl32MatrixInterval& this_interval = complete_interval)
+    void multiply(const T& scalar , const dl32SubMatrixBounds& this_bounds = complete_bounds)
     {
-        if( !this_interval.is_valid(*this) ) throw dl32InvalidMatrixOperationException();
-        
-        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
-            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
-                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] *= scalar;
+        for(unsigned int i = 0 ; i < this_bounds.rows_count() ; ++i)
+            for(unsigned int j = 0 ; j < this_bounds.columns_count() ; ++j)
+                (*this)[this_bounds.row(i)][this_bounds.column(j)] *= scalar;
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -483,16 +843,36 @@ public:
     /// @author	Manu343726
     /// 
     /// @param scalar The scalar value that the operation will be performed with.
-    /// @param this_interval Interval of this matrix where the operation will be performed. Its default value
-    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_interval).
+    /// @param this_bounds Bounds of this matrix where the operation will be performed. Its default value
+    ///        is the entire matrix (dl32Matrix<T,ROWS,COLUMNS>::complete_bounds).
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    void divide(const T& scalar , const dl32MatrixInterval& this_interval = complete_interval)
+    void divide(const T& scalar , const dl32SubMatrixBounds& this_bounds = complete_bounds)
     {
-        if( !this_interval.is_valid(*this) ) throw dl32InvalidMatrixOperationException();
+        if( !this_bounds.is_valid(*this) ) throw dl32InvalidMatrixOperationException();
         
-        for(unsigned int i = 0 ; i < this_interval.rows() ; ++i)
-            for(unsigned int j = 0 ; j < this_interval.columns() ; ++j)
-                (*this)[this_interval.begin_row + i][this_interval.begin_column + j] /= scalar;
+        for(unsigned int i = 0 ; i < this_bounds.rows_count() ; ++i)
+            for(unsigned int j = 0 ; j < this_bounds.columns_count() ; ++j)
+                (*this)[this_bounds.row(i)][this_bounds.column(j)] /= scalar;
+    }
+    
+    T determinant(const dl32SubMatrixBounds& bounds = complete_bounds) /* WARNING: NOT FINISHED */
+    {
+        if( !bounds.is_square() ) throw dl32InvalidMatrixOperationException();
+        
+#define MATRIX(x,y) ( (*this)[bounds.row( (x) )][bounds.column( (y) )] )
+        
+        switch( columns )
+        {
+            case 1: return MATRIX(0,0); //Sarrus 1x1
+            
+            case 2: return ( MATRIX(0,0) * MATRIX(1,1) ) - ( MATRIX(0,1) * MATRIX(1,0) ); //Sarrus 2x2
+            
+            case 3: return ( MATRIX(0,0) * MATRIX(1,1) * MATRIX(2,2) + MATRIX(0,1) * MATRIX(1,2) * MATRIX(2,0) + MATRIX(1,0) * MATRIX(2,1) * MATRIX(0,2) ) -
+                           ( MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) + MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) + MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) ); //Sarrus 3x3
+            
+            default:
+                return 0;
+        }
     }
     
     dl32Matrix<T,ROWS,COLUMNS>& operator+=(const dl32Matrix<T,ROWS,COLUMNS>& other)
@@ -539,22 +919,40 @@ public:
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Gets a submatrix of this matrix from the specified interval.
+    /// @brief Gets a submatrix of this matrix from the specified bounds.
     ///
     ///@tparam GET_REFERENCE_SUBMATRIX If is set to true, the submatrix is a reference to this matrix.
     ///        If is set to false, the submatrix is an independent copy of this matrix.
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<bool GET_REFERENCE_SUBMATRIX = false>
-    dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX> get_submatrix(const dl32MatrixInterval& interval)
+    template<bool GET_REFERENCE_SUBMATRIX = false , typename... TARGS> //Lo bueno de hacerlo así (Una función que le puedes pasar hasta n parámetros de n tipos diferentes) es que con ésta sola función puedo usar todas las sobrecargas del constructor de submatrix.
+    dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX> get_submatrix(const TARGS&... args)
     {
-        return dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX>(*this,interval);
+        return dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX>(*this,args...);
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Gets a submatrix of this matrix from the specified bounds.
+    ///
+    ///@tparam GET_REFERENCE_SUBMATRIX If is set to true, the submatrix is a reference to this matrix.
+    ///        If is set to false, the submatrix is an independent copy of this matrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<bool GET_REFERENCE_SUBMATRIX = false> //No se puede inferir el tipo de un initializer_list? http://stackoverflow.com/questions/11921335/use-brace-enclosed-initializer-lists-in-a-variadic-template Tengo que poner una sobrecarga explicitamente
+    dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX> get_submatrix(const std::initializer_list<unsigned int>& rows , const std::initializer_list<unsigned int>& columns)
+    {
+        //La verdad es que no hacía falta el cast, la conversión de initializer_list a vector es implícita
+        return dl32SubMatrix<matrix_type,GET_REFERENCE_SUBMATRIX>(*this, std::vector<unsigned int> { rows },std::vector<unsigned int> { columns });
     }
 };
 
 template<typename T , unsigned int ROWS , unsigned int COLUMNS>
 const dl32MatrixInterval dl32Matrix<T,ROWS,COLUMNS>::complete_interval = dl32MatrixInterval(0,0,ROWS-1,COLUMNS-1);
+
+template<typename T , unsigned int ROWS , unsigned int COLUMNS>
+const dl32SubMatrixBounds dl32Matrix<T,ROWS,COLUMNS>::complete_bounds = dl32SubMatrixBounds(0,0,ROWS-1,COLUMNS-1);
 
 #endif	/* DL32MATRIX_H */
 
