@@ -23,6 +23,8 @@
 
 #include "dl32Config.h"
 
+#ifdef WIN32
+
 #include <Windows.h>
 #include <string>
 #include <vector>
@@ -95,3 +97,8 @@ public:
 #define DL32TIMING_END
 #endif
 #endif
+
+#else
+#define DL32TIMING_BEGIN
+#define DL32TIMING_END
+#endif/* WIN32 */

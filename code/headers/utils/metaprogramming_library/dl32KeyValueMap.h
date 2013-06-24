@@ -84,7 +84,7 @@ private:
     {
         static const int index_of_key = dl32IndexOf<KEY,_keys>::value;
         
-        using push_back_result = dl32TypeList<dl32KeyValuePair<KEYS,VALUES>...,<dl32KeyValuePair<KEY,VALUE>>;
+        using push_back_result = dl32TypeList<dl32KeyValuePair<KEYS,VALUES>...,dl32KeyValuePair<KEY,VALUE>>;
         using result = typename _from_list_to_map<typename dl32tmp_if< index_of_key >= 0 , typename dl32Replace<index_of_key,_pairs,dl32KeyValuePair<KEY,VALUE>>::result , push_back_result >::type>::result;
     };
     

@@ -25,14 +25,16 @@
 #include "dl32Math.h"
 #include "dl32MetaprogrammingLibrary.h"
 
-#include <Windows.h>
-
 #include <unordered_map>
 #include <vector>
 #include <functional>
 #include <algorithm>
 
 using namespace std;
+
+#ifdef WIN32
+
+#include <Windows.h>
 
 /********************************************************************************************************************************
  * Win32 API messaging system. Window procedure paramaters definitions                                                          *
@@ -74,6 +76,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #define WINDOWS_PROCEDURE_BYPASS window , message , wParam , lParam
 
+#endif
 
 /****************************************************************************************************************
  * cpp_lib32 high-level events. Can be used to wrap system events (One or more system messages) or to implement *

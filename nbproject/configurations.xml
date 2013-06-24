@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="89">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
@@ -21,7 +21,6 @@
           </logicalFolder>
           <itemPath>code/headers/utils/dl32Assert.h</itemPath>
           <itemPath>code/headers/utils/dl32Config.h</itemPath>
-          <itemPath>code/headers/utils/dl32ConsoleColor.h</itemPath>
           <itemPath>code/headers/utils/dl32Demangling.h</itemPath>
           <itemPath>code/headers/utils/dl32Memory.h</itemPath>
           <itemPath>code/headers/utils/dl32OperatorOverloadingHelpers.h</itemPath>
@@ -30,22 +29,18 @@
           <itemPath>code/headers/utils/dl32Timing.h</itemPath>
         </logicalFolder>
         <itemPath>code/headers/dl32Color.h</itemPath>
-        <itemPath>code/headers/dl32Events.h</itemPath>
         <itemPath>code/headers/dl32Exceptions.h</itemPath>
         <itemPath>code/headers/dl32Math.h</itemPath>
-        <itemPath>code/headers/dl32Window.h</itemPath>
       </logicalFolder>
       <logicalFolder name="source" displayName="source" projectFiles="true">
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>code/source/utils/dl32Config.cpp</itemPath>
-          <itemPath>code/source/utils/dl32ConsoleColor.cpp</itemPath>
           <itemPath>code/source/utils/dl32Demangling.cpp</itemPath>
           <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
           <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
         </logicalFolder>
         <itemPath>code/source/dl32Color.cpp</itemPath>
         <itemPath>code/source/dl32Math.cpp</itemPath>
-        <itemPath>code/source/dl32Window.cpp</itemPath>
       </logicalFolder>
       <logicalFolder name="tests" displayName="tests" projectFiles="true">
         <logicalFolder name="ASCII_raster"
@@ -92,9 +87,7 @@
     <conf name="Debug" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>default</compilerSet>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
+        <compilerSet>GNU|GNU</compilerSet>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -118,15 +111,11 @@
       </compileType>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/math/dl32FloatingPointHelper.h"
             ex="false"
@@ -138,11 +127,6 @@
       <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="code/headers/utils/dl32ConsoleColor.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Demangling.h"
             ex="false"
@@ -199,14 +183,7 @@
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/utils/dl32ConsoleColor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Demangling.cpp"
             ex="false"
@@ -276,8 +253,6 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -295,15 +270,11 @@
       </compileType>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="code/headers/dl32Events.h" ex="false" tool="3" flavor2="0">
-      </item>
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="code/headers/dl32Window.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/math/dl32FloatingPointHelper.h"
             ex="false"
@@ -315,11 +286,6 @@
       <item path="code/headers/utils/dl32Assert.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Config.h" ex="false" tool="3" flavor2="0">
-      </item>
-      <item path="code/headers/utils/dl32ConsoleColor.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
       </item>
       <item path="code/headers/utils/dl32Demangling.h"
             ex="false"
@@ -376,14 +342,7 @@
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="code/source/dl32Window.cpp" ex="false" tool="1" flavor2="0">
-      </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/utils/dl32ConsoleColor.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Demangling.cpp"
             ex="false"

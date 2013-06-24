@@ -20,6 +20,8 @@
 
 #include "dl32Timing.h"
 
+#ifdef WIN32
+
 dl32TimingTreeNode dl32Timing::_root;
 vector<int> dl32Timing::_timingStack; 
 vector<dl32TimingFrame> dl32Timing::_frames;
@@ -78,3 +80,5 @@ void dl32Timing::pop()
 			_actual = _actual->parent();
 	}
 }
+
+#endif /* WIN32 */

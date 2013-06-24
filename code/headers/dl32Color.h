@@ -23,7 +23,14 @@
 
 #include "dl32Config.h"
 
+#ifdef WIN32
 #include <Windows.h>
+
+
+#else
+using byte  = unsigned char;
+using DWORD = unsigned int;
+#endif
 
 typedef DWORD dl32Color;
 

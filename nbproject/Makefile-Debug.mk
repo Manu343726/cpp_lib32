@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=MinGW-Windows
-CND_DLIB_EXT=dll
+CND_PLATFORM=GNU-Linux-x86
+CND_DLIB_EXT=so
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -37,9 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Color.o \
 	${OBJECTDIR}/code/source/dl32Math.o \
-	${OBJECTDIR}/code/source/dl32Window.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
-	${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o \
 	${OBJECTDIR}/code/source/utils/dl32Demangling.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
 	${OBJECTDIR}/code/source/utils/dl32Timing.o \
@@ -71,9 +69,9 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
@@ -87,20 +85,10 @@ ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp
 	${RM} $@.d
 	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
 
-${OBJECTDIR}/code/source/dl32Window.o: code/source/dl32Window.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source
-	${RM} $@.d
-	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Window.o code/source/dl32Window.cpp
-
 ${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
 	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Config.o code/source/utils/dl32Config.cpp
-
-${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o: code/source/utils/dl32ConsoleColor.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source/utils
-	${RM} $@.d
-	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32ConsoleColor.o code/source/utils/dl32ConsoleColor.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Demangling.o: code/source/utils/dl32Demangling.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
@@ -163,7 +151,7 @@ ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32.exe
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32
 
 # Subprojects
 .clean-subprojects:
