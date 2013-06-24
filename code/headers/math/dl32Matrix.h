@@ -299,7 +299,17 @@ public:
     
     dl32SubMatrixBounds(const dl32MatrixInterval& interval) : dl32SubMatrixBounds( interval.begin_row , interval.begin_column , interval.end_row , interval.end_column ) {}
     
-    dl32SubMatrixBounds(const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Creates a submatrix bounds with the specified rows and columns.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param rows Set of rows of the original matrix that forms part of the submatrix.
+    /// @param columns  Set of columns of the original matrix that forms part of the submatrix.
+    /// @param exclude_passed_lines If is set to true, the bounds are filled with the entire matrix lines 
+    ///                             (Rows and columns) excluding the passed lines. 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32SubMatrixBounds(const std::vector<unsigned int>& rows , const std::vector<unsigned int>& columns , bool exclude_passed_lines = false)
     {
         _rows.rehash( rows.size() );
         _columns.rehash( columns.size() );
@@ -646,7 +656,7 @@ public:
         
         switch( fop._operation )
         {
-            case dl32FluentMatrixOperation::ASSIGN:       (*fop._current_matrix) = operand;  fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
+            case dl32FluentMatrixOperation::ASSIGN:       (*fop._current_matrix)  = operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
             case dl32FluentMatrixOperation::ADDITION:     (*fop._current_matrix) += operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
             case dl32FluentMatrixOperation::SUBSTRACTION: (*fop._current_matrix) -= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop;
             case dl32FluentMatrixOperation::MULTIPLICATION: throw dl32InvalidMatrixOperationException("That operation is not supported."); /* (PROVISIONAL) fop._current_matrix *= operand; fop._current_status = operationStatus::WAITING_OPERATOR; return fop; */
@@ -822,6 +832,8 @@ public:
         _underlying_matrix.divide(scalar,_bounds);
         return *this;
     }    
+    
+    
 };
 
 const bool reference_submatrix = true;  ///< Boolean constant to make submatrix constructions more readable.
@@ -847,15 +859,40 @@ private:
     dl32FluentMatrixOperator<T,dl32Matrix<T,ROWS,COLUMNS>> _fluent_operator;
     
 public:
+    /*********************/
+    /* Matrix properties */
+    /*********************/
+    
     static const unsigned int rows    = ROWS;    ///< Gets the number of rows of this type of matrix.
     static const unsigned int columns = COLUMNS; ///< Gets the number of columns of this type of matrix.
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Checks if this type of matrix is a square matrix.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    constexpr bool is_square() const { return rows == columns; }
     
     static const dl32MatrixInterval complete_interval; ///< Gets the interval that fits the complete matrix.
     static const dl32SubMatrixBounds complete_bounds; ///< Gets the bounds that fits the entire matrix.
     
     using matrix_type = dl32Matrix<T,ROWS,COLUMNS>; //< Gets an alias to the matrix type.
     
+    /*********/
+    /* ctors */
+    /*********/
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Default constructor
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     dl32Matrix(bool check_matrix_operations = false) : _check_matrix_operations( check_matrix_operations ) , _fluent_operator( this ) {}
+    
+    
+    /*****************************************/
+    /* Matrix operations validation settings */
+    /*****************************************/
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if this matrix performs validation before any algebraic operation.
@@ -880,27 +917,9 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////////////////    
     void disable_operations_validation() { _check_matrix_operations = false; }
     
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Implicit conversion operator to submatrix.
-    ///
-    /// @author	Manu343726
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    operator dl32SubMatrix<matrix_type,true>()
-    {
-        return dl32SubMatrix<matrix_type,true>(*this,complete_bounds);
-    }
-    
-    dl32FluentMatrixOperator<T,matrix_type>& operator<<(dl32FluentMatrixOperation operation)
-    {
-        return _fluent_operator << operation;
-    }
-    
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief Checks if this type of matrix is a square matrix.
-    ///
-    /// @author	Manu343726
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    constexpr bool is_square() const { return rows == columns; }
+    /**************************/
+    /* Common algebraic tools */
+    /**************************/
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Fills the specified bounds of the matrix with the same value.
@@ -913,6 +932,57 @@ public:
             for(unsigned int j = 0 ; j < bounds.columns_count() ; ++j)
                 (*this)[bounds.row(i)][bounds.column(j)] = value;
     }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Computes the determinant of the matrix.
+    ///
+    /// @author	Manu343726
+    ///
+    /// @param bounds Sets the bounds of the submatrix where the determinant will be computed. Its default
+    ///               value is complete_bounds, so the determinant of the entire matrix is computed by
+    ///               default.
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    T determinant(const dl32SubMatrixBounds& bounds = complete_bounds) /* WARNING: NOT FINISHED */
+    {
+        if( !bounds.is_square() ) throw dl32InvalidMatrixOperationException();
+        
+        #define MATRIX(x,y) ( (*this)[bounds.row( (x) )][bounds.column( (y) )] )
+        
+        switch( columns )
+        {
+            case 1: return MATRIX(0,0); //Sarrus 1x1
+            
+            case 2: return ( MATRIX(0,0) * MATRIX(1,1) ) - ( MATRIX(0,1) * MATRIX(1,0) ); //Sarrus 2x2
+            
+            case 3: return ( MATRIX(0,0) * MATRIX(1,1) * MATRIX(2,2) + MATRIX(0,1) * MATRIX(1,2) * MATRIX(2,0) + MATRIX(1,0) * MATRIX(2,1) * MATRIX(0,2) ) -
+                           ( MATRIX(0,2) * MATRIX(1,1) * MATRIX(2,0) + MATRIX(0,1) * MATRIX(1,0) * MATRIX(2,2) + MATRIX(1,2) * MATRIX(2,1) * MATRIX(0,0) ); //Sarrus 3x3        
+            default:
+                return 0;
+        }
+    }
+    
+    /*********************/
+    /* Fluent operations */
+    /*********************/
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Performs a secuence of fluent algebraic operations.
+    /// @details Fluent operations are algebraic operations performed allways by the same matrix as target
+    ///          (The result of every computation is stored in the same matrix). 
+    ///          dl32FluentOperator class and operator<< overload in matrices provides a way to perform this
+    ///          type of operations without the cost of intermediate temporary objects as in common binary
+    ///          operators.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32FluentMatrixOperator<T,matrix_type>& operator<<(dl32FluentMatrixOperation operation)
+    {
+        return _fluent_operator << operation;
+    }
+    
+    /*******************************/
+    /* Common algebraic operations */
+    /*******************************/
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Performs an addition operation between this instance and other matrix. The result is stored 
@@ -1000,26 +1070,6 @@ public:
                 (*this)[this_bounds.row(i)][this_bounds.column(j)] /= scalar;
     }
     
-    T determinant(const dl32SubMatrixBounds& bounds = complete_bounds) /* WARNING: NOT FINISHED */
-    {
-        if( !bounds.is_square() ) throw dl32InvalidMatrixOperationException();
-        
-#define MATRIX(x,y) ( (*this)[bounds.row( (x) )][bounds.column( (y) )] )
-        
-        switch( columns )
-        {
-            case 1: return MATRIX(0,0); //Sarrus 1x1
-            
-            case 2: return ( MATRIX(0,0) * MATRIX(1,1) ) - ( MATRIX(0,1) * MATRIX(1,0) ); //Sarrus 2x2
-            
-            case 3: return ( MATRIX(0,0) * MATRIX(1,1) * MATRIX(2,2) + MATRIX(0,1) * MATRIX(1,2) * MATRIX(2,0) + MATRIX(1,0) * MATRIX(2,1) * MATRIX(0,2) ) -
-                           ( MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) + MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) + MATRIX(0,0) * MATRIX(0,0) * MATRIX(0,0) ); //Sarrus 3x3
-            
-            default:
-                return 0;
-        }
-    }
-    
     dl32Matrix<T,ROWS,COLUMNS>& operator+=(const dl32Matrix<T,ROWS,COLUMNS>& other)
     {
         add(other);
@@ -1062,6 +1112,8 @@ public:
         
         return result; //NRVO, si no move, si no copia. http://stackoverflow.com/questions/4986673/c11-rvalues-and-move-semantics-confusion
     }
+    
+
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Gets a submatrix of this matrix from the specified bounds.
