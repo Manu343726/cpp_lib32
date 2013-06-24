@@ -96,9 +96,9 @@ public:
 #define DL32TIMING_BEGIN
 #define DL32TIMING_END
 #endif
-#endif
 
 #else
 #define DL32TIMING_BEGIN
 #define DL32TIMING_END
-#endif/* WIN32 */
+#endif /* WIN32 */
+#endif /* INCLUDE GUARDS */
