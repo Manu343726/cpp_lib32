@@ -3,6 +3,12 @@
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="code" displayName="code" projectFiles="true">
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
+        <logicalFolder name="graphics" displayName="graphics" projectFiles="true">
+          <logicalFolder name="window" displayName="window" projectFiles="true">
+            <itemPath>code/headers/graphics/window/dl32PortableWindowConfiguration.h</itemPath>
+            <itemPath>code/headers/graphics/window/xws/dl32Window.h</itemPath>
+          </logicalFolder>
+        </logicalFolder>
         <logicalFolder name="math" displayName="math" projectFiles="true">
           <itemPath>code/headers/math/dl32FloatingPointHelper.h</itemPath>
           <itemPath>code/headers/math/dl32Matrix.h</itemPath>
@@ -107,6 +113,8 @@
             <pElem>code/tests/ASCII_raster/graphics</pElem>
             <pElem>code/tests/refactoring</pElem>
             <pElem>code/headers/math</pElem>
+            <pElem>code/headers/graphics</pElem>
+            <pElem>code/headers/graphics/window</pElem>
           </incDir>
           <commandLine>-ftemplate-depth=10000</commandLine>
         </ccTool>
@@ -118,6 +126,16 @@
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/graphics/window/dl32PortableWindowConfiguration.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/graphics/window/xws/dl32Window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/math/dl32FloatingPointHelper.h"
             ex="false"
@@ -279,6 +297,16 @@
       <item path="code/headers/dl32Math.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/graphics/window/dl32PortableWindowConfiguration.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="code/headers/graphics/window/xws/dl32Window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/math/dl32FloatingPointHelper.h"
             ex="false"

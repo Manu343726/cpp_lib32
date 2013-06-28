@@ -458,8 +458,7 @@ public:
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     static bool valid_substraction(const dl32SubMatrixBounds& i1 , const dl32SubMatrixBounds& i2)
-    {
-        
+    {      
         return valid_addition(i1,i2);
     }
     

@@ -252,6 +252,10 @@ public:
     using current_implementation = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; ///< Gets the current vector 2d implementation.
 };
 
+//Forward declaration for implicit cast from dl32oint2D to dl32Vector2D.
+template<typename T = float>
+struct dl32Vector2D;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class represents a point in 2d space.
 ///
@@ -278,6 +282,14 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     using my_type = dl32Point2D<T>;
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Implicit cast to 2d vector.
+    ///
+    /// @return A 2d vector (with the same coordinate type) with x and y as coordinates.
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    operator dl32Vector2D<T>() const {return dl32Vector2D<T>( x , y ); }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Point2Ds are equal.
     ///
     /// @author	Manu343726
@@ -301,7 +313,8 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     my_type& operator-=(const my_type& p) { return this->substract ( p ); }
 };
 
-using dl32Point2Df = dl32Point2D<float>; ///< Alias for single-precision 2d points.
+using dl32Point2Di = dl32Point2D<int>;    ///< Alias for integer 2d points.
+using dl32Point2Df = dl32Point2D<float>;  ///< Alias for single-precision 2d points.
 using dl32Point2Dd = dl32Point2D<double>; ///< Alias for double-precision 2d points.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -324,6 +337,14 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     dl32Vector2D(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : my_implementation( p2.x - p1.x , p2.y - p1.y ) {}
     
     using my_type = dl32Vector2D<T>;
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Implicit cast to 2d point.
+    ///
+    /// @return A 2d point (with the same coordinate type) with x and y as coordinates.
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    operator dl32Point2D<T>() const {return dl32Point2D<T>( x , y ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Vector2Ds are equal.
