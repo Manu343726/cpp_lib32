@@ -75,6 +75,7 @@
         <logicalFolder name="refactoring" displayName="refactoring" projectFiles="true">
           <itemPath>code/tests/refactoring/Redesigned_event_system_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/console_color_test.cpp</itemPath>
+          <itemPath>code/tests/refactoring/dl32Window_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/is_design_test.cpp</itemPath>
           <itemPath>code/tests/refactoring/minimax.cpp</itemPath>
           <itemPath>code/tests/refactoring/new_math_test.cpp</itemPath>
@@ -113,7 +114,6 @@
           <developmentMode>2</developmentMode>
         </cTool>
         <ccTool>
-          <developmentMode>2</developmentMode>
           <standard>8</standard>
           <incDir>
             <pElem>code/headers</pElem>
@@ -276,6 +276,11 @@
             flavor2="0">
       </item>
       <item path="code/tests/refactoring/console_color_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/dl32Window_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
@@ -462,6 +467,11 @@
             flavor2="0">
       </item>
       <item path="code/tests/refactoring/console_color_test.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/tests/refactoring/dl32Window_test.cpp"
             ex="false"
             tool="1"
             flavor2="0">
