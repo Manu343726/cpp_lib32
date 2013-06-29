@@ -31,19 +31,20 @@
 #include "dl32Config.h"
 #include "dl32Singleton.h"
 #include "dl32Exceptions.h"
+#include "dl32NewMath.h"
 
 #include "dl32PortableWindowConfiguration.h"
 
 class dl32Window
 {
 private:
-    _dl32::dl32WindowNativeHandle _window_handle;
+    dl32WindowNativeHandle _window_handle;
     
 public:
-    static const unsigned int DEFAULT_WIDTH  = _dl32::WINDOW_DEFAULT_WIDTH; ///< Gets the window default width.
-    static const unsigned int DEFAULT_HEIGHT = _dl32::WINDOW_DEFAULT_HEIGHT; ///< Gets the window default height.
-    static const int DEFAULT_POS_X  = _dl32::WINDOW_DEFAULT_POS_X; ///< Gets the window default x coorinate.
-    static const int DEFAULT_POS_Y  = _dl32::WINDOW_DEFAULT_POS_Y; ///< Gets the window default y coordinate.
+    static const unsigned int DEFAULT_WIDTH  = WINDOW_DEFAULT_WIDTH; ///< Gets the window default width.
+    static const unsigned int DEFAULT_HEIGHT = WINDOW_DEFAULT_HEIGHT; ///< Gets the window default height.
+    static const int DEFAULT_POS_X  = WINDOW_DEFAULT_POS_X; ///< Gets the window default x coorinate.
+    static const int DEFAULT_POS_Y  = WINDOW_DEFAULT_POS_Y; ///< Gets the window default y coordinate.
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Creates a window with the specified title and area (Position and size).
@@ -68,7 +69,7 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    dl32Window(const std::string& title , const dl32Point2Di& position , unsigned int width = DEFAULT_WIDTH , unsigned int height = DEFAULT_HEIGHT) : XWindow( title , position.x , position.y , width , height) {}
+    dl32Window(const std::string& title , const dl32Point2Di& position , unsigned int width = DEFAULT_WIDTH , unsigned int height = DEFAULT_HEIGHT) : dl32Window( title , position.x , position.y , width , height) {}
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Gets the title of the window.

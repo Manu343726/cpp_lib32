@@ -37,6 +37,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Color.o \
 	${OBJECTDIR}/code/source/dl32Math.o \
+	${OBJECTDIR}/code/source/graphics/window/dl32Window.o \
+	${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/source/utils/dl32Demangling.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
@@ -84,6 +86,16 @@ ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
+
+${OBJECTDIR}/code/source/graphics/window/dl32Window.o: code/source/graphics/window/dl32Window.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/graphics/window
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/graphics/window/dl32Window.o code/source/graphics/window/dl32Window.cpp
+
+${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o: code/source/graphics/window/xws/XWSScreenManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/graphics/window/xws
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o code/source/graphics/window/xws/XWSScreenManager.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils

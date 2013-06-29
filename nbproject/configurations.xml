@@ -5,8 +5,11 @@
       <logicalFolder name="headers" displayName="headers" projectFiles="true">
         <logicalFolder name="graphics" displayName="graphics" projectFiles="true">
           <logicalFolder name="window" displayName="window" projectFiles="true">
+            <logicalFolder name="xws" displayName="xws" projectFiles="true">
+              <itemPath>code/headers/graphics/window/xws/XWSSCreenManager.h</itemPath>
+            </logicalFolder>
             <itemPath>code/headers/graphics/window/dl32PortableWindowConfiguration.h</itemPath>
-            <itemPath>code/headers/graphics/window/xws/dl32Window.h</itemPath>
+            <itemPath>../../../DROPBOX/Dropbox/PROYECTOS/C_C++/dx_lib32/dx_lib32/code/headers/graphics/window/dl32Window.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="math" displayName="math" projectFiles="true">
@@ -39,6 +42,14 @@
         <itemPath>code/headers/dl32Math.h</itemPath>
       </logicalFolder>
       <logicalFolder name="source" displayName="source" projectFiles="true">
+        <logicalFolder name="graphics" displayName="graphics" projectFiles="true">
+          <logicalFolder name="window" displayName="window" projectFiles="true">
+            <logicalFolder name="xws" displayName="xws" projectFiles="true">
+              <itemPath>code/source/graphics/window/xws/XWSScreenManager.cpp</itemPath>
+            </logicalFolder>
+            <itemPath>code/source/graphics/window/dl32Window.cpp</itemPath>
+          </logicalFolder>
+        </logicalFolder>
         <logicalFolder name="utils" displayName="utils" projectFiles="true">
           <itemPath>code/source/utils/dl32Config.cpp</itemPath>
           <itemPath>code/source/utils/dl32Demangling.cpp</itemPath>
@@ -98,6 +109,9 @@
         <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <developmentMode>2</developmentMode>
+        </cTool>
         <ccTool>
           <developmentMode>2</developmentMode>
           <standard>8</standard>
@@ -118,7 +132,17 @@
           </incDir>
           <commandLine>-ftemplate-depth=10000</commandLine>
         </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibLibItem>X11</linkerLibLibItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
+      <item path="../../../DROPBOX/Dropbox/PROYECTOS/C_C++/dx_lib32/dx_lib32/code/headers/graphics/window/dl32Window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
@@ -132,7 +156,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/graphics/window/xws/dl32Window.h"
+      <item path="code/headers/graphics/window/xws/XWSSCreenManager.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -202,6 +226,16 @@
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/graphics/window/dl32Window.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/source/graphics/window/xws/XWSScreenManager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -290,6 +324,11 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="../../../DROPBOX/Dropbox/PROYECTOS/C_C++/dx_lib32/dx_lib32/code/headers/graphics/window/dl32Window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
       <item path="code/headers/dl32Color.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/dl32Exceptions.h" ex="false" tool="3" flavor2="0">
@@ -303,7 +342,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="code/headers/graphics/window/xws/dl32Window.h"
+      <item path="code/headers/graphics/window/xws/XWSSCreenManager.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -373,6 +412,16 @@
       <item path="code/source/dl32Color.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/source/dl32Math.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="code/source/graphics/window/dl32Window.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="code/source/graphics/window/xws/XWSScreenManager.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
       </item>
       <item path="code/source/utils/dl32Config.cpp" ex="false" tool="1" flavor2="0">
       </item>

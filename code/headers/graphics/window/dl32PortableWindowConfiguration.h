@@ -30,13 +30,13 @@
 
 #include "dl32Config.h"
 
-namespace _dl32
-{
  #ifdef _WIN32
 
 #include <Windows.h>
 
 using dl32WindowNativeHandle = HWND; 
+using dl32NativeEventCode    = UINT;
+using dl32NativeEventData    = MSG;
 
 const int WINDOW_DEFAULT_POS_X  = CW_USEDEFAULT;
 const int WINDOW_DEFAULT_POS_Y  = CW_USEDEFAULT;
@@ -45,15 +45,20 @@ const int WINDOW_DEFAULT_HEIGHT = 600;
 #else
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
 
-using dl32WindowNativeHandle = Window*; 
+using dl32WindowNativeHandle = Window; 
+using dl32NativeEventCode    = int;
+using dl32NativeEventData    = XEvent;
 
 const int WINDOW_DEFAULT_POS_X  = 0;//Provisional
 const int WINDOW_DEFAULT_POS_Y  = 0;//Provisional
-const int WINDOW_DEFAULT_WIDTH  = 800;
-const int WINDOW_DEFAULT_HEIGHT = 600;
+const unsigned int WINDOW_DEFAULT_WIDTH  = 800;
+const unsigned int WINDOW_DEFAULT_HEIGHT = 600;
+const unsigned int WINDOW_BORDER_WIDTH   = 10; //Provisional
 #endif   
-}
 
 
 

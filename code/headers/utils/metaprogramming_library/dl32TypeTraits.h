@@ -212,7 +212,7 @@ private:
     struct _is_array
     {
         static const bool value = false;
-        static const int lenght = UNESPECIFIED_ARRAY_LENGHT;
+        static const unsigned int lenght = UNESPECIFIED_ARRAY_LENGHT;
         using type = _T;
     };
     
@@ -220,7 +220,7 @@ private:
     struct _is_array<_T[]>
     {
         static const bool value = true;
-        static const int lenght = UNESPECIFIED_ARRAY_LENGHT;
+        static const unsigned int lenght = UNESPECIFIED_ARRAY_LENGHT;
         using type = _T;
     };
     
@@ -228,7 +228,7 @@ private:
     struct _is_array<_T[LENGHT]>
     {
         static const bool value = true;
-        static const int lenght = LENGHT;
+        static const unsigned int lenght = LENGHT;
         using type = _T;
     };
     
@@ -253,10 +253,7 @@ using dl32BasicTypes = typename dl32Merge<dl32IntegralTypes::push_back<void,bool
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32IsFloatingPointType
-{
-    static const bool value = dl32FloatingPointTypes::contains<dl32WithoutConstVolatile<T>>::value; ///< True if T is a floating-point type. False if not.
-};
+struct dl32IsFloatingPointType : public dl32BoolWrapper<dl32FloatingPointTypes::contains<dl32WithoutConstVolatile<T>>::value> {};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class checks if a provided type T is an integral type.
@@ -264,10 +261,7 @@ struct dl32IsFloatingPointType
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32IsIntegralType
-{
-    static const bool value = dl32IntegralTypes::contains<dl32WithoutConstVolatile<T>>::value; ///< True if T is an integral type. False if not.
-};
+struct dl32IsIntegralType : public dl32BoolWrapper<dl32IntegralTypes::contains<dl32WithoutConstVolatile<T>>::value> {};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief This class checks if a provided type T is a C++ basic type.
@@ -275,13 +269,10 @@ struct dl32IsIntegralType
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
-struct dl32IsBasicType
-{
-    static const bool value = dl32BasicTypes::contains<dl32WithoutConstVolatile<T>>::value; ///< True if T is a basic type. False if not.
-};
+struct dl32IsBasicType : public dl32BoolWrapper<dl32BasicTypes::contains<dl32WithoutConstVolatile<T>>::value> {};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief This class checks if a provided type T is a class.
+/// @brief This class checks if a provided type T is a class/struct.
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

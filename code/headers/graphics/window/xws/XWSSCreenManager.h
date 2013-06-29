@@ -11,6 +11,11 @@
 #include "dl32PortableWindowConfiguration.h"
 #include "dl32Singleton.h"
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
+
 DL32EXCEPTION_SUBCLASS_NODOC( dl32XWSDisplayConnectionFailed )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +30,7 @@ class XWSScreenManager : public dl32Singleton<XWSScreenManager>
 private:
     Display* _display;
     unsigned int _screen_number;
+    dl32WindowNativeHandle _root_window;
     
 public:
     
@@ -40,7 +46,14 @@ public:
     ///
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    Screen* display() const { return _display; }     
+    Display* display() const { return _display; }   
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief Returns a handle to the root window of the screen.
+    ///
+    /// @author	Manu343726
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    dl32WindowNativeHandle root() const { return _root_window; }
 };
 
 #endif	/* XWSSCREENMANAGER_H */

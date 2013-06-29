@@ -37,6 +37,8 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/code/source/dl32Color.o \
 	${OBJECTDIR}/code/source/dl32Math.o \
+	${OBJECTDIR}/code/source/graphics/window/dl32Window.o \
+	${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/source/utils/dl32Demangling.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
@@ -65,7 +67,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=-lX11
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -84,6 +86,16 @@ ${OBJECTDIR}/code/source/dl32Math.o: code/source/dl32Math.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source
 	${RM} $@.d
 	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -Icode/headers/graphics -Icode/headers/graphics/window -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/dl32Math.o code/source/dl32Math.cpp
+
+${OBJECTDIR}/code/source/graphics/window/dl32Window.o: code/source/graphics/window/dl32Window.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/graphics/window
+	${RM} $@.d
+	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -Icode/headers/graphics -Icode/headers/graphics/window -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/graphics/window/dl32Window.o code/source/graphics/window/dl32Window.cpp
+
+${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o: code/source/graphics/window/xws/XWSScreenManager.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/source/graphics/window/xws
+	${RM} $@.d
+	$(COMPILE.cc) -g -O -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -Icode/headers/graphics -Icode/headers/graphics/window -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/graphics/window/xws/XWSScreenManager.o code/source/graphics/window/xws/XWSScreenManager.cpp
 
 ${OBJECTDIR}/code/source/utils/dl32Config.o: code/source/utils/dl32Config.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils

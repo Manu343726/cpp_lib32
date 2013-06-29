@@ -287,7 +287,7 @@ struct dl32Point2D : public dl32Vector2dImplementationsManager<dl32Point2D<T>,T,
     /// @return A 2d vector (with the same coordinate type) with x and y as coordinates.
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    operator dl32Vector2D<T>() const {return dl32Vector2D<T>( x , y ); }
+    operator dl32Vector2D<T>() const {return dl32Vector2D<T>{ this->x , this->y }; }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Point2Ds are equal.
@@ -323,7 +323,7 @@ using dl32Point2Dd = dl32Point2D<double>; ///< Alias for double-precision 2d poi
 /// @tparam T Type used for point coordinates.
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T = float>
+template<typename T>
 struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation,
                       public dl32EqualityHelper<dl32Vector2D<T>>,         //Binary operator!=(dl32Vector2D<T>,dl32Vector2D<T>)
                       public dl32BasicAlgebraHelper<dl32Vector2D<T>>,     //Binary operator+ (dl32Vector2D<T>,dl32Vector2D<T>) , binary operator-(dl32Vector2D<T>,dl32Vector2D<T>)
@@ -344,7 +344,7 @@ struct dl32Vector2D : public dl32Vector2dImplementationsManager<dl32Vector2D<T>,
     /// @return A 2d point (with the same coordinate type) with x and y as coordinates.
     /// @author	Manu343726
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    operator dl32Point2D<T>() const {return dl32Point2D<T>( x , y ); }
+    operator dl32Point2D<T>() const {return dl32Point2D<T>( this->x , this->y ); }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief Checks if two dl32Vector2Ds are equal.
