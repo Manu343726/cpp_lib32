@@ -35,6 +35,8 @@
 
 #include "dl32PortableWindowConfiguration.h"
 
+DL32EXCEPTION_SUBCLASS_NODOC( dl32WindowTitleFetchingFailed );
+
 class dl32Window
 {
 private:

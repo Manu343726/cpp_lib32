@@ -23,6 +23,13 @@ XWindowAttributes get_window_attributes( dl32WindowNativeHandle window )
     return attributes;
 }
 
+void force_operations()//Puta arquitectura cliente-servidor...
+{
+    XFlush( XWSScreenManager::instance().display() );
+}
+
+/* dl32Window implementation (UNIX/X11 version) */
+
 dl32Window::dl32Window( const std::string& title, int x , int y , unsigned int width , unsigned int height )
 {
     auto display = XWSScreenManager::instance().display();
@@ -30,12 +37,13 @@ dl32Window::dl32Window( const std::string& title, int x , int y , unsigned int w
     
     _window_handle = XCreateSimpleWindow( display , XRootWindow( display , screen ) , x , y , width , height , WINDOW_BORDER_WIDTH , XWhitePixel( display , screen ) , XBlackPixel( display , screen ) );
 
+    this->title( title );
     show();
 }
 
 void dl32Window::title(const std::string& title)
 {
-    XStoreName( XWSScreenManager::instance().display() , _window_handle , title.c_str() );
+    XStoreName( XWSScreenManager::instance().display() , _window_handle , title.c_str() ); force_operations();
 }
 
 std::string dl32Window::title() const
@@ -44,7 +52,10 @@ std::string dl32Window::title() const
     
     XFetchName( XWSScreenManager::instance().display() , _window_handle , &c_style_window_title_string);
     
-    return std::string( c_style_window_title_string );
+    if( c_style_window_title_string )
+        return std::string( c_style_window_title_string );
+    else
+        throw dl32WindowTitleFetchingFailed();
 }
 
 dl32Point2Di dl32Window::position() const
@@ -66,17 +77,17 @@ dl32Point2Di dl32Window::position() const
 
 void dl32Window::position(int x , int y)
 {
-    XMoveWindow( XWSScreenManager::instance().display() , _window_handle , x , y );
+    XMoveWindow( XWSScreenManager::instance().display() , _window_handle , x , y ); force_operations();
 }
 
 void dl32Window::show()
 {
-    XMapWindow( XWSScreenManager::instance().display() , _window_handle );
+    XMapWindow( XWSScreenManager::instance().display() , _window_handle ); force_operations();
 }
 
 void dl32Window::hide()
 {
-    XUnmapWindow( XWSScreenManager::instance().display() , _window_handle );
+    XUnmapWindow( XWSScreenManager::instance().display() , _window_handle ); force_operations();
 }
 
 bool dl32Window::visible() const 
