@@ -46,6 +46,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
+	${OBJECTDIR}/code/tests/refactoring/dl32Event_test.o \
 	${OBJECTDIR}/code/tests/refactoring/dl32Window_test.o \
 	${OBJECTDIR}/code/tests/refactoring/is_design_test.o \
 	${OBJECTDIR}/code/tests/refactoring/minimax.o \
@@ -72,11 +73,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/code/source/dl32Color.o: code/source/dl32Color.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/source
@@ -133,6 +134,11 @@ ${OBJECTDIR}/code/tests/refactoring/console_color_test.o: code/tests/refactoring
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/console_color_test.o code/tests/refactoring/console_color_test.cpp
 
+${OBJECTDIR}/code/tests/refactoring/dl32Event_test.o: code/tests/refactoring/dl32Event_test.cpp 
+	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/tests/refactoring/dl32Event_test.o code/tests/refactoring/dl32Event_test.cpp
+
 ${OBJECTDIR}/code/tests/refactoring/dl32Window_test.o: code/tests/refactoring/dl32Window_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/refactoring
 	${RM} $@.d
@@ -169,7 +175,7 @@ ${OBJECTDIR}/code/tests/refactoring/typing_test.o: code/tests/refactoring/typing
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dx_lib32
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cpp_lib32
 
 # Subprojects
 .clean-subprojects:

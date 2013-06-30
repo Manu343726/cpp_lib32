@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=dx_lib32
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/dx_lib32
+CND_ARTIFACT_NAME_Debug=cpp_lib32
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/cpp_lib32
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=dxlib32.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/dxlib32.tar
+CND_PACKAGE_NAME_Debug=cpplib32.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/cpplib32.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=dx_lib32
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/dx_lib32
+CND_ARTIFACT_NAME_Release=cpp_lib32
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/cpp_lib32
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=dxlib32.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/dxlib32.tar
+CND_PACKAGE_NAME_Release=cpplib32.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/cpplib32.tar
 #
 # include compiler specific variables
 #

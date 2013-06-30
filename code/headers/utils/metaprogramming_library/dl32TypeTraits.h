@@ -73,7 +73,7 @@ namespace _dl32 /* cpp_lib32 private namespace (Implementation-only types define
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T , typename U>
-class dl32SameType
+class dl32SameTypes
 {
 private:
     template<typename _T , typename _U>
@@ -109,7 +109,7 @@ private:
     
 public:
     using result = typename _without_const<T>::type; ///< The type T without the const specifier. If T has not const specifier, this type is T.
-    static const bool has_const = !dl32SameType<T,result>::value; ///< True if T has const specifier. False if not.
+    static const bool has_const = !dl32SameTypes<T,result>::value; ///< True if T has const specifier. False if not.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ private:
     
 public:
     using result = typename _without_volatile<T>::type; ///< The type T without the volatile specifier. If T has not volatile specifier, this type is T.
-    static const bool has_volatile = !dl32SameType<T,result>::value; ///< True if T has volatile specifier. False if not.
+    static const bool has_volatile = !dl32SameTypes<T,result>::value; ///< True if T has volatile specifier. False if not.
 };
 
 template<typename T>
@@ -310,7 +310,7 @@ struct dl32HaveInheritance
 {
     static_assert( dl32IsClass<T>::value && dl32IsClass<U>::value , "Template parameters T and U must be classes");
     
-    static const bool result = dl32ImplicitCast<const U* , const T*>::result && !dl32SameType<const T* , const void*>::value && !dl32SameType<const T , const U>::value;
+    static const bool result = dl32ImplicitCast<const U* , const T*>::result && !dl32SameTypes<const T* , const void*>::value && !dl32SameTypes<const T , const U>::value;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

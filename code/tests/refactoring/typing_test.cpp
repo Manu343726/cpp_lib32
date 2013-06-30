@@ -71,7 +71,7 @@ int main()
     
     /* TypeList indexing test */
     
-    assert( (dl32SameType<float , myList::type_at<2>>::value) );
+    assert( (dl32SameTypes<float , myList::type_at<2>>::value) );
     
     /* Inheritance checking test */
     
@@ -88,7 +88,7 @@ int main()
     
     using new_type_list = myList::push_back<bool>;
     
-    assert( (dl32SameType<bool , typename myList::push_back<bool>::type_at<myList::size>>::value) );
+    assert( (dl32SameTypes<bool , typename myList::push_back<bool>::type_at<myList::size>>::value) );
     
     /* Typelist merge test */
     
