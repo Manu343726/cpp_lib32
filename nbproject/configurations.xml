@@ -9,6 +9,7 @@
           <logicalFolder name="xws" displayName="xws" projectFiles="true">
           </logicalFolder>
           <itemPath>code/headers/events/dl32Event.h</itemPath>
+          <itemPath>code/headers/events/dl32PortableEventConfig.h</itemPath>
         </logicalFolder>
         <logicalFolder name="graphics" displayName="graphics" projectFiles="true">
           <logicalFolder name="window" displayName="window" projectFiles="true">
@@ -156,6 +157,11 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/events/dl32Event.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/events/dl32PortableEventConfig.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/graphics/window/dl32PortableWindowConfiguration.h"
             ex="false"
@@ -354,6 +360,11 @@
       <item path="code/headers/dl32NewMath.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="code/headers/events/dl32Event.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="code/headers/events/dl32PortableEventConfig.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="code/headers/graphics/window/dl32PortableWindowConfiguration.h"
             ex="false"

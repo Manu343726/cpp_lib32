@@ -51,9 +51,9 @@ private:
     
     void _on_event()
     {
-        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "****************************************" << std::endl;
         cout << _event_trigger << " increment. Current count: " << _count << endl;
-        std::cout << "----------------------------------------" << std::endl;
+        std::cout << "****************************************" << std::endl;
     }
     
 public:
@@ -140,7 +140,7 @@ void test()
             begin = steady_clock::now();
         }
         
-        std::this_thread::sleep_for( std::chrono::milliseconds( 25 ) ); //Si no va demasiado rápido y es muy dificil de seguir
+        std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) ); //Si no va demasiado rápido y es muy dificil de seguir
     }
     
 }
