@@ -30,6 +30,7 @@
 #if DL32TESTS_CURRENTTEST == DL32TEST_REFACTORING_EVENTTEST
 
 #include "dl32Event.h"
+#include "dl32Demangling.h"
 
 #include <iostream>
 #include <chrono>
@@ -60,9 +61,9 @@ public:
     
     TurnCounter(unsigned int trigger = 1) : _count( 0 ) , _event_trigger( trigger )
     {
-        IncrementEvent.AddHandler( _on_event , *this );
+        IncrementEvent.AddHandler( &TurnCounter::_on_event  , *this );
         
-        cout << decltype( IncrementEvent)::sender_members_handlers_allowed;
+        //cout << dl32Demangle( decltype( &TurnCounter::_on_event ) ) << endl;
     }
     
     TurnCounter& operator++()
@@ -76,20 +77,25 @@ public:
     unsigned int count() const { return _count; }
     
     void reset() { _count = 0; }
+    
+    friend bool operator==(const TurnCounter& a , const TurnCounter& b)
+    {
+        return a._count == b._count && a._event_trigger == b._event_trigger;
+    }
 };
 
 //                            sender type                        event args
 using TurnEnd  = dl32Event< decltype( test ) , steady_clock::duration , unsigned int>;
 using TurnStep = dl32Event< decltype( test ) , steady_clock::duration , float>;
 
-void OnTurnEnd( typename TurnStep::SenderType sender , steady_clock::duration& total_time , unsigned int& total_turns )
+void OnTurnEnd( typename TurnStep::SenderParam sender , steady_clock::duration& total_time , unsigned int& total_turns )
 {
     std::cout << "=================================================================" << std::endl;
     std::cout << "Circle turn end: Total turns = " << total_turns << " turn time = " << duration_cast<std::chrono::seconds>( total_time ).count() << " seconds" << std::endl;
     std::cout << "=================================================================" << std::endl;
 }
 
-void OnTurnStep( typename TurnStep::SenderType sender , steady_clock::duration& total_time , float& current_angle )
+void OnTurnStep( typename TurnStep::SenderParam sender , steady_clock::duration& total_time , float& current_angle )
 {
     std::cout << "Circle turn step... Angle = " << current_angle << " total time = " << duration_cast<std::chrono::seconds>( total_time ).count() << " seconds" << std::endl;
 }
@@ -113,7 +119,7 @@ void test()
     
     const float PI = 3.141592654;
     const float step = 0.057;
-    TurnCounter counter( 10 ); //Member handled event triggered every 10 turns.
+    TurnCounter counter( 2 ); //Member handled event triggered every 10 turns.
     
     auto begin = steady_clock::now();
     
@@ -134,7 +140,7 @@ void test()
             begin = steady_clock::now();
         }
         
-        std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) ); //Si no va demasiado rápido y es muy dificil de seguir
+        std::this_thread::sleep_for( std::chrono::milliseconds( 25 ) ); //Si no va demasiado rápido y es muy dificil de seguir
     }
     
 }
