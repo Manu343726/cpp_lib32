@@ -136,5 +136,8 @@ struct dl32EnableIf {};
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 struct dl32EnableIf<true,T>{ using type = T; };
+
+template<bool CONDITION , typename T>
+using dl32EnableTypeIf = typename dl32SelectType<CONDITION,T,dl32NoType>::type; ///< Enables a specified type if a boolean condition its true. (Disabling means set the type as "dl32NoType").
 #endif	/* DL32TMPCORE_H */
 

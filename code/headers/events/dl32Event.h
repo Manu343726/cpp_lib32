@@ -72,25 +72,100 @@ public:
 
     /// @brief	Defines an alias representing function-pointer type of a event handler.
     using HandlerType = void(*)(SenderType,ARGSTYPES&...);
-
+    
+    static const bool sender_members_handlers_allowed = dl32IsClass<SENDERTYPE>::value; ///< If the sender is a class, it is allowed to use member functions as handlers of the event.
 private:
     
-    struct HandlerData
+    using _checker_type = std::function<bool(const SENDERTYPE&)>;
+    
+    template<bool IS_CLASS , typename SENDER , typename... ARGS>
+    struct _handler_type_wrapper;
+    
+    template<typename SENDER , typename... ARGS>
+    struct _handler_type_wrapper<true , SENDER , ARGS...>  : public dl32TypeWrapper<void(SENDER::*)(ARGS&...)> {};
+    
+    template<typename SENDER , typename... ARGS>
+    struct _handler_type_wrapper<false , SENDER , ARGS...> : public dl32TypeWrapper<void(*)(SENDER& , ARGS&...)> {};
+    
+    using _handler_type = typename _handler_type_wrapper<dl32IsClass<SENDERTYPE>::value , SENDERTYPE , ARGSTYPES...>::type;
+
+    
+    
+    class HandlerData
     {
-        HandlerType handler;
-        std::function<bool(const SenderType)> check_handler;
+    public:
+        static const _checker_type trivial_sender_checker;
         
-        HandlerData(const HandlerType& _handler , const std::function<bool(const SenderType)>& _check_handler)
+    private:
+        using _generic_function_pointer = void(*)();
+        
+        bool _is_sender_handler_member;
+        _checker_type _check_sender;
+        
+        _handler_type _pointer_to_member;
+        HandlerType                            _pointer_to_non_member;
+        
+        
+    public:
+        template<bool IS_ENABLED = sender_members_handlers_allowed>
+        HandlerData( typename dl32EnableIf<IS_ENABLED , _handler_type>::type handler ,
+                     _checker_type sender_checker = trivial_sender_checker) 
+                     : _is_sender_handler_member( true ) , 
+                       _check_sender( sender_checker ) , 
+                       _pointer_to_member( handler ) , 
+                       _pointer_to_non_member( nullptr )
+        {}
+                
+        HandlerData(HandlerType handler , 
+                   _checker_type sender_checker = trivial_sender_checker)  
+                   : _is_sender_handler_member( false ) , 
+                     _check_sender( sender_checker ) , 
+                     _pointer_to_member( nullptr ) , 
+                     _pointer_to_non_member( handler )
+        {}
+        
+        template<bool IS_ENABLED = sender_members_handlers_allowed>
+        typename dl32EnableIf<IS_ENABLED , void>::type 
+        operator()(SENDERTYPE& sender , ARGSTYPES&... args)
         {
-            handler = _handler;
-            check_handler = _check_handler;                    
+            if( !_check_sender( sender ) ) return;
+            
+            if( _is_sender_handler_member )
+                ( sender.*_pointer_to_member )( args... );
+            else
+                _pointer_to_non_member( sender , args... );
+        }
+        
+        template<bool IS_ENABLED = sender_members_handlers_allowed>
+        typename dl32EnableIf<!IS_ENABLED , void>::type 
+        operator()(SENDERTYPE& sender , ARGSTYPES&... args)
+        {
+            if( !_check_sender( sender ) ) return;
+            
+            _pointer_to_non_member( sender , args... );
+        }
+        
+        friend bool operator==( const HandlerData& a , const HandlerData& b)
+        {
+            return a._pointer_to_non_member == b._pointer_to_non_member || a.pointer_to_mamber == b._pointer_to_member;
+        }
+        
+        
+        friend bool operator==( const HandlerData& data , _handler_type handler)
+        {
+            return data.pointer_to_non_member == handler || data._pointer_to_member == handler;
+        }
+        
+        template<bool IS_ENABLED = sender_members_handlers_allowed>
+        friend typename dl32EnableIf<!IS_ENABLED,bool>::type operator==( const HandlerData& data , HandlerType handler)
+        {
+            return data._pointer_to_non_member == handler;
         }
     };
     
     std::vector<HandlerData> _handlers;
     
-public:
-    
+public:   
     static const unsigned int event_args_count = sizeof...(ARGSTYPES); ///< Gets the number of event args of this type of event.
     static const bool is_non_args_event = event_args_count == 0; ///< Checks if this type of event is an event without argumments (With sender parameter only).
 
@@ -105,36 +180,19 @@ public:
     /// @remarks Template parameter NUMBER_OF_ARGS is a parameter to make SFINAE work with class data,
     ///          not only with function data. Is not dessigned to be used by the user. Please not use it.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<bool ARGS_BY_REF = true , unsigned int NUMBER_OF_ARGS = event_args_count>
-    typename dl32EnableIf<NUMBER_OF_ARGS != 0 , void>::type
-    RaiseEvent(SenderType sender, dl32MakeReferenceIf<ARGS_BY_REF,ARGSTYPES>... args) {
+    template<bool ARGS_BY_REF = true>
+    void RaiseEvent(SenderType sender, dl32MakeReferenceIf<ARGS_BY_REF,ARGSTYPES>... args) {
         for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
-            if( it->check_handler( sender ) )          //Comprobación de que el sender es el mismo que espera éste handler. Si no lo es no se llama al handler.
-                it->handler( sender , args... ); //LLamada al handler.
+            (*it)( sender , args... );
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @brief	Raises the event.
-    /// @param [in,out]	sender Reference to the event sender.
-    /// @remarks Specialitation for non-argumments events.
-    ///
-    /// @remarks Template parameter NUMBER_OF_ARGS is a parameter to make SFINAE work with class data,
-    ///          not only with function data. Is not dessigned to be used by the user. Please not use it.
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<unsigned int NUMBER_OF_ARGS = event_args_count>
-    typename dl32EnableIf<NUMBER_OF_ARGS != 0 , void>::type
-    RaiseEvent(SenderType sender) { 
-        for (auto it = _handlers.begin(); it != _handlers.end(); ++it)
-            if( it->check_handler( sender ) ) //Comprobación de que el sender es el mismo que espera éste handler. Si no lo es no se llama al handler.
-                it->handler( sender );  //LLamada al handler.
-    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Adds a function as a handler for this event.
     /// @param	handler	Pointer to the function that will be a handler.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void AddHandler(const HandlerType& handler) {
-        _handlers.push_back( { handler , [](const SenderType) { return true; } } );
+        _handlers.push_back( { handler } );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,15 +204,24 @@ public:
     void AddHandler(const HandlerType& handler , const SenderType expected_sender) {
         _handlers.push_back( { handler , [=](const SenderType sender) { return sender == expected_sender; } } );
     }
+    
+    template<typename SENDER = SENDERTYPE>
+    typename dl32EnableIf<dl32IsClass<SENDER>::value , void>::type
+    AddHandler(_handler_type handler , const SenderType expected_sender) {
+        _handlers.push_back( { handler , [=](const SenderType sender) { return sender == expected_sender; } } );
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief	Removes the handler described by handler.
     /// @param	handler	The handler.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void RemoveHandler(const HandlerType& handler) {
-        _handlers.erase( std::find_if( std::begin( _handlers ) , [=](const HandlerData& data) { return data.handler == handler; } ) );
+        _handlers.erase( std::find_if( std::begin( _handlers ) , [=](const HandlerData& data) { return data == handler; } ) );
     }
 };
+
+template<typename SENDER , typename... ARGS>
+const typename dl32Event<SENDER,ARGS...>::_checker_type dl32Event<SENDER,ARGS...>::HandlerData::trivial_sender_checker = []( const SENDER& ) { return true; };
 
 #endif	/* DL32EVENT_H */
 

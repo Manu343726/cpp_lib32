@@ -41,6 +41,43 @@ using std::chrono::steady_clock;
 
 void test(); //Forward declaration of test.
 
+
+class TurnCounter
+{
+private:
+    unsigned int _count;
+    unsigned int _event_trigger;
+    
+    void _on_event()
+    {
+        std::cout << "----------------------------------------" << std::endl;
+        cout << _event_trigger << " increment. Current count: " << _count << endl;
+        std::cout << "----------------------------------------" << std::endl;
+    }
+    
+public:
+    dl32Event<TurnCounter> IncrementEvent; //Non-args event
+    
+    TurnCounter(unsigned int trigger = 1) : _count( 0 ) , _event_trigger( trigger )
+    {
+        IncrementEvent.AddHandler( _on_event , *this );
+        
+        cout << decltype( IncrementEvent)::sender_members_handlers_allowed;
+    }
+    
+    TurnCounter& operator++()
+    {
+        _count++;
+        
+        if( _count % _event_trigger == 0 ) 
+            IncrementEvent.RaiseEvent(*this);
+    }
+    
+    unsigned int count() const { return _count; }
+    
+    void reset() { _count = 0; }
+};
+
 //                            sender type                        event args
 using TurnEnd  = dl32Event< decltype( test ) , steady_clock::duration , unsigned int>;
 using TurnStep = dl32Event< decltype( test ) , steady_clock::duration , float>;
@@ -76,7 +113,7 @@ void test()
     
     const float PI = 3.141592654;
     const float step = 0.057;
-    unsigned int turns = 0;
+    TurnCounter counter( 10 ); //Member handled event triggered every 10 turns.
     
     auto begin = steady_clock::now();
     
@@ -89,10 +126,10 @@ void test()
         
         if( angle + step >= 2*PI)
         {
-            turns++;
+            ++counter;
             angle = 0;
             
-            turn_end_event.RaiseEvent( test , interval , turns );
+            turn_end_event.RaiseEvent<false>( test , interval , counter.count() );
             
             begin = steady_clock::now();
         }
