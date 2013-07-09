@@ -42,7 +42,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/code/source/utils/dl32Config.o \
 	${OBJECTDIR}/code/source/utils/dl32Demangling.o \
 	${OBJECTDIR}/code/source/utils/dl32Memory.o \
-	${OBJECTDIR}/code/source/utils/dl32Timing.o \
 	${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o \
 	${OBJECTDIR}/code/tests/refactoring/Redesigned_event_system_test.o \
 	${OBJECTDIR}/code/tests/refactoring/console_color_test.o \
@@ -113,11 +112,6 @@ ${OBJECTDIR}/code/source/utils/dl32Memory.o: code/source/utils/dl32Memory.cpp
 	${MKDIR} -p ${OBJECTDIR}/code/source/utils
 	${RM} $@.d
 	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -Icode/headers/graphics -Icode/headers/graphics/window -Icode/headers/events -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Memory.o code/source/utils/dl32Memory.cpp
-
-${OBJECTDIR}/code/source/utils/dl32Timing.o: code/source/utils/dl32Timing.cpp 
-	${MKDIR} -p ${OBJECTDIR}/code/source/utils
-	${RM} $@.d
-	$(COMPILE.cc) -g -Icode/headers -Icode/source -Icode/tests -Icode/headers/utils -Icode/headers/utils/metaprogramming_library -Icode/source/utils -Icode/tests/ASCII_raster -Icode/tests/ASCII_raster/ascii -Icode/tests/ASCII_raster/graphics -Icode/tests/refactoring -Icode/headers/math -Icode/headers/graphics -Icode/headers/graphics/window -Icode/headers/events -std=c++11 -ftemplate-depth=10000 -MMD -MP -MF $@.d -o ${OBJECTDIR}/code/source/utils/dl32Timing.o code/source/utils/dl32Timing.cpp
 
 ${OBJECTDIR}/code/tests/ASCII_raster/ASCII_raster_test.o: code/tests/ASCII_raster/ASCII_raster_test.cpp 
 	${MKDIR} -p ${OBJECTDIR}/code/tests/ASCII_raster

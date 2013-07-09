@@ -32,6 +32,8 @@
 #include "dl32Event.h"
 #include "dl32Demangling.h"
 
+#include "dl32Timing.h"
+
 #include <iostream>
 #include <chrono>
 #include <thread>
@@ -51,9 +53,9 @@ private:
     
     void _on_event()
     {
-        std::cout << "****************************************" << std::endl;
-        cout << _event_trigger << " increment. Current count: " << _count << endl;
-        std::cout << "****************************************" << std::endl;
+        std::cout << "*******************************************************" << std::endl;
+        std::cout << _event_trigger << " increment. Current count: " << _count << std::endl;
+        std::cout << "*******************************************************" << std::endl;
     }
     
 public:
@@ -62,8 +64,6 @@ public:
     TurnCounter(unsigned int trigger = 1) : _count( 0 ) , _event_trigger( trigger )
     {
         IncrementEvent.AddHandler( &TurnCounter::_on_event  , *this );
-        
-        //cout << dl32Demangle( decltype( &TurnCounter::_on_event ) ) << endl;
     }
     
     TurnCounter& operator++()
@@ -119,7 +119,7 @@ void test()
     
     const float PI = 3.141592654;
     const float step = 0.057;
-    TurnCounter counter( 2 ); //Member handled event triggered every 10 turns.
+    TurnCounter counter( 2 ) , counter2; //Member handled event triggered every 10 turns.
     
     auto begin = steady_clock::now();
     
@@ -135,12 +135,16 @@ void test()
             ++counter;
             angle = 0;
             
+            DL32TIMING_HIGHRESOLUTION_BEGIN
             turn_end_event.RaiseEvent<false>( test , interval , counter.count() );
+            DL32TIMING_HIGHRESOLUTION_END
+            
+            cout << " ---> Event call duration: " << std::chrono::duration_cast<std::chrono::nanoseconds>( dl32Timing<high_resolution_timing>::instance().last_frame().duration() ).count() << " ns" << endl;
             
             begin = steady_clock::now();
         }
         
-        std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) ); //Si no va demasiado rápido y es muy dificil de seguir
+        std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) ); //Si no va demasiado rápido y es muy dificil de seguir
     }
     
 }

@@ -100,13 +100,24 @@ typename dl32Singleton<T>::RealPointerToInstance dl32Singleton<T>::_instance = N
 ///
 /// @author	Manu343726
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-#define MAKE_SINGLETON( class_name )                                                     \
-            friend class dl32Singleton< class_name >;                                    \
+#define MAKE_SINGLETON_EX( class_name , class_type )                                     \
+            friend class dl32Singleton< class_type >;                                    \
         private:                                                                         \
             class_name(); /* ctor implementation must be in class_name implementation */ \
                                                                                          \
-            class_name(const class_name&) = delete;                                      \
-            class_name& operator=(const class_name&) = delete;                        
+            class_name(const class_type&) = delete;                                      \
+            class_type& operator=(const class_type&) = delete;  
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief This macro provides a "shortcut" to hide all ctors and assignment operator to performs 
+///        the singleton dessing pattern implementation.
+///
+/// @details Put this macro at the top of your class/struct (Next to the open brace), with your class 
+///          name as argumment.
+///
+/// @author	Manu343726
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+#define MAKE_SINGLETON( class_name ) MAKE_SINGLETON_EX( class_name , class_name )       
 
 #endif	/* DL32SINGLETON_H */
 

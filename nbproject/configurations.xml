@@ -62,7 +62,6 @@
           <itemPath>code/source/utils/dl32Config.cpp</itemPath>
           <itemPath>code/source/utils/dl32Demangling.cpp</itemPath>
           <itemPath>code/source/utils/dl32Memory.cpp</itemPath>
-          <itemPath>code/source/utils/dl32Timing.cpp</itemPath>
         </logicalFolder>
         <itemPath>code/source/dl32Color.cpp</itemPath>
         <itemPath>code/source/dl32Math.cpp</itemPath>
@@ -262,8 +261,6 @@
             flavor2="0">
       </item>
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/tests/ASCII_raster/ASCII_raster_test.cpp"
             ex="false"
@@ -465,8 +462,6 @@
             flavor2="0">
       </item>
       <item path="code/source/utils/dl32Memory.cpp" ex="false" tool="1" flavor2="0">
-      </item>
-      <item path="code/source/utils/dl32Timing.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="code/tests/ASCII_raster/ASCII_raster_test.cpp"
             ex="false"
