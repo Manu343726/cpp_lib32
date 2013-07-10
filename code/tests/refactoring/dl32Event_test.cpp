@@ -53,9 +53,13 @@ private:
     
     void _on_event()
     {
+        DL32TIMING_HIGHRESOLUTION_BEGIN
+                
         std::cout << "*******************************************************" << std::endl;
         std::cout << _event_trigger << " increment. Current count: " << _count << std::endl;
         std::cout << "*******************************************************" << std::endl;
+        
+        DL32TIMING_HIGHRESOLUTION_END
     }
     
 public:
@@ -90,9 +94,13 @@ using TurnStep = dl32Event< decltype( test ) , steady_clock::duration , float>;
 
 void OnTurnEnd( typename TurnStep::SenderParam sender , steady_clock::duration& total_time , unsigned int& total_turns )
 {
+    DL32TIMING_HIGHRESOLUTION_BEGIN
+            
     std::cout << "=================================================================" << std::endl;
     std::cout << "Circle turn end: Total turns = " << total_turns << " turn time = " << duration_cast<std::chrono::seconds>( total_time ).count() << " seconds" << std::endl;
     std::cout << "=================================================================" << std::endl;
+    
+    DL32TIMING_HIGHRESOLUTION_END
 }
 
 void OnTurnStep( typename TurnStep::SenderParam sender , steady_clock::duration& total_time , float& current_angle )
@@ -140,6 +148,8 @@ void test()
             DL32TIMING_HIGHRESOLUTION_END
             
             cout << " ---> Event call duration: " << std::chrono::duration_cast<std::chrono::nanoseconds>( dl32Timing<high_resolution_timing>::instance().last_frame().duration() ).count() << " ns" << endl;
+            
+            cout << dl32Timing<high_resolution_timing>::instance().to_string<std::chrono::milliseconds>() << endl;
             
             begin = steady_clock::now();
         }

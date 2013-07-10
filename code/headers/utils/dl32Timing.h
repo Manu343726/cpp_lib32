@@ -63,6 +63,9 @@ public:
         
         void finish(const dl32TimingTimePoint<HIGH_RESOLUTION>& end_point) { _end = end_point; _finished = true; }
         void finish() { finish( dl32TimingClock<HIGH_RESOLUTION>::now() ); }
+        
+        const std::string& function_name() const { return _function; }
+        int depth() const { return _depth; }
 };
 
 class dl32TimingTreeNode
@@ -102,6 +105,20 @@ private:
 	std::vector<dl32TimingFrame<HIGH_RESOLUTION>> _frames;
 
 	std::shared_ptr<dl32TimingTreeNode> _current;
+        
+        template<typename DURATION_CAST>
+        void _to_string(stringstream& ss , const std::shared_ptr<dl32TimingTreeNode>& node) const
+        {
+            if( !node->is_root() )
+            {
+                auto frame = _frames[ node->frame() ];
+                
+                ss << std::string( frame.depth() , '.' ) << " Call to '" << frame.function_name() << "': " << std::chrono::duration_cast<DURATION_CAST>( frame.duration() ).count() << endl;
+            }
+            
+            for(auto& child : node->timing_tree())
+                _to_string<DURATION_CAST>( ss , child );        
+        }
         
 public:
 	void push(const std::string& function_name = "unknown")
@@ -143,6 +160,16 @@ public:
 	const dl32TimingFrame<HIGH_RESOLUTION>&         frame(int index) const { return _frames.at(index); }
 	const vector<dl32TimingFrame<HIGH_RESOLUTION>>& frames()         const { return _frames; }
 	const std::shared_ptr<dl32TimingTreeNode>&      timing_tree()    const { return _root; }
+        
+        template<typename DURATION_CAST>
+        std::string to_string() const 
+        {
+            stringstream ss;
+            
+            _to_string<DURATION_CAST>(ss , _root);
+            
+            return ss.str();
+        }
 };
 
 
