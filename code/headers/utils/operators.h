@@ -51,6 +51,8 @@
  * than humans for that) and commonly deprecated.                           *
  ***************************************************************************/
 
+#include <type_traits>
+
 namespace dl32
 {
 	namespace { struct binary_sentinel {}; }
@@ -149,7 +151,7 @@ namespace dl32
 	/// @author	Manu343726
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T , typename U = binary_sentinel>
-	struct complete_comparison_ops : public dl32::eqality_ops<T,U> , 
+	struct complete_comparison_ops : public dl32::equality_ops<T,U> , 
 									 public dl32::comparison_ops<T,U> 
 	{};
 
@@ -177,10 +179,12 @@ namespace dl32
 			t2 += u;
 			return t2;
 		}
-    
-		template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
-		friend typename std::enable_if<SFINAE_BRIDGE,T>::type
-		operator+(const U& u , const T& t)
+	};
+
+	template<typename T , typename U>
+	struct addition_op<T,U,true> : public addition_op<T,U,false>
+	{
+		friend bool operator+(const U& u , const T& t)
 		{
 			return t+u;
 		}
@@ -210,10 +214,12 @@ namespace dl32
 			t2 -= u;
 			return t2;
 		}
-    
-		template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
-		friend typename std::enable_if<SFINAE_BRIDGE,T>::type
-		operator-(const U& u , const T& t)
+	};
+
+	template<typename T , typename U>
+	struct substraction_op<T,U,true> : public substraction_op<T,U,false>
+	{
+		friend bool operator-(const U& u , const T& t)
 		{
 			return t-u;
 		}
@@ -243,10 +249,12 @@ namespace dl32
 			t2 *= u;
 			return t2;
 		}
-    
-		template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
-		friend typename std::enable_if<SFINAE_BRIDGE,T>::type
-		operator*(const U& u , const T& t)
+	};
+
+	template<typename T , typename U>
+	struct multiplication_op<T,U,true> : public multiplication_op<T,U,false>
+	{
+		friend bool operator*(const U& u , const T& t)
 		{
 			return t*u;
 		}
@@ -270,16 +278,18 @@ namespace dl32
 	template<typename T , typename U = binary_sentinel , bool ENABLE_SYMMETRY = false>
 	struct division_op
 	{
-		friend T operator/(const T& t , const U& u)
+		friend T operator*(const T& t , const U& u)
 		{
 			T t2( t );
 			t2 /= u;
 			return t2;
 		}
-    
-		template<bool SFINAE_BRIDGE = ENABLE_SYMMETRY>
-		friend typename std::enable_if<SFINAE_BRIDGE,T>::type
-		operator/(const U& u , const T& t)
+	};
+
+	template<typename T , typename U>
+	struct division_op<T,U,true> : public division_op<T,U,false>
+	{
+		friend bool operator/(const U& u , const T& t)
 		{
 			return t/u;
 		}

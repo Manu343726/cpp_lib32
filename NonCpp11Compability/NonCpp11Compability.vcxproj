@@ -62,7 +62,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\headers\dl32NewMath.h" />
+    <ClInclude Include="..\code\headers\math\dl32FloatingPointHelper.h" />
+    <ClInclude Include="..\code\headers\math_2d.h" />
+    <ClInclude Include="..\code\headers\utils\console.h" />
+    <ClInclude Include="..\code\headers\utils\generic_singleton.h" />
+    <ClInclude Include="..\code\headers\utils\operators.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\code\source\utils\console.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

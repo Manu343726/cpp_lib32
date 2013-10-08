@@ -18,82 +18,102 @@
  along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
 *******************************************************************************/
 
-#include "dl32ConsoleColor.h"
+#include "../../headers/utils/console.h"
+
+namespace console = dl32::console;
 
 /* Useful constants definitions */
-const dl32PushStyle push_style; 
-const dl32PopStyle  pop_style; 
-const dl32SetAutoPush<true>  enable_autopush; 
-const dl32SetAutoPush<false> disable_autopush;
+const console::push_style_t push_style; 
+const console::pop_style_t  pop_style; 
+const console::set_autopush_t<true>  enable_autopush; 
+const console::set_autopush_t<false> disable_autopush;
+
+
+
+#if defined(_WIN32)
+
+#include <Windows.h>
 
 /* DWORD text attributes color masks */
-#define COLORMASK_NOCOLOR        0x11111100
-#define COLORMASK_COLORONLY      0x00000011
-#define COLORMASK_NOFOREGROUND   0x11111110
-#define COLORMASK_FOREGROUNDONLY 0x00000001
-#define COLORMASK_NOBACKGROUND   0x11111101
-#define COLORMASK_BACKGROUNDONLY 0x00000010
+
+const DWORD COLORMASK_NOCOLOR        = 0x11111100;
+const DWORD COLORMASK_COLORONLY      = 0x00000011;
+const DWORD COLORMASK_NOFOREGROUND   = 0x11111110;
+const DWORD COLORMASK_FOREGROUNDONLY = 0x00000001;
+const DWORD COLORMASK_NOBACKGROUND   = 0x11111101;
+const DWORD COLORMASK_BACKGROUNDONLY = 0x00000010;
+
+typedef DWORD color_value;
 
 /* Internal operations */
-std::pair<WORD,WORD> _get_colors_from_style( dl32ConsoleStyle style );
-dl32ConsoleStyle _change_foreground_only(dl32ConsoleStyle style , DWORD color );
-dl32ConsoleStyle _change_background_only(dl32ConsoleStyle style , DWORD color );
 
-std::pair<WORD,WORD> _get_colors_from_style( dl32ConsoleStyle style )
+std::pair<WORD,WORD> _get_colors_from_style( console::console_style style )
 {
     return std::pair<WORD,WORD>( style & COLORMASK_FOREGROUNDONLY , (style & COLORMASK_BACKGROUNDONLY) >> 4 );
 }
 
-dl32ConsoleStyle _change_foreground_only(dl32ConsoleStyle style , DWORD color )
+console::console_style _change_foreground_only(dl32::console::console_style style , DWORD color )
 {
     return (style & COLORMASK_NOFOREGROUND) | color;
 }
 
-dl32ConsoleStyle _change_background_only(dl32ConsoleStyle style , DWORD color )
+console::console_style _change_background_only(dl32::console::console_style style , DWORD color )
 {
     return (style & COLORMASK_NOBACKGROUND) | (color << 4);
 }
 
-//Ctor
-dl32ConsoleColorSettings::dl32ConsoleColorSettings()
-{
-    _setup_handle();
-    _styles_stack_autopush = false;
-    _last_change = dl32StyleChange::FOREGROUND;
-    _styles_stack.push_back( _get_style() );
-}
 
-void dl32ConsoleColorSettings::_setup_handle() throw ( dl32ConsoleHandleSetupFailed )
+void console::style_settings::_setup_handle()
 {
     if(!(_handle = GetStdHandle( STD_OUTPUT_HANDLE ))) 
-        throw dl32ConsoleHandleSetupFailed();
+        throw;
 }
 
-dl32ConsoleStyle dl32ConsoleColorSettings::_get_style()
+console::console_style console::style_settings::_get_style()
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
     GetConsoleScreenBufferInfo( _handle , &info );
     return info.wAttributes;
 }
 
-void dl32ConsoleColorSettings::_set_style(dl32ConsoleStyle style) throw( dl32ConsoleStyleChangeFailed )
+
+void console::style_settings::_set_style(console::console_style style)
 {
     if( !SetConsoleTextAttribute( _handle , style ) )
-        throw dl32ConsoleStyleChangeFailed();
+        throw;
+}
+#elif defined(__linux__)
+
+//mmm...
+
+#endif
+
+
+
+/* Portable code: */
+
+
+console::style_settings::style_settings()
+{
+    _setup_handle();
+    _styles_stack_autopush = false;
+	_last_change = console::style_change::FOREGROUND;
+    _styles_stack.push_back( _get_style() );
 }
 
-void dl32ConsoleColorSettings::_update_style(dl32ConsoleStyle style) throw( dl32ConsoleStyleChangeFailed )
+
+void console::style_settings::_update_style(console::console_style style)
 {
     _styles_stack.back() = style;
     _set_style( style );
 }
 
-void dl32ConsoleColorSettings::_push_style()
+void console::style_settings::_push_style()
 {
     _styles_stack.push_back( _get_style() );
 }
 
-void dl32ConsoleColorSettings::_pop_style()
+void console::style_settings::_pop_style()
 {
     if( _styles_stack.size() <= 1 ) return;
     
@@ -101,32 +121,32 @@ void dl32ConsoleColorSettings::_pop_style()
     _set_style( _styles_stack.back() );
 }
 
-void dl32ConsoleColorSettings::change_background(dl32ConsoleColor color) throw( dl32ConsoleStyleChangeFailed )
+void console::style_settings::change_background(console::color color)
 {
     if( _styles_stack_autopush ) _push_style();
     
-    _update_style( _change_background_only( _styles_stack.back() , (DWORD)color ) );
+    _update_style( _change_background_only( _styles_stack.back() , (color_value)color ) );
     
-    _last_change = dl32StyleChange::BACKGROUND;
+	_last_change = console::style_change::BACKGROUND;
 }
 
-void dl32ConsoleColorSettings::change_foreground(dl32ConsoleColor color) throw( dl32ConsoleStyleChangeFailed )
+void console::style_settings::change_foreground(console::color color)
 {
     if( _styles_stack_autopush ) _push_style();
     
-    _update_style( _change_foreground_only( _styles_stack.back() , (DWORD)color ) );
+    _update_style( _change_foreground_only( _styles_stack.back() , (color_value)color ) );
     
-    _last_change = dl32StyleChange::FOREGROUND;
+	_last_change = console::style_change::FOREGROUND;
 }
 
-void dl32ConsoleColorSettings::push_style()
+void console::style_settings::push_style()
 {
     if( _styles_stack_autopush ) return; //Si autopush está activado, haces un push, y luego cambias el estilo, el estilo actual se mete dos veces en la pila.
     
     _push_style();
 }
 
-void dl32ConsoleColorSettings::pop_style()
+void console::style_settings::pop_style()
 {
     _pop_style();
 }

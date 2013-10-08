@@ -28,7 +28,7 @@
 #ifndef DL32NEWMATH_H
 #define	DL32NEWMATH_H
 
-#include "utils/dl32OperatorOverloadingHelpers.h"
+#include "utils/operators.h"
 
 #include <cmath>
 #include <limits>
@@ -51,6 +51,76 @@ namespace dl32
 	{
 		const dl32::vector_impl current_vector_impl = dl32::vector_impl::HOMEBREW; ///< Vector implementation configuration.
 
+		template<typename T>
+		struct coords_2d_holder
+		{
+			//Restrict coordinates to floating-point and integrals only: (Waiting for C++14 concepts lite...)
+			static_assert( std::is_floating_point<T>::value || std::is_integral<T>::value , "2d vectors must have integral or floating-point types as coordinates");
+
+			static const unsigned int dimensions = 2; ///< Dimensional range of the point.
+			typedef T coord_type; ///< Type used for the coordinates.
+
+			union
+			{
+				struct
+				{
+					T x; ///< First coordinate of the vector.
+					T y; ///< Second coordinate of the vector.
+				};
+				T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x. Second element with y.
+			};
+
+			coords_2d_holder() : x(0) , y(0) {}
+		};
+
+		template<typename T , bool IS_FLOATING_POINT = std::is_floating_point<T>::value>
+		struct coords_2d_comparer;
+
+
+		//floating-point specialization:
+		template<typename T>
+		struct coords_2d_comparer<T,false> : public coords_2d_holder<T>
+		{
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			/// @brief Equality operator for two 2d entities. 
+			/// @details This version is enabled only for floating-point coordinates. 
+			/// 
+			/// @param m1 First entity to be compared.
+			/// @param m2 Second entity to be compared.
+			///
+			/// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
+			///
+			/// @author	Manu343726
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& lhs)
+			{
+				return dl32::floating_point_helper<T>::equal(lsh.x , rhs.x) &&
+					   dl32::floating_point_helper<T>::equal(lsh.y , rhs.y);
+			}
+		};
+
+		//Integral specialization:
+		template<typename T>
+		struct coords_2d_comparer<T,false> : public coords_2d_holder<T>
+		{
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			/// @brief Equality operator for two 2d entities. 
+			/// @details This version is enabled only for integral coordinates. 
+			/// 
+			/// @param m1 First entity to be compared.
+			/// @param m2 Second entity to be compared.
+			///
+			/// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
+			///
+			/// @author	Manu343726
+			///////////////////////////////////////////////////////////////////////////////////////////////////////
+			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& lhs)
+			{
+				return dl32::floating_point_helper<T>::equal(lsh.x , rhs.x) &&
+					   dl32::floating_point_helper<T>::equal(lsh.y , rhs.y);
+			}
+		};
+
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief This class provides a homebrew implementation of a 2d vector and its most common algebraic
 		///        operations.
@@ -65,26 +135,9 @@ namespace dl32
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-		struct vector_2d_impl_homebrew
+		struct vector_2d_impl_homebrew : public coords_2d_comparer<T>
 		{
-		private:
-			using my_type = _vector_2d_implementation_homebrew<IMPLEMENTER,T,BASIC_ALGEBRA_ONLY>; //Así es mas facil de escribir
-		public:
-			static const unsigned int dimensions = 2; ///< Dimensional range of the point.
-			using coord_type = T; ///< Type used for the coordinates.
     
-			union
-			{
-				struct
-				{
-					T x; ///< First coordinate of the vector.
-					T y; ///< Second coordinate of the vector.
-				};
-				T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x. Second element with y.
-			};
-    
-			//Restrict coordinates to floating-point and integrals only: (Waiting for C++14 concepts lite...)
-			static_assert( std::is_floating_point<T>::value || std::is_integral<T>::value , "2d vectors must have integral or floating-point types as coordinates");
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Default constructor. Set all coordinates to zero.
@@ -103,48 +156,6 @@ namespace dl32
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			vector_2d_impl_homebrew(const T& _x ,const T& _y) : x(_x) , y(_y) {}
     
-			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			/// @brief Equality operator for two 2d vectors. 
-			/// @details This version is enabled only for floating-point Ts. 
-			/// 
-			/// @param m1 First vector to be compared.
-			/// @param m2 Second vector to be compared.
-			///
-			/// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
-			///
-			/// @author	Manu343726
-			///
-			/// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only to make SFINAE
-			///          work with class template parameter T. Please don't use it.
-			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			template<typename T_DUMMY_SFINAE_BRIDGE = T>
-			static typename std::enable_if<std::is_floating_point<T_DUMMY_SFINAE_BRIDGE>::value , bool>::type 
-			equal(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
-			{ 
-				return dl32::floating_point_helper<T>::are_equal( m1.x , m2.x ) && 
-					   dl32::floating_point_helper<T>::are_equal( m1.y , m2.y ); 
-			}
-    
-			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			/// @brief Equality operator for two 2d vectors. 
-			/// @details This version is enabled only for integral Ts. 
-			/// 
-			/// @param m1 First vector to be compared.
-			/// @param m2 Second vector to be compared.
-			///
-			/// @return Returns true if coordinates of m1 and m2 are the same. Returns false in other case.
-			///
-			/// @author	Manu343726
-			///
-			/// @remarks Template parameter T_DUMMY_SFINAE_BRIDGE is designed only to make SFINAE
-			///          work with class template parameter T. Please don't use it.
-			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			template<typename T_DUMMY_SFINAE_BRIDGE = T>
-			static typename std::enable_if<std::is_integral<T_DUMMY_SFINAE_BRIDGE>::value , bool>::type 
-			operator ==(const IMPLEMENTER& m1 , const IMPLEMENTER m2) 
-			{ 
-				return m1.x == m2.x && m1.y == m2.y; 
-			}
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Addition implementation. This function performs addition of a provided vector to this instance.
