@@ -249,7 +249,7 @@ namespace dl32
 
 	//Forward declaration for implicit cast from dl32oint2D to dl32Vector2D.
 	template<typename T = float>
-	struct dl32Vector2D;
+	struct vector_2d;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief This class represents a point in 2d space.
@@ -258,9 +258,9 @@ namespace dl32
 	/// @author	Manu343726
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T = float>
-	struct point_2d : public dl32::internal::vector_2d_impl_homebrew<dl32Point2D<T>,T,true> ,
-		              public dl32::equality_ops<dl32Point2D<T>>,     //Binary operator !=, based on ==.
-		              public dl32::basic_algebra_ops<dl32Point2D<T>> //Binary operators + and -, based on += and -=.
+	struct point_2d : public dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true> ,
+		              public dl32::equality_ops<dl32::point_2d<T>>,     //Binary operator !=, based on ==.
+		              public dl32::basic_algebra_ops<dl32::point_2d<T>> //Binary operators + and -, based on += and -=.
 	{
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,10 +268,10 @@ namespace dl32
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		point_2d() : dl32::internal::vector_2d_impl_homebrew<dl32Point2D<T>,T,true>() {}
+		point_2d() : dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true>() {}
     
     
-		point_2d(const T& _x ,const T& _y) : dl32::internal::vector_2d_impl_homebrew<dl32Point2D<T>,T,true>(_x,_y) {}
+		point_2d(const T& _x ,const T& _y) : dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true>(_x,_y) {}
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Implicit cast to 2d vector.
@@ -279,7 +279,7 @@ namespace dl32
 		/// @return A 2d vector (with the same coordinate type) with x and y as coordinates.
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		operator vector_2d<T>() const {return point_2d<T>{ this->x , this->y }; }
+		operator vector_2d<T>() const {return vector_2d<T>{ this->x , this->y }; }
 	};
 
 	using point_2di = dl32::point_2d<int>;    ///< Alias for integer 2d points.
@@ -293,19 +293,15 @@ namespace dl32
 	/// @author	Manu343726
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	struct dl32Vector2D : public <dl32Vector2D<T>,T,false>::current_implementation,
-						  public dl32EqualityHelper<dl32Vector2D<T>>,         //Binary operator!=(dl32Vector2D<T>,dl32Vector2D<T>)
-						  public dl32BasicAlgebraHelper<dl32Vector2D<T>>,     //Binary operator+ (dl32Vector2D<T>,dl32Vector2D<T>) , binary operator-(dl32Vector2D<T>,dl32Vector2D<T>)
-						  public dl32MultiplicationHelper<dl32Vector2D<T>,T>, //Binary operator* (dl32Vector2D<T>,T)
-						  public dl32DivisionHelper<dl32Vector2D<T>,T>        //Binary operator/ (dl32Vector2D<T>,T)
+	struct vector_2d : public dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true> ,
+		               public dl32::equality_ops<dl32::vector_2d<T>>,        //Binary operator!=(dl32::vector_2d<T>,dl32::vector_2d<T>)
+					   public dl32::basic_algebra_ops<dl32::vector_2d<T>>,   //Binary operator+ (dl32::vector_2d<T>,dl32::vector_2d<T>) , binary operator-(dl32::vector_2d<T>,dl32::vector_2d<T>)
+					   public dl32::multiplication_op<dl32::vector_2d<T>,T>, //Binary operator* (dl32::vector_2d<T>,T)
+				       public dl32::division_op<dl32::vector_2d<T>,T>        //Binary operator/ (dl32::vector_2d<T>,T)
 	{
-		using my_implementation = typename dl32Vector2dImplementationsManager<dl32Vector2D<T>,T,false>::current_implementation; ///< Alias to the implementer type.
-    
-		dl32Vector2D() : my_implementation() {}
-		dl32Vector2D(const T& _x ,const T& _y) : my_implementation(_x,_y) {}
-		dl32Vector2D(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : my_implementation( p2.x - p1.x , p2.y - p1.y ) {}
-    
-		using my_type = dl32Vector2D<T>;
+		vector_2d()                                              : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>()                            {}
+		vector_2d(const T& _x ,const T& _y)                      : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>(_x,_y)                       {}
+		vector_2d(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>( p2.x - p1.x , p2.y - p1.y ) {}
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Implicit cast to 2d point.
@@ -313,44 +309,7 @@ namespace dl32
 		/// @return A 2d point (with the same coordinate type) with x and y as coordinates.
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		operator dl32Point2D<T>() const {return dl32Point2D<T>( this->x , this->y ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Checks if two dl32Vector2Ds are equal.
-		///
-		/// @author	Manu343726
-		///
-		/// @return True if thw two points are equal. False if not.
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		friend bool operator==(const my_type& p1 , const my_type& p2) { return my_implementation::equal( p1 , p2 ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Adds a dl32Vector2D to this instance.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		my_type& operator+=(const my_type& p) { return this->add       ( p ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Sobstracts a dl32Vector2D from this instance.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		my_type& operator-=(const my_type& p) { return this->substract ( p ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Multiplies this instcance by a scalar.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		my_type& operator*=(const T& s) { return this->multiply ( s ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Divides this instance by a scalar.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		my_type& operator/=(const T& s) { return this->divide   ( s ); }
+		operator dl32::point_2d<T>() const {return dl32::point_2d<T>( this->x , this->y ); }
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Returns the lenght of the vector
@@ -387,8 +346,9 @@ namespace dl32
 		}
 	};
 
-	using dl32Vector2Df = dl32Vector2D<float>; ///< Alias for single-precision 2d vectors.
-	using dl32Vector2Dd = dl32Vector2D<double>; ///< Alias for double-precision 2d vectors.
+	using vector_2di = dl32::vector_2d<int>;    ///< Alias for integral 2d vectors.
+	using vector_2df = dl32::vector_2d<float>;  ///< Alias for single-precision 2d vectors.
+	using vector_2dd = dl32::vector_2d<double>; ///< Alias for double-precision 2d vectors.
 }
 
 #endif	/* DL32NEWMATH_H */
