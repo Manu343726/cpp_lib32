@@ -81,6 +81,7 @@ namespace dl32
 			};
 
 			coords_2d_holder() : x(0) , y(0) {}
+			coords_2d_holder(T _x , T _y) : x(_x) , y(_y) {}
 
 			T& operator[](std::size_t index)       { return index == 0 ? x : y; }
 			T  operator[](std::size_t index) const { return index == 0 ? x : y; }
@@ -100,6 +101,11 @@ namespace dl32
 		template<typename T>
 		struct coords_2d_comparer<T,true> : public coords_2d_holder<T>
 		{
+			//Ctor for subclasses:
+			coords_2d_comparer()          : coords_2d_holder<T>() {}
+			coords_2d_comparer(T x , T y) : coords_2d_holder<T>(x,y) {}
+
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Equality operator for two 2d entities. 
 			/// @details This version is enabled only for floating-point coordinates. 
@@ -113,8 +119,8 @@ namespace dl32
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& rhs)
 			{
-				return dl32::floating_point_helper<T>::equal(lhs.x , rhs.x) &&
-					   dl32::floating_point_helper<T>::equal(lhs.y , rhs.y);
+				return dl32::floating_point_helper<T>::are_equal(lhs.x , rhs.x) &&
+					   dl32::floating_point_helper<T>::are_equal(lhs.y , rhs.y);
 			}
 		};
 
@@ -122,6 +128,11 @@ namespace dl32
 		template<typename T>
 		struct coords_2d_comparer<T,false> : public coords_2d_holder<T>
 		{
+			//Ctor for subclasses:
+			coords_2d_comparer()          : coords_2d_holder<T>() {}
+			coords_2d_comparer(T x , T y) : coords_2d_holder<T>(x,y) {}
+
+
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Equality operator for two 2d entities. 
 			/// @details This version is enabled only for integral coordinates. 
@@ -162,7 +173,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			entity_2d_impl_homebrew() {}
+			entity_2d_impl_homebrew() : coords_2d_comparer<T>() {}
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Constructor. Creates a vector with the specified coordinates.
@@ -172,7 +183,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			entity_2d_impl_homebrew(const T& _x ,const T& _y) : this->x( _x ) , this->y( _y ) {}
+			entity_2d_impl_homebrew(const T& _x ,const T& _y) : coords_2d_comparer<T>(_x , _y) {}
     
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,14 +281,14 @@ namespace dl32
 		               public dl32::equality_ops<dl32::vector_2d<T>>,        //Binary operator!=(dl32::vector_2d<T>,dl32::vector_2d<T>)
 					   public dl32::basic_algebra_ops<dl32::vector_2d<T>>,   //Binary operator+ (dl32::vector_2d<T>,dl32::vector_2d<T>) , binary operator-(dl32::vector_2d<T>,dl32::vector_2d<T>)
 					   public dl32::multiplication_op<dl32::vector_2d<T>,T>, //Binary operator* (dl32::vector_2d<T>,T)
-				       public dl32::division_op<dl32::vector_2d<T>,T>       //Binary operator/ (dl32::vector_2d<T>,T)
+				       public dl32::division_op<dl32::vector_2d<T>,T>      //Binary operator/ (dl32::vector_2d<T>,T)
 					   //public dl32::multiplication_op<dl32::vector_2d<T>>    //Binary operator* (dl32::vector_2d<T>,dl32_vector_2d<T>) (Dot product)
 	{
 		//Constructors:
 
-		vector_2d()                                              : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>()                            {}
-		vector_2d(const T& _x ,const T& _y)                      : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>(_x,_y)                       {}
-		vector_2d(const vector_2d<T>& p1 , vector_2d<T>& p2)     : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>( p2.x - p1.x , p2.y - p1.y ) {}
+		vector_2d()                                                : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>()                            {}
+		vector_2d(const T& _x ,const T& _y)                        : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>(_x,_y)                       {}
+		vector_2d(const vector_2d<T>& p1 , const vector_2d<T>& p2) : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>( p2.x - p1.x , p2.y - p1.y ) {}
     
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////

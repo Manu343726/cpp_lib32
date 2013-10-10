@@ -23,10 +23,10 @@
 namespace console = dl32::console;
 
 /* Useful constants definitions */
-const console::push_style_t push_style; 
-const console::pop_style_t  pop_style; 
-const console::set_autopush_t<true>  enable_autopush; 
-const console::set_autopush_t<false> disable_autopush;
+const console::push_style_t console::push_style; 
+const console::pop_style_t  console::pop_style; 
+const console::set_autopush_t<true>  console::enable_autopush; 
+const console::set_autopush_t<false> console::disable_autopush;
 
 
 

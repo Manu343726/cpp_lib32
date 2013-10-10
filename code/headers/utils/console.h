@@ -48,8 +48,6 @@
  *                                                                                                                                      *
  ***************************************************************************************************************************************/
 
-#pragma once
-
 #ifndef DL32CONSOLECOLOR_H
 #define	DL32CONSOLECOLOR_H
 
@@ -91,14 +89,9 @@ namespace dl32
 		};
 
 #if defined(_WIN32)
-
-		namespace windows
-		{ 
-			#include <Windows.h> 
-		}
-
-		typedef windows::HANDLE standard_output_handle;
-		typedef windows::DWORD  console_style;
+		//Apaño (Problemas de inclusión, deberían ser HANDLE y DWORD)
+		typedef void* standard_output_handle;
+		typedef unsigned int  console_style;
 #elif defined(__linux__)
 
 		typedef void* file_descriptor; //Working on it.... Provisional

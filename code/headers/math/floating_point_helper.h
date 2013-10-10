@@ -24,7 +24,7 @@ namespace dl32
 		static_assert( std::is_floating_point<T>::value , "T must be a floating-point type" );
 
 		typedef T floating_point_type; ///< Public alias to the floating-point type in use.
-		static const floating_point_type epsilon = std::numeric_limits<T>::epsilon(); ///< floating-point epsilon used for comparisons.
+		static const floating_point_type epsilon; ///< floating-point epsilon used for comparisons.
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Checks if two floating-point numbers are equal.
@@ -122,6 +122,9 @@ namespace dl32
 			bool operator ()(T f1 , T f2) const { return less_or_equal(f1,f2); }
 		};
 	};	
+	
+	template<typename T>
+	const T floating_point_helper<T>::epsilon = std::numeric_limits<T>::epsilon();
 }
 
 #endif	/* DL32FLOATOPERATIONSHELPER_H */
