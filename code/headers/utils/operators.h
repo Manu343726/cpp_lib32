@@ -278,7 +278,7 @@ namespace dl32
 	template<typename T , typename U = binary_sentinel , bool ENABLE_SYMMETRY = false>
 	struct division_op
 	{
-		friend T operator*(const T& t , const U& u)
+		friend T operator/(const T& t , const U& u)
 		{
 			T t2( t );
 			t2 /= u;
@@ -407,7 +407,7 @@ namespace dl32
 	///
 	/// @details User class (T) must implement operator+=(const U&) and operator-=(const U&).
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+	template<typename T , typename U = binary_sentinel , bool ENABLE_SYMMETRY = false>
 	struct basic_algebra_ops : public addition_op<T,U,ENABLE_SYMMETRY> , 
 							   public substraction_op<T,U,ENABLE_SYMMETRY>
 	{};
@@ -421,7 +421,7 @@ namespace dl32
 	/// @details User class (T) must implement T::operator+=(const U&), T::operator-=(const U&), T::operator+=(const U&),
 	///          and T::operator/=(const U&).
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename T , typename U = dl32NoType , bool ENABLE_SYMMETRY = false>
+	template<typename T , typename U = binary_sentinel , bool ENABLE_SYMMETRY = false>
 	struct algebra_ops : public addition_op<T,U,ENABLE_SYMMETRY> , 
 						 public substraction_op<T,U,ENABLE_SYMMETRY> , 
 						 public multiplication_op<T,U,ENABLE_SYMMETRY> , 

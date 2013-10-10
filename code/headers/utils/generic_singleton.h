@@ -47,8 +47,8 @@ namespace dl32
 		typedef T& ReferenceToInstance;
 		typedef singleton<T>* RealPointerToInstance;
 	private:
-		singleton(const dl32Singleton&) {}
-		singleton& operator=(const dl32Singleton&) {}
+		singleton(const singleton&) {}
+		singleton& operator=(const singleton&) {}
     
 		static RealPointerToInstance _instance;
     
@@ -94,8 +94,8 @@ namespace dl32
 			private:                                                                         \
 				class_name(); /* ctor implementation must be in class_name implementation */ \
 																							 \
-				class_name(const class_type&) = delete;                                      \
-				class_type& operator=(const class_type&) = delete;  
+				class_name(const class_type&);                                               \
+				class_type& operator=(const class_type&);  
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief This macro provides a "shortcut" to hide all ctors and assignment operator to performs 

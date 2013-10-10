@@ -29,9 +29,12 @@
 #define	DL32NEWMATH_H
 
 #include "utils/operators.h"
+#include "math\floating_point_helper.h"
 
 #include <cmath>
 #include <limits>
+#include <sstream>
+#include <string>
 
 namespace dl32
 {
@@ -51,11 +54,18 @@ namespace dl32
 	{
 		const dl32::vector_impl current_vector_impl = dl32::vector_impl::HOMEBREW; ///< Vector implementation configuration.
 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @brief This class holds the coordinates of a 2d element.
+		///
+		/// @details The homebrew implementation of 2d points and 2d vectors 
+		///
+		/// @author	Manu343726
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		template<typename T>
 		struct coords_2d_holder
 		{
 			//Restrict coordinates to floating-point and integrals only: (Waiting for C++14 concepts lite...)
-			static_assert( std::is_floating_point<T>::value || std::is_integral<T>::value , "2d vectors must have integral or floating-point types as coordinates");
+			static_assert( std::is_floating_point<T>::value || std::is_integral<T>::value , "2d elements must have integral or floating-point types as coordinates");
 
 			static const unsigned int dimensions = 2; ///< Dimensional range of the point.
 			typedef T coord_type; ///< Type used for the coordinates.
@@ -64,22 +74,31 @@ namespace dl32
 			{
 				struct
 				{
-					T x; ///< First coordinate of the vector.
-					T y; ///< Second coordinate of the vector.
+					T x; ///< First coordinate.
+					T y; ///< Second coordinate.
 				};
-				T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x. Second element with y.
+				T coords[dimensions]; ///< Vector coordinates in array-style. First element corresponds with x, second element with y.
 			};
 
 			coords_2d_holder() : x(0) , y(0) {}
+
+			T& operator[](std::size_t index)       { return index == 0 ? x : y; }
+			T  operator[](std::size_t index) const { return index == 0 ? x : y; }
 		};
 
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @brief This class provides floating-point and integral equality comparison criteria for 2d entities.
+		///
+		/// @author	Manu343726
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		template<typename T , bool IS_FLOATING_POINT = std::is_floating_point<T>::value>
 		struct coords_2d_comparer;
 
 
 		//floating-point specialization:
 		template<typename T>
-		struct coords_2d_comparer<T,false> : public coords_2d_holder<T>
+		struct coords_2d_comparer<T,true> : public coords_2d_holder<T>
 		{
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Equality operator for two 2d entities. 
@@ -92,10 +111,10 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& lhs)
+			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& rhs)
 			{
-				return dl32::floating_point_helper<T>::equal(lsh.x , rhs.x) &&
-					   dl32::floating_point_helper<T>::equal(lsh.y , rhs.y);
+				return dl32::floating_point_helper<T>::equal(lhs.x , rhs.x) &&
+					   dl32::floating_point_helper<T>::equal(lhs.y , rhs.y);
 			}
 		};
 
@@ -114,10 +133,9 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& lhs)
+			friend bool operator==(const coords_2d_comparer& lhs , const coords_2d_comparer& rhs)
 			{
-				return dl32::floating_point_helper<T>::equal(lsh.x , rhs.x) &&
-					   dl32::floating_point_helper<T>::equal(lsh.y , rhs.y);
+				return lhs.x == rhs.x && lhs.y == rhs.y;
 			}
 		};
 
@@ -134,8 +152,8 @@ namespace dl32
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-		struct vector_2d_impl_homebrew : public coords_2d_comparer<T>
+		template<typename IMPLEMENTER , typename T = float>
+		struct entity_2d_impl_homebrew : public coords_2d_comparer<T>
 		{
     
     
@@ -144,7 +162,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			vector_2d_impl_homebrew() : x(0) , y(0) {}
+			entity_2d_impl_homebrew() {}
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Constructor. Creates a vector with the specified coordinates.
@@ -154,7 +172,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			vector_2d_impl_homebrew(const T& _x ,const T& _y) : x(_x) , y(_y) {}
+			entity_2d_impl_homebrew(const T& _x ,const T& _y) : this->x( _x ) , this->y( _y ) {}
     
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,10 +180,10 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			IMPLEMENTER& operator+=(const IMPLEMENTER& m)
+			IMPLEMENTER& operator+=(const IMPLEMENTER& rhs)
 			{
-				this->x += m.x;
-				this->y += m.y;
+				this->x += rhs.x;
+				this->y += rhs.y;
         
 				return static_cast<IMPLEMENTER&>(*this);
 			}
@@ -176,10 +194,10 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			IMPLEMENTER& operator-=(const IMPLEMENTER& m)
+			IMPLEMENTER& operator-=(const IMPLEMENTER& rhs)
 			{
-				this->x -= m.x;
-				this->y -= m.y;
+				this->x -= rhs.x;
+				this->y -= rhs.y;
         
 				return static_cast<IMPLEMENTER&>(*this);
 			}
@@ -190,13 +208,8 @@ namespace dl32
 			/// @details This function is enabled only for implementers wich use complete algebra ( BASIC_ALGEBRA_ONLY == false )
 			///
 			/// @author	Manu343726
-			///
-			/// @remarks Template parameter BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE is designed only to make SFINAE
-			///          work with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
-			typename std::enable_if<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , IMPLEMENTER&>::type 
-			operator*=(const coord_type& n)
+			IMPLEMENTER& operator*=(const T& n)
 			{
 				this->x *= n;
 				this->y *= n;
@@ -210,13 +223,8 @@ namespace dl32
 			/// @details This function is enabled only for implementers wich use complete algebra ( BASIC_ALGEBRA_ONLY == false )
 			///
 			/// @author	Manu343726
-			///
-			/// @remarks Template parameter BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE is designed only for make SFINAE
-			///          work with class template parameter BASIC_ALGEBRA_ONLY. Please don't use it.
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			template<bool BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE = BASIC_ALGEBRA_ONLY>
-			typename std::enable_if<!BASIC_ALGEBRA_ONLY_DUMMY_SFINAE_BRIDGE , IMPLEMENTER&>::type 
-			operator/=(const coord_type& n)
+			IMPLEMENTER& operator/=(const T& n)
 			{
 				this->x /= n;
 				this->y /= n;
@@ -227,11 +235,13 @@ namespace dl32
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Gets a string representation of the 2d vector.
 			///
+			/// @details MSVC does not still implement std::to_string()
+			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			std::string to_string()
+			std::string to_string() const
 			{
-				stringstream ss;
+				std::stringstream ss;
         
 				ss << "{" << x << "," << y << "}";
         
@@ -245,57 +255,9 @@ namespace dl32
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-		struct vector_2d_implt_direct3d{};
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief This class provides a OpenGL algebra utilities API based implementation of a 2d vector and 
-		///        its most common algebraic operations. NOT IMPLEMENTED. PROVISIONAL DEFINITION.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		template<typename IMPLEMENTER , typename T = float , bool BASIC_ALGEBRA_ONLY = false>
-		struct vector_2d_implementation_opengl{};
+		template<typename IMPLEMENTER , typename T = float>
+		struct entity_2d_implt_direct3d{};
 	}
-
-	//Forward declaration for implicit cast from dl32oint2D to dl32Vector2D.
-	template<typename T = float>
-	struct vector_2d;
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// @brief This class represents a point in 2d space.
-	///
-	/// @tparam T Type used for point coordinates.
-	/// @author	Manu343726
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	template<typename T = float>
-	struct point_2d : public dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true> ,
-		              public dl32::equality_ops<dl32::point_2d<T>>,     //Binary operator !=, based on ==.
-		              public dl32::basic_algebra_ops<dl32::point_2d<T>> //Binary operators + and -, based on += and -=.
-	{
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Default constructor. Initialices coordinates x and y to zero.
-		///
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		point_2d() : dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true>() {}
-    
-    
-		point_2d(const T& _x ,const T& _y) : dl32::internal::vector_2d_impl_homebrew<dl32::point_2d<T>,T,true>(_x,_y) {}
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Implicit cast to 2d vector.
-		///
-		/// @return A 2d vector (with the same coordinate type) with x and y as coordinates.
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		operator vector_2d<T>() const {return vector_2d<T>{ this->x , this->y }; }
-	};
-
-	using point_2di = dl32::point_2d<int>;    ///< Alias for integer 2d points.
-	using point_2df = dl32::point_2d<float>;  ///< Alias for single-precision 2d points.
-	using point_2dd = dl32::point_2d<double>; ///< Alias for double-precision 2d points.
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief This class represents a vector in 2d space.
@@ -304,30 +266,26 @@ namespace dl32
 	/// @author	Manu343726
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	template<typename T>
-	struct vector_2d : public dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true> ,
+	struct vector_2d : public dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T> ,
 		               public dl32::equality_ops<dl32::vector_2d<T>>,        //Binary operator!=(dl32::vector_2d<T>,dl32::vector_2d<T>)
 					   public dl32::basic_algebra_ops<dl32::vector_2d<T>>,   //Binary operator+ (dl32::vector_2d<T>,dl32::vector_2d<T>) , binary operator-(dl32::vector_2d<T>,dl32::vector_2d<T>)
 					   public dl32::multiplication_op<dl32::vector_2d<T>,T>, //Binary operator* (dl32::vector_2d<T>,T)
-				       public dl32::division_op<dl32::vector_2d<T>,T>        //Binary operator/ (dl32::vector_2d<T>,T)
+				       public dl32::division_op<dl32::vector_2d<T>,T>       //Binary operator/ (dl32::vector_2d<T>,T)
+					   //public dl32::multiplication_op<dl32::vector_2d<T>>    //Binary operator* (dl32::vector_2d<T>,dl32_vector_2d<T>) (Dot product)
 	{
-		vector_2d()                                              : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>()                            {}
-		vector_2d(const T& _x ,const T& _y)                      : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>(_x,_y)                       {}
-		vector_2d(const dl32Point2D<T>& p1 , dl32Point2D<T>& p2) : dl32::internal::vector_2d_impl_homebrew<dl32::vector_2d<T>,T,true>( p2.x - p1.x , p2.y - p1.y ) {}
+		//Constructors:
+
+		vector_2d()                                              : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>()                            {}
+		vector_2d(const T& _x ,const T& _y)                      : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>(_x,_y)                       {}
+		vector_2d(const vector_2d<T>& p1 , vector_2d<T>& p2)     : dl32::internal::entity_2d_impl_homebrew<dl32::vector_2d<T>,T>( p2.x - p1.x , p2.y - p1.y ) {}
+    
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Implicit cast to 2d point.
-		///
-		/// @return A 2d point (with the same coordinate type) with x and y as coordinates.
-		/// @author	Manu343726
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		operator dl32::point_2d<T>() const {return dl32::point_2d<T>( this->x , this->y ); }
-    
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief Returns the lenght of the vector
+		/// @brief Returns the length of the vector
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		T lenght() const { return std::sqrt( this->x*this->x + this->y*this->y ); }
+		T length() const { return std::sqrt( this->x*this->x + this->y*this->y ); }
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Normalizes this vector (Converts this vector in a unit-lenght vector with the same direction).
@@ -337,18 +295,20 @@ namespace dl32
 		void normalize()
 		{
 			//Fast Inverse Square Root? Me lo pensaré...
-			T lenght = lenght();
+			T length = length();
         
-			this->x /= lenght;
-			this->y /= lenght;
+			this->x /= length;
+			this->y /= length;
 		}
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief Returns a normalized version of this vector.
 		///
+		/// @details It uses a NRVO-friendly implementation.
+		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		my_type get_normalized()
+		vector_2d normalized()
 		{
 			my_type ret( *this );
 			ret.normalize();
@@ -357,9 +317,9 @@ namespace dl32
 		}
 	};
 
-	using vector_2di = dl32::vector_2d<int>;    ///< Alias for integral 2d vectors.
-	using vector_2df = dl32::vector_2d<float>;  ///< Alias for single-precision 2d vectors.
-	using vector_2dd = dl32::vector_2d<double>; ///< Alias for double-precision 2d vectors.
+	typedef dl32::vector_2d<int> vector_2di;    ///< Alias for integral 2d vectors.
+	typedef dl32::vector_2d<float> vector_2df;  ///< Alias for single-precision 2d vectors.
+	typedef dl32::vector_2d<double> vector_2dd; ///< Alias for double-precision 2d vectors.
 }
 
 #endif	/* DL32NEWMATH_H */

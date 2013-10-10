@@ -27,7 +27,7 @@
     <ClInclude Include="..\code\headers\utils\generic_singleton.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="..\code\headers\math\dl32FloatingPointHelper.h">
+    <ClInclude Include="..\code\headers\math\floating_point_helper.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

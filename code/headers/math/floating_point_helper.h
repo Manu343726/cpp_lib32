@@ -21,7 +21,9 @@ namespace dl32
 	template<typename T>
 	struct floating_point_helper
 	{
-		using floating_point_type = T; ///< Public alias to the floating-point type in use.
+		static_assert( std::is_floating_point<T>::value , "T must be a floating-point type" );
+
+		typedef T floating_point_type; ///< Public alias to the floating-point type in use.
 		static const floating_point_type epsilon = std::numeric_limits<T>::epsilon(); ///< floating-point epsilon used for comparisons.
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +109,7 @@ namespace dl32
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		struct greather_or_equal_comparer
 		{
-			bool operator ()(T f1 , T f2) const { return greather_or_equal_comparer(f1,f2); }
+			bool operator ()(T f1 , T f2) const { return greather_or_equal(f1,f2); }
 		};
     
 		///////////////////////////////////////////////////////////////////////////////////////////////////////

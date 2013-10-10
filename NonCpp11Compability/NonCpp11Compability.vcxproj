@@ -62,7 +62,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\code\headers\math\dl32FloatingPointHelper.h" />
+    <ClInclude Include="..\code\headers\math\floating_point_helper.h" />
     <ClInclude Include="..\code\headers\math_2d.h" />
     <ClInclude Include="..\code\headers\utils\console.h" />
     <ClInclude Include="..\code\headers\utils\generic_singleton.h" />
