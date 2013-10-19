@@ -18,7 +18,9 @@
  along with cpp_lib32 project. If not, see <http://www.gnu.org/licenses/>.     *
 *******************************************************************************/
 
-#include "../../headers/utils/console.h"
+#include "console.h"
+
+#include <bitset>
 
 namespace console = dl32::console;
 
@@ -36,12 +38,12 @@ const console::set_autopush_t<false> console::disable_autopush;
 
 /* DWORD text attributes color masks */
 
-const DWORD COLORMASK_NOCOLOR        = 0x11111100;
-const DWORD COLORMASK_COLORONLY      = 0x00000011;
-const DWORD COLORMASK_NOFOREGROUND   = 0x11111110;
-const DWORD COLORMASK_FOREGROUNDONLY = 0x00000001;
-const DWORD COLORMASK_NOBACKGROUND   = 0x11111101;
-const DWORD COLORMASK_BACKGROUNDONLY = 0x00000010;
+const DWORD COLORMASK_NOCOLOR        = 0xFFFFFF00;
+const DWORD COLORMASK_COLORONLY      = 0x000000FF;
+const DWORD COLORMASK_NOFOREGROUND   = 0xFFFFFFF0;
+const DWORD COLORMASK_FOREGROUNDONLY = 0x0000000F;
+const DWORD COLORMASK_NOBACKGROUND   = 0xFFFFFF0F;
+const DWORD COLORMASK_BACKGROUNDONLY = 0x000000F0;
 
 typedef DWORD color_value;
 
@@ -97,7 +99,7 @@ console::style_settings::style_settings()
 {
     _setup_handle();
     _styles_stack_autopush = false;
-	_last_change = console::style_change::FOREGROUND;
+	_last_change = console::change::FOREGROUND;
     _styles_stack.push_back( _get_style() );
 }
 
@@ -115,7 +117,7 @@ void console::style_settings::_push_style()
 
 void console::style_settings::_pop_style()
 {
-    if( _styles_stack.size() <= 1 ) return;
+	if( _styles_stack.empty() ) return;
     
     _styles_stack.pop_back();
     _set_style( _styles_stack.back() );
@@ -127,7 +129,7 @@ void console::style_settings::change_background(console::color color)
     
     _update_style( _change_background_only( _styles_stack.back() , (color_value)color ) );
     
-	_last_change = console::style_change::BACKGROUND;
+	_last_change = console::change::BACKGROUND;
 }
 
 void console::style_settings::change_foreground(console::color color)
@@ -136,7 +138,7 @@ void console::style_settings::change_foreground(console::color color)
     
     _update_style( _change_foreground_only( _styles_stack.back() , (color_value)color ) );
     
-	_last_change = console::style_change::FOREGROUND;
+	_last_change = console::change::FOREGROUND;
 }
 
 void console::style_settings::push_style()

@@ -46,13 +46,13 @@ namespace dl32
 		typedef T* PointerToInstance;
 		typedef T& ReferenceToInstance;
 		typedef singleton<T>* RealPointerToInstance;
+
 	private:
 		singleton(const singleton&) {}
 		singleton& operator=(const singleton&) {}
     
 		static RealPointerToInstance _instance;
-    
-		static void _singleton_instance_deleter() { delete _instance; }
+
 	protected:
 		singleton() {}
 		virtual ~singleton() {} //Correct polymorphic delete
@@ -66,8 +66,8 @@ namespace dl32
 		{
 			if( _instance == nullptr)
 			{
-				/* Register the class at runtime-exit to avoid memory-leaks */
-				std::atexit( _singleton_instance_deleter );
+				/* Register a function to delete the instance at runtime-exit to avoid memory-leaks */
+				std::atexit( [](){ delete _instance; } );
 
 				_instance = new T;
 			}
@@ -90,7 +90,7 @@ namespace dl32
 	/// @author	Manu343726
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
 	#define MAKE_SINGLETON_EX( class_name , class_type )                                     \
-				friend class singleton< class_type >;                                        \
+				friend class dl32::singleton< class_type >;                                  \
 			private:                                                                         \
 				class_name(); /* ctor implementation must be in class_name implementation */ \
 																							 \

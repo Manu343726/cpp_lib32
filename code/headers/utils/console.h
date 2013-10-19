@@ -27,23 +27,23 @@
 
 /****************************************************************************************************************************************
  * This API provides a set of easy-to-use methods for change the style of the standard output stream.                                   *
- * All operations are performed by the dl32ConsoleColorSettings singleton, but the API provides a more                                  *
- * confortable syntax to use its methods, all based in a stream syntax:                                                                 *
+ * All operations are performed by the console::style_settings singleton, but the API provides a more                                   *
+ * confortable syntax to use its methods, based on stream operations:                                                                   *
  *                                                                                                                                      *
  * a) Explicit operations:                                                                                                              *
- *     - User specifies the operations in a explicit manner, through a set of types. (See dl32ChangeForegroungColor class,              *
- *       dl32ChangeBackgroundColor class , dl32PushStyle class , dl32PopStyle class , and dl32SetAutoPush class bellow)                 *
- *     - Example: cout << dl32ChangeForegroundColor( dl32ConsoleColor::GREEN ) << "Ohhh, i'm green" << endl;                            *
+ *     - User specifies the operations in a explicit manner, through a set of types. (See change_foreground_t class,                    *
+ *       change_background_t class , push_style_t class , pop_style_t class , and set_autopush_t class bellow)                          *
+ *     - Example: cout << console::change_foreground_t( console::color::GREEN ) << "Ohhh, i'm green" << endl;                           *
  *                                                                                                                                      *
- *     #Also, the API provides a set of constants to avoid instantations. For example: cout << push_style; instead of                   *
- *      cout << dl32PushStyle();                                                                                                        *
+ *     #Also, the API provides a set of constants to avoid instantations. For example: cout << console::push_style; instead of          *
+ *      cout << console::push_style_t();                                                                                                *
  *                                                                                                                                      *
  * b) Implicit operations:                                                                                                              *
  *     - User specifies the style-change using a set of values stored in enums (See dl32StyleChange enum operator<< overload bellow).   *
- *     - Example: cout << dl32StyleChange::FOREGROUND << dl32ConsoleColor::GREEN << "Ohhh, i'm green" << endl;                          *
+ *     - Example: cout << console::change::FOREGROUND << console::color::GREEN << "Ohhh, i'm green" << endl;                            *
  *                                                                                                                                      *
  *                                                                                                                                      *
- * An example of use is provided in the console_color_test:                                                                             *
+ * An example of use is provided in the console_color_test (The names have changed, but is the same behaviour):                         *
  * (https://github.com/Manu343726/cpp_lib32/blob/BigRefactoring/code/tests/refactoring/console_color_test.cpp)                          * 
  *                                                                                                                                      *
  ***************************************************************************************************************************************/
@@ -67,7 +67,7 @@ namespace dl32
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		enum color
+		enum class color
 		{
 			BLACK       = 0x00000000,
 			BLUE        = 0x00000001,
@@ -91,7 +91,7 @@ namespace dl32
 #if defined(_WIN32)
 		//Apaño (Problemas de inclusión, deberían ser HANDLE y DWORD)
 		typedef void* standard_output_handle;
-		typedef unsigned int  console_style;
+		typedef unsigned long  console_style;
 #elif defined(__linux__)
 
 		typedef void* file_descriptor; //Working on it.... Provisional
@@ -104,7 +104,7 @@ namespace dl32
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		enum class style_change
+		enum class change
 		{
 			FOREGROUND,
 			BACKGROUND
@@ -131,7 +131,7 @@ namespace dl32
 			void _pop_style();
 			bool _styles_stack_autopush;
     
-			dl32::console::style_change _last_change;
+			dl32::console::change _last_change;
 
 		public:  
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			dl32::console::style_change last_change() { return _last_change; }
+			dl32::console::change last_change() { return _last_change; }
     
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
 			/// @brief Executes the last console-style change with the specified color.
@@ -191,8 +191,8 @@ namespace dl32
 			{
 				switch( _last_change )
 				{
-					case dl32::console::style_change::BACKGROUND: change_background( color ); break;
-					case dl32::console::style_change::FOREGROUND: change_foreground( color ); break;
+					case dl32::console::change::BACKGROUND: change_background( color ); break;
+					case dl32::console::change::FOREGROUND: change_foreground( color ); break;
 				}
 			}
     
@@ -201,7 +201,7 @@ namespace dl32
 			///
 			/// @author	Manu343726
 			///////////////////////////////////////////////////////////////////////////////////////////////////////
-			void set_execute_change( dl32::console::style_change change) { _last_change = change; }
+			void set_execute_change( dl32::console::change change) { _last_change = change; }
 		};
 
 
@@ -262,7 +262,7 @@ namespace dl32
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		/// @brief This class provides an interface to set the autopush mode through the output stream operator (<<).
-		///        For example: cout << dl32SetAutoPush<true>(); enables autopush.
+		///        For example: cout << console::set_autopush_t<true>(); enables autopush.
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -278,7 +278,7 @@ namespace dl32
 		};
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @brief This class provides an interface to pùsh the current style through the output stream operator (<<).
+		/// @brief This class provides an interface to push the current style through the output stream operator (<<).
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,13 +312,13 @@ namespace dl32
 		/// @details With these overloads, operations can be performed with the following simpler syntax:
 		///          cout << [change] << [color];
 		///          Where:
-		///           - [change] is a value of the dl32StyleChange enum. It specifies the change that will be 
+		///           - [change] is a value of the console::change enum. It specifies the change that will be 
 		///             performed.
-		///           - [color] is the console color (A value of the dl32ConsoleColor enum) that will be setted.
+		///           - [color] is the console color (A value of the console::color enum) that will be setted.
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
-		inline std::ostream& operator<<(std::ostream& os , dl32::console::style_change change)
+		inline std::ostream& operator<<(std::ostream& os , dl32::console::change change)
 		{
 			dl32::console::style_settings::instance().set_execute_change( change );
     
@@ -330,9 +330,9 @@ namespace dl32
 		/// @details With these overloads, operations can be performed with the following simpler syntax:
 		///          cout << [change] << [color];
 		///          Where:
-		///           - [change] is a value of the dl32StyleChange enum. It specifies the change that will be 
+		///           - [change] is a value of the console::change enum. It specifies the change that will be 
 		///             performed.
-		///           - [color] is the console color (A value of the dl32ConsoleColor enum) that will be setted.
+		///           - [color] is the console color (A value of the console::color enum) that will be setted.
 		///
 		/// @author	Manu343726
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
